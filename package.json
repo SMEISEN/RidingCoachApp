@@ -8,7 +8,7 @@
     "lint": "frontend/node_modules/.bin/vue-cli-service lint"
   },
   "engines": {
-    "node": "8.10.0"
+    "node": "12.16.x"
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
