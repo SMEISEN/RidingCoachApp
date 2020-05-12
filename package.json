@@ -7,6 +7,9 @@
     "build": "frontend/node_modules/.bin/vue-cli-service build",
     "lint": "frontend/node_modules/.bin/vue-cli-service lint"
   },
+  "engines": {
+    "node": "8.10.0"
+  },
   "dependencies": {
     "@mdi/font": "^3.6.95",
     "axios": "^0.19.2",
