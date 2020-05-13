@@ -2,11 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
-from backend.config import Config
+
 
 app = Flask(__name__, static_folder='../dist/static')
-app.config['SECRET_KEY'] = Config.SECRET_KEY
-app.config['DATABASE_URL'] = Config.SQLALCHEMY_DATABASE_URI
+app.config.from_object('backend.config.Config')
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 CORS(app)
