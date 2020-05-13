@@ -6,7 +6,7 @@ from backend.config import Config
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = Config.SECRET_KEY
-app.config['DATABASE_URL'] = Config.SECRET_KEY
+app.config['DATABASE_URL'] = Config.SQLALCHEMY_DATABASE_URI
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 CORS(app)
