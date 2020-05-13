@@ -8,8 +8,8 @@ if os.path.exists(dotenv_path):
 
 class Config(object):
 
-    SECRET_KEY = os.environ.get('SECRET_KEY', '')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', '')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     APP_DIR = os.path.dirname(__file__)
     ROOT_DIR = os.path.dirname(APP_DIR)
     DIST_DIR = os.path.join(ROOT_DIR, 'dist')
