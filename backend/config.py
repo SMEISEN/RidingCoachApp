@@ -14,5 +14,5 @@ class Config(object):
     DATABASE_URL = os.environ.get('DATABASE_URL')
     APP_DIR = os.path.dirname(__file__)
     ROOT_DIR = os.path.dirname(APP_DIR)
-    DIST_DIR = os.path.join(ROOT_DIR, 'frontend/dist')
+    DIST_DIR = os.path.join(ROOT_DIR, 'dist')
 
