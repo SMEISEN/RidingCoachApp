@@ -10,7 +10,7 @@ from backend.src.models import Maintenance, Bike, History, MaintenanceSchema
 def index_client():
     dist_dir = current_app.config['DIST_DIR']
     entry = os.path.join(dist_dir, 'index.html')
-    return send_file(entry)
+    return send_file('../../frontend/dist/index.html')
 
 
 @app.route('/api/maintenance/list', methods=['GET'])
