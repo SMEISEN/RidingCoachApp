@@ -1,14 +1,16 @@
+import os
 from datetime import datetime
-
-from flask import jsonify, request, redirect, url_for
+from flask import jsonify, request, redirect, url_for, current_app, send_file
 from backend.src import app, db
 from backend.src.models import Maintenance, Bike, History, MaintenanceSchema
 
 
 @app.route('/')
 @app.route('/home')
-def home():
-    return 'Hello, World!'
+def index_client():
+    dist_dir = current_app.config['DIST_DIR']
+    entry = os.path.join(dist_dir, 'index.html')
+    return send_file(entry)
 
 
 @app.route('/api/maintenance/list', methods=['GET'])
