@@ -4,9 +4,9 @@
   "private": true,
   "main": "frontend/src/main.js",
   "scripts": {
-    "serve": "cd frontend && vue-cli-service serve",
-    "build": "cd frontend && vue-cli-service build",
-    "lint": "cd frontend && vue-cli-service lint"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "engines": {
     "node": "12.16.x"
