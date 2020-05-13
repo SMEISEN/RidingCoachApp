@@ -5,3 +5,4 @@ flask_marshmallow
 flask_cors
 datetime
 gunicorn
+psycopg2-binary
