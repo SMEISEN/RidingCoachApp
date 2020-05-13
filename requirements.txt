@@ -4,3 +4,4 @@ flask_sqlalchemy
 flask_marshmallow
 flask_cors
 datetime
+gunicorn
