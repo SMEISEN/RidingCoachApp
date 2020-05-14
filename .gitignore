@@ -21,3 +21,6 @@ yarn-error.log*
 /.env
 /RidingCoachApp.iml
 /pyvenv.cfg
+/frontend/node_modules/
+/frontend/dist/
+/frontend/package.json
