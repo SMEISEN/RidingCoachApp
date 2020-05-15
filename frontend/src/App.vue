@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      color="blue darken-4"
+      color="primary"
       dark
     >
       <div class="d-flex align-center">
@@ -29,7 +29,7 @@
 <script>
 
 export default {
-  name: 'app',
+  name: 'App',
 
   data: () => ({
     //
