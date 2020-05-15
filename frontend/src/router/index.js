@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-// import Maintenance from '../components/Maintenance.vue';
+import Maintenance from '../components/Maintenance.vue';
 
 Vue.use(VueRouter);
 
@@ -11,7 +11,7 @@ export default new VueRouter({
     {
       path: '/',
       name: 'Maintenance',
-      // component: Maintenance,
+      component: Maintenance,
       alias: '/home',
     },
   ],
