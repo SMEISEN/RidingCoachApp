@@ -4,7 +4,7 @@
   "private": true,
   "main": "frontend/src/main.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "cd frontend && node server.js",
     "heroku-postbuild": "npm run build"
   },
   "engines": {
