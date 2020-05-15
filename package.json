@@ -12,6 +12,8 @@
     "node": "12.16.x"
   },
   "dependencies": {
+    "@mdi/font": "^3.9.97",
+    "roboto-fontface": "*",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "node-sass": "^4.14.1",
