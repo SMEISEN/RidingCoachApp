@@ -24,3 +24,5 @@ yarn-error.log*
 /frontend/node_modules/
 /frontend/dist/
 /frontend/package.json
+/frontend/config/dev.env.js
+/frontend/config/prod.env.js
