@@ -1,5 +1,7 @@
 import os
+import click
 from flask import Flask, current_app, send_file, Blueprint
+from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
@@ -15,6 +17,12 @@ api = Api(blueprint)
 app.register_blueprint(blueprint)
 CORS(app)
 
+from backend.src.resources import MaintenanceResource, HistoryResource, BikeResource
+
+api.add_resource(MaintenanceResource, '/maintenance/list')
+api.add_resource(HistoryResource, '/maintenance/history')
+api.add_resource(BikeResource, '/bike')
+
 
 @app.route('/')
 @app.route('/home')
@@ -24,8 +32,7 @@ def index_client():
     return send_file(entry)
 
 
-from backend.src.resources import MaintenanceResource, HistoryResource, BikeResource
-
-api.add_resource(MaintenanceResource, '/maintenance/list')
-api.add_resource(HistoryResource, '/maintenance/history')
-api.add_resource(BikeResource, '/bike')
+@click.command(name='create_tables')
+@with_appcontext
+def create_tables():
+    db.create_all()
