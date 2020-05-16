@@ -14,5 +14,11 @@ export default new VueRouter({
       component: Maintenance,
       alias: '/home',
     },
+    {
+      path: '/index.html',
+      name: 'Maintenance',
+      component: Maintenance,
+      alias: '/home',
+    },
   ],
 });
