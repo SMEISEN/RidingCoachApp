@@ -1,7 +1,5 @@
 import os
-import click
 from flask import Flask, current_app, send_file, Blueprint
-from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
@@ -32,8 +30,7 @@ def index_client():
     return send_file(entry)
 
 
-@click.command(name='create_tables')
-@with_appcontext
+@app.cli.command(name='create_tables')
 def create_tables():
     db.create_all()
 
