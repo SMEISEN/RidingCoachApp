@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 import de from 'vuetify/es5/locale/de';
+import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify);
 
