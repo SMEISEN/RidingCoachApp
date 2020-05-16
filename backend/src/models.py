@@ -28,7 +28,7 @@ class HistoryModel(db.Model):
     hist_id = db.Column(db.Integer, primary_key=True)
     #
     category = db.Column(db.String(20), nullable=False)  # Motor, Anbauteile, etc.
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Öl gewechselt, etc.
+    name = db.Column(db.String(100), nullable=False)  # Öl gewechselt, etc.
     #
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     hours = db.Column(db.Float, nullable=False)  # 77.5 h
