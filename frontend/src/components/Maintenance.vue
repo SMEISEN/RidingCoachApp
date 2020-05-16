@@ -6,9 +6,7 @@
           <v-dialog v-model="dialog"
                     persistent max-width="600px"
                     ref="addMaintenanceDialog"
-                    @keydown.esc="dialog = false"
-                    @submit="onSubmit"
-                    @close="onCancel">
+                    @keydown.esc="dialog = false">
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark v-on="on">Add maintenance</v-btn>
             </template>
@@ -34,7 +32,9 @@
                       </v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field label="Maintenance*" required></v-text-field>
+                      <v-text-field label="Maintenance*" required
+                                    v-model="addMaintenanceForm.name">
+                      </v-text-field>
                     </v-col>
                     <v-col cols="12">
                       <v-text-field label="Comment"
@@ -47,8 +47,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn type="close" color="secondary" text @click="dialog = false">Close</v-btn>
-                <v-btn type="submit" color="secondary" text @click="dialog = false">Save</v-btn>
+                <v-btn color="secondary" text @click="onCancel">Close</v-btn>
+                <v-btn color="secondary" text @click="onSubmit">Save</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -58,7 +58,9 @@
             <tr>
               <th class="text-left">Category</th>
               <th class="text-left">Name</th>
-              <th class="text-left">Interval</th>
+              <th class="text-left">Hours</th>
+              <th class="text-left">Date</th>
+              <th class="text-left">Comment</th>
               <th></th>
             </tr>
             </thead>
@@ -67,11 +69,12 @@
                 <td>{{ maintenance.category }}</td>
                 <td>{{ maintenance.name }}</td>
                 <td>{{ maintenance.hours }}</td>
+                <td>{{ maintenance.date }}</td>
                 <td>{{ maintenance.comment }}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-warning btn-sm">Done!</button>
-                    <button type="button" class="btn btn-danger btn-sm">Edit</button>
+                    <v-btn color="warning" text @click="">Edit</v-btn>
+                    <v-btn color="success" text @click="">Done!</v-btn>
                   </div>
                 </td>
               </tr>
@@ -94,6 +97,7 @@ export default {
         category: '',
         name: '',
         hours: '',
+        date: '',
         comment: '',
       },
       dialog: false,
@@ -101,7 +105,7 @@ export default {
   },
   methods: {
     getMaintenance() {
-      const path = 'http://localhost:5000/api/maintenance/list';
+      const path = '/api/maintenance/history';
       axios.get(path)
         .then((res) => {
           this.maintenance_list = res.data;
@@ -112,7 +116,7 @@ export default {
         });
     },
     addMaintenance(payload) {
-      const path = 'http://localhost:5000/api/maintenance/new';
+      const path = '/api/maintenance/history';
       axios.post(path, payload)
         .then(() => {
           this.getMaintenance();
@@ -127,15 +131,17 @@ export default {
       this.addMaintenanceForm.category = '';
       this.addMaintenanceForm.name = '';
       this.addMaintenanceForm.hours = '';
+      this.addMaintenanceForm.date = '';
       this.addMaintenanceForm.comment = '';
     },
     onSubmit(evt) {
       evt.preventDefault();
-      this.$ref.addMaintenanceDialog.dialog = false;
+      this.dialog = false;
       const payload = {
         category: this.addMaintenanceForm.category,
         name: this.addMaintenanceForm.name,
         hours: this.addMaintenanceForm.hours,
+        date: this.addMaintenanceForm.date,
         comment: this.addMaintenanceForm.comment,
       };
       this.addMaintenance(payload);
@@ -143,7 +149,7 @@ export default {
     },
     onCancel(evt) {
       evt.preventDefault();
-      this.$refs.addMaintenanceDialog.hide();
+      this.dialog = false;
       this.initForm();
     },
   },

@@ -32,20 +32,23 @@ class HistoryResource(Resource):
 
     def post(self):
 
+        last_history = HistoryModel.query.order_by(HistoryModel.hist_id.desc()).first()
+        if last_history is None:
+            last_id = -1
+        else:
+            last_id = last_history.hist_id
+
         inserted_data = request.get_json()
-        new_maintenance = MaintenanceModel(
-            mtn_id=3,
+        new_history = HistoryModel(
+            hist_id=last_id+1,
             category=inserted_data['category'],
             name=inserted_data['name'],
-            hours_interval=inserted_data['hours_interval'],
-            date_last=datetime.utcnow(),
-            hours_last=77.5,
-            hours_left=5,
-            status=80
+            hours=inserted_data['hours'],
+            comment=inserted_data['comment'],
+            date=datetime.utcnow(),
         )
-        db.session.add(new_maintenance)
+        db.session.add(new_history)
         db.session.commit()
-        return redirect(url_for('home'))
 
 
 class BikeResource(Resource):
