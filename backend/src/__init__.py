@@ -36,3 +36,6 @@ def index_client():
 @with_appcontext
 def create_tables():
     db.create_all()
+
+
+app.cli.add_command(create_tables)
