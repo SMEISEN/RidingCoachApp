@@ -33,6 +33,7 @@ def index_client():
 @app.cli.command(name='create_tables')
 def create_tables():
     db.create_all()
+    print('Database created!')
 
 
 app.cli.add_command(create_tables)
