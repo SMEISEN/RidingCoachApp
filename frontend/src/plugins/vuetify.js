@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
+import Vuetify from 'vuetify';
 import de from 'vuetify/es5/locale/de';
 import 'vuetify/dist/vuetify.min.css'
 
