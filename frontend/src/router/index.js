@@ -10,15 +10,40 @@ export default new VueRouter({
   routes: [
     {
       path: '/',
+      alias: '/home',
       name: 'Maintenance',
       component: Maintenance,
-      alias: '/home',
+      meta: {
+        title: 'Home Page - Example App',
+        metaTags: [
+          {
+            name: 'description',
+            content: 'The home page of our example app.',
+          },
+          {
+            property: 'og:description',
+            content: 'The home page of our example app.',
+          },
+        ],
+      },
     },
     {
       path: '/index.html',
       name: 'Maintenance',
       component: Maintenance,
-      alias: '/home',
+      meta: {
+        title: 'Home Page - Example App',
+        metaTags: [
+          {
+            name: 'description',
+            content: 'The home page of our example app.',
+          },
+          {
+            property: 'og:description',
+            content: 'The home page of our example app.',
+          },
+        ],
+      },
     },
   ],
 });

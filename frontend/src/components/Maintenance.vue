@@ -3,12 +3,56 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-10">
-          <h1>Maintenance</h1>
-          <hr><br><br>
-          <button type="button" class="btn btn-success btn-sm" v-b-modal.maintenance-modal>
-            Add Maintenance
-          </button>
-          <br><br>
+          <v-dialog v-model="dialog"
+                    persistent max-width="600px"
+                    ref="addMaintenanceDialog"
+                    @keydown.esc="dialog = false"
+                    @submit="onSubmit"
+                    @close="onCancel">
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" dark v-on="on">Add maintenance</v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">Add maintenance</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="9">
+                      <v-text-field label="Category name*"
+                                    required
+                                    v-model="addMaintenanceForm.category">
+                      </v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="3">
+                      <v-text-field
+                        label="Hours*"
+                        required
+                        hint="of engine operation"
+                        v-model="addMaintenanceForm.hours">
+                      </v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field label="Maintenance*" required></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field label="Comment"
+                                    v-model="addMaintenanceForm.comment">
+                      </v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <small>*indicates required field</small>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn type="close" color="secondary" text @click="dialog = false">Close</v-btn>
+                <v-btn type="submit" color="secondary" text @click="dialog = false">Save</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <br>
           <v-simple-table fixed-header height="300px">
             <thead>
             <tr>
@@ -22,7 +66,8 @@
               <tr v-for="(maintenance, index) in maintenance_list" :key="index">
                 <td>{{ maintenance.category }}</td>
                 <td>{{ maintenance.name }}</td>
-                <td>{{ maintenance.hours_interval }}</td>
+                <td>{{ maintenance.hours }}</td>
+                <td>{{ maintenance.comment }}</td>
                 <td>
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-warning btn-sm">Done!</button>
@@ -34,47 +79,6 @@
           </v-simple-table>
         </div>
       </div>
-      <b-modal ref="addMaintenanceModal"
-                     id="maintenance-modal"
-                     title="Add a new maintenance"
-                     hide-footer>
-        <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-          <b-form-group id="form-category-group"
-                        label="Category:"
-                        label-for="form-category-input">
-            <b-form-input id="form-category-input"
-                          type="text"
-                          v-model="addMaintenanceForm.category"
-                          required
-                          placeholder="Enter category name">
-            </b-form-input>
-          </b-form-group>
-          <b-form-group id="form-name-group"
-                        label="Name:"
-                        label-for="form-name-input">
-            <b-form-input id="form-name-input"
-                          type="text"
-                          v-model="addMaintenanceForm.name"
-                          required
-                          placeholder="Enter maintenance name">
-            </b-form-input>
-          </b-form-group>
-          <b-form-group id="form-interval-group"
-                        label="Interval:"
-                        label-for="form-interval-input">
-            <b-form-input id="form-interval-input"
-                          type="text"
-                          v-model="addMaintenanceForm.hours_interval"
-                          required
-                          placeholder="Enter interval hours">
-            </b-form-input>
-          </b-form-group>
-          <b-button-group>
-            <b-button type="submit" variant="primary">Submit</b-button>
-            <b-button type="reset" variant="danger">Reset</b-button>
-          </b-button-group>
-        </b-form>
-      </b-modal>
     </div>
   </v-app>
 </template>
@@ -89,8 +93,10 @@ export default {
       addMaintenanceForm: {
         category: '',
         name: '',
-        hours_interval: '',
+        hours: '',
+        comment: '',
       },
+      dialog: false,
     };
   },
   methods: {
@@ -120,22 +126,24 @@ export default {
     initForm() {
       this.addMaintenanceForm.category = '';
       this.addMaintenanceForm.name = '';
-      this.addMaintenanceForm.hours_interval = '';
+      this.addMaintenanceForm.hours = '';
+      this.addMaintenanceForm.comment = '';
     },
     onSubmit(evt) {
       evt.preventDefault();
-      this.$refs.addMaintenanceModal.hide();
+      this.$ref.addMaintenanceDialog.dialog = false;
       const payload = {
         category: this.addMaintenanceForm.category,
         name: this.addMaintenanceForm.name,
-        hours_interval: this.addMaintenanceForm.hours_interval,
+        hours: this.addMaintenanceForm.hours,
+        comment: this.addMaintenanceForm.comment,
       };
       this.addMaintenance(payload);
       this.initForm();
     },
-    onReset(evt) {
+    onCancel(evt) {
       evt.preventDefault();
-      this.$refs.addMaintenanceModal.hide();
+      this.$refs.addMaintenanceDialog.hide();
       this.initForm();
     },
   },

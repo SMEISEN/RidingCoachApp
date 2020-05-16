@@ -2,7 +2,7 @@ from datetime import datetime
 from backend.src import db, ma
 
 
-class Maintenance(db.Model):
+class MaintenanceModel(db.Model):
     # fixed
     mtn_id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String(20), nullable=False)  # Motor, Anbauteile, etc.
@@ -20,11 +20,32 @@ class Maintenance(db.Model):
 
 class MaintenanceSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Maintenance
+        model = MaintenanceModel
         include_fk = True
 
 
-class Bike(db.Model):
+class HistoryModel(db.Model):
+    hist_id = db.Column(db.Integer, primary_key=True)
+    #
+    category = db.Column(db.String(20), nullable=False)  # Motor, Anbauteile, etc.
+    name = db.Column(db.String(100), unique=True, nullable=False)  # Öl gewechselt, etc.
+    #
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    hours = db.Column(db.Float, nullable=False)  # 77.5 h
+    #
+    comment = db.Column(db.Text, nullable=True)
+
+    def __repr__(self):
+        return f"History('{self.category}', '{self.name}', '{self.date}')"
+
+
+class HistorySchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = HistoryModel
+        include_fk = True
+
+
+class BikeModel(db.Model):
     operating_hours = db.Column(db.Float, primary_key=True)
     #
     manufacturer = db.Column(db.String(15), nullable=True)
@@ -38,16 +59,8 @@ class Bike(db.Model):
         return f"Bike('{self.operating_hours}', '{self.date_posted}')"
 
 
-class History(db.Model):
-    hist_id = db.Column(db.Integer, primary_key=True)
-    #
-    category = db.Column(db.String(20), nullable=False)  # Motor, Anbauteile, etc.
-    name = db.Column(db.String(100), unique=True, nullable=False)  # Öl gewechselt, etc.
-    #
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    hours = db.Column(db.Float, nullable=False)  # 77.5 h
-    #
-    comment = db.Column(db.Text, nullable=True)
+class BikeSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = BikeModel
+        include_fk = True
 
-    def __repr__(self):
-        return f"History('{self.category}', '{self.name}', '{self.date}')"
