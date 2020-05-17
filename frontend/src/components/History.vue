@@ -18,27 +18,32 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="9">
-                      <v-text-field label="Category name*"
+                      <v-select :items="['Motor', 'Carburetor', 'Attachments', 'Brakes',
+                      'Clutch', 'Suspension', 'Wheels']"
+                                    label="Category name*"
                                     required
-                                    v-model="addMaintenanceForm.category">
-                      </v-text-field>
+                                    v-model="history_form_dict.category">
+                      </v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
                       <v-text-field
                         label="Hours*"
                         required
                         hint="of engine operation"
-                        v-model="addMaintenanceForm.hours">
+                        v-model="history_form_dict.hours">
                       </v-text-field>
                     </v-col>
                     <v-col cols="12">
-                      <v-text-field label="Maintenance*" required
-                                    v-model="addMaintenanceForm.name">
-                      </v-text-field>
+                      <v-combobox
+                        :items="maintenance_names_dict[history_form_dict.category]"
+                        label="Maintenance*"
+                        required
+                        v-model="history_form_dict.name">
+                      </v-combobox>
                     </v-col>
                     <v-col cols="12">
                       <v-text-field label="Comment"
-                                    v-model="addMaintenanceForm.comment">
+                                    v-model="history_form_dict.comment">
                       </v-text-field>
                     </v-col>
                   </v-row>
@@ -65,7 +70,7 @@
             </tr>
             </thead>
             <tbody>
-              <tr v-for="(maintenance, index) in maintenance_list" :key="index">
+              <tr v-for="(maintenance, index) in history_list" :key="index">
                 <td>{{ maintenance.category }}</td>
                 <td>{{ maintenance.name }}</td>
                 <td>{{ maintenance.hours }}</td>
@@ -73,8 +78,8 @@
                 <td>{{ maintenance.comment }}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    <v-btn color="warning" text @click="">Edit</v-btn>
-                    <v-btn color="success" text @click="">Done!</v-btn>
+                    <v-btn color="warning" text @click="dialog = false">Edit</v-btn>
+                    <v-btn color="success" text @click="dialog = false">Done!</v-btn>
                   </div>
                 </td>
               </tr>
@@ -92,8 +97,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      maintenance_list: [],
-      addMaintenanceForm: {
+      history_list: [],
+      history_form_dict: {
         category: '',
         name: '',
         hours: '',
@@ -101,50 +106,69 @@ export default {
         comment: '',
       },
       dialog: false,
+      maintenance_names_dict: {
+        Motor: [],
+        Carburetor: [],
+        Attachments: [],
+        Brakes: [],
+        Clutch: [],
+        Suspension: [],
+        Wheels: [],
+      },
     };
   },
   methods: {
-    getMaintenance() {
+    getMaintenanceHistory() {
       const path = '/api/maintenance/history';
       axios.get(path)
         .then((res) => {
-          this.maintenance_list = res.data;
+          this.history_list = res.data;
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.error(error);
         });
     },
-    addMaintenance(payload) {
+    getMaintenanceNames() {
+      const path = '/api/maintenance/list';
+      axios.get(path)
+        .then((res) => {
+          this.maintenance_names_dict = res.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    addMaintenanceHistory(payload) {
       const path = '/api/maintenance/history';
       axios.post(path, payload)
         .then(() => {
-          this.getMaintenance();
+          this.getMaintenanceHistory();
         })
         .catch((error) => {
           // eslint-disable-next-line
           console.log(error);
-          this.getMaintenance();
+          this.getMaintenanceHistory();
         });
     },
     initForm() {
-      this.addMaintenanceForm.category = '';
-      this.addMaintenanceForm.name = '';
-      this.addMaintenanceForm.hours = '';
-      this.addMaintenanceForm.date = '';
-      this.addMaintenanceForm.comment = '';
+      this.history_form_dict.category = '';
+      this.history_form_dict.name = '';
+      this.history_form_dict.hours = '';
+      this.history_form_dict.date = '';
+      this.history_form_dict.comment = '';
     },
     onSubmit(evt) {
       evt.preventDefault();
       this.dialog = false;
       const payload = {
-        category: this.addMaintenanceForm.category,
-        name: this.addMaintenanceForm.name,
-        hours: this.addMaintenanceForm.hours,
-        date: this.addMaintenanceForm.date,
-        comment: this.addMaintenanceForm.comment,
+        category: this.history_form_dict.category,
+        name: this.history_form_dict.name,
+        hours: this.history_form_dict.hours,
+        date: this.history_form_dict.date,
+        comment: this.history_form_dict.comment,
       };
-      this.addMaintenance(payload);
+      this.addMaintenanceHistory(payload);
       this.initForm();
     },
     onCancel(evt) {
@@ -154,7 +178,8 @@ export default {
     },
   },
   created() {
-    this.getMaintenance();
+    this.getMaintenanceHistory();
+    this.getMaintenanceNames();
   },
 };
 </script>
