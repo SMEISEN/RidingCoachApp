@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Maintenance from '../components/Maintenance.vue';
+import History from '../components/History.vue';
 
 Vue.use(VueRouter);
 
@@ -11,8 +11,8 @@ export default new VueRouter({
     {
       path: '/',
       alias: '/home',
-      name: 'Maintenance',
-      component: Maintenance,
+      name: 'History',
+      component: History,
       meta: {
         title: 'Home Page - Example App',
         metaTags: [
@@ -29,8 +29,8 @@ export default new VueRouter({
     },
     {
       path: '/index.html',
-      name: 'Maintenance',
-      component: Maintenance,
+      name: 'History',
+      component: History,
       meta: {
         title: 'Home Page - Example App',
         metaTags: [
