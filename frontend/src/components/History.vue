@@ -4,11 +4,11 @@
       <div class="row">
         <div class="col-sm-10">
           <v-dialog v-model="dialog"
-                    persistent max-width="600px"
+                    persistent max-width="500px"
                     ref="addMaintenanceDialog"
                     @keydown.esc="dialog = false">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark v-on="on">Add maintenance</v-btn>
+              <v-btn color="secondary" dark v-on="on">Add maintenance</v-btn>
             </template>
             <v-card>
               <v-card-title>
@@ -17,7 +17,7 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="9">
+                    <v-col cols="12" sm="6" md="8">
                       <v-select :items="['Motor', 'Carburetor', 'Attachments', 'Brakes',
                       'Clutch', 'Suspension', 'Wheels']"
                                     label="Category name*"
@@ -25,11 +25,15 @@
                                     v-model="history_form_dict.category">
                       </v-select>
                     </v-col>
-                    <v-col cols="12" sm="6" md="3">
+                    <v-col cols="12" sm="6" md="4">
                       <v-text-field
-                        label="Hours*"
+                        append-outer-icon="mdi-plus"
+                        prepend-icon="mdi-minus"
+                        @click:append-outer="increment"
+                        @click:prepend="decrement"
                         required
                         hint="of engine operation"
+                        suffix="h*"
                         v-model="history_form_dict.hours">
                       </v-text-field>
                     </v-col>
@@ -101,19 +105,19 @@ export default {
       history_form_dict: {
         category: '',
         name: '',
-        hours: '',
+        hours: '20',
         date: '',
         comment: '',
       },
       dialog: false,
       maintenance_names_dict: {
-        Motor: [],
-        Carburetor: [],
-        Attachments: [],
-        Brakes: [],
-        Clutch: [],
-        Suspension: [],
-        Wheels: [],
+        Motor: ['Motor 1', 'Motor 2'],
+        Carburetor: ['Carburetor 1', 'Carburetor 2'],
+        Attachments: ['Attachments 1', 'Attachments 2'],
+        Brakes: ['Brakes 1', 'Brakes 2'],
+        Clutch: ['Clutch 1', 'Clutch 2'],
+        Suspension: ['Suspension 1', 'Suspension 2'],
+        Wheels: ['Wheels 1', 'Wheels 2'],
       },
     };
   },
@@ -175,6 +179,14 @@ export default {
       evt.preventDefault();
       this.dialog = false;
       this.initForm();
+    },
+    increment() {
+      this.history_form_dict.hours = Number(parseFloat(this.history_form_dict.hours) + 0.1)
+        .toFixed(1);
+    },
+    decrement() {
+      this.history_form_dict.hours = Number(parseFloat(this.history_form_dict.hours) - 0.1)
+        .toFixed(1);
     },
   },
   created() {
