@@ -36,4 +36,21 @@ def create_tables():
     print('Database created!')
 
 
+@app.cli.command(name='drop_tables')
+def drop_tables():
+    db.drop_all()
+    print('Database dropped!')
+
+
+@app.cli.command(name='clear_tables')
+def clear_tables(session):
+    meta = db.metadata
+    for table in reversed(meta.sorted_tables):
+        print(f"Cleared table {table}!")
+        session.execute(table.delete())
+    session.commit()
+
+
 app.cli.add_command(create_tables)
+app.cli.add_command(drop_tables)
+app.cli.add_command(clear_tables)
