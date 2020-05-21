@@ -17,6 +17,8 @@
     "roboto-fontface": "*",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
+    "moment": "^2.26.0",
+    "moment-timezone": "^0.5.31",
     "node-sass": "^4.14.1",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",

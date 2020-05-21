@@ -79,7 +79,7 @@
                 <td>{{ maintenance.category }}</td>
                 <td>{{ maintenance.name }}</td>
                 <td>{{ maintenance.hours }}</td>
-                <td>{{ maintenance.date }}</td>
+                <td>{{ maintenance.date | formatDate }}</td>
                 <td>{{ maintenance.comment }}</td>
                 <td>
                   <div class="btn-group" role="group">
