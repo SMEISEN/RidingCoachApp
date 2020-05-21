@@ -18,11 +18,11 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="8">
-                      <v-select :items="['Motor', 'Carburetor', 'Attachments', 'Brakes',
-                      'Clutch', 'Suspension', 'Wheels']"
-                                    label="Category name*"
-                                    required
-                                    v-model="history_form_dict.category">
+                      <v-select :items="['Motor', 'Carburetor', 'Attachments', 'Brakes', 'Clutch',
+                      'Suspension', 'Wheels']"
+                                label="Category name*"
+                                required
+                                v-model="history_form_dict.category">
                       </v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
@@ -74,7 +74,7 @@
             </tr>
             </thead>
             <tbody>
-              <tr v-for="(maintenance, index) in history_list" :key="index">
+              <tr v-for="(maintenance) in history_list" v-bind:key="maintenance.hist_id">
                 <td>{{ maintenance.category }}</td>
                 <td>{{ maintenance.name }}</td>
                 <td>{{ maintenance.hours }}</td>
@@ -82,8 +82,10 @@
                 <td>{{ maintenance.comment }}</td>
                 <td>
                   <div class="btn-group" role="group">
-                    <v-btn color="warning" text @click="dialog = false">Edit</v-btn>
-                    <v-btn color="success" text @click="dialog = false">Done!</v-btn>
+                    <v-btn color="warning" text @click="editHistory(maintenance.hist_id)">
+                      Edit</v-btn>
+                    <v-btn color="error" text @click="deleteHistoryItem(maintenance.hist_id)">
+                      Delete</v-btn>
                   </div>
                 </td>
               </tr>
@@ -103,12 +105,14 @@ export default {
     return {
       history_list: [],
       history_form_dict: {
+        hist_id: '',
         category: '',
         name: '',
         hours: '20',
         date: '',
         comment: '',
       },
+      edit: false,
       dialog: false,
       maintenance_names_dict: {
         Motor: ['Motor 1', 'Motor 2'],
@@ -122,7 +126,7 @@ export default {
     };
   },
   methods: {
-    getMaintenanceHistory() {
+    getHistory() {
       const path = '/api/maintenance/history';
       axios.get(path)
         .then((res) => {
@@ -133,7 +137,18 @@ export default {
           console.error(error);
         });
     },
-    getMaintenanceNames() {
+    postHistory(payload) {
+      const path = '/api/maintenance/history';
+      axios.post(path, payload)
+        .then(() => {
+          this.getHistory();
+        })
+        .catch((error) => {
+          console.log(error);
+          this.getHistory();
+        });
+    },
+    getMaintenance() {
       const path = '/api/maintenance/list';
       axios.get(path)
         .then((res) => {
@@ -143,19 +158,8 @@ export default {
           console.error(error);
         });
     },
-    addMaintenanceHistory(payload) {
-      const path = '/api/maintenance/history';
-      axios.post(path, payload)
-        .then(() => {
-          this.getMaintenanceHistory();
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.log(error);
-          this.getMaintenanceHistory();
-        });
-    },
     initForm() {
+      this.history_form_dict.hist_id = '';
       this.history_form_dict.category = '';
       this.history_form_dict.name = '';
       this.history_form_dict.hours = '';
@@ -172,7 +176,11 @@ export default {
         date: this.history_form_dict.date,
         comment: this.history_form_dict.comment,
       };
-      this.addMaintenanceHistory(payload);
+      if (this.edit === false) {
+        this.postHistory(payload);
+      } else {
+        this.putHistoryItem(payload);
+      }
       this.initForm();
     },
     onCancel(evt) {
@@ -188,10 +196,50 @@ export default {
       this.history_form_dict.hours = Number(parseFloat(this.history_form_dict.hours) - 0.1)
         .toFixed(1);
     },
+    editHistory(MtnId) {
+      const path = `/api/maintenance/history/${MtnId}`;
+      axios.get(path)
+        .then((res) => {
+          this.history_form_dict.hist_id = res.data.hist_id;
+          this.history_form_dict.category = res.data.category;
+          this.history_form_dict.name = res.data.name;
+          this.history_form_dict.hours = res.data.hours;
+          this.history_form_dict.date = res.data.date;
+          this.history_form_dict.comment = res.data.comment;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      this.edit = true;
+      this.dialog = true;
+    },
+    putHistoryItem(payload) {
+      const path = `/api/maintenance/history/${this.history_form_dict.hist_id}`;
+      axios.put(path, payload)
+        .then(() => {
+          this.getHistory();
+        })
+        .catch((error) => {
+          console.log(error);
+          this.getHistory();
+        });
+      this.edit = false;
+    },
+    deleteHistoryItem(MtnID) {
+      const path = `/api/maintenance/history/${MtnID}`;
+      axios.delete(path)
+        .then(() => {
+          this.getHistory();
+        })
+        .catch((error) => {
+          console.log(error);
+          this.getHistory();
+        });
+    },
   },
   created() {
-    this.getMaintenanceHistory();
-    this.getMaintenanceNames();
+    this.getHistory();
+    this.getMaintenance();
   },
 };
 </script>
