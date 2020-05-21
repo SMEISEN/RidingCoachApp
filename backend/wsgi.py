@@ -1,4 +1,4 @@
-from backend.app import app, initialize_app
+from backend.app import app
 from backend.config import Config
 
 
