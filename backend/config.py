@@ -17,3 +17,5 @@ class Config(object):
     ROOT_DIR = os.path.dirname(APP_DIR)
     DIST_DIR = os.path.join(ROOT_DIR, 'frontend/dist')
 
+    API_URL = os.getenv('API_URL')
+    API_PORT = os.getenv('API_PORT')
