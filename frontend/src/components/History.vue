@@ -42,6 +42,7 @@
                         :items="maintenance_names_dict[history_form_dict.category]"
                         label="Maintenance*"
                         required
+                        ref="NameComboBox"
                         v-model="history_form_dict.name">
                       </v-combobox>
                     </v-col>
@@ -168,20 +169,23 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault();
-      this.dialog = false;
-      const payload = {
-        category: this.history_form_dict.category,
-        name: this.history_form_dict.name,
-        hours: this.history_form_dict.hours,
-        date: this.history_form_dict.date,
-        comment: this.history_form_dict.comment,
-      };
-      if (this.edit === false) {
-        this.postHistory(payload);
-      } else {
-        this.putHistoryItem(payload);
-      }
-      this.initForm();
+      this.$refs.NameComboBox.blur();
+      this.$nextTick(() => {
+        const payload = {
+          category: this.history_form_dict.category,
+          name: this.history_form_dict.name,
+          hours: this.history_form_dict.hours,
+          date: this.history_form_dict.date,
+          comment: this.history_form_dict.comment,
+        };
+        if (this.edit === false) {
+          this.postHistory(payload);
+        } else {
+          this.putHistoryItem(payload);
+        }
+        this.dialog = false;
+        this.initForm();
+      });
     },
     onCancel(evt) {
       evt.preventDefault();
