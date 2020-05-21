@@ -37,6 +37,7 @@ def initialize_app(flask_app):
 @app.route('/')
 @app.route('/home')
 def index_client():
+    initialize_app(app)
     dist_dir = current_app.config['DIST_DIR']
     entry = os.path.join(dist_dir, 'index.html')
     return send_file(entry)
