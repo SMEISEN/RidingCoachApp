@@ -10,19 +10,13 @@ from backend.database import db, ma
 
 app = Flask(__name__, static_folder='../frontend/dist/static', template_folder="../frontend/dist")
 app.url_map.strict_slashes = False
-
 app.config.from_object(Config())
 
 blueprint = Blueprint('api', __name__, url_prefix='/api')
 api.init_app(blueprint)
-
 api.add_namespace(maintenance_namespace)
 api.add_namespace(history_namespace)
 api.add_namespace(bike_namespace)
-
-app.cli.add_command(create_tables)
-app.cli.add_command(drop_tables)
-app.cli.add_command(clear_tables)
 
 app.register_blueprint(blueprint)
 
@@ -59,3 +53,8 @@ def clear_tables(session):
         print(f"Cleared table {table}!")
         session.execute(table.delete())
     session.commit()
+
+
+app.cli.add_command(create_tables)
+app.cli.add_command(drop_tables)
+app.cli.add_command(clear_tables)
