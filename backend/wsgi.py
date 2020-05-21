@@ -9,4 +9,5 @@ if __name__ == '__main__':
         app.run(host=Config.API_URL, port=Config.API_PORT, debug=True)
 
     else:
+        initialize_app(app)
         app.run(host='0.0.0.0', debug=False)
