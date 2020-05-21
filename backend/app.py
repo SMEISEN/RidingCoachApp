@@ -11,33 +11,30 @@ from backend.database import db, ma
 app = Flask(__name__, static_folder='../frontend/dist/static', template_folder="../frontend/dist")
 app.url_map.strict_slashes = False
 
+app.config.from_object(Config())
 
-def initialize_app(flask_app):
-    flask_app.config.from_object(Config())
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+api.init_app(blueprint)
 
-    blueprint = Blueprint('api', __name__, url_prefix='/api')
-    api.init_app(blueprint)
+api.add_namespace(maintenance_namespace)
+api.add_namespace(history_namespace)
+api.add_namespace(bike_namespace)
 
-    api.add_namespace(maintenance_namespace)
-    api.add_namespace(history_namespace)
-    api.add_namespace(bike_namespace)
+app.cli.add_command(create_tables)
+app.cli.add_command(drop_tables)
+app.cli.add_command(clear_tables)
 
-    flask_app.cli.add_command(create_tables)
-    flask_app.cli.add_command(drop_tables)
-    flask_app.cli.add_command(clear_tables)
+app.register_blueprint(blueprint)
 
-    flask_app.register_blueprint(blueprint)
+db.init_app(app)
+ma.init_app(app)
 
-    db.init_app(flask_app)
-    ma.init_app(flask_app)
-
-    CORS(flask_app)
+CORS(app)
 
 
 @app.route('/')
 @app.route('/home')
 def index_client():
-    initialize_app(app)
     dist_dir = current_app.config['DIST_DIR']
     entry = os.path.join(dist_dir, 'index.html')
     return send_file(entry)
