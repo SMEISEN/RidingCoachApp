@@ -4,19 +4,31 @@
       app
       color="primary"
       dark
+      hide-on-scroll
+      dense
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-      </div>
 
-      <v-spacer></v-spacer>
+      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+
+      <v-tabs
+        grow
+        right
+      >
+        <v-tabs-slider color="accent"></v-tabs-slider>
+
+        <v-tab to="/dashboard">
+          Dashboard
+        </v-tab>
+        <v-tab to="/maintenance">
+          Maintenance
+        </v-tab>
+        <v-tab to="/history">
+          History
+        </v-tab>
+
+      </v-tabs>
+
+      <router-view></router-view>
 
     </v-app-bar>
 

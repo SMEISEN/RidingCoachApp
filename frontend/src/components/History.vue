@@ -183,6 +183,7 @@
 import axios from 'axios';
 
 export default {
+  name: 'History',
   data() {
     return {
       history_list: [],
