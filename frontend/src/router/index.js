@@ -12,7 +12,7 @@ export default new VueRouter({
   routes: [
     {
       path: '/dashboard',
-      alias: '/home',
+      alias: '/',
       name: 'Dashboard',
       component: Dashboard,
       meta: {
