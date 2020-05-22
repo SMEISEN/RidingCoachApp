@@ -1,8 +1,8 @@
 <template v-slot:default>
   <v-app>
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-10">
+    <v-container>
+      <v-row>
+        <v-col sm="10">
           <v-dialog v-model="maintenance_dialog"
                     persistent max-width="500px"
                     ref="addMaintenanceDialog"
@@ -173,9 +173,9 @@
               </tr>
             </tbody>
           </v-simple-table>
-        </div>
-      </div>
-    </div>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 
