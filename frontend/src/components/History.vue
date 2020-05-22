@@ -18,6 +18,60 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="8">
+                      <v-menu
+                        v-model="date_menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        scrollable
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="history_form_dict.date"
+                            prepend-icon="mdi-calendar"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="history_form_dict.date"
+                                       @input="date_menu = false">
+                        </v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-menu
+                        ref="menu"
+                        v-model="time_menu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="history_form_dict.time"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="history_form_dict.time"
+                            prepend-icon="mdi-clock"
+                            append-outer-icon="mdi-update"
+                            @click:append-outer="refreshDateTime"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="time_menu"
+                          v-model="history_form_dict.time"
+                          format="24hr"
+                          scrollable
+                          full-width
+                          @click:minute="$refs.menu.save(history_form_dict.time)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="8">
                       <v-select :items="['Motor', 'Carburetor', 'Attachments', 'Brakes', 'Clutch',
                       'Suspension', 'Wheels']"
                                 label="Category name*"
@@ -79,7 +133,7 @@
                 <td>{{ maintenance.category }}</td>
                 <td>{{ maintenance.name }}</td>
                 <td>{{ maintenance.hours }}</td>
-                <td>{{ maintenance.date | formatDate }}</td>
+                <td>{{ maintenance.datetime_display | formatDateTime }}</td>
                 <td>{{ maintenance.comment }}</td>
                 <td>
                   <div class="btn-group" role="group">
@@ -109,12 +163,11 @@ export default {
         hist_id: '',
         category: '',
         name: '',
-        hours: '20',
-        date: '',
+        hours: '',
+        date: new Date().toISOString().substr(0, 10),
+        time: new Date().toTimeString().substr(0, 5),
         comment: '',
       },
-      edit: false,
-      dialog: false,
       maintenance_names_dict: {
         Motor: ['Motor 1', 'Motor 2'],
         Carburetor: ['Carburetor 1', 'Carburetor 2'],
@@ -124,6 +177,10 @@ export default {
         Suspension: ['Suspension 1', 'Suspension 2'],
         Wheels: ['Wheels 1', 'Wheels 2'],
       },
+      edit: false,
+      dialog: false,
+      date_menu: false,
+      time_menu: false,
     };
   },
   methods: {
@@ -163,19 +220,21 @@ export default {
       this.history_form_dict.hist_id = '';
       this.history_form_dict.category = '';
       this.history_form_dict.name = '';
-      this.history_form_dict.hours = '';
       this.history_form_dict.date = '';
+      this.history_form_dict.time = '';
+      this.history_form_dict.hours = '';
       this.history_form_dict.comment = '';
     },
     onSubmit(evt) {
       evt.preventDefault();
       this.$refs.NameComboBox.blur();
       this.$nextTick(() => {
+        const datetime = this.history_form_dict.date.concat('T', this.history_form_dict.time);
         const payload = {
           category: this.history_form_dict.category,
           name: this.history_form_dict.name,
           hours: this.history_form_dict.hours,
-          date: this.history_form_dict.date,
+          datetime_display: Date.parse(datetime),
           comment: this.history_form_dict.comment,
         };
         if (this.edit === false) {
@@ -208,7 +267,10 @@ export default {
           this.history_form_dict.category = res.data.category;
           this.history_form_dict.name = res.data.name;
           this.history_form_dict.hours = res.data.hours;
-          this.history_form_dict.date = res.data.date;
+          this.history_form_dict.date = this.$options.filters
+            .formatDateTime(res.data.datetime_display).substring(0, 10);
+          this.history_form_dict.time = this.$options.filters
+            .formatDateTime(res.data.datetime_display).substring(11, 16);
           this.history_form_dict.comment = res.data.comment;
         })
         .catch((error) => {
@@ -239,6 +301,10 @@ export default {
           console.log(error);
           this.getHistory();
         });
+    },
+    refreshDateTime() {
+      this.history_form_dict.date = new Date().toISOString().substr(0, 10);
+      this.history_form_dict.time = new Date().toTimeString().substr(0, 5);
     },
   },
   created() {

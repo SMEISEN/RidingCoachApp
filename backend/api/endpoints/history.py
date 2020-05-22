@@ -17,13 +17,13 @@ class HistoryCollection(Resource):
         Returns a list of all maintenance history posts.
         """
         history_schema = HistorySchema()
-        history = HistoryModel.query.all()
+        history_all_posts = HistoryModel.query.all()
 
-        history_list = []
-        for item in history:
-            history_list.append(history_schema.dump(item))
+        history_post_list = []
+        for history_post in history_all_posts:
+            history_post_list.append(history_schema.dump(history_post))
 
-        response = jsonify(history_list)
+        response = jsonify(history_post_list)
         response.status_code = 200
 
         return response
@@ -33,11 +33,11 @@ class HistoryCollection(Resource):
         """
         Adds a maintenance history posts.
         """
-        last_history = HistoryModel.query.order_by(HistoryModel.hist_id.desc()).first()
-        if last_history is None:
+        last_history_post = HistoryModel.query.order_by(HistoryModel.hist_id.desc()).first()
+        if last_history_post is None:
             last_id = -1
         else:
-            last_id = last_history.hist_id
+            last_id = last_history_post.hist_id
 
         inserted_data = request.get_json()
         new_history = HistoryModel(
@@ -46,7 +46,9 @@ class HistoryCollection(Resource):
             name=inserted_data['name'],
             hours=inserted_data['hours'],
             comment=inserted_data['comment'],
-            date=datetime.utcnow(),
+            datetime_created=datetime.utcnow(),
+            datetime_last_modified=datetime.utcnow(),
+            datetime_display=datetime.utcfromtimestamp(inserted_data['datetime_display']/1000)
         )
 
         db.session.add(new_history)
@@ -79,14 +81,15 @@ class HistoryItem(Resource):
         """
         inserted_data = request.get_json()
 
-        maintenance_history = HistoryModel.query.filter(HistoryModel.hist_id == id_).one()
-        maintenance_history.category = inserted_data['category']
-        maintenance_history.name = inserted_data['name']
-        maintenance_history.hours = inserted_data['hours']
-        maintenance_history.comment = inserted_data['comment']
-        maintenance_history.date = datetime.utcnow()
+        history_post = HistoryModel.query.filter(HistoryModel.hist_id == id_).one()
+        history_post.category = inserted_data['category']
+        history_post.name = inserted_data['name']
+        history_post.hours = inserted_data['hours']
+        history_post.comment = inserted_data['comment']
+        history_post.datetime_display = datetime.utcfromtimestamp(inserted_data['datetime_display']/1000)
+        history_post.datetime_last_modified = datetime.utcnow()
 
-        db.session.add(maintenance_history)
+        db.session.add(history_post)
         db.session.commit()
 
         return None, 204
@@ -96,9 +99,9 @@ class HistoryItem(Resource):
         """
         Deletes maintenance history post.
         """
-        maintenance_history = HistoryModel.query.filter(HistoryModel.hist_id == id_).one()
+        history_post = HistoryModel.query.filter(HistoryModel.hist_id == id_).one()
 
-        db.session.delete(maintenance_history)
+        db.session.delete(history_post)
         db.session.commit()
 
         return None, 204
