@@ -3,16 +3,17 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-10">
-          <v-dialog v-model="dialog"
+          <v-dialog v-model="maintenance_dialog"
                     persistent max-width="500px"
                     ref="addMaintenanceDialog"
-                    @keydown.esc="dialog = false">
+                    @keydown.esc="maintenance_dialog = false"
+          >
             <template v-slot:activator="{ on }">
-              <v-btn color="secondary" dark v-on="on">Add maintenance</v-btn>
+              <v-btn color="secondary" dark v-on="on">Add maintenance entry</v-btn>
             </template>
             <v-card>
               <v-card-title>
-                <span class="headline">Add maintenance</span>
+                <span class="headline">Add maintenance entry</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -106,8 +107,10 @@
                       </v-text-field>
                     </v-col>
                   </v-row>
+                  <v-spacer></v-spacer>
+                  <p class="text--secondary text-sm-right">
+                    *indicates required field</p>
                 </v-container>
-                <small>*indicates required field</small>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -117,7 +120,7 @@
             </v-card>
           </v-dialog>
           <br>
-          <v-simple-table fixed-header height="300px">
+          <v-simple-table fixed-header height="500px">
             <thead>
             <tr>
               <th class="text-left">Category</th>
@@ -138,9 +141,33 @@
                 <td>
                   <div class="btn-group" role="group">
                     <v-btn color="warning" text @click="editHistory(maintenance.hist_id)">
-                      Edit</v-btn>
-                    <v-btn color="error" text @click="deleteHistoryItem(maintenance.hist_id)">
-                      Delete</v-btn>
+                      Edit
+                    </v-btn>
+                    <v-dialog v-model="confirm_delete_dialog" persistent max-width="400">
+                      <template v-slot:activator="{ on }">
+                        <v-btn color="error" text v-on="on">
+                          Delete
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-card-title class="headline">
+                          Warning
+                        </v-card-title>
+                        <v-card-text>
+                          <p class="text--primary">
+                            Do you really want to delete this maintenance entry?</p>
+                          <p class="text--secondary text-sm-left">
+                            The deletion is permanent and cannot be undone.</p>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn color="accent" text
+                                 @click="confirm_delete_dialog = false">Cancel</v-btn>
+                          <v-btn color="error" text
+                                 @click="deleteHistoryItem(maintenance.hist_id)">Delete</v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
                   </div>
                 </td>
               </tr>
@@ -178,7 +205,8 @@ export default {
         Wheels: ['Wheels 1', 'Wheels 2'],
       },
       edit: false,
-      dialog: false,
+      maintenance_dialog: false,
+      confirm_delete_dialog: false,
       date_menu: false,
       time_menu: false,
     };
@@ -242,13 +270,13 @@ export default {
         } else {
           this.putHistoryItem(payload);
         }
-        this.dialog = false;
+        this.maintenance_dialog = false;
         this.initForm();
       });
     },
     onCancel(evt) {
       evt.preventDefault();
-      this.dialog = false;
+      this.maintenance_dialog = false;
       this.initForm();
     },
     increment() {
@@ -277,7 +305,7 @@ export default {
           console.error(error);
         });
       this.edit = true;
-      this.dialog = true;
+      this.maintenance_dialog = true;
     },
     putHistoryItem(payload) {
       const path = `/api/maintenance/history/${this.history_form_dict.hist_id}`;
@@ -301,6 +329,7 @@ export default {
           console.log(error);
           this.getHistory();
         });
+      this.confirm_delete_dialog = false;
     },
     refreshDateTime() {
       this.history_form_dict.date = new Date().toISOString().substr(0, 10);
