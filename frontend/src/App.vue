@@ -13,6 +13,7 @@
       <v-tabs
         grow
         right
+        dark
       >
         <v-tabs-slider color="accent"></v-tabs-slider>
 
@@ -27,8 +28,6 @@
         </v-tab>
 
       </v-tabs>
-
-      <router-view></router-view>
 
     </v-app-bar>
 

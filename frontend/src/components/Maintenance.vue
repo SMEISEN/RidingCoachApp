@@ -1,5 +1,7 @@
 <template>
-  <div>Maintenance component</div>
+  <v-app>
+    <div>Maintenance component</div>
+  </v-app>
 </template>
 
 <script>

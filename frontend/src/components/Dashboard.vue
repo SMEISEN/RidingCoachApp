@@ -1,5 +1,7 @@
 <template>
-  <div>Dashboard component</div>
+  <v-app>
+    <div>Dashboard component</div>
+  </v-app>
 </template>
 
 <script>
