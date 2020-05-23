@@ -73,8 +73,7 @@
                       </v-menu>
                     </v-col>
                     <v-col cols="12" sm="6" md="8">
-                      <v-select :items="['Motor', 'Carburetor', 'Attachments', 'Brakes', 'Clutch',
-                      'Suspension', 'Wheels']"
+                      <v-select :items="maintenance_categories_list"
                                 label="Category name*"
                                 required
                                 v-model="history_form_dict.category">
@@ -196,6 +195,7 @@ export default {
         time: new Date().toTimeString().substr(0, 5),
         comment: '',
       },
+      maintenance_categories_list: [],
       maintenance_names_dict: {
         Motor: ['Motor 1', 'Motor 2'],
         Carburetor: ['Carburetor 1', 'Carburetor 2'],
@@ -214,18 +214,17 @@ export default {
   },
   methods: {
     getHistory() {
-      const path = '/api/maintenance/history';
+      const path = '/api/history';
       axios.get(path)
         .then((res) => {
           this.history_list = res.data;
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.error(error);
         });
     },
     postHistory(payload) {
-      const path = '/api/maintenance/history';
+      const path = '/api/history';
       axios.post(path, payload)
         .then(() => {
           this.getHistory();
@@ -235,10 +234,11 @@ export default {
           this.getHistory();
         });
     },
-    getMaintenance() {
-      const path = '/api/maintenance/list';
+    getMaintenanceCategoriesAndNames() {
+      const path = '/api/maintenance/category/dict';
       axios.get(path)
         .then((res) => {
+          this.maintenance_categories_list = Object.keys(res.data);
           this.maintenance_names_dict = res.data;
         })
         .catch((error) => {
@@ -288,8 +288,8 @@ export default {
       this.history_form_dict.hours = Number(parseFloat(this.history_form_dict.hours) - 0.1)
         .toFixed(1);
     },
-    editHistory(MtnId) {
-      const path = `/api/maintenance/history/${MtnId}`;
+    editHistory(HistId) {
+      const path = `/api/history/${HistId}`;
       axios.get(path)
         .then((res) => {
           this.history_form_dict.hist_id = res.data.hist_id;
@@ -309,7 +309,7 @@ export default {
       this.maintenance_dialog = true;
     },
     putHistoryItem(payload) {
-      const path = `/api/maintenance/history/${this.history_form_dict.hist_id}`;
+      const path = `/api/history/${this.history_form_dict.hist_id}`;
       axios.put(path, payload)
         .then(() => {
           this.getHistory();
@@ -320,8 +320,8 @@ export default {
         });
       this.edit = false;
     },
-    deleteHistoryItem(MtnID) {
-      const path = `/api/maintenance/history/${MtnID}`;
+    deleteHistoryItem(HistId) {
+      const path = `/api/history/${HistId}`;
       axios.delete(path)
         .then(() => {
           this.getHistory();
@@ -339,7 +339,7 @@ export default {
   },
   created() {
     this.getHistory();
-    this.getMaintenance();
+    this.getMaintenanceCategoriesAndNames();
   },
 };
 </script>
