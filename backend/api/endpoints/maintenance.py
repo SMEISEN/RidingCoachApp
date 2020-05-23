@@ -21,7 +21,13 @@ class MaintenanceResource(Resource):
         for maintenance in maintenance_all:
             maintenance_list.append(maintenance_schema.dump(maintenance))
 
-        response = jsonify(maintenance_list)
+        maintenance_categories_dict = defaultdict(list)
+        for item in maintenance_list:
+            category = item['category']
+            item.pop('category')
+            maintenance_categories_dict[category].append(item)
+
+        response = jsonify(maintenance_categories_dict)
         response.status_code = 200
 
         return response
