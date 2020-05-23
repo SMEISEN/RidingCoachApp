@@ -11,112 +11,116 @@
             <template v-slot:activator="{ on }">
               <v-btn color="secondary" dark v-on="on">Add maintenance entry</v-btn>
             </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">Add maintenance entry</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="8">
-                      <v-menu
-                        v-model="date_menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        scrollable
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="history_form_dict.date"
-                            prepend-icon="mdi-calendar"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="history_form_dict.date"
-                                       @input="date_menu = false">
-                        </v-date-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-menu
-                        ref="menu"
-                        v-model="time_menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        :return-value.sync="history_form_dict.time"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="history_form_dict.time"
-                            prepend-icon="mdi-clock"
-                            append-outer-icon="mdi-update"
-                            @click:append-outer="refreshDateTime"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-time-picker
-                          v-if="time_menu"
-                          v-model="history_form_dict.time"
-                          format="24hr"
+            <v-form
+              lazy-validation
+              v-model="valid"
+            >
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Add maintenance entry</span>
+                </v-card-title>
+                <v-card-text>
+
+                    <v-row>
+                      <v-col cols="12" sm="6" md="8">
+                        <v-menu
+                          v-model="date_menu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
                           scrollable
-                          full-width
-                          @click:minute="$refs.menu.save(history_form_dict.time)"
-                        ></v-time-picker>
-                      </v-menu>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="8">
-                      <v-select :items="maintenance_categories_list"
-                                label="Category name*"
-                                required
-                                v-model="history_form_dict.category">
-                      </v-select>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        append-outer-icon="mdi-plus"
-                        prepend-icon="mdi-minus"
-                        @click:append-outer="increment"
-                        @click:prepend="decrement"
-                        required
-                        hint="of engine operation"
-                        suffix="h*"
-                        v-model="history_form_dict.hours">
-                      </v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-combobox
-                        :items="maintenance_names_dict[history_form_dict.category]"
-                        label="Maintenance*"
-                        required
-                        ref="NameComboBox"
-                        v-model="history_form_dict.name">
-                      </v-combobox>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field label="Comment"
-                                    v-model="history_form_dict.comment">
-                      </v-text-field>
-                    </v-col>
-                  </v-row>
+                          transition="scale-transition"
+                          offset-y
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="history_form_dict.date"
+                              prepend-icon="mdi-calendar"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker v-model="history_form_dict.date"
+                                         @input="date_menu = false">
+                          </v-date-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-menu
+                          ref="menu"
+                          v-model="time_menu"
+                          :close-on-content-click="false"
+                          :nudge-right="40"
+                          :return-value.sync="history_form_dict.time"
+                          transition="scale-transition"
+                          offset-y
+                          max-width="290px"
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="history_form_dict.time"
+                              prepend-icon="mdi-clock"
+                              append-outer-icon="mdi-update"
+                              @click:append-outer="refreshDateTime"
+                              readonly
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-time-picker
+                            v-if="time_menu"
+                            v-model="history_form_dict.time"
+                            format="24hr"
+                            scrollable
+                            full-width
+                            @click:minute="$refs.menu.save(history_form_dict.time)"
+                          ></v-time-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="8">
+                        <v-select :items="maintenance_categories_list"
+                                  label="Category name*"
+                                  required
+                                  v-model="history_form_dict.category">
+                        </v-select>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          append-outer-icon="mdi-plus"
+                          prepend-icon="mdi-minus"
+                          @click:append-outer="increment"
+                          @click:prepend="decrement"
+                          required
+                          hint="of engine operation"
+                          suffix="h*"
+                          v-model="history_form_dict.hours">
+                        </v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-combobox
+                          :items="maintenance_names_dict[history_form_dict.category]"
+                          label="Maintenance*"
+                          required
+                          ref="NameComboBox"
+                          v-model="history_form_dict.name">
+                        </v-combobox>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field label="Comment"
+                                      v-model="history_form_dict.comment">
+                        </v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-spacer></v-spacer>
+                    <p class="text--secondary text-sm-right">
+                      *indicates required field</p>
+                </v-card-text>
+                <v-card-actions>
                   <v-spacer></v-spacer>
-                  <p class="text--secondary text-sm-right">
-                    *indicates required field</p>
-                </v-container>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="secondary" text @click="onCancel">Close</v-btn>
-                <v-btn color="secondary" text @click="onSubmit">Save</v-btn>
-              </v-card-actions>
-            </v-card>
+                  <v-btn color="secondary" text @click="onCancel">Close</v-btn>
+                  <v-btn color="secondary" :disabled="!valid" text @click="onSubmit">Save</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-form>
           </v-dialog>
           <br>
           <v-simple-table fixed-header height="500px">
