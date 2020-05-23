@@ -41,7 +41,7 @@ def index_client():
 def create_tables():
     db.create_all()
 
-    with open('backend/database/maintenance_category_name_interval.json') as json_file:
+    with open('backend/database/templates/maintenance_category_name_interval.json') as json_file:
         maintenance_template = json.load(json_file)
 
     for entry in maintenance_template.items():
