@@ -214,6 +214,7 @@ export default {
       confirm_delete_dialog: false,
       date_menu: false,
       time_menu: false,
+      valid: false,
     };
   },
   methods: {
