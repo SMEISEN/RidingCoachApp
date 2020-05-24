@@ -219,8 +219,8 @@ export default {
   },
   methods: {
     getHistory() {
-      const path = '/api/history';
-      axios.get(path)
+      const api_path = '/api/history';
+      axios.get(api_path)
         .then((res) => {
           this.history_list = res.data;
         })
@@ -229,8 +229,8 @@ export default {
         });
     },
     postHistory(payload) {
-      const path = '/api/history';
-      axios.post(path, payload)
+      const api_path = '/api/history';
+      axios.post(api_path, payload)
         .then(() => {
           this.getHistory();
         })
@@ -240,8 +240,8 @@ export default {
         });
     },
     getMaintenanceCategoriesAndNames() {
-      const path = '/api/maintenance/category/dict';
-      axios.get(path)
+      const api_path = '/api/maintenance/category/dict';
+      axios.get(api_path)
         .then((res) => {
           this.maintenance_categories_list = Object.keys(res.data);
           this.maintenance_names_dict = res.data;
@@ -294,8 +294,8 @@ export default {
         .toFixed(1);
     },
     editHistory(HistId) {
-      const path = `/api/history/${HistId}`;
-      axios.get(path)
+      const api_path = `/api/history/${HistId}`;
+      axios.get(api_path)
         .then((res) => {
           this.history_form_dict.hist_id = res.data.hist_id;
           this.history_form_dict.category = res.data.category;
@@ -314,8 +314,8 @@ export default {
       this.maintenance_dialog = true;
     },
     putHistoryItem(payload) {
-      const path = `/api/history/${this.history_form_dict.hist_id}`;
-      axios.put(path, payload)
+      const api_path = `/api/history/${this.history_form_dict.hist_id}`;
+      axios.put(api_path, payload)
         .then(() => {
           this.getHistory();
         })
@@ -326,8 +326,8 @@ export default {
       this.edit = false;
     },
     deleteHistoryItem(HistId) {
-      const path = `/api/history/${HistId}`;
-      axios.delete(path)
+      const api_path = `/api/history/${HistId}`;
+      axios.delete(api_path)
         .then(() => {
           this.getHistory();
         })
