@@ -23,15 +23,38 @@
                   <tbody>
                   <tr v-for="(maintenance) in category" v-bind:key="maintenance.mtn_id">
                     <td>{{ maintenance.name }}</td>
-                    <td>{{ maintenance.hours_left }}</td>
-                    <td>{{ maintenance.state }}</td>
+                    <td v-if="maintenance.hours_last == null"></td>
+                    <td v-else>
+                      {{
+                      bike_operating_hours -
+                      maintenance.hours_last +
+                      maintenance.hours_interval
+                      }} h
+                    </td>
+                    <td v-if="maintenance.hours_last == null"></td>
+                    <td v-else>
+                      <v-progress-linear
+                        color="primary"
+                        background-color="secondary"
+                        height="10"
+                        value="
+                        (bike_operating_hours -
+                        maintenance.hours_last +
+                        maintenance.hours_interval)
+                        / maintenance.hours_interval"
+                        rounded>
+                      </v-progress-linear>
+                    </td>
                     <td>
-                      <v-btn color="success" text @click="putMaintenance(maintenance.mtn_id)">
+                      <v-btn color="success" text @click="editMaintenance(maintenance.mtn_id)">
                         Done!
                       </v-btn>
                     </td>
-                    <td>{{ maintenance.hours_interval }}</td>
-                    <td>{{ maintenance.datetime_display | formatDateTime }}</td>
+                    <td>{{ maintenance.hours_interval }} h</td>
+                    <td v-if="maintenance.hours_last == null"></td>
+                    <td v-else>
+                      {{ maintenance.datetime_last_modified | formatDateTime }}
+                    </td>
                   </tr>
                   </tbody>
                 </v-simple-table>
@@ -61,21 +84,31 @@ export default {
         Suspension: [],
         Wheels: [],
       },
-      bike_dict: {
-        operating_hours: '',
-        manufacturer: '',
-        model: '',
-        ccm: '',
-        stroke: '',
-        piston: '',
-        year: '',
+      bike_operating_hours: '',
+      history_entry_dict: {
+        hist_id: '',
+        category: '',
+        name: '',
+        hours: '',
+        date: '',
+        time: '',
+        comment: '',
+      },
+      maintenance_entry: {
+        mtn_id: '',
+        category: '',
+        name: '',
+        hours_interval: '',
+        hours_last: '',
+        datetime_created: '',
+        datetime_last_modified: '',
       },
     };
   },
   methods: {
     getMaintenance() {
-      const path = '/api/maintenance';
-      axios.get(path)
+      const ApiPath = '/api/maintenance';
+      axios.get(ApiPath)
         .then((res) => {
           this.maintenance_dict.Motor = res.data.Motor;
           this.maintenance_dict.Carburetor = res.data.Carburetor;
@@ -90,32 +123,55 @@ export default {
         });
     },
     getBikeEngineHours() {
-      const path = 'api/bike';
-      axios.get(path)
+      const ApiPath = 'api/bike';
+      axios.get(ApiPath)
         .then((res) => {
-          this.bike.operating_hours = res.data.operating_hours;
-          this.bike.manufacturer = res.data.manufacturer;
-          this.bike.model = res.data.model;
-          this.bike.ccm = res.data.ccm;
-          this.bike.stroke = res.data.stroke;
-          this.bike.piston = res.data.piston;
-          this.bike.year = res.data.year;
+          this.bike_operating_hours = res.data.operating_hours;
         });
     },
-    putMaintenance(MtnId) {
-      const path = `/api/maintenance/${MtnId}`;
-      const payload = this.bike.operating_hours;
-      axios.put(path, payload)
+    getMaintenanceEntry(MtnId) {
+      const ApiPath = `/api/maintenance/${MtnId}`;
+      return axios.get(ApiPath)
+        .then(() => axios.get(ApiPath))
+        .catch((error) => {
+          console.log(error);
+          this.getMaintenance();
+        });
+    },
+    async editMaintenance(MtnId) {
+      await this.getMaintenanceEntry(MtnId)
+        .then((res) => {
+          this.postHistory({
+            category: res.data.category,
+            name: res.data.name,
+            hours: this.bike_operating_hours,
+            datetime_display: new Date().getTime(),
+            comment: '',
+          });
+        });
+      this.putMaintenance(MtnId, { hours_last: this.bike_operating_hours });
+    },
+    putMaintenance(MtnId, payload) {
+      const ApiPath = `/api/maintenance/${MtnId}`;
+      axios.put(ApiPath, payload)
         .then(() => {
           this.getMaintenance();
         })
         .catch((error) => {
           console.log(error);
-          this.getHistory();
+          this.getMaintenance();
+        });
+    },
+    postHistory(payload) {
+      const ApiPath = '/api/history';
+      axios.post(ApiPath, payload)
+        .catch((error) => {
+          console.log(error);
         });
     },
   },
   created() {
+    this.getBikeEngineHours();
     this.getMaintenance();
   },
 };
