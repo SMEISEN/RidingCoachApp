@@ -12,15 +12,14 @@
               <v-btn color="secondary" dark v-on="on">Add maintenance entry</v-btn>
             </template>
             <v-form
-              lazy-validation
               v-model="valid"
+              ref="validation_form"
             >
               <v-card>
                 <v-card-title>
                   <span class="headline">Add maintenance entry</span>
                 </v-card-title>
                 <v-card-text>
-
                     <v-row>
                       <v-col cols="12" sm="6" md="8">
                         <v-menu
@@ -78,6 +77,7 @@
                       </v-col>
                       <v-col cols="12" sm="6" md="8">
                         <v-select :items="maintenance_categories_list"
+                                  :rules="[v => !!v]"
                                   label="Category name*"
                                   required
                                   v-model="history_form_dict.category">
@@ -89,6 +89,7 @@
                           prepend-icon="mdi-minus"
                           @click:append-outer="increment"
                           @click:prepend="decrement"
+                          :rules="[v => !!v]"
                           required
                           hint="of engine operation"
                           suffix="h*"
@@ -98,6 +99,7 @@
                       <v-col cols="12">
                         <v-combobox
                           :items="maintenance_names_dict[history_form_dict.category]"
+                          :rules="[v => !!v]"
                           label="Maintenance*"
                           required
                           ref="NameComboBox"
@@ -117,7 +119,8 @@
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="secondary" text @click="onCancel">Close</v-btn>
-                  <v-btn color="secondary" :disabled="!valid" text @click="onSubmit">Save</v-btn>
+                  <v-btn color="secondary" :disabled="!valid"
+                         text @click="onSubmit">Save</v-btn>
                 </v-card-actions>
               </v-card>
             </v-form>
@@ -135,7 +138,9 @@
             </tr>
             </thead>
             <tbody>
-              <tr v-for="(maintenance) in history_list" v-bind:key="maintenance.hist_id">
+              <tr v-for="(maintenance) in history_list"
+                  v-bind:key="maintenance.hist_id"
+                  v-bind:MtnId="maintenance.hist_id">
                 <td>{{ maintenance.category }}</td>
                 <td>{{ maintenance.name }}</td>
                 <td>{{ maintenance.hours }}</td>
@@ -146,31 +151,9 @@
                     <v-btn color="warning" text @click="editHistory(maintenance.hist_id)">
                       Edit
                     </v-btn>
-                    <v-dialog v-model="confirm_delete_dialog" persistent max-width="400">
-                      <template v-slot:activator="{ on }">
-                        <v-btn color="error" text v-on="on">
-                          Delete
-                        </v-btn>
-                      </template>
-                      <v-card>
-                        <v-card-title class="headline">
-                          Warning
-                        </v-card-title>
-                        <v-card-text>
-                          <p class="text--primary">
-                            Do you really want to delete this maintenance entry?</p>
-                          <p class="text--secondary text-sm-left">
-                            The deletion is permanent and cannot be undone.</p>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn color="accent" text
-                                 @click="confirm_delete_dialog = false">Cancel</v-btn>
-                          <v-btn color="error" text
-                                 @click="deleteHistoryItem(maintenance.hist_id)">Delete</v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
+                    <v-btn color="error" text @click="deleteHistory(maintenance.hist_id)">
+                      Delete
+                    </v-btn>
                   </div>
                 </td>
               </tr>
@@ -179,6 +162,26 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-dialog v-model="confirm_delete_dialog" persistent max-width="400">
+      <v-card>
+        <v-card-title class="headline">
+          Warning
+        </v-card-title>
+        <v-card-text>
+          <p class="text--primary">
+            Do you really want to delete this maintenance entry?</p>
+          <p class="text--secondary text-sm-left">
+            The deletion is permanent and cannot be undone.</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="accent" text
+                 @click="confirm_delete_dialog = false">Cancel</v-btn>
+          <v-btn color="error" text
+                 @click="deleteHistoryItem()">Delete</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -214,13 +217,13 @@ export default {
       confirm_delete_dialog: false,
       date_menu: false,
       time_menu: false,
-      valid: false,
+      valid: true,
     };
   },
   methods: {
     getHistory() {
-      const api_path = '/api/history';
-      axios.get(api_path)
+      const ApiPath = '/api/history';
+      axios.get(ApiPath)
         .then((res) => {
           this.history_list = res.data;
         })
@@ -229,8 +232,8 @@ export default {
         });
     },
     postHistory(payload) {
-      const api_path = '/api/history';
-      axios.post(api_path, payload)
+      const ApiPath = '/api/history';
+      axios.post(ApiPath, payload)
         .then(() => {
           this.getHistory();
         })
@@ -240,8 +243,8 @@ export default {
         });
     },
     getMaintenanceCategoriesAndNames() {
-      const api_path = '/api/maintenance/category/dict';
-      axios.get(api_path)
+      const ApiPath = '/api/maintenance/category/dict';
+      axios.get(ApiPath)
         .then((res) => {
           this.maintenance_categories_list = Object.keys(res.data);
           this.maintenance_names_dict = res.data;
@@ -258,6 +261,7 @@ export default {
       this.history_form_dict.time = '';
       this.history_form_dict.hours = '';
       this.history_form_dict.comment = '';
+      this.$refs.validation_form.resetValidation();
     },
     onSubmit(evt) {
       evt.preventDefault();
@@ -294,8 +298,8 @@ export default {
         .toFixed(1);
     },
     editHistory(HistId) {
-      const api_path = `/api/history/${HistId}`;
-      axios.get(api_path)
+      const ApiPath = `/api/history/${HistId}`;
+      axios.get(ApiPath)
         .then((res) => {
           this.history_form_dict.hist_id = res.data.hist_id;
           this.history_form_dict.category = res.data.category;
@@ -314,8 +318,8 @@ export default {
       this.maintenance_dialog = true;
     },
     putHistoryItem(payload) {
-      const api_path = `/api/history/${this.history_form_dict.hist_id}`;
-      axios.put(api_path, payload)
+      const ApiPath = `/api/history/${this.history_form_dict.hist_id}`;
+      axios.put(ApiPath, payload)
         .then(() => {
           this.getHistory();
         })
@@ -325,9 +329,13 @@ export default {
         });
       this.edit = false;
     },
-    deleteHistoryItem(HistId) {
-      const api_path = `/api/history/${HistId}`;
-      axios.delete(api_path)
+    deleteHistory(HistId) {
+      this.confirm_delete_dialog = true;
+      this.history_form_dict.hist_id = HistId;
+    },
+    deleteHistoryItem() {
+      const ApiPath = `/api/history/${this.history_form_dict.hist_id}`;
+      axios.delete(ApiPath)
         .then(() => {
           this.getHistory();
         })
