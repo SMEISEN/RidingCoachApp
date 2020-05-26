@@ -15,7 +15,7 @@ class MaintenanceResource(Resource):
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
         maintenance_schema = MaintenanceSchema()
-        maintenance_all = MaintenanceModel.query.all()
+        maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.mtn_id.asc()).all()
 
         maintenance_list = []
         for maintenance in maintenance_all:
