@@ -65,23 +65,5 @@ export default new VueRouter({
         ],
       },
     },
-    {
-      path: '/index.html',
-      name: 'Dashboard',
-      component: Dashboard,
-      meta: {
-        title: 'Dashboard',
-        metaTags: [
-          {
-            name: 'Dashboard',
-            content: 'tbd',
-          },
-          {
-            property: 'og:tbd',
-            content: 'tbd',
-          },
-        ],
-      },
-    },
   ],
 });
