@@ -35,13 +35,13 @@
                     <td v-else>
                       <v-progress-linear
                         color="primary"
-                        background-color="secondary"
+                        background-color="accent"
                         height="10"
-                        value="
+                        :value="
                         (maintenance.hours_last +
                         maintenance.hours_interval -
                         bike_operating_hours)
-                        / maintenance.hours_interval"
+                        / maintenance.hours_interval * 100"
                         rounded>
                       </v-progress-linear>
                     </td>
