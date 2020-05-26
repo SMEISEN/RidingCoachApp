@@ -26,9 +26,9 @@
                     <td v-if="maintenance.hours_last == null"></td>
                     <td v-else>
                       {{
-                      bike_operating_hours -
                       maintenance.hours_last +
-                      maintenance.hours_interval
+                      maintenance.hours_interval -
+                      bike_operating_hours
                       }} h
                     </td>
                     <td v-if="maintenance.hours_last == null"></td>
@@ -38,9 +38,9 @@
                         background-color="secondary"
                         height="10"
                         value="
-                        (bike_operating_hours -
-                        maintenance.hours_last +
-                        maintenance.hours_interval)
+                        (maintenance.hours_last +
+                        maintenance.hours_interval -
+                        bike_operating_hours)
                         / maintenance.hours_interval"
                         rounded>
                       </v-progress-linear>
