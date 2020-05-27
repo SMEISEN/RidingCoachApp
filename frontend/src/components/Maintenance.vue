@@ -1,4 +1,4 @@
-<template>
+<template v-slot:default>
   <v-app>
     <v-flex>
       <v-layout wrap>
@@ -7,59 +7,54 @@
             <v-card-title>
               <span class="headline">{{ key }}</span>
             </v-card-title>
-            <v-row>
-              <v-col sm="10">
-                <v-simple-table height="300px">
-                  <thead>
-                  <tr>
-                    <th class="text-left">Name</th>
-                    <th class="text-left">Hours left</th>
-                    <th class="text-left">State</th>
-                    <th></th>
-                    <th class="text-left">Interval</th>
-                    <th class="text-left">Date</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr v-for="(maintenance) in category" v-bind:key="maintenance.mtn_id">
-                    <td>{{ maintenance.name }}</td>
-                    <td v-if="maintenance.hours_last == null"></td>
-                    <td v-else>
-                      {{
-                      maintenance.hours_last +
-                      maintenance.hours_interval -
-                      bike_operating_hours
-                      }} h
-                    </td>
-                    <td v-if="maintenance.hours_last == null"></td>
-                    <td v-else>
-                      <v-progress-linear
-                        color="primary"
-                        background-color="accent"
-                        height="10"
-                        :value="
-                        (maintenance.hours_last +
+            <v-simple-table fixed-header height="300px">
+              <thead>
+              <tr>
+                <th class="text-left" style="min-width: 120px">Name</th>
+                <th class="text-left" style="min-width: 120px">Hours left</th>
+                <th></th>
+                <th class="text-left">Interval</th>
+                <th class="text-left">Date</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="(maintenance) in category" v-bind:key="maintenance.mtn_id">
+                <td style="font-size: 12px">{{ maintenance.name }}</td>
+                <td v-if="maintenance.hours_last == null"></td>
+                <td v-else>
+                  <v-progress-linear
+                    color="primary"
+                    background-color="accent"
+                    height="22"
+                    :value="
+                    (maintenance.hours_last +
+                    maintenance.hours_interval -
+                    bike_operating_hours)
+                    / maintenance.hours_interval * 100"
+                    rounded>
+                    <template v-slot="{ value }">
+                      <span class="white--text">
+                        {{ maintenance.hours_last +
                         maintenance.hours_interval -
-                        bike_operating_hours)
-                        / maintenance.hours_interval * 100"
-                        rounded>
-                      </v-progress-linear>
-                    </td>
-                    <td>
-                      <v-btn color="success" text @click="editMaintenance(maintenance.mtn_id)">
-                        Done!
-                      </v-btn>
-                    </td>
-                    <td>{{ maintenance.hours_interval }} h</td>
-                    <td v-if="maintenance.hours_last == null"></td>
-                    <td v-else>
-                      {{ maintenance.datetime_last_modified | formatDateTime }}
-                    </td>
-                  </tr>
-                  </tbody>
-                </v-simple-table>
-              </v-col>
-            </v-row>
+                        bike_operating_hours
+                        }} h / {{ Math.ceil(value) }} %
+                      </span>
+                    </template>
+                    </v-progress-linear>
+                </td>
+                <td>
+                  <v-btn color="success" text @click="editMaintenance(maintenance.mtn_id)">
+                    Done!
+                  </v-btn>
+                </td>
+                <td>{{ maintenance.hours_interval }} h</td>
+                <td v-if="maintenance.hours_last == null"></td>
+                <td v-else>
+                  {{ maintenance.datetime_last_modified | formatDateTime }}
+                </td>
+              </tr>
+              </tbody>
+            </v-simple-table>
           </v-card>
           <br>
         </v-container>
