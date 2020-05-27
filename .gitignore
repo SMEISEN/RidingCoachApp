@@ -25,3 +25,4 @@ yarn-error.log*
 /frontend/config/dev.env.js
 /frontend/config/prod.env.js
 /frontend/package-lock.json
+/backend/database/site.db
