@@ -46,12 +46,12 @@ def create_tables():
 
     for entry in maintenance_template.items():
         new_maintenance = MaintenanceModel(
-            mtn_id=entry[0],
+            maintenance_id=entry[0],
             category=entry[1]['category'],
             name=entry[1]['name'],
-            hours_interval=entry[1]['hours_interval'],
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
+            interval_amount=entry[1]['interval_amount'],
+            interval_unit=entry[1]['interval_unit'],
+            interval_type=entry[1]['interval_type'],
         )
         db.session.add(new_maintenance)
     db.session.commit()

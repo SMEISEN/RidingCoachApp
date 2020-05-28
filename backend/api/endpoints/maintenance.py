@@ -7,6 +7,7 @@ from flask_restplus import Resource
 from collections import defaultdict
 
 ns = api.namespace('maintenance', description='Operations related to blog posts')
+maintenance_schema = MaintenanceSchema()
 
 
 @ns.route('/')
@@ -14,18 +15,19 @@ class MaintenanceResource(Resource):
 
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
-        maintenance_schema = MaintenanceSchema()
-        maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.mtn_id.asc()).all()
+        maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.maintenance_id.asc()).all()
 
         maintenance_list = []
         for maintenance in maintenance_all:
             maintenance_list.append(maintenance_schema.dump(maintenance))
 
-        maintenance_categories_dict = defaultdict(list)
+        maintenance_categories_dict = defaultdict(lambda: defaultdict(dict))
         for item in maintenance_list:
             category = item['category']
             item.pop('category')
-            maintenance_categories_dict[category].append(item)
+            name = item['name']
+            item.pop('name')
+            maintenance_categories_dict[category][name].update(item)
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200
@@ -38,34 +40,18 @@ class MaintenanceResource(Resource):
         inserted_data = request.get_json()
 
         new_maintenance = MaintenanceModel(
-            mtn_id=inserted_data['mtn_id'],
+            maintenance_id=inserted_data['maintenance_id'],
             category=inserted_data['category'],
             name=inserted_data['name'],
-            hours_interval=inserted_data['hours_interval'],
-            hours_last=inserted_data['hours_last'],
-            hours_left=inserted_data['hours_left'],
-            status=inserted_data['status'],
+            interval_amount=inserted_data['interval_amount'],
+            interval_unit=inserted_data['interval_unit'],
+            interval_latest=inserted_data['interval_latest'],
+            interval_type=inserted_data['interval_type'],
             datetime_created=datetime.utcnow(),
             datetime_last_modified=datetime.utcnow(),
-            datetime_display=datetime.utcfromtimestamp(inserted_data['datetime_display']/1000)
+            datetime_display=datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
         )
         db.session.add(new_maintenance)
-        db.session.commit()
-
-        return 201
-
-    @api.response(201, 'Maintenance successfully added.')
-    def put(self):
-
-        inserted_data = request.get_json()
-
-        update_maintenance = MaintenanceModel.filter_by(mtn_id=inserted_data['mtn_id']).first()
-
-        update_maintenance.hours_last = inserted_data['hours_last']
-        update_maintenance.hours_left = inserted_data['hours_left']
-        update_maintenance.datetime_display = datetime.utcfromtimestamp(inserted_data['datetime_display']/1000)
-        update_maintenance.datetime_last_modified = datetime.utcnow()
-
         db.session.commit()
 
         return 201
@@ -80,8 +66,7 @@ class MaintenanceItem(Resource):
         """
         Returns a maintenance work.
         """
-        maintenance_schema = MaintenanceSchema()
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.mtn_id == id_).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
         response = jsonify(maintenance_schema.dump(maintenance_work))
         response.status_code = 200
@@ -95,10 +80,9 @@ class MaintenanceItem(Resource):
         """
         inserted_data = request.get_json()
 
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.mtn_id == id_).one()
-        maintenance_work.hours_last = inserted_data['hours_last']
-
-        maintenance_work.datetime_last_modified = datetime.utcnow()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
+        maintenance_work.interval_latest = inserted_data['interval_latest']
+        maintenance_work.datetime_last_modified = datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
 
         db.session.add(maintenance_work)
         db.session.commit()
@@ -110,7 +94,7 @@ class MaintenanceItem(Resource):
         """
         Deletes maintenance work.
         """
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.mtn_id == id_).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
         db.session.delete(maintenance_work)
         db.session.commit()
@@ -145,7 +129,7 @@ class MaintenanceCategories(Resource):
         """
         Returns a dicttionary of maintenance categories and their work names.
         """
-        maintenance_categories = MaintenanceModel.query\
+        maintenance_categories = MaintenanceModel.query \
             .with_entities(MaintenanceModel.category, MaintenanceModel.name).all()
 
         maintenance_categories_dict = defaultdict(list)
@@ -167,7 +151,6 @@ class MaintenanceCategoryItems(Resource):
         """
         Returns all maintenance work of a category.
         """
-        maintenance_schema = MaintenanceSchema()
         maintenance_of_category = MaintenanceModel.query.filter(MaintenanceModel.category == category).all()
 
         maintenance_list = []

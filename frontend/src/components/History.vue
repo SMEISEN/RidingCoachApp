@@ -22,19 +22,19 @@
               </thead>
               <tbody>
                 <tr v-for="(maintenance) in history_list"
-                    v-bind:key="maintenance.hist_id"
-                    v-bind:MtnId="maintenance.hist_id">
+                    v-bind:key="maintenance.history_id"
+                    v-bind:MtnId="maintenance.history_id">
                   <td style="font-size: 12px">{{ maintenance.category }}</td>
                   <td style="font-size: 12px">{{ maintenance.name }}</td>
-                  <td>{{ maintenance.hours }}</td>
+                  <td>{{ maintenance.operating_hours }}</td>
                   <td>{{ maintenance.datetime_display | formatDateTime }}</td>
                   <td>{{ maintenance.comment }}</td>
                   <td>
                     <div class="btn-group" role="group">
-                      <v-btn color="warning" text @click="editHistory(maintenance.hist_id)">
+                      <v-btn color="warning" text @click="editHistory(maintenance.history_id)">
                         Edit
                       </v-btn>
-                      <v-btn color="error" text @click="deleteHistory(maintenance.hist_id)">
+                      <v-btn color="error" text @click="deleteHistory(maintenance.history_id)">
                         Delete
                       </v-btn>
                     </div>
@@ -133,12 +133,12 @@
                   required
                   hint="of engine operation"
                   suffix="h*"
-                  v-model="history_form_dict.hours">
+                  v-model="history_form_dict.operating_hours">
                 </v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-combobox
-                  :items="maintenance_names_dict[history_form_dict.category]"
+                  :items="getMaintenanceNamesFromCategory(this.history_form_dict.category)"
                   :rules="[v => !!v]"
                   label="Maintenance*"
                   required
@@ -197,23 +197,24 @@ export default {
     return {
       history_list: [],
       history_form_dict: {
-        hist_id: '',
+        history_id: '',
+        maintenance_id: '',
         category: '',
         name: '',
-        hours: '',
+        operating_hours: '',
         date: new Date().toISOString().substr(0, 10),
         time: new Date().toTimeString().substr(0, 5),
         comment: '',
       },
       maintenance_categories_list: [],
       maintenance_names_dict: {
-        Motor: [],
-        Carburetor: [],
-        Attachments: [],
-        Brakes: [],
-        Clutch: [],
-        Suspension: [],
-        Wheels: [],
+        Motor: {},
+        Carburetor: {},
+        Attachments: {},
+        Brakes: {},
+        Clutch: {},
+        Suspension: {},
+        Wheels: {},
       },
       edit: false,
       maintenance_dialog: false,
@@ -224,6 +225,11 @@ export default {
     };
   },
   methods: {
+    getMaintenanceNamesFromCategory(category) {
+      if (this.maintenance_categories_list.includes(category)) {
+        return Object.keys(this.maintenance_names_dict[category]);
+      } return [];
+    },
     getHistory() {
       const ApiPath = '/api/history';
       axios.get(ApiPath)
@@ -241,12 +247,12 @@ export default {
           this.getHistory();
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           this.getHistory();
         });
     },
     getMaintenanceCategoriesAndNames() {
-      const ApiPath = '/api/maintenance/category/dict';
+      const ApiPath = '/api/maintenance';
       axios.get(ApiPath)
         .then((res) => {
           this.maintenance_categories_list = Object.keys(res.data);
@@ -257,14 +263,15 @@ export default {
         });
     },
     initForm() {
-      this.history_form_dict.hist_id = '';
+      this.history_form_dict.history_id = '';
       this.history_form_dict.category = '';
       this.history_form_dict.name = '';
       this.history_form_dict.date = new Date().toISOString().substr(0, 10);
       this.history_form_dict.time = new Date().toTimeString().substr(0, 5);
-      this.history_form_dict.hours = '';
+      this.history_form_dict.operating_hours = '';
       this.history_form_dict.comment = '';
       this.$refs.validation_form.resetValidation();
+      this.edit = false;
     },
     onSubmit(evt) {
       evt.preventDefault();
@@ -272,9 +279,11 @@ export default {
       this.$nextTick(() => {
         const datetime = this.history_form_dict.date.concat('T', this.history_form_dict.time);
         const payload = {
-          category: this.history_form_dict.category,
-          name: this.history_form_dict.name,
-          hours: this.history_form_dict.hours,
+          maintenance_id:
+            this.maintenance_names_dict[
+              this.history_form_dict.category][
+              this.history_form_dict.name].maintenance_id,
+          operating_hours: this.history_form_dict.operating_hours,
           datetime_display: Date.parse(datetime),
           comment: this.history_form_dict.comment,
         };
@@ -293,21 +302,24 @@ export default {
       this.initForm();
     },
     increment() {
-      this.history_form_dict.hours = Number(parseFloat(this.history_form_dict.hours) + 0.1)
-        .toFixed(1);
+      this.history_form_dict.operating_hours = Number(
+        parseFloat(this.history_form_dict.operating_hours) + 0.1,
+      ).toFixed(1);
     },
     decrement() {
-      this.history_form_dict.hours = Number(parseFloat(this.history_form_dict.hours) - 0.1)
-        .toFixed(1);
+      this.history_form_dict.operating_hours = Number(
+        parseFloat(this.history_form_dict.operating_hours) - 0.1,
+      ).toFixed(1);
     },
     editHistory(HistId) {
       const ApiPath = `/api/history/${HistId}`;
       axios.get(ApiPath)
         .then((res) => {
-          this.history_form_dict.hist_id = res.data.hist_id;
+          this.history_form_dict.history_id = res.data.history_id;
+          this.history_form_dict.maintenance_id = res.data.maintenance_id;
           this.history_form_dict.category = res.data.category;
           this.history_form_dict.name = res.data.name;
-          this.history_form_dict.hours = res.data.hours;
+          this.history_form_dict.operating_hours = res.data.operating_hours;
           this.history_form_dict.date = this.$options.filters
             .formatDateTime(res.data.datetime_display).substring(0, 10);
           this.history_form_dict.time = this.$options.filters
@@ -321,29 +333,29 @@ export default {
       this.maintenance_dialog = true;
     },
     putHistoryItem(payload) {
-      const ApiPath = `/api/history/${this.history_form_dict.hist_id}`;
+      const ApiPath = `/api/history/${this.history_form_dict.history_id}`;
       axios.put(ApiPath, payload)
         .then(() => {
           this.getHistory();
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           this.getHistory();
         });
       this.edit = false;
     },
     deleteHistory(HistId) {
       this.confirm_delete_dialog = true;
-      this.history_form_dict.hist_id = HistId;
+      this.history_form_dict.history_id = HistId;
     },
     deleteHistoryItem() {
-      const ApiPath = `/api/history/${this.history_form_dict.hist_id}`;
+      const ApiPath = `/api/history/${this.history_form_dict.history_id}`;
       axios.delete(ApiPath)
         .then(() => {
           this.getHistory();
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           this.getHistory();
         });
       this.confirm_delete_dialog = false;
@@ -356,6 +368,8 @@ export default {
   created() {
     this.getHistory();
     this.getMaintenanceCategoriesAndNames();
+  },
+  updated() {
   },
 };
 </script>
