@@ -38,16 +38,11 @@ class HistoryCollection(Resource):
         """
         Adds a maintenance history entries.
         """
-        last_history_entry = HistoryModel.query.order_by(HistoryModel.history_id.desc()).first()
-        if last_history_entry is None:
-            last_id = -1
-        else:
-            last_id = last_history_entry.history_id
 
         inserted_data = request.get_json()
         new_history = HistoryModel(
-            history_id=last_id+1,
             maintenance_id=inserted_data['maintenance_id'],
+            bike_id=inserted_data['bike_id'],
             operating_hours=inserted_data['operating_hours'],
             comment=inserted_data['comment'],
             datetime_created=datetime.utcnow(),
@@ -61,7 +56,7 @@ class HistoryCollection(Resource):
         return None, 201
 
 
-@ns.route('/<int:id_>')
+@ns.route('/<string:id_>')
 @api.response(404, 'Maintenance history entry not found.')
 class HistoryItem(Resource):
 
@@ -89,8 +84,7 @@ class HistoryItem(Resource):
         inserted_data = request.get_json()
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
-        history_entry.category = inserted_data['category']
-        history_entry.name = inserted_data['name']
+        history_entry.maintenance_id = inserted_data['maintenance_id']
         history_entry.operating_hours = inserted_data['operating_hours']
         history_entry.comment = inserted_data['comment']
         history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data['datetime_display']/1000)
