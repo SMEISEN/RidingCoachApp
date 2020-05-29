@@ -40,16 +40,12 @@ class MaintenanceResource(Resource):
         inserted_data = request.get_json()
 
         new_maintenance = MaintenanceModel(
-            maintenance_id=inserted_data['maintenance_id'],
             category=inserted_data['category'],
             name=inserted_data['name'],
             interval_amount=inserted_data['interval_amount'],
             interval_unit=inserted_data['interval_unit'],
             interval_latest=inserted_data['interval_latest'],
-            interval_type=inserted_data['interval_type'],
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
-            datetime_display=datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
+            interval_type=inserted_data['interval_type']
         )
         db.session.add(new_maintenance)
         db.session.commit()
@@ -57,7 +53,7 @@ class MaintenanceResource(Resource):
         return 201
 
 
-@ns.route('/<int:id_>')
+@ns.route('/<string:id_>')
 @api.response(404, 'Maintenance work not found.')
 class MaintenanceItem(Resource):
 

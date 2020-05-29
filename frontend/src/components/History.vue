@@ -216,6 +216,7 @@ export default {
         Suspension: {},
         Wheels: {},
       },
+      bike_dict: {},
       edit: false,
       maintenance_dialog: false,
       confirm_delete_dialog: false,
@@ -225,6 +226,13 @@ export default {
     };
   },
   methods: {
+    getBikeEngineHours() {
+      const ApiPath = 'api/bike';
+      axios.get(ApiPath)
+        .then((res) => {
+          this.bike_dict = res.data;
+        });
+    },
     getMaintenanceNamesFromCategory(category) {
       if (this.maintenance_categories_list.includes(category)) {
         return Object.keys(this.maintenance_names_dict[category]);
@@ -283,6 +291,7 @@ export default {
             this.maintenance_names_dict[
               this.history_form_dict.category][
               this.history_form_dict.name].maintenance_id,
+          bike_id: this.bike_dict.bike_id,
           operating_hours: this.history_form_dict.operating_hours,
           datetime_display: Date.parse(datetime),
           comment: this.history_form_dict.comment,
@@ -367,6 +376,7 @@ export default {
   },
   created() {
     this.getHistory();
+    this.getBikeEngineHours();
     this.getMaintenanceCategoriesAndNames();
   },
   updated() {

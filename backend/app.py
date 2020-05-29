@@ -46,7 +46,6 @@ def create_tables():
 
     for entry in maintenance_template.items():
         new_maintenance = MaintenanceModel(
-            maintenance_id=entry[0],
             category=entry[1]['category'],
             name=entry[1]['name'],
             interval_amount=entry[1]['interval_amount'],
