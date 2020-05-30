@@ -36,7 +36,7 @@ class MaintenanceResource(Resource):
             name = item['name']
             item.pop('name')
             maintenance_categories_dict[category][name].update(item)
-        print(maintenance_categories_dict)
+
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200
 
