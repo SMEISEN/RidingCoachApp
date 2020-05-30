@@ -1,6 +1,5 @@
 from datetime import datetime
 from backend.database import db, ma
-from backend.database.models.history import HistoryModel
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
@@ -15,8 +14,6 @@ class MaintenanceModel(db.Model):
     interval_amount = db.Column(db.Float, nullable=False)
     interval_unit = db.Column(db.String(25), nullable=False)
     interval_type = db.Column(db.String(25), nullable=False)
-
-    history = db.relationship('HistoryModel', backref=db.backref('maintenance'))
 
     def __repr__(self):
         return f"Maintenance('{self.maintenance_id}', '{self.category}', '{self.name}')"

@@ -20,7 +20,7 @@ class HistoryCollection(Resource):
         Returns a list of all maintenance history entries.
         """
 
-        history_all_entries = HistoryModel.query.all()
+        history_all_entries = HistoryModel.query.order_by(HistoryModel.datetime_display.desc()).all()
 
         history_entry_list = []
         for history_entry in history_all_entries:
@@ -81,6 +81,7 @@ class HistoryItem(Resource):
         """
         Updates a maintenance history entry.
         """
+
         inserted_data = request.get_json()
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
@@ -100,6 +101,7 @@ class HistoryItem(Resource):
         """
         Deletes maintenance history entry.
         """
+
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
 
         db.session.delete(history_entry)
