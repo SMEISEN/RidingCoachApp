@@ -3,10 +3,12 @@ from flask import jsonify, request
 from backend.api import api
 from backend.database import db
 from backend.database.models.maintenance import MaintenanceModel, MaintenanceSchema
+from backend.database.models.history import HistoryModel, HistorySchema
 from flask_restplus import Resource
 from collections import defaultdict
 
 ns = api.namespace('maintenance', description='Operations related to blog posts')
+history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
 
 
@@ -15,11 +17,17 @@ class MaintenanceResource(Resource):
 
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
-        maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.maintenance_id.asc()).all()
+        maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.category.asc()).all()
 
         maintenance_list = []
-        for maintenance in maintenance_all:
-            maintenance_list.append(maintenance_schema.dump(maintenance))
+        for maintenance_entry in maintenance_all:
+            history_data = history_schema.dump(
+                maintenance_entry.history, many=True)
+            maintenance_data = maintenance_schema.dump(maintenance_entry)
+            if len(history_data) > 0:
+                maintenance_list.append({**maintenance_data, **history_data[0]})
+            else:
+                maintenance_list.append(maintenance_data)
 
         maintenance_categories_dict = defaultdict(lambda: defaultdict(dict))
         for item in maintenance_list:
@@ -28,7 +36,7 @@ class MaintenanceResource(Resource):
             name = item['name']
             item.pop('name')
             maintenance_categories_dict[category][name].update(item)
-
+        print(maintenance_categories_dict)
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200
 
@@ -62,6 +70,7 @@ class MaintenanceItem(Resource):
         """
         Returns a maintenance work.
         """
+
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
         response = jsonify(maintenance_schema.dump(maintenance_work))
@@ -74,6 +83,7 @@ class MaintenanceItem(Resource):
         """
         Updates a maintenance work.
         """
+
         inserted_data = request.get_json()
 
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
@@ -90,6 +100,7 @@ class MaintenanceItem(Resource):
         """
         Deletes maintenance work.
         """
+
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
         db.session.delete(maintenance_work)
@@ -107,6 +118,7 @@ class MaintenanceCategories(Resource):
         """
         Returns a list of maintenance categories.
         """
+
         maintenance_categories = MaintenanceModel.query.with_entities(MaintenanceModel.category).distinct().all()
         maintenance_categories = list(zip(*maintenance_categories))
 
@@ -125,6 +137,7 @@ class MaintenanceCategories(Resource):
         """
         Returns a dicttionary of maintenance categories and their work names.
         """
+
         maintenance_categories = MaintenanceModel.query \
             .with_entities(MaintenanceModel.category, MaintenanceModel.name).all()
 
@@ -147,6 +160,7 @@ class MaintenanceCategoryItems(Resource):
         """
         Returns all maintenance work of a category.
         """
+
         maintenance_of_category = MaintenanceModel.query.filter(MaintenanceModel.category == category).all()
 
         maintenance_list = []

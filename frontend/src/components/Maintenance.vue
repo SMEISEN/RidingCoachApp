@@ -2,55 +2,73 @@
   <v-app>
     <v-flex>
       <v-layout wrap>
-        <v-container v-for="(category, key) in maintenance_dict" v-bind:key="key">
+        <v-container v-for="(category_object, category_name) in maintenance_dict"
+                     v-bind:key="category_name">
           <v-card class="card-container">
             <v-card-title>
-              <span class="headline">{{ key }}</span>
+              <span class="headline">{{ category_name }}</span>
             </v-card-title>
             <v-simple-table fixed-header height="300px">
               <thead>
               <tr>
                 <th class="text-left" style="min-width: 120px">Name</th>
-                <th class="text-left" style="min-width: 120px">Hours left</th>
+                <th class="text-left" style="min-width: 120px">State</th>
                 <th></th>
                 <th class="text-left">Interval</th>
                 <th class="text-left">Date</th>
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(maintenance) in category" v-bind:key="maintenance.mtn_id">
-                <td style="font-size: 12px">{{ maintenance.name }}</td>
-                <td v-if="maintenance.hours_last == null"></td>
+              <tr v-for="(maintenance_object, maintenance_name) in category_object"
+                  v-bind:key="maintenance_object.maintenance_id">
+                <td style="font-size: 12px">{{ maintenance_name }}</td>
+                <td v-if="!Object.keys(maintenance_object).includes('operating_hours')"></td>
+                <td v-else-if="maintenance_object.interval_unit === 'a'">
+                  <v-progress-linear
+                    color="primary"
+                    background-color="accent"
+                    height="22"
+                    :value="currentStateIntervalYears(maintenance_object.datetime_display)"
+                    rounded>
+                    <template v-slot="{ value }">
+                      <span class="white--text">
+                        {{ leftIntervalYears(maintenance_object.datetime_display) }} a /
+                        {{ Math.ceil(value) }} %
+                      </span>
+                    </template>
+                  </v-progress-linear>
+                </td>
                 <td v-else>
                   <v-progress-linear
                     color="primary"
                     background-color="accent"
                     height="22"
-                    :value="
-                    (maintenance.hours_last +
-                    maintenance.hours_interval -
-                    bike_operating_hours)
-                    / maintenance.hours_interval * 100"
+                    :value="currentStateIntervalHours(maintenance_object.operating_hours,
+                                                      maintenance_object.interval_amount,
+                                                      bike_dict.operating_hours)"
                     rounded>
                     <template v-slot="{ value }">
                       <span class="white--text">
-                        {{ maintenance.hours_last +
-                        maintenance.hours_interval -
-                        bike_operating_hours
-                        }} h / {{ Math.ceil(value) }} %
+                        {{ leftIntervalHours(maintenance_object.operating_hours,
+                                             maintenance_object.interval_amount,
+                                             bike_dict.operating_hours) }} h /
+                        {{ Math.ceil(value) }} %
                       </span>
                     </template>
                     </v-progress-linear>
                 </td>
                 <td>
-                  <v-btn color="success" text @click="editMaintenance(maintenance.mtn_id)">
+                  <v-btn color="success" text
+                         @click="editMaintenance(maintenance_object.maintenance_id)">
                     Done!
                   </v-btn>
                 </td>
-                <td>{{ maintenance.hours_interval }} h</td>
-                <td v-if="maintenance.hours_last == null"></td>
+                <td>
+                  {{ maintenance_object.interval_amount }} {{ maintenance_object.interval_unit }}
+                </td>
+                <td v-if="!Object.keys(maintenance_object).includes('operating_hours')"> </td>
                 <td v-else>
-                  {{ maintenance.datetime_last_modified | formatDateTime }}
+                  {{ maintenance_object.datetime_display | formatDateTime }}
                 </td>
               </tr>
               </tbody>
@@ -70,48 +88,62 @@ export default {
   name: 'Maintenance',
   data() {
     return {
-      maintenance_dict: {
-        Motor: [],
-        Carburetor: [],
-        Attachments: [],
-        Brakes: [],
-        Clutch: [],
-        Suspension: [],
-        Wheels: [],
-      },
-      bike_operating_hours: '',
+      maintenance_dict: {},
+      bike_dict: {},
       history_entry_dict: {
-        hist_id: '',
+        history_id: '',
         category: '',
         name: '',
-        hours: '',
+        operating_hours: '',
         date: '',
         time: '',
         comment: '',
       },
       maintenance_entry: {
-        mtn_id: '',
+        maintenance_id: '',
         category: '',
         name: '',
-        hours_interval: '',
-        hours_last: '',
+        interval_amount: '',
+        interval_unit: '',
+        interval_latest: '',
         datetime_created: '',
         datetime_last_modified: '',
+        datetime_display: '',
       },
     };
   },
   methods: {
+    currentStateIntervalHours(Latest, Interval, Current) {
+      return ((Latest + Interval - Current) / Interval) * 100;
+    },
+    currentStateIntervalYears(Latest) {
+      const latest = new Date(Latest);
+      const now = new Date();
+      const start = new Date(latest.getFullYear(), 0, 0);
+      const diff = now - start;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const day = Math.floor(diff / oneDay);
+
+      return (day / 365) * 100;
+    },
+    leftIntervalYears(Latest) {
+      const latest = new Date(Latest);
+      const now = new Date();
+      const start = new Date(latest.getFullYear(), 0, 0);
+      const diff = now - start;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const day = Math.floor(diff / oneDay);
+
+      return 365 - day;
+    },
+    leftIntervalHours(HoursLatest, HoursInterval, BikeHours) {
+      return HoursLatest + HoursInterval - BikeHours;
+    },
     getMaintenance() {
       const ApiPath = '/api/maintenance';
       axios.get(ApiPath)
         .then((res) => {
-          this.maintenance_dict.Motor = res.data.Motor;
-          this.maintenance_dict.Carburetor = res.data.Carburetor;
-          this.maintenance_dict.Attachments = res.data.Attachments;
-          this.maintenance_dict.Brakes = res.data.Brakes;
-          this.maintenance_dict.Clutch = res.data.Clutch;
-          this.maintenance_dict.Suspension = res.data.Suspension;
-          this.maintenance_dict.Wheels = res.data.Wheels;
+          this.maintenance_dict = res.data;
         })
         .catch((error) => {
           console.error(error);
@@ -121,7 +153,10 @@ export default {
       const ApiPath = 'api/bike';
       axios.get(ApiPath)
         .then((res) => {
-          this.bike_operating_hours = res.data.operating_hours;
+          this.bike_dict = res.data;
+        })
+        .catch((error) => {
+          console.error(error);
         });
     },
     getMaintenanceEntry(MtnId) {
@@ -129,39 +164,25 @@ export default {
       return axios.get(ApiPath)
         .then(() => axios.get(ApiPath))
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           this.getMaintenance();
         });
     },
-    async editMaintenance(MtnId) {
-      await this.getMaintenanceEntry(MtnId)
-        .then((res) => {
-          this.postHistory({
-            category: res.data.category,
-            name: res.data.name,
-            hours: this.bike_operating_hours,
-            datetime_display: new Date().getTime(),
-            comment: '',
-          });
-        });
-      this.putMaintenance(MtnId, { hours_last: this.bike_operating_hours });
-    },
-    putMaintenance(MtnId, payload) {
-      const ApiPath = `/api/maintenance/${MtnId}`;
-      axios.put(ApiPath, payload)
-        .then(() => {
-          this.getMaintenance();
-        })
-        .catch((error) => {
-          console.log(error);
-          this.getMaintenance();
-        });
+    editMaintenance(MtnId) {
+      this.postHistory({
+        maintenance_id: MtnId,
+        bike_id: this.bike_dict.bike_id,
+        operating_hours: this.bike_dict.operating_hours,
+        comment: '',
+        datetime_display: new Date().getTime(),
+      });
     },
     postHistory(payload) {
       const ApiPath = '/api/history';
       axios.post(ApiPath, payload)
+        .then(() => this.getMaintenance())
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     },
   },

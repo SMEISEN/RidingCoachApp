@@ -1,6 +1,7 @@
 from datetime import datetime
 from backend.database import db, ma
 from backend.database.models.bike import BikeModel
+from backend.database.models.maintenance import MaintenanceModel
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
@@ -21,9 +22,11 @@ class HistoryModel(db.Model):
     datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     bike = db.relationship('BikeModel', backref=db.backref('history'))
+    maintenance = db.relationship('MaintenanceModel',
+                                  backref=db.backref('history', order_by='HistoryModel.operating_hours.desc()'))
 
     def __repr__(self):
-        return f"History('{self.category}', '{self.name}', '{self.date}')"
+        return f"History('{self.history_id}', '{self.operating_hours}', '{self.datetime_display}')"
 
 
 class HistorySchema(ma.SQLAlchemyAutoSchema):

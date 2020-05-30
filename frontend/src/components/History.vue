@@ -231,6 +231,9 @@ export default {
       axios.get(ApiPath)
         .then((res) => {
           this.bike_dict = res.data;
+        })
+        .catch((error) => {
+          console.error(error);
         });
     },
     getMaintenanceNamesFromCategory(category) {
