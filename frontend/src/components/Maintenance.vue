@@ -12,10 +12,15 @@
               <thead>
               <tr>
                 <th class="text-left" style="min-width: 120px">Name</th>
-                <th class="text-left" style="min-width: 120px">State</th>
-                <th></th>
-                <th class="text-left">Interval</th>
-                <th class="text-left">Date</th>
+                <th class="text-left" style="min-width: 120px;width: 120px;max-width: 120px">
+                  State</th>
+                <th class="button" style="min-width: 120px;width: 120px;max-width: 120px"></th>
+                <th class="text-left" style="min-width: 80px;width: 80px;max-width: 80px">
+                  Interval
+                </th>
+                <th class="text-left" style="min-width: 145px;width: 145px;max-width: 145px">
+                  Date
+                </th>
               </tr>
               </thead>
               <tbody>
