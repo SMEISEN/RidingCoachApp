@@ -199,38 +199,28 @@ import axios from 'axios';
 
 export default {
   name: 'History',
-  data() {
-    return {
-      history_list: [],
-      history_form_dict: {
-        history_id: '',
-        maintenance_id: '',
-        category: '',
-        name: '',
-        operating_hours: '',
-        date: new Date().toISOString().substr(0, 10),
-        time: new Date().toTimeString().substr(0, 5),
-        comment: '',
-      },
-      maintenance_categories_list: [],
-      maintenance_names_dict: {
-        Motor: {},
-        Carburetor: {},
-        Attachments: {},
-        Brakes: {},
-        Clutch: {},
-        Suspension: {},
-        Wheels: {},
-      },
-      bike_dict: {},
-      edit: false,
-      maintenance_dialog: false,
-      confirm_delete_dialog: false,
-      date_menu: false,
-      time_menu: false,
-      valid: true,
-    };
-  },
+  data: () => ({
+    history_list: [],
+    history_form_dict: {
+      history_id: '',
+      maintenance_id: '',
+      category: '',
+      name: '',
+      operating_hours: '',
+      date: new Date().toISOString().substr(0, 10),
+      time: new Date().toTimeString().substr(0, 5),
+      comment: '',
+    },
+    maintenance_categories_list: [],
+    maintenance_names_dict: {},
+    bike_dict: {},
+    edit: false,
+    maintenance_dialog: false,
+    confirm_delete_dialog: false,
+    date_menu: false,
+    time_menu: false,
+    valid: true,
+  }),
   methods: {
     getBikeEngineHours() {
       const ApiPath = 'api/bike';
