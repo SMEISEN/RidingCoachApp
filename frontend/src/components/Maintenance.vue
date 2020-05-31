@@ -8,17 +8,20 @@
             <v-card-title>
               <span class="headline">{{ category_name }}</span>
             </v-card-title>
-            <v-simple-table fixed-header height="300px">
+            <v-simple-table dense fixed-header height="300px">
               <thead>
               <tr>
-                <th class="text-left" style="min-width: 120px">Name</th>
+                <th class="text-left" style="min-width: 120px">
+                  Name
+                </th>
                 <th class="text-left" style="min-width: 120px;width: 120px;max-width: 120px">
-                  State</th>
+                  State
+                </th>
                 <th class="button" style="min-width: 120px;width: 120px;max-width: 120px"></th>
                 <th class="text-left" style="min-width: 80px;width: 80px;max-width: 80px">
                   Interval
                 </th>
-                <th class="text-left" style="min-width: 145px;width: 145px;max-width: 145px">
+                <th class="text-left" style="width: 145px">
                   Date
                 </th>
               </tr>
@@ -162,15 +165,6 @@ export default {
         })
         .catch((error) => {
           console.error(error);
-        });
-    },
-    getMaintenanceEntry(MtnId) {
-      const ApiPath = `/api/maintenance/${MtnId}`;
-      return axios.get(ApiPath)
-        .then(() => axios.get(ApiPath))
-        .catch((error) => {
-          console.error(error);
-          this.getMaintenance();
         });
     },
     editMaintenance(MtnId) {
