@@ -1,15 +1,49 @@
 from datetime import datetime
 from flask import jsonify, request
+from flask_filter.query_filter import query_with_filters
 from backend.api import api
 from backend.database import db
 from backend.database.models.maintenance import MaintenanceModel, MaintenanceSchema
 from backend.database.models.history import HistoryModel, HistorySchema
-from flask_restplus import Resource
+from flask_restplus import Resource, fields
 from collections import defaultdict
 
 ns = api.namespace('maintenance', description='Operations related to blog posts')
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
+
+search_parameters = api.model('Resource',
+                              {
+                                  "field": fields.String(description="cust ID", required=True),
+                                  "op": fields.String(description="cust ID", required=True),
+                                  "value": fields.String(description="cust ID", required=True)
+                              })
+
+
+def query_to_dict(maintenance_query):
+    """
+    Reformats the query to a structured dictonary, which can be json serialized.
+    """
+
+    maintenance_list = []
+    for maintenance_entry in maintenance_query:
+        history_data = history_schema.dump(
+            maintenance_entry.history, many=True)
+        maintenance_data = maintenance_schema.dump(maintenance_entry)
+        if len(history_data) > 0:
+            maintenance_list.append({**maintenance_data, **history_data[0]})
+        else:
+            maintenance_list.append(maintenance_data)
+
+    maintenance_categories_dict = defaultdict(lambda: defaultdict(dict))
+    for item in maintenance_list:
+        category = item['category']
+        item.pop('category')
+        name = item['name']
+        item.pop('name')
+        maintenance_categories_dict[category][name].update(item)
+
+    return maintenance_categories_dict
 
 
 @ns.route('/')
@@ -17,25 +51,13 @@ class MaintenanceResource(Resource):
 
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
+        """
+        Returns all maintenance work.
+        """
+
         maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.category.asc()).all()
 
-        maintenance_list = []
-        for maintenance_entry in maintenance_all:
-            history_data = history_schema.dump(
-                maintenance_entry.history, many=True)
-            maintenance_data = maintenance_schema.dump(maintenance_entry)
-            if len(history_data) > 0:
-                maintenance_list.append({**maintenance_data, **history_data[0]})
-            else:
-                maintenance_list.append(maintenance_data)
-
-        maintenance_categories_dict = defaultdict(lambda: defaultdict(dict))
-        for item in maintenance_list:
-            category = item['category']
-            item.pop('category')
-            name = item['name']
-            item.pop('name')
-            maintenance_categories_dict[category][name].update(item)
+        maintenance_categories_dict = query_to_dict(maintenance_all)
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200
@@ -44,6 +66,9 @@ class MaintenanceResource(Resource):
 
     @api.response(201, 'Maintenance work successfully added.')
     def post(self):
+        """
+        Creates a new maintenance work.
+        """
 
         inserted_data = request.get_json()
 
@@ -109,65 +134,23 @@ class MaintenanceItem(Resource):
         return None, 204
 
 
-@ns.route('/category/list')
-@api.response(404, 'Maintenance category list not found.')
-class MaintenanceCategories(Resource):
+@ns.route('/search')
+@api.response(404, 'Searched entries not found.')
+class MaintenanceSearch(Resource):
 
-    @api.response(200, f"Maintenance category list successfully fetched.")
-    def get(self):
+    @api.expect(search_parameters)
+    def post(self):
         """
-        Returns a list of maintenance categories.
-        """
-
-        maintenance_categories = MaintenanceModel.query.with_entities(MaintenanceModel.category).distinct().all()
-        maintenance_categories = list(zip(*maintenance_categories))
-
-        response = jsonify(maintenance_categories)
-        response.status_code = 200
-
-        return response
-
-
-@ns.route('/category/dict')
-@api.response(404, 'Maintenance category dictionary not found.')
-class MaintenanceCategories(Resource):
-
-    @api.response(200, f"Maintenance category dictionary successfully fetched.")
-    def get(self):
-        """
-        Returns a dicttionary of maintenance categories and their work names.
+        Creates a filtered query based on the input json file and returns the requested data.
         """
 
-        maintenance_categories = MaintenanceModel.query \
-            .with_entities(MaintenanceModel.category, MaintenanceModel.name).all()
+        search = [request.get_json()]
 
-        maintenance_categories_dict = defaultdict(list)
-        for key, value in sorted(maintenance_categories):
-            maintenance_categories_dict[key].append(value)
+        maintenance_searched = query_with_filters(MaintenanceModel, search, MaintenanceSchema)
+
+        maintenance_categories_dict = query_to_dict(maintenance_searched)
 
         response = jsonify(maintenance_categories_dict)
-        response.status_code = 200
-
-        return response
-
-
-@ns.route('/category/<string:category>')
-@api.response(404, 'Maintenance work not found.')
-class MaintenanceCategoryItems(Resource):
-
-    @api.response(200, f"Maintenance work with requested category successfully fetched.")
-    def get(self, category):
-        """
-        Returns all maintenance work of a category.
-        """
-
-        maintenance_of_category = MaintenanceModel.query.filter(MaintenanceModel.category == category).all()
-
-        maintenance_list = []
-        for maintenance in maintenance_of_category:
-            maintenance_list.append(maintenance_schema.dump(maintenance))
-
-        response = jsonify(maintenance_list)
         response.status_code = 200
 
         return response
