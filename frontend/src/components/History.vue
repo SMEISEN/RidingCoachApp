@@ -60,8 +60,8 @@
             <span class="headline">Add maintenance entry</span>
           </v-card-title>
           <v-card-text>
-            <v-row>
-              <v-col cols="12" sm="6" md="8">
+            <v-row no-gutters>
+              <v-col cols="auto" xs="12" sm="8" md="8">
                 <v-menu
                   v-model="date_menu"
                   :close-on-content-click="false"
@@ -83,7 +83,7 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="auto" xs="12" sm="4" md="4">
                 <v-menu
                   ref="menu"
                   v-model="time_menu"
@@ -115,7 +115,9 @@
                   ></v-time-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" sm="6" md="8">
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" xs="12" sm="8" md="8">
                 <v-select :items="maintenance_categories_list"
                           :rules="[v => !!v]"
                           label="Category name*"
@@ -123,7 +125,7 @@
                           v-model="history_form_dict.category">
                 </v-select>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12" xs="12" sm="4" md="4">
                 <v-text-field
                   append-outer-icon="mdi-plus"
                   prepend-icon="mdi-minus"
@@ -136,6 +138,8 @@
                   v-model="history_form_dict.operating_hours">
                 </v-text-field>
               </v-col>
+            </v-row>
+            <v-row no-gutters>
               <v-col cols="12">
                 <v-combobox
                   :items="getMaintenanceNamesFromCategory(this.history_form_dict.category)"
@@ -146,6 +150,8 @@
                   v-model="history_form_dict.name">
                 </v-combobox>
               </v-col>
+            </v-row>
+            <v-row no-gutters>
               <v-col cols="12">
                 <v-text-field label="Comment"
                               v-model="history_form_dict.comment">
