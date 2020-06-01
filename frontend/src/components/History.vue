@@ -199,6 +199,9 @@ import axios from 'axios';
 
 export default {
   name: 'History',
+  metaInfo: {
+    title: 'History',
+  },
   data: () => ({
     history_list: [],
     history_form_dict: {

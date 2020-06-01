@@ -91,6 +91,9 @@ import axios from 'axios';
 
 export default {
   name: 'Dashboard',
+  metaInfo: {
+    title: 'Dashboard',
+  },
   data: () => ({
     bike_dict: {},
     wear_dict: {
