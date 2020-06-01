@@ -1,10 +1,14 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import VueMeta from 'vue-meta';
 import Dashboard from '../components/Dashboard.vue';
 import Maintenance from '../components/Maintenance.vue';
 import History from '../components/History.vue';
 
 Vue.use(VueRouter);
+Vue.use(VueMeta, {
+  refreshOnceOnNavigation: true,
+});
 
 export default new VueRouter({
   mode: 'history',
@@ -15,55 +19,16 @@ export default new VueRouter({
       alias: '/',
       name: 'Dashboard',
       component: Dashboard,
-      meta: {
-        title: 'Dashboard',
-        metaTags: [
-          {
-            name: 'Dashboard',
-            content: 'tbd',
-          },
-          {
-            property: 'og:tbd',
-            content: 'tbd',
-          },
-        ],
-      },
     },
     {
       path: '/maintenance',
       name: 'Maintenance',
       component: Maintenance,
-      meta: {
-        title: 'Maintenance',
-        metaTags: [
-          {
-            name: 'description',
-            content: 'tbd',
-          },
-          {
-            property: 'og:tbd',
-            content: 'tbd',
-          },
-        ],
-      },
     },
     {
       path: '/history',
       name: 'History',
       component: History,
-      meta: {
-        title: 'History',
-        metaTags: [
-          {
-            name: 'History',
-            content: 'tbd',
-          },
-          {
-            property: 'og:tbd',
-            content: 'tbd',
-          },
-        ],
-      },
     },
   ],
 });

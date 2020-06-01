@@ -94,6 +94,9 @@ import axios from 'axios';
 
 export default {
   name: 'Maintenance',
+  metaInfo: {
+    title: 'Maintenance',
+  },
   data() {
     return {
       maintenance_dict: {},
