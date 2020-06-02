@@ -17,7 +17,7 @@
       >
         <v-tabs-slider color="accent"></v-tabs-slider>
 
-        <v-tab to="/dashboard">
+        <v-tab to="/">
           Dashboard
         </v-tab>
         <v-tab to="/maintenance">
@@ -33,8 +33,6 @@
 
     <v-content>
       <router-view></router-view>
-
-
       <v-navigation-drawer
         v-model="drawer"
         absolute
@@ -77,7 +75,7 @@ export default {
       { name: 'mobile-web-app-capable', content: 'yes' },
     ],
     link: [
-      { rel: 'shortcut icon', type: 'image/png', href: '/rc-logo.png' },
+      { rel: 'shortcut icon', type: 'image/svg', href: '/rc-logo.svg' },
     ],
   },
 
