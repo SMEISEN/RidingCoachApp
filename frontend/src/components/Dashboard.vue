@@ -1,88 +1,101 @@
 <template v-slot:default>
   <v-app>
-    <v-flex>
-      <v-layout wrap>
-        <v-container fluid>
-          <v-row dense>
-            <v-col cols="12" xs="12" sm="6" md="6">
-              <v-card class="card-container" height="170px">
-                <v-card-title>
-                  <span class="headerline">
-                    {{ bike_dict.manufacturer + ' ' + bike_dict.model + ' ' + bike_dict.year }}
-                  </span>
-                </v-card-title>
-                <v-simple-table
-                  hide-default-header
-                  hide-default-footer
-                  dense
-                >
-                  <tbody>
-                  <tr v-for="(category_object, category_name) in wear_dict"
-                      v-bind:key="category_name">
-                    <td>{{ category_object.name }}</td>
-                    <td v-if="!Object.keys(category_object).includes('operating_hours')"></td>
-                    <td v-else style="min-width: 120px;width: 120px;max-width: 120px">
-                      <v-progress-linear
-                        color="primary"
-                        background-color="accent"
-                        height="22"
-                        :value="(category_object.operating_hours +
+    <v-container fluid>
+      <v-row dense align="stretch">
+        <v-col cols="12" xs="12" sm="6" md="6">
+          <v-card class="card-container">
+            <v-card-title>
+              <span class="headerline">
+                {{ bike_dict.manufacturer + ' ' + bike_dict.model + ' ' + bike_dict.year }}
+              </span>
+            </v-card-title>
+            <v-simple-table
+              hide-default-header
+              hide-default-footer
+              dense
+            >
+              <tbody>
+              <tr v-for="(category_object, category_name) in wear_dict"
+                  v-bind:key="category_name">
+                <td>{{ category_object.name }}</td>
+                <td v-if="!Object.keys(category_object).includes('operating_hours')"></td>
+                <td v-else style="min-width: 120px;width: 120px;max-width: 120px">
+                  <v-progress-linear
+                    color="primary"
+                    background-color="accent"
+                    height="22"
+                    :value="(category_object.operating_hours +
+                    category_object.interval_amount -
+                    bike_dict.operating_hours) / category_object.interval_amount * 100"
+                    rounded>
+                    <template v-slot="{ value }">
+                      <span class="white--text">
+                        {{ category_object.operating_hours +
                         category_object.interval_amount -
-                        bike_dict.operating_hours) / category_object.interval_amount * 100"
-                        rounded>
-                        <template v-slot="{ value }">
-                          <span class="white--text">
-                            {{ category_object.operating_hours +
-                            category_object.interval_amount -
-                            bike_dict.operating_hours }} h / {{ Math.ceil(value) }} %
-                          </span>
-                        </template>
-                      </v-progress-linear>
-                    </td>
-                  </tr>
-                  </tbody>
-                </v-simple-table>
-              </v-card>
-            </v-col>
-            <v-col cols="12" xs="12" sm="6" md="6">
-              <v-card class="card-container" height="170px">
-                <v-card-title>
-                  <span class="headline">Upcoming maintenance</span>
-                </v-card-title>
-                <v-simple-table
-                  hide-default-header
-                  hide-default-footer
-                  dense
-                  height="95px"
-                >
-                  <tbody>
-                  <tr v-for="(test, index) in orderedUsers"
-                      v-bind:key="index">
-                    <td>{{ test.name }}</td>
-                    <td style="min-width: 120px;width: 120px;max-width: 120px">
-                      <v-progress-linear
-                        color="primary"
-                        background-color="accent"
-                        height="22"
-                        :value="test.state"
-                        rounded>
-                        <template v-slot="{ value }">
-                          <span class="white--text">
-                            {{ test.hours_left }} h /
-                            {{ Math.ceil(value) }} %
-                          </span>
-                        </template>
-                      </v-progress-linear>
-                    </td>
-                  </tr>
-                  </tbody>
-                </v-simple-table>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-layout>
-    </v-flex>
+                        bike_dict.operating_hours }} h / {{ Math.ceil(value) }} %
+                      </span>
+                    </template>
+                  </v-progress-linear>
+                </td>
+              </tr>
+              </tbody>
+            </v-simple-table>
+          </v-card>
+        </v-col>
+        <v-col cols="12" xs="12" sm="6" md="6">
+          <v-card class="card-container">
+            <v-card-title>
+              <span class="headline">Upcoming maintenance</span>
+            </v-card-title>
+            <v-simple-table
+              hide-default-header
+              hide-default-footer
+              dense
+              height="95px"
+            >
+              <tbody>
+              <tr v-for="(test, index) in orderedUsers"
+                  v-bind:key="index">
+                <td style="font-size: 12px">{{ test.name }}</td>
+                <td style="min-width: 120px;width: 120px;max-width: 120px">
+                  <v-progress-linear
+                    color="primary"
+                    background-color="accent"
+                    height="22"
+                    :value="test.state"
+                    rounded>
+                    <template v-slot="{ value }">
+                      <span class="white--text">
+                        {{ test.hours_left }} h /
+                        {{ Math.ceil(value) }} %
+                      </span>
+                    </template>
+                  </v-progress-linear>
+                </td>
+              </tr>
+              </tbody>
+            </v-simple-table>
+          </v-card>
+        </v-col>
+        <v-col cols="12" xs="12" sm="6" md="6">
+          <v-card class="card-container">
+            <v-card-title>
+              <span class="headline">Recent training</span>
+            </v-card-title>
+            <v-card-text>
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
+              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+              sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+              aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
+              rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
+              amet.
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 
@@ -113,11 +126,11 @@ export default {
   methods: {
     currentStateIntervalHours(Latest, Interval, Current) {
       const state = ((Latest + Interval - Current) / Interval) * 100;
-      return state.toPrecision(2);
+      return Number.parseFloat(state.toPrecision(2));
     },
     leftIntervalHours(HoursLatest, HoursInterval, BikeHours) {
       const HoursLeft = HoursLatest + HoursInterval - BikeHours;
-      return HoursLeft.toPrecision(2);
+      return Number.parseFloat(HoursLeft.toPrecision(2));
     },
     getBikeData() {
       const ApiPath = '/api/bike';
@@ -179,6 +192,7 @@ export default {
           }
         }
         this.maintenance_next = test;
+        console.log(this.maintenance_next);
       });
     },
   },
