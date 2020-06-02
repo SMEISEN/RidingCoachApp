@@ -1,9 +1,11 @@
 <template v-slot:default>
   <v-app>
-    <v-flex>
-      <v-layout wrap>
-        <v-container v-for="(category_object, category_name) in maintenance_dict"
-                     v-bind:key="category_name">
+    <v-container fluid>
+      <v-row dense>
+        <v-col cols="12" xs="12" sm="12" md="6"
+               v-for="(category_object, category_name) in maintenance_dict"
+               v-bind:key="category_name"
+        >
           <v-card class="card-container">
             <v-card-title>
               <span class="headline">{{ category_name }}</span>
@@ -82,10 +84,9 @@
               </tbody>
             </v-simple-table>
           </v-card>
-          <br>
-        </v-container>
-      </v-layout>
-    </v-flex>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-app>
 </template>
 
@@ -125,7 +126,12 @@ export default {
   },
   methods: {
     currentStateIntervalHours(Latest, Interval, Current) {
-      return ((Latest + Interval - Current) / Interval) * 100;
+      const state = ((Latest + Interval - Current) / Interval) * 100;
+      return Number.parseFloat(state.toPrecision(2));
+    },
+    leftIntervalHours(HoursLatest, HoursInterval, BikeHours) {
+      const HoursLeft = HoursLatest + HoursInterval - BikeHours;
+      return Number.parseFloat(HoursLeft.toPrecision(2));
     },
     currentStateIntervalYears(Latest) {
       const latest = new Date(Latest);
@@ -146,9 +152,6 @@ export default {
       const day = Math.floor(diff / oneDay);
 
       return 365 - day;
-    },
-    leftIntervalHours(HoursLatest, HoursInterval, BikeHours) {
-      return HoursLatest + HoursInterval - BikeHours;
     },
     getMaintenance() {
       const ApiPath = '/api/maintenance';
