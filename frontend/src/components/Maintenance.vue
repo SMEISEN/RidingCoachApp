@@ -192,5 +192,7 @@ export default {
     this.getBikeEngineHours();
     this.getMaintenance();
   },
+  updated() {
+  },
 };
 </script>

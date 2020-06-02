@@ -45,38 +45,38 @@
               </v-card>
             </v-col>
             <v-col cols="12" xs="12" sm="6" md="6">
-              <v-card class="card-container" height="280px">
+              <v-card class="card-container" height="170px">
                 <v-card-title>
                   <span class="headline">Upcoming maintenance</span>
-                  <v-data-table
-                    hide-default-header
-                    hide-default-footer
-                  >
-                  </v-data-table>
+                </v-card-title>
+                <v-simple-table
+                  hide-default-header
+                  hide-default-footer
+                  dense
+                  height="95px"
+                >
                   <tbody>
-                  <tr v-for="(index, maintenance) in maintenance_next" v-bind:key="index">
-                    <td>{{ maintenance.name }}</td>
-                    <td>
+                  <tr v-for="(test, index) in orderedUsers"
+                      v-bind:key="index">
+                    <td>{{ test.name }}</td>
+                    <td style="min-width: 120px;width: 120px;max-width: 120px">
                       <v-progress-linear
                         color="primary"
                         background-color="accent"
                         height="22"
-                        :value="(maintenance.hours_last +
-                        bike_dict.operating_hours)
-                        / maintenance.hours_interval * 100"
+                        :value="test.state"
                         rounded>
                         <template v-slot="{ value }">
                           <span class="white--text">
-                            {{ maintenance.hours_last +
-                            maintenance.hours_interval -
-                            bike_dict.operating_hours }} h / {{ Math.ceil(value) }} %
+                            {{ test.hours_left }} h /
+                            {{ Math.ceil(value) }} %
                           </span>
                         </template>
                       </v-progress-linear>
                     </td>
                   </tr>
                   </tbody>
-                </v-card-title>
+                </v-simple-table>
               </v-card>
             </v-col>
           </v-row>
@@ -88,6 +88,7 @@
 
 <script>
 import axios from 'axios';
+import _ from 'lodash';
 
 export default {
   name: 'Dashboard',
@@ -102,15 +103,22 @@ export default {
       tires: '',
       engine: '',
     },
-    maintenance_next: {
-      next_1: '',
-      next_2: '',
-      next_3: '',
-      next_4: '',
-      next_5: '',
-    },
+    maintenance_next: [],
   }),
+  computed: {
+    orderedUsers() {
+      return _.orderBy(this.maintenance_next, 'hours_left');
+    },
+  },
   methods: {
+    currentStateIntervalHours(Latest, Interval, Current) {
+      const state = ((Latest + Interval - Current) / Interval) * 100;
+      return state.toPrecision(2);
+    },
+    leftIntervalHours(HoursLatest, HoursInterval, BikeHours) {
+      const HoursLeft = HoursLatest + HoursInterval - BikeHours;
+      return HoursLeft.toPrecision(2);
+    },
     getBikeData() {
       const ApiPath = '/api/bike';
       axios.get(ApiPath).then((res) => {
@@ -138,12 +146,39 @@ export default {
     getMaintenance() {
       const ApiPath = '/api/maintenance/search';
       const payload = {
-        field: 'interval_unit',
+        field: 'interval_type',
         op: '=',
-        value: 'h',
+        value: 'planned cycle',
       };
       axios.post(ApiPath, payload).then((res) => {
-        console.log(res);
+        for (let i = 0; i < Object.values(res.data).length; i += 1) {
+          Object.assign(this.maintenance_next, Object.values(res.data)[i]);
+        }
+        const test = [];
+        for (let i = 0; i < Object.values(this.maintenance_next).length; i += 1) {
+          if (Object.values(this.maintenance_next)[i].operating_hours !== undefined) {
+            if (Object.values(this.maintenance_next)[i].interval_unit === 'h') {
+              const name = { name: Object.keys(this.maintenance_next)[i] };
+              const entry = Object.values(this.maintenance_next)[i];
+              const HoursLeft = {
+                hours_left: this.leftIntervalHours(
+                  Object.values(this.maintenance_next)[i].operating_hours,
+                  Object.values(this.maintenance_next)[i].interval_amount,
+                  this.bike_dict.operating_hours,
+                ),
+              };
+              const state = {
+                state: this.currentStateIntervalHours(
+                  Object.values(this.maintenance_next)[i].operating_hours,
+                  Object.values(this.maintenance_next)[i].interval_amount,
+                  this.bike_dict.operating_hours,
+                ),
+              };
+              test.push(Object.assign(entry, name, HoursLeft, state));
+            }
+          }
+        }
+        this.maintenance_next = test;
       });
     },
   },
@@ -151,6 +186,8 @@ export default {
     this.getBikeData();
     this.getWear();
     this.getMaintenance();
+  },
+  updated() {
   },
 };
 </script>
