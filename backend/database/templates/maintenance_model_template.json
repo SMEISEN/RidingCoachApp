@@ -24,7 +24,7 @@
 	"22": {"category": "Carburetor", "name": "Check ventilation hoses for damage and kink-free installation.", "interval_amount": "10", "interval_unit": "h", "interval_type": "planned cycle"},
 	"23": {"category": "Carburetor", "name": "Check engine idle.", "interval_amount": "10", "interval_unit": "h", "interval_type": "planned cycle"},
 	"24": {"category": "Carburetor", "name": "Check carburetor components.", "interval_amount": "40", "interval_unit": "h", "interval_type": "planned cycle"},
-	"25": {"category": "Carburetor", "name": "Clean and adjust the carburetor.", "interval_amount": "1", "interval_unit": "h", "interval_type": "planned cycle"},
+	"25": {"category": "Carburetor", "name": "Clean and adjust the carburetor.", "interval_amount": "1", "interval_unit": "a", "interval_type": "planned cycle"},
 	"26": {"category": "Attachments", "name": "Check cooling system for leaks.", "interval_amount": "10", "interval_unit": "h", "interval_type": "planned cycle"},
 	"27": {"category": "Attachments", "name": "Check antifreeze and coolant level.", "interval_amount": "10", "interval_unit": "h", "interval_type": "planned cycle"},
 	"28": {"category": "Attachments", "name": "Check exhaust system for leaks and correct mounting.", "interval_amount": "10", "interval_unit": "h", "interval_type": "planned cycle"},

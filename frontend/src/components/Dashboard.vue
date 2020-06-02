@@ -132,6 +132,37 @@ export default {
       const HoursLeft = HoursLatest + HoursInterval - BikeHours;
       return Number.parseFloat(HoursLeft.toPrecision(2));
     },
+    structureMaintenanceNext(data) {
+      const helperList1 = [];
+      for (let i = 0; i < Object.values(data).length; i += 1) {
+        Object.assign(helperList1, Object.values(data)[i]);
+      }
+      const helperList2 = [];
+      for (let i = 0; i < Object.values(helperList1).length; i += 1) {
+        if (Object.values(helperList1)[i].operating_hours !== undefined) {
+          if (Object.values(helperList1)[i].interval_unit === 'h') {
+            const name = { name: Object.keys(helperList1)[i] };
+            const entry = Object.values(helperList1)[i];
+            const HoursLeft = {
+              hours_left: this.leftIntervalHours(
+                Object.values(helperList1)[i].operating_hours,
+                Object.values(helperList1)[i].interval_amount,
+                this.bike_dict.operating_hours,
+              ),
+            };
+            const state = {
+              state: this.currentStateIntervalHours(
+                Object.values(helperList1)[i].operating_hours,
+                Object.values(helperList1)[i].interval_amount,
+                this.bike_dict.operating_hours,
+              ),
+            };
+            helperList2.push(Object.assign(entry, name, HoursLeft, state));
+          }
+        }
+      }
+      return helperList2;
+    },
     getBikeData() {
       const ApiPath = '/api/bike';
       axios.get(ApiPath).then((res) => {
@@ -164,35 +195,7 @@ export default {
         value: 'planned cycle',
       };
       axios.post(ApiPath, payload).then((res) => {
-        for (let i = 0; i < Object.values(res.data).length; i += 1) {
-          Object.assign(this.maintenance_next, Object.values(res.data)[i]);
-        }
-        const test = [];
-        for (let i = 0; i < Object.values(this.maintenance_next).length; i += 1) {
-          if (Object.values(this.maintenance_next)[i].operating_hours !== undefined) {
-            if (Object.values(this.maintenance_next)[i].interval_unit === 'h') {
-              const name = { name: Object.keys(this.maintenance_next)[i] };
-              const entry = Object.values(this.maintenance_next)[i];
-              const HoursLeft = {
-                hours_left: this.leftIntervalHours(
-                  Object.values(this.maintenance_next)[i].operating_hours,
-                  Object.values(this.maintenance_next)[i].interval_amount,
-                  this.bike_dict.operating_hours,
-                ),
-              };
-              const state = {
-                state: this.currentStateIntervalHours(
-                  Object.values(this.maintenance_next)[i].operating_hours,
-                  Object.values(this.maintenance_next)[i].interval_amount,
-                  this.bike_dict.operating_hours,
-                ),
-              };
-              test.push(Object.assign(entry, name, HoursLeft, state));
-            }
-          }
-        }
-        this.maintenance_next = test;
-        console.log(this.maintenance_next);
+        this.maintenance_next = this.structureMaintenanceNext(res.data);
       });
     },
   },
