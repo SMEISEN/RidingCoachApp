@@ -55,13 +55,13 @@
                     height="22"
                     :value="currentStateIntervalHours(maintenance_object.operating_hours,
                                                       maintenance_object.interval_amount,
-                                                      bike_dict.operating_hours)"
+                                                      $store.getters.getCurrentBikeOperatingHours)"
                     rounded>
                     <template v-slot="{ value }">
                       <span class="white--text">
                         {{ leftIntervalHours(maintenance_object.operating_hours,
                                              maintenance_object.interval_amount,
-                                             bike_dict.operating_hours) }} h /
+                                             $store.getters.getCurrentBikeOperatingHours) }} h /
                         {{ Math.ceil(value) }} %
                       </span>
                     </template>
@@ -101,7 +101,6 @@ export default {
   data() {
     return {
       maintenance_dict: {},
-      bike_dict: {},
       history_entry_dict: {
         history_id: '',
         category: '',
@@ -163,21 +162,11 @@ export default {
           console.error(error);
         });
     },
-    getBikeEngineHours() {
-      const ApiPath = 'api/bike';
-      axios.get(ApiPath)
-        .then((res) => {
-          this.bike_dict = res.data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
     editMaintenance(MtnId) {
       this.postHistory({
         maintenance_id: MtnId,
-        bike_id: this.bike_dict.bike_id,
-        operating_hours: this.bike_dict.operating_hours,
+        bike_id: this.$store.getters.getCurrentBikeId,
+        operating_hours: this.$store.getters.getCurrentBikeOperatingHours,
         comment: '',
         datetime_display: new Date().getTime(),
       });
@@ -192,7 +181,6 @@ export default {
     },
   },
   created() {
-    this.getBikeEngineHours();
     this.getMaintenance();
   },
   updated() {

@@ -142,7 +142,7 @@
             <v-row no-gutters>
               <v-col cols="12">
                 <v-combobox
-                  :items="getMaintenanceNamesFromCategory(this.history_form_dict.category)"
+                  :items="getMaintenanceNamesFromCategory(history_form_dict.category)"
                   :rules="[v => !!v]"
                   label="Maintenance*"
                   required
@@ -216,7 +216,6 @@ export default {
     },
     maintenance_categories_list: [],
     maintenance_names_dict: {},
-    bike_dict: {},
     edit: false,
     maintenance_dialog: false,
     confirm_delete_dialog: false,
@@ -225,16 +224,6 @@ export default {
     valid: true,
   }),
   methods: {
-    getBikeEngineHours() {
-      const ApiPath = 'api/bike';
-      axios.get(ApiPath)
-        .then((res) => {
-          this.bike_dict = res.data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
     getMaintenanceNamesFromCategory(category) {
       if (this.maintenance_categories_list.includes(category)) {
         return Object.keys(this.maintenance_names_dict[category]);
@@ -278,9 +267,11 @@ export default {
       this.history_form_dict.name = '';
       this.history_form_dict.date = new Date().toISOString().substr(0, 10);
       this.history_form_dict.time = new Date().toTimeString().substr(0, 5);
-      this.history_form_dict.operating_hours = '';
+      this.history_form_dict.operating_hours = this.$store.getters.getCurrentBikeOperatingHours;
       this.history_form_dict.comment = '';
-      this.$refs.validation_form.resetValidation();
+      if (typeof this.$refs.validation_form !== 'undefined') {
+        this.$refs.validation_form.resetValidation();
+      }
       this.edit = false;
     },
     onSubmit(evt) {
@@ -293,7 +284,7 @@ export default {
             this.maintenance_names_dict[
               this.history_form_dict.category][
               this.history_form_dict.name].maintenance_id,
-          bike_id: this.bike_dict.bike_id,
+          bike_id: this.$store.getters.getCurrentBikeId,
           operating_hours: this.history_form_dict.operating_hours,
           datetime_display: Date.parse(datetime),
           comment: this.history_form_dict.comment,
@@ -378,8 +369,8 @@ export default {
   },
   created() {
     this.getHistory();
-    this.getBikeEngineHours();
     this.getMaintenanceCategoriesAndNames();
+    this.initForm();
   },
   updated() {
   },
