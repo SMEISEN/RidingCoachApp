@@ -14,15 +14,15 @@ maintenance_schema = MaintenanceSchema()
 
 search_parameters = api.model('Resource',
                               {
-                                  "field": fields.String(description="cust ID", required=True),
-                                  "op": fields.String(description="cust ID", required=True),
-                                  "value": fields.String(description="cust ID", required=True)
+                                  "field": fields.String(description="field to be searched in", required=True),
+                                  "op": fields.String(description="operator", required=True),
+                                  "value": fields.String(description="value", required=True)
                               })
 
 
 def query_to_dict(maintenance_query):
     """
-    Reformats the query to a structured dictonary, which can be json serialized.
+    Reformats the query to a structured dictionary, which can be json serialized.
     """
 
     maintenance_list = []

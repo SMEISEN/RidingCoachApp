@@ -6,7 +6,9 @@
           <v-card class="card-container">
             <v-card-title>
               <span class="headerline">
-                {{ bike_dict.manufacturer + ' ' + bike_dict.model + ' ' + bike_dict.year }}
+                {{ $store.getters.getCurrentBikeManufacturer + ' ' +
+                   $store.getters.getCurrentBikeModel + ' ' +
+                   $store.getters.getCurrentBikeYear }}
               </span>
             </v-card-title>
             <v-simple-table
@@ -26,13 +28,14 @@
                     height="22"
                     :value="(category_object.operating_hours +
                     category_object.interval_amount -
-                    bike_dict.operating_hours) / category_object.interval_amount * 100"
+                    $store.getters.getCurrentBikeOperatingHours) /
+                    category_object.interval_amount * 100"
                     rounded>
                     <template v-slot="{ value }">
                       <span class="white--text">
                         {{ category_object.operating_hours +
                         category_object.interval_amount -
-                        bike_dict.operating_hours }} h / {{ Math.ceil(value) }} %
+                        $store.getters.getCurrentBikeOperatingHours }} h / {{ Math.ceil(value) }} %
                       </span>
                     </template>
                   </v-progress-linear>
@@ -147,14 +150,14 @@ export default {
               hours_left: this.leftIntervalHours(
                 Object.values(helperList1)[i].operating_hours,
                 Object.values(helperList1)[i].interval_amount,
-                this.bike_dict.operating_hours,
+                this.$store.getters.getCurrentBikeOperatingHours,
               ),
             };
             const state = {
               state: this.currentStateIntervalHours(
                 Object.values(helperList1)[i].operating_hours,
                 Object.values(helperList1)[i].interval_amount,
-                this.bike_dict.operating_hours,
+                this.$store.getters.getCurrentBikeOperatingHours,
               ),
             };
             helperList2.push(Object.assign(entry, name, HoursLeft, state));

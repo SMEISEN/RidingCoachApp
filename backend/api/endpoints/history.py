@@ -4,11 +4,34 @@ from backend.api import api
 from backend.database import db
 from backend.database.models.history import HistoryModel, HistorySchema
 from backend.database.models.maintenance import MaintenanceSchema
-from flask_restplus import Resource
+from flask_restplus import Resource, fields
 
 ns = api.namespace('history', description='Operations related to history entries')
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
+
+post_history_parameters = api.model('Resource', {
+    "maintenance_id":
+        fields.String(description="maintenance ID", required=True),
+    "bike_id":
+        fields.String(description="bike ID", required=True),
+    "operating_hours":
+        fields.Float(description="operating hours", required=True),
+    "comment":
+        fields.String(description="comment", required=False),
+    "datetime_display":
+        fields.DateTime(description="utc time stamp in ms", required=True, dt_format=u'iso8601'),
+})
+put_history_entry_parameters = api.model('Resource', {
+    "maintenance_id":
+        fields.String(description="maintenance ID", required=True),
+    "operating_hours":
+        fields.Float(description="operating hours", required=True),
+    "comment":
+        fields.String(description="comment", required=False),
+    "datetime_display":
+        fields.DateTime(description="utc time stamp in ms", required=True, dt_format=u'iso8601'),
+})
 
 
 @ns.route('/')
@@ -33,6 +56,7 @@ class HistoryCollection(Resource):
 
         return response
 
+    @api.expect(post_history_parameters)
     @api.response(201, 'Maintenance history successfully added.')
     def post(self):
         """
@@ -47,7 +71,7 @@ class HistoryCollection(Resource):
             comment=inserted_data['comment'],
             datetime_created=datetime.utcnow(),
             datetime_last_modified=datetime.utcnow(),
-            datetime_display=datetime.utcfromtimestamp(inserted_data['datetime_display']/1000)
+            datetime_display=datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
         )
 
         db.session.add(new_history)
@@ -76,6 +100,7 @@ class HistoryItem(Resource):
 
         return response
 
+    @api.expect(put_history_entry_parameters)
     @api.response(204, f"History entry with requested id successfully updated.")
     def put(self, id_):
         """
@@ -88,7 +113,7 @@ class HistoryItem(Resource):
         history_entry.maintenance_id = inserted_data['maintenance_id']
         history_entry.operating_hours = inserted_data['operating_hours']
         history_entry.comment = inserted_data['comment']
-        history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data['datetime_display']/1000)
+        history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
         history_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(history_entry)

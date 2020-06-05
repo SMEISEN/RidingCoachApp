@@ -4,6 +4,7 @@ import moment from 'moment-timezone';
 import vuetify from './plugins/vuetify';
 import App from './App.vue';
 import router from './router/index';
+import store from './store';
 
 Vue.config.productionTip = false;
 Vue.filter('formatDateTime', (value) => {
@@ -17,5 +18,6 @@ Vue.filter('formatDateTime', (value) => {
 new Vue({
   router,
   vuetify,
+  store,
   render: (h) => h(App),
 }).$mount('#app');
