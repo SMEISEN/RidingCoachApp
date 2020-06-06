@@ -12,28 +12,43 @@ ns = api.namespace('maintenance', description='Operations related to blog posts'
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
 
-search_parameters = api.model('Resource',
-                              {
-                                  "field": fields.String(description="field to be searched in", required=True),
-                                  "op": fields.String(description="operator", required=True),
-                                  "value": fields.String(description="value", required=True)
-                              })
+query_parameters = api.model('MaintenanceQueryParameters', {
+    "bike_id":
+        fields.String(description="", required=False),
+    "category":
+        fields.String(description="", required=False),
+    "name":
+        fields.String(description="", required=False),
+    "interval_amount":
+        fields.Float(description="", required=False),
+    "interval_unit":
+        fields.String(description="", required=False),
+    "interval_type":
+        fields.String(description="", required=False)
+})
 
 
-def query_to_dict(maintenance_query):
+def query_to_dict(maintenance_query, bike_id=None):
     """
     Reformats the query to a structured dictionary, which can be json serialized.
     """
 
     maintenance_list = []
     for maintenance_entry in maintenance_query:
-        history_data = history_schema.dump(
-            maintenance_entry.history, many=True)
+
         maintenance_data = maintenance_schema.dump(maintenance_entry)
-        if len(history_data) > 0:
-            maintenance_list.append({**maintenance_data, **history_data[0]})
-        else:
+
+        if bike_id is None:
             maintenance_list.append(maintenance_data)
+
+        else:
+            history_data = history_schema.dump(maintenance_entry.history, many=True)
+            history_data = list(filter(lambda d: d['bike_id'] in [bike_id], history_data))
+
+            if len(history_data) > 0:
+                maintenance_list.append({**maintenance_data, **history_data[0]})
+            else:
+                maintenance_list.append(maintenance_data)
 
     maintenance_categories_dict = defaultdict(lambda: defaultdict(dict))
     for item in maintenance_list:
@@ -47,7 +62,7 @@ def query_to_dict(maintenance_query):
 
 
 @ns.route('/')
-class MaintenanceResource(Resource):
+class MaintenanceCollection(Resource):
 
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
@@ -86,17 +101,17 @@ class MaintenanceResource(Resource):
         return 201
 
 
-@ns.route('/<string:id_>')
+@ns.route('/<string:maintenance_id>')
 @api.response(404, 'Maintenance work not found.')
 class MaintenanceItem(Resource):
 
     @api.response(200, f"Maintenance work with requested id successfully fetched.")
-    def get(self, id_):
+    def get(self, maintenance_id):
         """
         Returns a maintenance work.
         """
 
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == maintenance_id).one()
 
         response = jsonify(maintenance_schema.dump(maintenance_work))
         response.status_code = 200
@@ -104,14 +119,14 @@ class MaintenanceItem(Resource):
         return response
 
     @api.response(204, f"Maintenance work with requested id successfully updated.")
-    def put(self, id_):
+    def put(self, maintenance_id):
         """
         Updates a maintenance work.
         """
 
         inserted_data = request.get_json()
 
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == maintenance_id).one()
         maintenance_work.interval_latest = inserted_data['interval_latest']
         maintenance_work.datetime_last_modified = datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
 
@@ -121,12 +136,12 @@ class MaintenanceItem(Resource):
         return None, 204
 
     @api.response(204, f"Maintenance work with requested id successfully deleted.")
-    def delete(self, id_):
+    def delete(self, maintenance_id):
         """
         Deletes maintenance work.
         """
 
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == maintenance_id).one()
 
         db.session.delete(maintenance_work)
         db.session.commit()
@@ -134,21 +149,29 @@ class MaintenanceItem(Resource):
         return None, 204
 
 
-@ns.route('/search')
-@api.response(404, 'Searched entries not found.')
-class MaintenanceSearch(Resource):
+@ns.route('/query')
+@api.response(404, 'Query parameters not found.')
+class MaintenanceQuery(Resource):
 
-    @api.expect(search_parameters)
+    @api.expect(query_parameters)
     def post(self):
         """
         Creates a filtered query based on the input json file and returns the requested data.
         """
 
-        search = [request.get_json()]
+        requested = request.get_json()
+        filter_data = {
+            'category': requested.get('category'),
+            'name': requested.get('name'),
+            'interval_amount': requested.get('interval_amount'),
+            'interval_unit': requested.get('interval_unit'),
+            'interval_type': requested.get('interval_type'),
+        }
+        filter_data = {key: value for (key, value) in filter_data.items() if value}
 
-        maintenance_searched = query_with_filters(MaintenanceModel, search, MaintenanceSchema)
+        maintenance_query = MaintenanceModel.query.filter_by(**filter_data).all()
 
-        maintenance_categories_dict = query_to_dict(maintenance_searched)
+        maintenance_categories_dict = query_to_dict(maintenance_query, requested.get('bike_id'))
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200

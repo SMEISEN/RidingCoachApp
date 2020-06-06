@@ -6,7 +6,7 @@ from backend.database import db
 
 ns = api.namespace('bike', description='Operations related to blog posts')
 
-post_bike_parameters = api.model('Resource', {
+post_bike_parameters = api.model('PostBikeParameters', {
     "operating_hours":
         fields.Float(description="operating hours", required=True),
     "manufacturer":
@@ -27,13 +27,14 @@ post_bike_parameters = api.model('Resource', {
 
 
 @ns.route('/')
-class BikeResource(Resource):
+class BikeCollection(Resource):
 
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
         """
         Returns a list the bike characteristics.
         """
+
         bike_schema = BikeSchema()
         bike_all_entries = BikeModel.query.all()
 

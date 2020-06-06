@@ -153,8 +153,12 @@ export default {
       return 365 - day;
     },
     getMaintenance() {
-      const ApiPath = '/api/maintenance';
-      axios.get(ApiPath)
+      const ApiPath = '/api/maintenance/query';
+      const payload = {
+        bike_id: this.$store.getters.getCurrentBikeId,
+        interval_type: 'planned cycle',
+      };
+      axios.post(ApiPath, payload)
         .then((res) => {
           this.maintenance_dict = res.data;
         })
