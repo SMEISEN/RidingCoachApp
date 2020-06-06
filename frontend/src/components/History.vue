@@ -230,8 +230,11 @@ export default {
       } return [];
     },
     getHistory() {
-      const ApiPath = '/api/history';
-      axios.get(ApiPath)
+      const ApiPath = '/api/history/query';
+      const payload = {
+        bike_id: this.$store.getters.getCurrentBikeId,
+      };
+      axios.post(ApiPath, payload)
         .then((res) => {
           this.history_list = res.data;
         })

@@ -26,16 +26,16 @@
                     color="primary"
                     background-color="accent"
                     height="22"
-                    :value="(category_object.operating_hours +
-                    category_object.interval_amount -
-                    $store.getters.getCurrentBikeOperatingHours) /
-                    category_object.interval_amount * 100"
+                    :value="currentStateIntervalHours(category_object.operating_hours,
+                                                      category_object.interval_amount,
+                                                      $store.getters.getCurrentBikeOperatingHours)"
                     rounded>
                     <template v-slot="{ value }">
                       <span class="white--text">
-                        {{ category_object.operating_hours +
-                        category_object.interval_amount -
-                        $store.getters.getCurrentBikeOperatingHours }} h / {{ Math.ceil(value) }} %
+                        {{ leftIntervalHours(category_object.operating_hours,
+                                             category_object.interval_amount,
+                                             $store.getters.getCurrentBikeOperatingHours) }} h /
+                        {{ Math.ceil(value) }} %
                       </span>
                     </template>
                   </v-progress-linear>
@@ -173,11 +173,10 @@ export default {
       });
     },
     getWear() {
-      const ApiPath = '/api/maintenance/search';
+      const ApiPath = '/api/maintenance/query';
       const payload = {
-        field: 'interval_type',
-        op: '=',
-        value: 'estimated wear',
+        bike_id: this.$store.getters.getCurrentBikeId,
+        interval_type: 'estimated wear',
       };
       axios.post(ApiPath, payload).then((res) => {
         this.wear_dict.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
@@ -191,11 +190,10 @@ export default {
       });
     },
     getMaintenance() {
-      const ApiPath = '/api/maintenance/search';
+      const ApiPath = '/api/maintenance/query';
       const payload = {
-        field: 'interval_type',
-        op: '=',
-        value: 'planned cycle',
+        bike_id: this.$store.getters.getCurrentBikeId,
+        interval_type: 'planned cycle',
       };
       axios.post(ApiPath, payload).then((res) => {
         this.maintenance_next = this.structureMaintenanceNext(res.data);

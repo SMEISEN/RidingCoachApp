@@ -10,7 +10,7 @@ ns = api.namespace('history', description='Operations related to history entries
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
 
-post_history_parameters = api.model('Resource', {
+post_history_parameters = api.model('PostHistoryParameters', {
     "maintenance_id":
         fields.String(description="maintenance ID", required=True),
     "bike_id":
@@ -22,7 +22,7 @@ post_history_parameters = api.model('Resource', {
     "datetime_display":
         fields.DateTime(description="utc time stamp in ms", required=True, dt_format=u'iso8601'),
 })
-put_history_entry_parameters = api.model('Resource', {
+put_history_entry_parameters = api.model('PutHistoryParameters', {
     "maintenance_id":
         fields.String(description="maintenance ID", required=True),
     "operating_hours":
@@ -31,6 +31,20 @@ put_history_entry_parameters = api.model('Resource', {
         fields.String(description="comment", required=False),
     "datetime_display":
         fields.DateTime(description="utc time stamp in ms", required=True, dt_format=u'iso8601'),
+})
+query_parameters = api.model('HistoryQueryParameters', {
+    "bike_id":
+        fields.String(description="", required=False),
+    "operating_hours":
+        fields.Float(description="", required=False),
+    "comment":
+        fields.String(description="", required=False),
+    "datetime_created":
+        fields.DateTime(description="", required=False),
+    "datetime_last_modified":
+        fields.DateTime(description="", required=False),
+    "datetime_display":
+        fields.DateTime(description="", required=False)
 })
 
 
@@ -133,3 +147,38 @@ class HistoryItem(Resource):
         db.session.commit()
 
         return None, 204
+
+
+@ns.route('/query')
+@api.response(404, 'Query parameters not found.')
+class HistoryQuery(Resource):
+
+    @api.expect(query_parameters)
+    def post(self):
+        """
+        Returns a list of all maintenance history entries.
+        """
+
+        requested = request.get_json()
+        filter_data = {
+            'bike_id': requested.get('bike_id'),
+            'operating_hours': requested.get('operating_hours'),
+            'comment': requested.get('comment'),
+            'datetime_created': requested.get('datetime_created'),
+            'datetime_last_modified': requested.get('datetime_last_modified'),
+            'datetime_display': requested.get('datetime_display'),
+        }
+        filter_data = {key: value for (key, value) in filter_data.items() if value}
+
+        history_query = HistoryModel.query.filter_by(**filter_data).all()
+
+        history_entry_list = []
+        for history_entry in history_query:
+            maintenance_data = maintenance_schema.dump(history_entry.maintenance)
+            history_data = history_schema.dump(history_entry)
+            history_entry_list.append({**maintenance_data, **history_data})
+
+        response = jsonify(history_entry_list)
+        response.status_code = 200
+
+        return response
