@@ -1,5 +1,5 @@
 # RidingCoachApp 
-_Web application for motorcycle riders to organize maintainance, spare parts, and bike setups_
+_Web application for motorcycle riders to organize maintenance, spare parts, and bike setups._
 
 ![RidingCoach Logo](/frontend/public/rc-logo.svg "RidingCoach Logo")
 
