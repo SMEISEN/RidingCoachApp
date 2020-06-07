@@ -101,26 +101,6 @@ export default {
   data() {
     return {
       maintenance_dict: {},
-      history_entry_dict: {
-        history_id: '',
-        category: '',
-        name: '',
-        operating_hours: '',
-        date: '',
-        time: '',
-        comment: '',
-      },
-      maintenance_entry: {
-        maintenance_id: '',
-        category: '',
-        name: '',
-        interval_amount: '',
-        interval_unit: '',
-        interval_latest: '',
-        datetime_created: '',
-        datetime_last_modified: '',
-        datetime_display: '',
-      },
     };
   },
   methods: {
@@ -186,6 +166,9 @@ export default {
   },
   created() {
     this.getMaintenance();
+    this.$store.subscribe(() => {
+      this.getMaintenance();
+    });
   },
   updated() {
   },

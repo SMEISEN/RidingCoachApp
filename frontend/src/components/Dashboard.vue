@@ -17,23 +17,23 @@
               dense
             >
               <tbody>
-              <tr v-for="(category_object, category_name) in wear_dict"
-                  v-bind:key="category_name">
-                <td>{{ category_object.name }}</td>
-                <td v-if="!Object.keys(category_object).includes('operating_hours')"></td>
+              <tr v-for="(wear_object, index) in wear_dict"
+                  v-bind:key="index + $store.getters.getCurrentBikeOperatingHours">
+                <td>{{ wear_object.name }}</td>
+                <td v-if="!Object.keys(wear_object).includes('operating_hours')"></td>
                 <td v-else style="min-width: 120px;width: 120px;max-width: 120px">
                   <v-progress-linear
                     color="primary"
                     background-color="accent"
                     height="22"
-                    :value="currentStateIntervalHours(category_object.operating_hours,
-                                                      category_object.interval_amount,
+                    :value="currentStateIntervalHours(wear_object.operating_hours,
+                                                      wear_object.interval_amount,
                                                       $store.getters.getCurrentBikeOperatingHours)"
                     rounded>
                     <template v-slot="{ value }">
                       <span class="white--text">
-                        {{ leftIntervalHours(category_object.operating_hours,
-                                             category_object.interval_amount,
+                        {{ leftIntervalHours(wear_object.operating_hours,
+                                             wear_object.interval_amount,
                                              $store.getters.getCurrentBikeOperatingHours) }} h /
                         {{ Math.ceil(value) }} %
                       </span>
@@ -57,19 +57,20 @@
               height="95px"
             >
               <tbody>
-              <tr v-for="(test, index) in orderedUsers"
-                  v-bind:key="index">
-                <td style="font-size: 12px">{{ test.name }}</td>
+              <tr v-for="(maintenance_object, index) in orderedMaintenance"
+                  v-bind:key="index + $store.getters.getCurrentBikeOperatingHours"
+              >
+                <td style="font-size: 12px">{{ maintenance_object.name }}</td>
                 <td style="min-width: 120px;width: 120px;max-width: 120px">
                   <v-progress-linear
                     color="primary"
                     background-color="accent"
                     height="22"
-                    :value="test.state"
+                    :value="maintenance_object.state"
                     rounded>
                     <template v-slot="{ value }">
                       <span class="white--text">
-                        {{ test.hours_left }} h /
+                        {{ maintenance_object.hours_left }} h /
                         {{ Math.ceil(value) }} %
                       </span>
                     </template>
@@ -122,7 +123,7 @@ export default {
     maintenance_next: [],
   }),
   computed: {
-    orderedUsers() {
+    orderedMaintenance() {
       return _.orderBy(this.maintenance_next, 'hours_left');
     },
   },
@@ -204,6 +205,11 @@ export default {
     this.getBikeData();
     this.getWear();
     this.getMaintenance();
+    this.$store.subscribe(() => {
+      this.getBikeData();
+      this.getWear();
+      this.getMaintenance();
+    });
   },
   updated() {
   },

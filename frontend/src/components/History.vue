@@ -60,7 +60,7 @@
             <span class="headline">Add maintenance entry</span>
           </v-card-title>
           <v-card-text>
-            <v-row no-gutters>
+            <v-row dense>
               <v-col cols="auto" xs="12" sm="8" md="8">
                 <v-menu
                   v-model="date_menu"
@@ -205,14 +205,14 @@ export default {
   data: () => ({
     history_list: [],
     history_form_dict: {
-      history_id: '',
-      maintenance_id: '',
-      category: '',
-      name: '',
-      operating_hours: '',
+      history_id: null,
+      maintenance_id: null,
+      category: null,
+      name: null,
+      operating_hours: null,
       date: new Date().toISOString().substr(0, 10),
       time: new Date().toTimeString().substr(0, 5),
-      comment: '',
+      comment: null,
     },
     maintenance_categories_list: [],
     maintenance_names_dict: {},
@@ -265,13 +265,13 @@ export default {
         });
     },
     initForm() {
-      this.history_form_dict.history_id = '';
-      this.history_form_dict.category = '';
-      this.history_form_dict.name = '';
+      this.history_form_dict.history_id = null;
+      this.history_form_dict.category = null;
+      this.history_form_dict.name = null;
       this.history_form_dict.date = new Date().toISOString().substr(0, 10);
       this.history_form_dict.time = new Date().toTimeString().substr(0, 5);
       this.history_form_dict.operating_hours = this.$store.getters.getCurrentBikeOperatingHours;
-      this.history_form_dict.comment = '';
+      this.history_form_dict.comment = null;
       if (typeof this.$refs.validation_form !== 'undefined') {
         this.$refs.validation_form.resetValidation();
       }
@@ -374,6 +374,11 @@ export default {
     this.getHistory();
     this.getMaintenanceCategoriesAndNames();
     this.initForm();
+    this.$store.subscribe(() => {
+      this.getHistory();
+      this.getMaintenanceCategoriesAndNames();
+      this.initForm();
+    });
   },
   updated() {
   },
