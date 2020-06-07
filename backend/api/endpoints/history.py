@@ -79,13 +79,13 @@ class HistoryCollection(Resource):
 
         inserted_data = request.get_json()
         new_history = HistoryModel(
-            maintenance_id=inserted_data['maintenance_id'],
-            bike_id=inserted_data['bike_id'],
-            operating_hours=inserted_data['operating_hours'],
-            comment=inserted_data['comment'],
+            maintenance_id=inserted_data.get('maintenance_id'),
+            bike_id=inserted_data.get('bike_id'),
+            operating_hours=inserted_data.get('operating_hours'),
+            comment=inserted_data.get('comment'),
             datetime_created=datetime.utcnow(),
             datetime_last_modified=datetime.utcnow(),
-            datetime_display=datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
+            datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display') / 1000)
         )
 
         db.session.add(new_history)
@@ -98,7 +98,7 @@ class HistoryCollection(Resource):
 @api.response(404, 'Maintenance history entry not found.')
 class HistoryItem(Resource):
 
-    @api.response(200, f"Maintenance history with requested id successfully fetched.")
+    @api.response(200, "Maintenance history with requested id successfully fetched.")
     def get(self, id_):
         """
         Returns a maintenance history entry.
@@ -115,7 +115,7 @@ class HistoryItem(Resource):
         return response
 
     @api.expect(put_history_entry_parameters)
-    @api.response(204, f"History entry with requested id successfully updated.")
+    @api.response(204, "History entry with requested id successfully updated.")
     def put(self, id_):
         """
         Updates a maintenance history entry.
@@ -124,10 +124,10 @@ class HistoryItem(Resource):
         inserted_data = request.get_json()
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
-        history_entry.maintenance_id = inserted_data['maintenance_id']
-        history_entry.operating_hours = inserted_data['operating_hours']
-        history_entry.comment = inserted_data['comment']
-        history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
+        history_entry.maintenance_id = inserted_data.get('maintenance_id')
+        history_entry.operating_hours = inserted_data.get('operating_hours')
+        history_entry.comment = inserted_data.get('comment')
+        history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display') / 1000)
         history_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(history_entry)
@@ -135,10 +135,10 @@ class HistoryItem(Resource):
 
         return None, 204
 
-    @api.response(204, f"History entry with requested id successfully deleted.")
+    @api.response(204, "History entry with requested id successfully deleted.")
     def delete(self, id_):
         """
-        Deletes maintenance history entry.
+        Deletes a maintenance history entry.
         """
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
