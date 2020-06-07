@@ -88,12 +88,12 @@ class MaintenanceCollection(Resource):
         inserted_data = request.get_json()
 
         new_maintenance = MaintenanceModel(
-            category=inserted_data['category'],
-            name=inserted_data['name'],
-            interval_amount=inserted_data['interval_amount'],
-            interval_unit=inserted_data['interval_unit'],
-            interval_latest=inserted_data['interval_latest'],
-            interval_type=inserted_data['interval_type']
+            category=inserted_data.get('category'),
+            name=inserted_data.get('name'),
+            interval_amount=inserted_data.get('interval_amount'),
+            interval_unit=inserted_data.get('interval_unit'),
+            interval_latest=inserted_data.get('interval_latest'),
+            interval_type=inserted_data.get('interval_type')
         )
         db.session.add(new_maintenance)
         db.session.commit()
@@ -127,8 +127,8 @@ class MaintenanceItem(Resource):
         inserted_data = request.get_json()
 
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == maintenance_id).one()
-        maintenance_work.interval_latest = inserted_data['interval_latest']
-        maintenance_work.datetime_last_modified = datetime.utcfromtimestamp(inserted_data['datetime_display'] / 1000)
+        maintenance_work.interval_latest = inserted_data.get('interval_latest')
+        maintenance_work.datetime_last_modified = datetime.utcfromtimestamp(inserted_data.get('datetime_display') / 1000)
 
         db.session.add(maintenance_work)
         db.session.commit()
