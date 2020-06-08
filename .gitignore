@@ -3,6 +3,7 @@
 
 # local env files
 /backend/.env
+/frontend/.env
 
 # Log files
 npm-debug.log*

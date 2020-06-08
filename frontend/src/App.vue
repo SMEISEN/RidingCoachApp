@@ -6,6 +6,7 @@
       dark
       hide-on-scroll
       dense
+      v-if="isAuthenticated"
     >
 
       <v-app-bar-nav-icon @click="navigationDrawer()"></v-app-bar-nav-icon>
@@ -78,10 +79,34 @@
           </v-list-group>
           <v-list-item>
             <v-list-item-icon>
+              <v-icon>mdi-dumbbell</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              Training
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>mdi-medical-bag</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              Spare parts
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
               <v-icon>mdi-settings</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
               Settings
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="onLogout">
+            <v-list-item-icon>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              Logout
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -229,8 +254,8 @@
 </template>
 
 <script>
-
 import axios from 'axios';
+import { AUTH_LOGOUT } from './store/actions/authentication';
 
 export default {
   name: 'App',
@@ -271,12 +296,22 @@ export default {
     valid: true,
     edit: false,
   }),
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
+  },
   methods: {
     getBikeData() {
       const ApiPath = '/api/bike';
-      axios.get(ApiPath).then((res) => {
-        this.bike_list = res.data;
-      });
+      axios.get(ApiPath)
+        .then((res) => {
+          this.bike_list = res.data;
+        })
+        .catch((error) => {
+          console.error(error);
+          this.getBikeData();
+        });
     },
     postBikeData(payload) {
       const ApiPath = '/api/bike';
@@ -294,10 +329,12 @@ export default {
       axios.put(ApiPath, payload)
         .then(() => {
           this.getBikeData();
+          this.selected_bike = BikeId;
         })
         .catch((error) => {
           console.error(error);
           this.getBikeData();
+          this.selected_bike = BikeId;
         });
     },
     deleteBikeData() {
@@ -391,6 +428,11 @@ export default {
         this.postBikeData(payload);
       } else {
         this.putBikeData(BikeId, payload);
+        if (this.selected_bike === BikeId) {
+          payload.bike_id = BikeId;
+          this.$store.commit('selectBike', payload);
+          this.$forceUpdate();
+        }
       }
       this.bike_dialog = false;
       this.initForm();
@@ -399,6 +441,10 @@ export default {
       evt.preventDefault();
       this.bike_dialog = false;
       this.initForm();
+    },
+    onLogout() {
+      this.$store.dispatch(AUTH_LOGOUT);
+      this.$router.push('/login');
     },
     initForm() {
       this.bike_form_dict.manufacturer = null;
