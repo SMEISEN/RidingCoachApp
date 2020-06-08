@@ -136,7 +136,6 @@ export default {
       const ApiPath = '/api/maintenance/query';
       const payload = {
         bike_id: this.$store.getters.getCurrentBikeId,
-        interval_type: 'planned cycle',
       };
       axios.post(ApiPath, payload)
         .then((res) => {
