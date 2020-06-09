@@ -21,7 +21,7 @@
               </tr>
               </thead>
               <tbody>
-                <tr v-for="(maintenance) in history_list"
+                <tr v-for="(maintenance) in orderedHistory"
                     v-bind:key="maintenance.history_id"
                     v-bind:MtnId="maintenance.history_id">
                   <td style="font-size: 12px">{{ maintenance.category }}</td>
@@ -196,6 +196,7 @@
 
 <script>
 import axios from 'axios';
+import _ from 'lodash';
 
 export default {
   name: 'History',
@@ -223,6 +224,11 @@ export default {
     time_menu: false,
     valid: true,
   }),
+  computed: {
+    orderedHistory() {
+      return _.orderBy(this.history_list, 'datetime_display', 'desc');
+    },
+  },
   methods: {
     getMaintenanceNamesFromCategory(category) {
       if (this.maintenance_categories_list.includes(category)) {
