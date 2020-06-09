@@ -141,7 +141,7 @@ export default {
   }),
   computed: {
     orderedMaintenance() {
-      return _.orderBy(this.maintenance_next, 'hours_left');
+      return _.orderBy(this.maintenance_next, 'hours_left', 'asc');
     },
   },
   methods: {
