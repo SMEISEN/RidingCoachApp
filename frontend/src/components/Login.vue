@@ -26,9 +26,12 @@
                 <v-row dense>
                   <v-col cols="11">
                     <v-text-field label="Password"
+                                  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                                  :type="show ? 'text' : 'password'"
                                   prepend-icon="mdi-lock"
                                   :rules="[v => !!v]"
                                   required
+                                  @click:append="show = !show"
                                   v-model="password">
                     </v-text-field>
                   </v-col>
@@ -71,6 +74,7 @@ export default {
       username: '',
       password: '',
       valid: true,
+      show: false,
     };
   },
   computed: {
