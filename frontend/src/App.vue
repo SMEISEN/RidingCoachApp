@@ -18,7 +18,7 @@
       >
         <v-tabs-slider color="accent"></v-tabs-slider>
 
-        <v-tab to="/">
+        <v-tab to="/dashboard">
           Dashboard
         </v-tab>
         <v-tab to="/maintenance">
