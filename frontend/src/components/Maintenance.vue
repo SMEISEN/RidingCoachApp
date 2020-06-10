@@ -87,6 +87,19 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="3000"
+      color="info"
+    >
+      Maintenance history added!
+      <v-btn
+        text
+        @click="undoMaintenance"
+      >
+        Undo
+      </v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -102,6 +115,8 @@ export default {
   data() {
     return {
       maintenance_dict: {},
+      snackbar: false,
+      last_history_id: null,
     };
   },
   methods: {
@@ -165,11 +180,29 @@ export default {
         comment: '',
         datetime_display: new Date().getTime(),
       });
+      this.snackbar = true;
+    },
+    undoMaintenance() {
+      this.deleteHistory();
+      this.snackbar = false;
     },
     postHistory(payload) {
       const ApiPath = '/api/history';
       axios.post(ApiPath, payload)
-        .then(() => this.getMaintenance())
+        .then((res) => {
+          this.getMaintenance();
+          this.last_history_id = res.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    deleteHistory() {
+      const ApiPath = `/api/history/${this.last_history_id}`;
+      axios.delete(ApiPath)
+        .then(() => {
+          this.getMaintenance();
+        })
         .catch((error) => {
           console.error(error);
         });

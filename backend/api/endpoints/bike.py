@@ -82,7 +82,10 @@ class BikeCollection(Resource):
         db.session.add(new_bike)
         db.session.commit()
 
-        return None, 201
+        response = jsonify(new_bike.bike_id)
+        response.status_code = 201
+
+        return response
 
 
 @ns.route('/<string:id_>')

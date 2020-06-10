@@ -91,7 +91,10 @@ class HistoryCollection(Resource):
         db.session.add(new_history)
         db.session.commit()
 
-        return None, 201
+        response = jsonify(new_history.history_id)
+        response.status_code = 201
+
+        return response
 
 
 @ns.route('/<string:id_>')
