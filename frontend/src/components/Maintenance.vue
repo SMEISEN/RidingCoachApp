@@ -29,9 +29,9 @@
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(maintenance_object, maintenance_name) in category_object"
+              <tr v-for="maintenance_object in sort_maintenance(category_object)"
                   v-bind:key="maintenance_object.maintenance_id">
-                <td style="font-size: 12px">{{ maintenance_name }}</td>
+                <td style="font-size: 12px">{{ maintenance_object.name }}</td>
                 <td v-if="!Object.keys(maintenance_object).includes('operating_hours')"></td>
                 <td v-else-if="maintenance_object.interval_unit === 'a'">
                   <v-progress-linear
@@ -92,6 +92,7 @@
 
 <script>
 import axios from 'axios';
+import _ from 'lodash';
 
 export default {
   name: 'Maintenance',
@@ -104,6 +105,17 @@ export default {
     };
   },
   methods: {
+    sort_maintenance(maintenanceObject) {
+      const maintenanceList = [];
+      for (let i = 0; i < Object.keys(maintenanceObject).length; i += 1) {
+        maintenanceList.push(
+          Object.assign(Object.values(maintenanceObject)[i],
+            { name: Object.keys(maintenanceObject)[i] }),
+        );
+      }
+      return _.orderBy(maintenanceList,
+        ['interval_unit', 'interval_amount'], ['desc', 'asc']);
+    },
     currentStateIntervalHours(Latest, Interval, Current) {
       const state = ((Latest + Interval - Current) / Interval) * 100;
       return Number.parseFloat(state.toPrecision(2));
