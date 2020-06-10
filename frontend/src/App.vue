@@ -307,10 +307,14 @@ export default {
       axios.get(ApiPath)
         .then((res) => {
           this.bike_list = res.data;
+          if (this.$store.getters.getCurrentBikeId === null) {
+            this.selectBike(0);
+          } else {
+            this.selected_bike = this.$store.getters.getCurrentBikeId;
+          }
         })
         .catch((error) => {
           console.error(error);
-          this.getBikeData();
         });
     },
     postBikeData(payload) {
@@ -466,11 +470,6 @@ export default {
   },
   created() {
     this.getBikeData();
-    if (this.$store.getters.getCurrentBikeId === 'undefined') {
-      this.selectBike(0);
-    } else {
-      this.selected_bike = this.$store.getters.getCurrentBikeId;
-    }
   },
   updated() {
   },

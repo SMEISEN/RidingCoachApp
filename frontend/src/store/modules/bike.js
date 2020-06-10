@@ -1,11 +1,11 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
 const state = () => ({
-  current_bike_id: '',
-  current_bike_manufacturer: '',
-  current_bike_model: '',
-  current_bike_operating_hours: '',
-  current_bike_year: '',
+  current_bike_id: null,
+  current_bike_manufacturer: null,
+  current_bike_model: null,
+  current_bike_operating_hours: null,
+  current_bike_year: null,
 });
 const getters = {
   getCurrentBikeId: (state) => state.current_bike_id,
