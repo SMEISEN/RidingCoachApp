@@ -180,7 +180,6 @@ export default {
         comment: '',
         datetime_display: new Date().getTime(),
       });
-      this.snackbar = true;
     },
     undoMaintenance() {
       this.deleteHistory();
@@ -192,6 +191,7 @@ export default {
         .then((res) => {
           this.getMaintenance();
           this.last_history_id = res.data;
+          this.snackbar = true;
         })
         .catch((error) => {
           console.error(error);
