@@ -271,13 +271,12 @@ export default {
         });
     },
     initForm() {
-      this.history_form_dict.history_id = null;
-      this.history_form_dict.category = null;
-      this.history_form_dict.name = null;
+      Object.keys(this.history_form_dict).forEach((index) => {
+        this.history_form_dict[index] = null;
+      });
       this.history_form_dict.date = new Date().toISOString().substr(0, 10);
       this.history_form_dict.time = new Date().toTimeString().substr(0, 5);
       this.history_form_dict.operating_hours = this.$store.getters.getCurrentBikeOperatingHours;
-      this.history_form_dict.comment = null;
       if (typeof this.$refs.validation_form !== 'undefined') {
         this.$refs.validation_form.resetValidation();
       }
