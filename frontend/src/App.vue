@@ -37,6 +37,7 @@
       <v-navigation-drawer
         v-model="navigation_drawer"
         absolute
+        style="position:fixed; top:48px; left:0;"
         temporary
         width="auto"
       >
@@ -142,7 +143,7 @@
                     v-model="bike_form_dict.manufacturer"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" xs="12" sm="5" md="5">
+                <v-col cols="12" xs="12" sm="5" md="6">
                   <v-text-field
                     label="Model*"
                     :rules="[v => !!v]"
@@ -150,7 +151,7 @@
                     v-model="bike_form_dict.model"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" xs="12" sm="3" md="3">
+                <v-col cols="12" xs="12" sm="3" md="2">
                   <v-text-field
                     append-outer-icon="mdi-plus"
                     prepend-icon="mdi-minus"
@@ -162,8 +163,8 @@
                     v-model="bike_form_dict.year"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" xs="12" sm="9" md="9"></v-col>
-                <v-col cols="12" xs="12" sm="3" md="3">
+                <v-col cols="12" xs="12" sm="9" md="10"></v-col>
+                <v-col cols="12" xs="12" sm="3" md="2">
                   <v-text-field
                     append-outer-icon="mdi-plus"
                     prepend-icon="mdi-minus"
@@ -171,8 +172,9 @@
                     @click:prepend="decrementHour"
                     :rules="[v => !!v]"
                     required
-                    hint="of engine operation"
-                    suffix="h*"
+                    label="Operating hours*"
+                    hint="of engine"
+                    suffix="h"
                     v-model="bike_form_dict.operating_hours">
                   </v-text-field>
                 </v-col>
@@ -353,7 +355,7 @@ export default {
         });
       this.confirm_delete_dialog = false;
       this.bike_dialog = false;
-      this.initForm();
+      this.initBikeForm();
     },
     selectBike(index) {
       const selectedBike = this.bike_list[index];
@@ -439,7 +441,7 @@ export default {
         }
       }
       this.bike_dialog = false;
-      this.initForm();
+      this.initBikeForm();
     },
     onCancel(evt) {
       evt.preventDefault();
@@ -450,20 +452,12 @@ export default {
       this.$store.dispatch(AUTH_LOGOUT);
       this.$router.push('/login');
     },
-    initForm() {
-      this.bike_form_dict.manufacturer = null;
-      this.bike_form_dict.model = null;
-      this.bike_form_dict.year = null;
-      this.bike_form_dict.ccm = null;
-      this.bike_form_dict.stroke = null;
-      this.bike_form_dict.piston = null;
-      this.bike_form_dict.slick_front = null;
-      this.bike_form_dict.slick_rear = null;
-      this.bike_form_dict.rain_front = null;
-      this.bike_form_dict.rain_rear = null;
-      this.bike_form_dict.setup = null;
-      if (typeof this.$refs.validation_form !== 'undefined') {
-        this.$refs.validation_form.resetValidation();
+    initBikeForm() {
+      Object.keys(this.bike_form_dict).forEach((index) => {
+        this.bike_form_dict[index] = null;
+      });
+      if (typeof this.$refs.validation_bike_form !== 'undefined') {
+        this.$refs.validation_bike_form.resetValidation();
       }
       this.edit = false;
     },
