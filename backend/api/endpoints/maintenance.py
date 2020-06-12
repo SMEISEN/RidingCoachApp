@@ -1,6 +1,5 @@
 from datetime import datetime
 from flask import jsonify, request
-from flask_filter.query_filter import query_with_filters
 from backend.api import api
 from backend.database import db
 from backend.database.models.maintenance import MaintenanceModel, MaintenanceSchema
