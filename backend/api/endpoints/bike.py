@@ -147,4 +147,3 @@ class BikeItem(Resource):
         db.session.commit()
 
         return None, 204
-
