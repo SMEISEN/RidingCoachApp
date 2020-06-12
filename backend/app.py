@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 from flask import Flask, Blueprint, current_app, send_file
 from flask_cors import CORS
-from flask_migrate import MigrateCommand
 from backend.api import api
 from backend.api.endpoints.maintenance import ns as maintenance_namespace
 from backend.api.endpoints.maintenance import MaintenanceModel
