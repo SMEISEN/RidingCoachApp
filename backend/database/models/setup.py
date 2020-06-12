@@ -2,11 +2,11 @@ from datetime import datetime
 from backend.database import db, ma
 from backend.database.models.bike import BikeModel
 from backend.database.models.training import TrainingModel
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSON
 import uuid
 
 
-class SetupModel(db.model):
+class SetupModel(db.Model):
     __tablename__ = 'setup'
 
     setup_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
@@ -27,9 +27,9 @@ class SetupModel(db.model):
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    bike = db.relationship('BikeModel', backref=db.backref('setup'))
+    bike = db.relationship('BikeModel', backref=db.backref('setups'))
     training = db.relationship('TrainingModel',
-                               backref=db.backref('setup', order_by='SetupModel.datetime_display.asc()'))
+                               backref=db.backref('setups', order_by='SetupModel.datetime_display.asc()'))
 
     def __repr__(self):
         return f"Setup('{self.setup_id}', '{self.operating_hours}', '{self.datetime_display}')"

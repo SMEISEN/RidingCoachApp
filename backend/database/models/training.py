@@ -1,6 +1,6 @@
 from datetime import datetime
 from backend.database import db, ma
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSON
 import uuid
 
 
