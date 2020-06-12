@@ -3,13 +3,14 @@ import json
 from datetime import datetime
 from flask import Flask, Blueprint, current_app, send_file
 from flask_cors import CORS
+from flask_migrate import MigrateCommand
 from backend.api import api
 from backend.api.endpoints.maintenance import ns as maintenance_namespace
 from backend.api.endpoints.maintenance import MaintenanceModel
 from backend.api.endpoints.history import ns as history_namespace
 from backend.api.endpoints.bike import ns as bike_namespace
 from backend.config import Config
-from backend.database import db, ma
+from backend.database import db, ma, migrate
 
 app = Flask(__name__, static_folder='../frontend/dist/static', template_folder="../frontend/dist")
 app.url_map.strict_slashes = False
@@ -25,6 +26,7 @@ app.register_blueprint(blueprint)
 
 db.init_app(app)
 ma.init_app(app)
+migrate.init_app(app, db)
 
 CORS(app)
 
