@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import VueMeta from 'vue-meta';
 import Dashboard from '../components/Dashboard.vue';
 import Maintenance from '../components/Maintenance.vue';
-import History from '../components/History.vue';
+import History from '../pages/HistoryPage';
 import Login from '../components/Login.vue';
 import store from '../store';
 

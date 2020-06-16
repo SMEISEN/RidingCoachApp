@@ -4,6 +4,7 @@ import createPersistedState from 'vuex-persistedstate';
 import Cookies from 'js-cookie';
 import bike from './modules/bike';
 import authentication from './modules/authentication';
+import history from './modules/history'
 
 Vue.use(Vuex);
 
@@ -11,6 +12,7 @@ export default new Vuex.Store({
   modules: {
     bike,
     authentication,
+    history,
   },
   plugins: [createPersistedState({
     storage: {
