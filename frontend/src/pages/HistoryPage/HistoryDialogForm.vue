@@ -146,6 +146,7 @@
 
 <script>
 import {HistoryApi} from '../../components/common/HistoryApi';
+import {FormUtils} from "../../components/common/FromUtils";
 
 
 export default {
@@ -182,9 +183,7 @@ export default {
       } return [];
     },
     initForm() {
-      Object.keys(this.history_form_input).forEach((index) => {
-        this.history_form_input[index] = null;
-      });
+      FormUtils.initObject(this.history_form_input, null);
       this.history_form_input.date = new Date().toISOString().substr(0, 10);
       this.history_form_input.time = new Date().toTimeString().substr(0, 5);
       this.history_form_input.operating_hours = this.$store.getters.getCurrentBikeOperatingHours;
@@ -199,14 +198,12 @@ export default {
       this.$forceUpdate();
     },
     increment() {
-      this.history_form_input.operating_hours = Number(
-        parseFloat(this.history_form_input.operating_hours) + 0.1,
-      ).toFixed(1);
+      this.history_form_input.operating_hours = FormUtils
+        .incrementNumber(this.history_form_input.operating_hours, 0.1, 1)
     },
     decrement() {
-      this.history_form_input.operating_hours = Number(
-        parseFloat(this.history_form_input.operating_hours) - 0.1,
-      ).toFixed(1);
+      this.history_form_input.operating_hours = FormUtils
+        .decrementNumber(this.history_form_input.operating_hours, 0.1, 1)
     },
     onSave() {
       this.$refs.NameComboBox.blur();
