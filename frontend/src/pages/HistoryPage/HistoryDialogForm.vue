@@ -196,6 +196,7 @@ export default {
     refreshDateTime() {
       this.history_form_input.date = new Date().toISOString().substr(0, 10);
       this.history_form_input.time = new Date().toTimeString().substr(0, 5);
+      this.$forceUpdate();
     },
     increment() {
       this.history_form_input.operating_hours = Number(
