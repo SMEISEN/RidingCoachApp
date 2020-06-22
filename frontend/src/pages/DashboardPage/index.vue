@@ -11,38 +11,9 @@
                    $store.getters.getCurrentBikeYear }}
               </span>
             </v-card-title>
-            <v-simple-table
-              hide-default-header
-              hide-default-footer
-              dense
-            >
-              <tbody>
-              <tr v-for="(wear_object, index) in wear_dict"
-                  v-bind:key="index + $store.getters.getCurrentBikeOperatingHours">
-                <td>{{ wear_object.name }}</td>
-                <td v-if="!Object.keys(wear_object).includes('operating_hours')"></td>
-                <td v-else style="min-width: 120px;width: 120px;max-width: 120px">
-                  <v-progress-linear
-                    color="primary"
-                    background-color="accent"
-                    height="22"
-                    :value="currentStateIntervalHours(wear_object.operating_hours,
-                                                      wear_object.interval_amount,
-                                                      $store.getters.getCurrentBikeOperatingHours)"
-                    rounded>
-                    <template v-slot="{ value }">
-                      <span class="white--text">
-                        {{ leftIntervalHours(wear_object.operating_hours,
-                                             wear_object.interval_amount,
-                                             $store.getters.getCurrentBikeOperatingHours) }} h /
-                        {{ Math.ceil(value) }} %
-                      </span>
-                    </template>
-                  </v-progress-linear>
-                </td>
-              </tr>
-              </tbody>
-            </v-simple-table>
+            <DashboardWearState
+              :wear_object="wear_object"
+            />
           </v-card>
         </v-col>
         <v-col cols="12" xs="12" sm="6" md="6">
@@ -50,35 +21,9 @@
             <v-card-title>
               <span class="headline">Upcoming maintenance</span>
             </v-card-title>
-            <v-simple-table
-              hide-default-header
-              hide-default-footer
-              dense
-              height="95px"
-            >
-              <tbody>
-              <tr v-for="(maintenance_object, index) in orderedMaintenance"
-                  v-bind:key="index + $store.getters.getCurrentBikeOperatingHours"
-              >
-                <td style="font-size: 12px">{{ maintenance_object.name }}</td>
-                <td style="min-width: 120px;width: 120px;max-width: 120px">
-                  <v-progress-linear
-                    color="primary"
-                    background-color="accent"
-                    height="22"
-                    :value="maintenance_object.state"
-                    rounded>
-                    <template v-slot="{ value }">
-                      <span class="white--text">
-                        {{ maintenance_object.hours_left }} h /
-                        {{ Math.ceil(value) }} %
-                      </span>
-                    </template>
-                  </v-progress-linear>
-                </td>
-              </tr>
-              </tbody>
-            </v-simple-table>
+            <DashboardMaintenanceState
+              :maintenance_next="maintenance_array"
+            />
           </v-card>
         </v-col>
         <v-col cols="12" xs="12" sm="6" md="6">
@@ -121,38 +66,32 @@
 </template>
 
 <script>
-import axios from 'axios';
-import _ from 'lodash';
+import DashboardWearState from './DashboardWearState';
+import DashboardMaintenanceState from './DashboardMaintenanceState';
+import {DataProcessingUtils} from '../../components/common/DataProcessingUtils';
+import {MaintenanceApi} from '../../components/common/MaintenanceApi';
+import {BikeApi} from '../../components/common/BikeApi';
 
 export default {
   name: 'Dashboard',
   metaInfo: {
     title: 'Dashboard',
   },
+  components: {
+    DashboardMaintenanceState,
+    DashboardWearState
+  },
   data: () => ({
-    bike_dict: {},
-    wear_dict: {
+    bike_object: {},
+    wear_object: {
       brakes_front: '',
       brakes_rear: '',
       tires: '',
       engine: '',
     },
-    maintenance_next: [],
+    maintenance_array: [],
   }),
-  computed: {
-    orderedMaintenance() {
-      return _.orderBy(this.maintenance_next, 'hours_left', 'asc');
-    },
-  },
   methods: {
-    currentStateIntervalHours(Latest, Interval, Current) {
-      const state = ((Latest + Interval - Current) / Interval) * 100;
-      return Number.parseFloat(state.toPrecision(2));
-    },
-    leftIntervalHours(HoursLatest, HoursInterval, BikeHours) {
-      const HoursLeft = HoursLatest + HoursInterval - BikeHours;
-      return Number.parseFloat(HoursLeft.toPrecision(2));
-    },
     structureMaintenanceNext(data) {
       const helperList1 = [];
       for (let i = 0; i < Object.values(data).length; i += 1) {
@@ -165,14 +104,14 @@ export default {
             const name = { name: Object.keys(helperList1)[i] };
             const entry = Object.values(helperList1)[i];
             const HoursLeft = {
-              hours_left: this.leftIntervalHours(
+              hours_left: DataProcessingUtils.processLeftIntervalHours(
                 Object.values(helperList1)[i].operating_hours,
                 Object.values(helperList1)[i].interval_amount,
                 this.$store.getters.getCurrentBikeOperatingHours,
               ),
             };
             const state = {
-              state: this.currentStateIntervalHours(
+              state: DataProcessingUtils.processStateOfIntervalHours(
                 Object.values(helperList1)[i].operating_hours,
                 Object.values(helperList1)[i].interval_amount,
                 this.$store.getters.getCurrentBikeOperatingHours,
@@ -185,36 +124,27 @@ export default {
       return helperList2;
     },
     getBikeData() {
-      const ApiPath = '/api/bike';
-      axios.get(ApiPath).then((res) => {
-        this.bike_dict = res.data;
-      });
+      BikeApi.getBike().then((res) => this.bike_object = res.data);
     },
     getWear() {
-      const ApiPath = '/api/maintenance/query';
-      const payload = {
+      MaintenanceApi.queryMaintenance({
         bike_id: this.$store.getters.getCurrentBikeId,
-        interval_type: 'estimated wear',
-      };
-      axios.post(ApiPath, payload).then((res) => {
-        this.wear_dict.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
-        this.wear_dict.brakes_front.name = 'Front brake pads';
-        this.wear_dict.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
-        this.wear_dict.brakes_rear.name = 'Rear brake pads';
-        this.wear_dict.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
-        this.wear_dict.tires.name = 'Tires';
-        this.wear_dict.engine = res.data.Motor[Object.keys(res.data.Motor)[0]];
-        this.wear_dict.engine.name = 'Engine revision';
+        interval_type: 'estimated wear'}).then((res) => {
+          this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
+          this.wear_object.brakes_front.name = 'Front brake pads';
+          this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
+          this.wear_object.brakes_rear.name = 'Rear brake pads';
+          this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
+          this.wear_object.tires.name = 'Tires';
+          this.wear_object.engine = res.data.Motor[Object.keys(res.data.Motor)[0]];
+          this.wear_object.engine.name = 'Engine revision';
       });
     },
     getMaintenance() {
-      const ApiPath = '/api/maintenance/query';
-      const payload = {
+      MaintenanceApi.queryMaintenance({
         bike_id: this.$store.getters.getCurrentBikeId,
-        interval_type: 'planned cycle',
-      };
-      axios.post(ApiPath, payload).then((res) => {
-        this.maintenance_next = this.structureMaintenanceNext(res.data);
+        interval_type: 'planned cycle'}).then((res) => {
+        this.maintenance_array = this.structureMaintenanceNext(res.data);
       });
     },
   },

@@ -40,12 +40,12 @@ export default {
   },
   methods: {
     currentStateIntervalHours() {
-      return DataProcessingUtils
-        .processStateOfIntervalHours(this.hours_latest, this.hours_interval, this.hours_current)
+      return DataProcessingUtils.processStateOfIntervalHours(
+        this.hours_latest, this.hours_interval, this.hours_current, this.digits);
     },
     leftIntervalHours() {
-      return DataProcessingUtils
-        .processLeftIntervalHours(this.hours_latest, this.hours_interval, this.hours_current)
+      return DataProcessingUtils.processLeftIntervalHours(
+        this.hours_latest, this.hours_interval, this.hours_current, this.digits);
     },
   },
 }
