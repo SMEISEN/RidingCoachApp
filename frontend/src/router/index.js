@@ -4,7 +4,7 @@ import VueMeta from 'vue-meta';
 import Dashboard from '../pages/DashboardPage';
 import Maintenance from '../pages/MaintenancePage';
 import History from '../pages/HistoryPage';
-import Login from '../components/Login.vue';
+import Login from '../pages/LoginPage';
 import store from '../store';
 
 Vue.use(VueRouter);
