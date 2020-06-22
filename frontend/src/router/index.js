@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueMeta from 'vue-meta';
 import Dashboard from '../components/Dashboard.vue';
-import Maintenance from '../components/Maintenance.vue';
+import Maintenance from '../pages/MaintenancePage';
 import History from '../pages/HistoryPage';
 import Login from '../components/Login.vue';
 import store from '../store';
