@@ -13,13 +13,14 @@
             <HistoryTable
               :maintenance_history="orderedHistory"
               @editButtonClicked="editHistory"
+              @deletionConfirmed="refreshHistory"
             />
           </v-card>
         </v-container>
       </v-layout>
     </v-flex>
     <HistoryDialogForm
-      :history_form_input.sync="history_form_object"
+      :history_form_input="history_form_object"
       :maintenance_categories="maintenance_categories_array"
       :maintenance_names="maintenance_names_object"
       @saveButtonClicked="refreshHistory"

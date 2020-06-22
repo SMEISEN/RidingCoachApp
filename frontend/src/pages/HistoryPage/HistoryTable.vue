@@ -41,6 +41,7 @@
     </v-simple-table>
     <ConfirmDeleteDialog
       :flagged_for_deletion="'history entry'"
+      :confirm_delete_dialog.sync="confirm_delete_dialog"
       @deleteConfirmationButtonClicked="deletionConfirmed"
     />
   </div>
@@ -64,6 +65,7 @@ export default {
   },
   data: () => ({
     history_id: null,
+    confirm_delete_dialog: false,
   }),
   methods: {
     onEditButton(HistId) {
@@ -72,10 +74,11 @@ export default {
     },
     onDeleteButton(HistId) {
       this.history_id = HistId;
-      this.$store.commit('setHistoryDeleteDialog', true);
+      this.confirm_delete_dialog = true;
     },
     deletionConfirmed() {
       HistoryApi.deleteHistoryItem(this.history_id);
+      this.$emit('deletionConfirmed', this.history_id);
     }
   },
   created() {

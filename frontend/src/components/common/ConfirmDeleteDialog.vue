@@ -34,28 +34,23 @@
 export default {
   name: 'ConfirmDeleteDialog',
   props: {
+    confirm_delete_dialog: {
+      type: Boolean,
+      required: true,
+    },
     flagged_for_deletion: {
       type: String,
       required: true,
     },
   },
-  computed: {
-    confirm_delete_dialog: {
-      get() {
-        return this.$store.getters.getHistoryDeleteDialog;
-      },
-      set(value) {
-        this.$store.commit('setHistoryDeleteDialog', value);
-      }
-    },
-  },
   methods: {
     onCancel() {
-      this.$store.commit('setHistoryDeleteDialog', false);
+      this.$emit('cancelButtonClicked');
+      this.$emit('update:confirm_delete_dialog', false);
     },
     onConfirm() {
       this.$emit('deleteConfirmationButtonClicked');
-      this.$store.commit('setHistoryDeleteDialog', false);
+      this.$emit('update:confirm_delete_dialog', false);
     },
   },
 }

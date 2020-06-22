@@ -172,8 +172,12 @@ export default {
   }),
   computed: {
     maintenance_dialog: {
-      get() { return this.$store.getters.getHistoryAddOrEditDialog },
-      set(value) { this.$store.commit('setHistoryAddOrEditDialog', value) }
+      get() {
+        return this.$store.getters.getHistoryAddOrEditDialog
+      },
+      set(value) {
+        this.$store.commit('setHistoryAddOrEditDialog', value)
+      },
     },
   },
   methods: {
@@ -222,14 +226,14 @@ export default {
         if (this.$store.getters.getHistoryEditFlag === false) {
           HistoryApi.postHistory(payload).then(() => {
             this.$emit('saveButtonClicked')
-            this.$store.commit('setHistoryAddOrEditDialog', false);
+            this.maintenance_dialog = false;
             this.initForm();
           });
         } else {
           const HistId = this.history_form_input.history_id;
           HistoryApi.putHistoryItem(payload, HistId).then(() => {
             this.$emit('saveButtonClicked')
-            this.$store.commit('setHistoryAddOrEditDialog', false);
+            this.maintenance_dialog = false;
             this.initForm();
           });
         }
@@ -237,7 +241,7 @@ export default {
     },
     onCancel() {
       this.$emit('cancelButtonClicked');
-      this.$store.commit('setHistoryAddOrEditDialog', false);
+      this.maintenance_dialog = false;
       this.initForm();
     },
   },
