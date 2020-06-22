@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import {DataProcessingUtils} from './DataProcessingUtils';
+
 export default {
   name: 'LinearProgressIntervalHours',
   props: {
@@ -38,13 +40,12 @@ export default {
   },
   methods: {
     currentStateIntervalHours() {
-      const state = ((this.hours_latest + this.hours_interval - this.hours_current)
-        / this.hours_interval) * 100;
-      return Number.parseFloat(state.toPrecision(this.digits));
+      return DataProcessingUtils
+        .processStateOfIntervalHours(this.hours_latest, this.hours_interval, this.hours_current)
     },
     leftIntervalHours() {
-      const hours_left = this.hours_latest + this.hours_interval - this.hours_current;
-      return Number.parseFloat(hours_left.toPrecision(this.digits));
+      return DataProcessingUtils
+        .processLeftIntervalHours(this.hours_latest, this.hours_interval, this.hours_current)
     },
   },
 }
