@@ -49,7 +49,7 @@
 
 <script>
 import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog';
-import {HistoryApi} from '../../components/common/HistoryApi';
+import {HistoryApi} from '../../components/api/HistoryApi';
 
 export default {
   name: 'HistoryTable',

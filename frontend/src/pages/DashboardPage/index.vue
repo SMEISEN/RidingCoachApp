@@ -68,9 +68,9 @@
 <script>
 import DashboardWearState from './DashboardWearState';
 import DashboardMaintenanceState from './DashboardMaintenanceState';
-import {DataProcessingUtils} from '../../components/common/DataProcessingUtils';
-import {MaintenanceApi} from '../../components/common/MaintenanceApi';
-import {BikeApi} from '../../components/common/BikeApi';
+import {DataProcessingUtils} from '../../components/utils/DataProcessingUtils';
+import {MaintenanceApi} from '../../components/api/MaintenanceApi';
+import {BikeApi} from '../../components/api/BikeApi';
 
 export default {
   name: 'Dashboard',

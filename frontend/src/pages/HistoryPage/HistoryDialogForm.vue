@@ -145,8 +145,8 @@
 </template>
 
 <script>
-import {HistoryApi} from '../../components/common/HistoryApi';
-import {FormUtils} from "../../components/common/FromUtils";
+import {HistoryApi} from '../../components/api/HistoryApi';
+import {FormUtils} from '../../components/utils/FromUtils';
 
 
 export default {

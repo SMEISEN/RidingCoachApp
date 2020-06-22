@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: "MaintenanceUndoSnackbar",
+  name: 'MaintenanceUndoSnackbar',
   props: {
     snackbar_state: {
       type: Boolean,
