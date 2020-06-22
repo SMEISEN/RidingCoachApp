@@ -32,10 +32,10 @@ export default {
   },
   methods: {
     leftIntervalYears() {
-      return DataProcessingUtils.processLeftIntervalYears(this.date_latest);
+      return DataProcessingUtils.processLeftIntervalYears(this.date_latest, this.digits);
     },
     currentStateIntervalYears() {
-      return DataProcessingUtils.processStateOfIntervalYears(this.date_latest);
+      return DataProcessingUtils.processStateOfIntervalYears(this.date_latest, this.digits);
     },
   }
 }

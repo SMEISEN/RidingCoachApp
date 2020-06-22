@@ -10,12 +10,10 @@
                 @click.prevent="addHistory"
               >Add maintenance entry</v-btn>
             </v-card-title>
-            <v-card-text>
-              <HistoryTable
-                :maintenance_history="orderedHistory"
-                @editButtonClicked="editHistory"
-              />
-            </v-card-text>
+            <HistoryTable
+              :maintenance_history="orderedHistory"
+              @editButtonClicked="editHistory"
+            />
           </v-card>
         </v-container>
       </v-layout>
