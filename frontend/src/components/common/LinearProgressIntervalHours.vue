@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {DataProcessingUtils} from './DataProcessingUtils';
+import {DataProcessingUtils} from '../utils/DataProcessingUtils';
 
 export default {
   name: 'LinearProgressIntervalHours',

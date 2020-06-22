@@ -6,7 +6,7 @@ import {
   AUTH_SUCCESS,
   AUTH_LOGOUT,
 } from '../actions/authentication';
-import apiCall from '../../utils/api';
+import apiCall from '../../components/api/LoginApi';
 
 const state = {
   token: localStorage.getItem('user-token') || '',
