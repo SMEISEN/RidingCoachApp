@@ -32,8 +32,8 @@
 import _ from 'lodash';
 import HistoryTable from './HistoryTable';
 import HistoryDialogForm from './HistoryDialogForm';
-import {HistoryApi} from '../../components/common/HistoryApi';
-import {MaintenanceApi} from '../../components/common/MaintenanceApi';
+import {HistoryApi} from '../../components/api/HistoryApi';
+import {MaintenanceApi} from '../../components/api/MaintenanceApi';
 
 
 export default {

@@ -28,8 +28,8 @@
 <script>
 import MaintenanceTable from './MaintenanceTable';
 import MaintenanceUndoSnackbar from './MaintenanceUndoSnackbar';
-import {HistoryApi} from '../../components/common/HistoryApi';
-import {MaintenanceApi} from '../../components/common/MaintenanceApi';
+import {HistoryApi} from '../../components/api/HistoryApi';
+import {MaintenanceApi} from '../../components/api/MaintenanceApi';
 
 export default {
   name: 'Maintenance',

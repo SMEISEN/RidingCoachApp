@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import {DataProcessingUtils} from '../../components/common/DataProcessingUtils';
+import {DataProcessingUtils} from '../../components/utils/DataProcessingUtils';
 import _ from 'lodash';
 import LinearProgressIntervalHours from '../../components/common/LinearProgressIntervalHours';
 import LinearProgressIntervalYears from '../../components/common/LinearProgressIntervalYears';
