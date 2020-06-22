@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import {DataProcessingUtils} from "./DataProcessingUtils";
+
 export default {
   name: 'LinearProgressIntervalYears',
   props: {
@@ -30,26 +32,10 @@ export default {
   },
   methods: {
     leftIntervalYears() {
-      const latest = new Date(this.date_latest);
-      const now = new Date();
-      const start = new Date(latest.getFullYear(), 0, 0);
-      const diff = now - start;
-      const oneDay = 1000 * 60 * 60 * 24;
-      const day = Math.floor(diff / oneDay);
-      const days_left = 365 - day;
-
-      return Number.parseFloat(days_left.toPrecision(this.digits));
+      return DataProcessingUtils.processLeftIntervalYears(this.date_latest);
     },
     currentStateIntervalYears() {
-      const latest = new Date(this.date_latest);
-      const now = new Date();
-      const start = new Date(latest.getFullYear(), 0, 0);
-      const diff = now - start;
-      const oneDay = 1000 * 60 * 60 * 24;
-      const day = Math.floor(diff / oneDay);
-      const state = (day / 365) * 100;
-
-      return Number.parseFloat(state.toPrecision(this.digits));
+      return DataProcessingUtils.processStateOfIntervalYears(this.date_latest);
     },
   }
 }
