@@ -68,6 +68,7 @@ export default {
   },
   methods: {
     addHistory() {
+      this.history_form_object.operating_hours = this.$store.getters.getCurrentBikeOperatingHours
       this.$store.commit('setHistoryEditFlag', false);
       this.$store.commit('setHistoryAddOrEditDialog', true);
     },
