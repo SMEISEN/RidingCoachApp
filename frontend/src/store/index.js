@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import bike from './modules/bike';
 import authentication from './modules/authentication';
 import history from './modules/history'
+import navigation from './modules/navigation'
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     bike,
     authentication,
     history,
+    navigation,
   },
   plugins: [createPersistedState({
     storage: {
