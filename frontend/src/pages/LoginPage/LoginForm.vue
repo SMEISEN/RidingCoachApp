@@ -58,6 +58,8 @@ export default {
   name: 'LoginForm',
   data() {
     return {
+      valid: true,
+      show: false,
       username: '',
       password: '',
     };

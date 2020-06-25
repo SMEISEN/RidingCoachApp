@@ -24,12 +24,6 @@ export default {
   components: {
     LoginForm,
   },
-  data() {
-    return {
-      valid: true,
-      show: false,
-    };
-  },
   methods: {
     login(username, password) {
       this.$store.dispatch(AUTH_REQUEST, { username, password })
