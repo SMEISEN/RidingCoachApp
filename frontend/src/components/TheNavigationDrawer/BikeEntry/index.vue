@@ -37,8 +37,8 @@
       </v-radio-group>
     </v-list-group>
     <TheNavigationDrawerBikeDialog
-      :bike_form_object.sync="bike_form_object"
-      :setup_individual_object="setup_individual_object"
+      :bike_form_object="bike_form_object"
+      :setup_individual_template="setup_individual_template"
       :bike_array="bike_array"
       @clearBikeDialog="initBikeForm"
       @updatedBike="updatedBike()"
@@ -85,18 +85,11 @@ export default {
         },
       ],
     },
-    setup_individual_object: {
+    setup_individual_template: {
       category: null,
       name: null,
       ticks_available: null,
       ticks_standard: null,
-    },
-    setup_fixed_dict: {
-      operating_hours: null,
-      slick_pressure_front: null,
-      slick_pressure_rear: null,
-      rain_pressure_front: null,
-      rain_pressure_rear: null,
     },
   }),
   computed: {
@@ -133,7 +126,11 @@ export default {
       this.bike_form_object.slick_rear = this.bike_array[bike_index].slick_rear;
       this.bike_form_object.rain_front = this.bike_array[bike_index].rain_front;
       this.bike_form_object.rain_rear = this.bike_array[bike_index].rain_rear;
-      this.bike_form_object.setup_individual = this.bike_array[bike_index].setup;
+      if (this.bike_array[bike_index].setup === null) {
+        this.bike_form_object.setup_individual = [_.clone(this.setup_individual_template, true)];
+      } else {
+        this.bike_form_object.setup_individual = this.bike_array[bike_index].setup;
+      }
       this.$store.commit('setBikeEditFlag', true);
       this.$store.commit('setBikeDialogState', true);
       this.$store.commit('setNavigationDrawerState', false);
@@ -144,7 +141,7 @@ export default {
     },
     initBikeForm() {
       FormUtils.initObject(this.bike_form_object, null);
-      this.bike_form_object.setup_individual = [_.clone(this.setup_individual_object)];
+      this.bike_form_object.setup_individual = [_.clone(this.setup_individual_template)];
       this.$store.commit('setBikeEditFlag', false);
     },
   },
