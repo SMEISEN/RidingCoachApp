@@ -16,7 +16,8 @@
 
 <script>
 import TheNavigationDrawerTrainingDialog from './TrainingDialog';
-import {FormUtils} from "../../utils/FromUtils";
+import {FormUtils} from '../../utils/FromUtils';
+
 export default {
   name: 'TheNavigationDrawerTraining',
   props: {
@@ -43,26 +44,13 @@ export default {
       ],
       setup_individual: null,
     },
-    setup_fixed_array: [
-      {
-        operating_hours: null,
-        slick_pressure_front: null,
-        slick_pressure_rear: null,
-        rain_pressure_front: null,
-        rain_pressure_rear: null,
-      },
-    ],
-    setup_individual_array: [
-      [
-        {
-          category: null,
-          name: null,
-          ticks_available: null,
-          ticks_standard: null,
-          ticks_current: null,
-        },
-      ],
-    ],
+    setup_fixed_template: {
+      operating_hours: null,
+      slick_pressure_front: null,
+      slick_pressure_rear: null,
+      rain_pressure_front: null,
+      rain_pressure_rear: null,
+    },
   }),
   methods: {
     editTraining() {
@@ -73,9 +61,12 @@ export default {
       const bike_index = FormUtils.indexOfObjectValueInArray(
         this.bike_array,this.$store.getters.getCurrentBikeId)
       FormUtils.initObject(this.training_form_object, null);
-      this.training_form_object.setup_fixed = [_.clone(this.setup_fixed_array)];
-      this.training_form_object.setup_individual =
-        [this.bike_array[bike_index].setup];
+      this.training_form_object.setup_fixed = [[_.clone(this.setup_fixed_template)]];
+      if (this.bike_array[bike_index].setup === null) {
+        this.training_form_object.setup_individual = [[]];
+      } else {
+        this.training_form_object.setup_individual = [this.bike_array[bike_index].setup];
+      }
       for (let i = 0;
            i < Object.values(this.training_form_object.setup_individual)[0].length;
            i += 1) {
