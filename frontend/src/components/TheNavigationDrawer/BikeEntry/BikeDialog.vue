@@ -55,8 +55,8 @@
 import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog';
 import {BikeApi} from '../../api/BikeApi';
 import BikeDialogSetup from './BikeDialogSetup';
-import BikeDialogOptional from "./BikeDialogOptional";
-import BikeDialogRequired from "./BikeDialogRequired";
+import BikeDialogOptional from './BikeDialogOptional';
+import BikeDialogRequired from './BikeDialogRequired';
 
 export default {
   name: 'TheNavigationDrawerBikeDialog',
