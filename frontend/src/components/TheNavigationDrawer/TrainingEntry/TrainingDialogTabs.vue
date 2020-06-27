@@ -32,6 +32,10 @@
             :tab_item_index="tab_item_index"
             :training_form_object="training_form_object"
           />
+          <TrainingDialogTabsElectronic
+            :tab_item_index="tab_item_index"
+            :training_form_object="training_form_object"
+          />
         </v-expansion-panels>
       </v-card-text>
     </v-tab-item>
@@ -46,10 +50,12 @@
 import TrainingDialogTabsEngine from './TrainingDialogTabsEngine';
 import TrainingDialogTabsTires from './TrainingDialogTabsTires';
 import TrainingDialogTabsSetup from './TrainingDialogTabsSetup';
+import TrainingDialogTabsElectronic from "./TrainingDialogTabsElectronic";
 
 export default {
   name: 'TheNavigationDrawerTrainingDialogTabs',
   components: {
+    TrainingDialogTabsElectronic,
     TrainingDialogTabsSetup,
     TrainingDialogTabsTires,
     TrainingDialogTabsEngine},

@@ -19,21 +19,17 @@
           </v-text-field>
         </v-col>
         <v-col cols="11" xs="0" sm="1" md="1"></v-col>
-        <v-col cols="11" xs="11" sm="4" md="4">
-          <v-subheader>Mode*</v-subheader>
+        <v-col cols="11" xs="11" sm="4" md="4"
+               v-for="(setup_entry, setup_index) in engine_setup"
+               v-bind:key="setup_index"
+        >
+          <v-subheader>{{ setup_entry.name }}</v-subheader>
           <hr style="height:3pt; visibility:hidden;" />
-          <v-slider
-            v-model="engine_mode"
-            :tick-labels="['soft','performance']"
-            :min="1"
-            :max="2"
-            step="1"
-            ticks="always"
-            tick-size="4"
-            append-icon="mdi-plus"
-            prepend-icon="mdi-minus"
-          >
-          </v-slider>
+          <TrainingDialogTabsSlider
+            :tab_item_index="tab_item_index"
+            :setup_entry="setup_entry"
+            :training_form_object="training_form_object"
+          />
         </v-col>
         <v-col cols="11" xs="0" sm="1" md="1"></v-col>
       </v-row>
@@ -43,9 +39,13 @@
 
 <script>
 import {FormUtils} from '../../utils/FromUtils';
+import TrainingDialogTabsSlider from './TrainingDialogTabsSlider';
 
 export default {
   name: 'TrainingDialogTabsEngine',
+  components: {
+    TrainingDialogTabsSlider,
+  },
   props: {
     tab_item_index: {
       type: Number,
@@ -59,6 +59,12 @@ export default {
   data: () => ({
     engine_mode: null,
   }),
+  computed: {
+    engine_setup() {
+      return this.training_form_object.setup_individual[this.tab_item_index -1]
+        .filter(i => i.category === 'Engine');
+    },
+  },
   methods: {
     incrementHour(ind) {
       this.training_form_object.setup_fixed[ind].operating_hours =
