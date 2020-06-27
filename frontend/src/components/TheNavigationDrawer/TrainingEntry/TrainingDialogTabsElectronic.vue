@@ -1,10 +1,10 @@
 <template>
   <v-expansion-panel>
-    <v-expansion-panel-header>Suspension</v-expansion-panel-header>
+    <v-expansion-panel-header>Electronic</v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-row dense>
         <v-col cols="12" xs="12" sm="3" md="2"
-               v-for="(setup_entry, setup_index) in suspension_setup"
+               v-for="(setup_entry, setup_index) in electronic_setup"
                v-bind:key="setup_index"
         >
           <v-subheader>{{ setup_entry.name }}</v-subheader>
@@ -23,7 +23,7 @@
 import TrainingDialogTabsSlider from './TrainingDialogTabsSlider';
 
 export default {
-  name: 'TrainingDialogTabsSetup',
+  name: 'TrainingDialogTabsElectronic',
   components: {
     TrainingDialogTabsSlider,
   },
@@ -38,14 +38,10 @@ export default {
     },
   },
   computed: {
-    suspension_setup() {
+    electronic_setup() {
       return this.training_form_object.setup_individual[this.tab_item_index -1]
-        .filter(i => i.category === 'Suspension');
+        .filter(i => i.category === 'Electronic');
     },
-  },
-  updated() {
-  },
-  created() {
   },
 }
 </script>
