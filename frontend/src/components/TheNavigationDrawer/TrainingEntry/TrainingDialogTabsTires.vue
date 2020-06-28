@@ -14,9 +14,9 @@
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
                 @click:append-outer=
-                  "incrementTirePressureFront(tab_item_index-1)"
+                  "incrementTirePressureFront(tab_item_index)"
                 @click:prepend=
-                  "decrementTirePressureFront(tab_item_index-1)"
+                  "decrementTirePressureFront(tab_item_index)"
                 :rules="[v => !!v]"
                 required
                 label="Front tire pressure"
@@ -24,7 +24,7 @@
                 hint="recommended: 2.1 bar"
                 persistent-hint
                 v-model=
-                  "training_form_object.setup_fixed[tab_item_index-1].slick_pressure_front">
+                  "training_form_object.setup_fixed[tab_item_index].slick_pressure_front">
               </v-text-field>
             </v-col>
             <v-col cols="11" xs="0" sm="1" md="1"></v-col>
@@ -33,9 +33,9 @@
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
                 @click:append-outer=
-                  "incrementTirePressureRear(tab_item_index-1)"
+                  "incrementTirePressureRear(tab_item_index)"
                 @click:prepend=
-                  "decrementTirePressureRear(tab_item_index-1)"
+                  "decrementTirePressureRear(tab_item_index)"
                 :rules="[v => !!v]"
                 required
                 label="Rear tire pressure"
@@ -43,7 +43,7 @@
                 hint="recommended: 2.1 bar"
                 persistent-hint
                 v-model=
-                  "training_form_object.setup_fixed[tab_item_index-1].slick_pressure_rear">
+                  "training_form_object.setup_fixed[tab_item_index].slick_pressure_rear">
               </v-text-field>
             </v-col>
             <v-col cols="11" xs="0" sm="1" md="1"></v-col>
@@ -57,9 +57,9 @@
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
                 @click:append-outer=
-                  "incrementTirePressureFront(tab_item_index-1)"
+                  "incrementTirePressureFront(tab_item_index)"
                 @click:prepend=
-                  "decrementTirePressureFront(tab_item_index-1)"
+                  "decrementTirePressureFront(tab_item_index)"
                 :rules="[v => !!v]"
                 required
                 label="Front tire pressure"
@@ -67,7 +67,7 @@
                 hint="recommended: 2.1 bar"
                 persistent-hint
                 v-model=
-                  "training_form_object.setup_fixed[tab_item_index-1].rain_pressure_front">
+                  "training_form_object.setup_fixed[tab_item_index].rain_pressure_front">
               </v-text-field>
             </v-col>
             <v-col cols="12" xs="0" sm="2" md="2"></v-col>
@@ -76,9 +76,9 @@
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
                 @click:append-outer=
-                  "incrementTirePressureRear(tab_item_index-1)"
+                  "incrementTirePressureRear(tab_item_index)"
                 @click:prepend=
-                  "decrementTirePressureRear(tab_item_index-1)"
+                  "decrementTirePressureRear(tab_item_index)"
                 :rules="[v => !!v]"
                 required
                 label="Rear tire pressure"
@@ -86,7 +86,7 @@
                 hint="recommended: 2.1 bar"
                 persistent-hint
                 v-model=
-                  "training_form_object.setup_fixed[tab_item_index-1].rain_pressure_rear">
+                  "training_form_object.setup_fixed[tab_item_index].rain_pressure_rear">
               </v-text-field>
             </v-col>
             <v-col cols="12" xs="0" sm="1" md="1"></v-col>

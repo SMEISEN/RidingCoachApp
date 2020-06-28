@@ -5,13 +5,11 @@
       <v-row dense>
         <v-col cols="12" xs="12" sm="3" md="2"
                v-for="(setup_entry, setup_index) in suspension_setup"
-               v-bind:key="setup_index"
+               :key="'tab-item/' + tab_item_index + '/setup-item/' + setup_index"
         >
           <v-subheader>{{ setup_entry.name }}</v-subheader>
           <TrainingDialogTabsSlider
-            :tab_item_index="tab_item_index"
             :setup_entry="setup_entry"
-            :training_form_object="training_form_object"
           />
         </v-col>
       </v-row>
@@ -39,7 +37,7 @@ export default {
   },
   computed: {
     suspension_setup() {
-      return this.training_form_object.setup_individual[this.tab_item_index -1]
+      return this.training_form_object.setup_individual[this.tab_item_index]
         .filter(i => i.category === 'Suspension');
     },
   },

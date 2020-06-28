@@ -9,9 +9,7 @@
         >
           <v-subheader>{{ setup_entry.name }}</v-subheader>
           <TrainingDialogTabsSlider
-            :tab_item_index="tab_item_index"
             :setup_entry="setup_entry"
-            :training_form_object="training_form_object"
           />
         </v-col>
       </v-row>
@@ -39,7 +37,7 @@ export default {
   },
   computed: {
     electronic_setup() {
-      return this.training_form_object.setup_individual[this.tab_item_index -1]
+      return this.training_form_object.setup_individual[this.tab_item_index]
         .filter(i => i.category === 'Electronic');
     },
   },

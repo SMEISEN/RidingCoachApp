@@ -46,8 +46,12 @@ export default {
   },
   computed: {
     navigation_drawer: {
-      get() { return this.$store.getters.getNavigationDrawerState },
-      set(value) { this.$store.commit('setNavigationDrawerState', value) }
+      get() {
+        return this.$store.getters.getNavigationDrawerState;
+      },
+      set(value) {
+        this.$store.commit('setNavigationDrawerState', value);
+      },
     },
   },
   methods: {

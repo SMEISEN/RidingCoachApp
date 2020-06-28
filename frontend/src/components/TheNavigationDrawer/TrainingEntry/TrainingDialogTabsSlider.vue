@@ -14,39 +14,21 @@
 </template>
 
 <script>
-import {FormUtils} from "../../utils/FromUtils";
-
 export default {
   name: 'TrainingDialogTabsSlider',
   props: {
-    tab_item_index: {
-      type: Number,
-      required: true,
-    },
     setup_entry: {
       type: Object,
       required: true,
     },
-    training_form_object: {
-      type: Object,
-      required: true,
-    },
-  },
-  computed:{
-    indexOfSetup() {
-      return FormUtils.indexOfObjectValueInArray(
-        this.training_form_object.setup_individual[this.tab_item_index-1], this.setup_entry.name);
-    },
   },
   methods: {
     incrementSetup() {
-      this.training_form_object.setup_individual[this.tab_item_index-1][this.indexOfSetup]
-        .ticks_current += 1;
+      this.setup_entry.ticks_current += 1;
       this.$forceUpdate();
     },
     decrementSetup() {
-      this.training_form_object.setup_individual[this.tab_item_index-1][this.indexOfSetup]
-        .ticks_current -= 1;
+      this.setup_entry.ticks_current -= 1;
       this.$forceUpdate();
     },
     tickLabels(standardTick, availableTicks) {
