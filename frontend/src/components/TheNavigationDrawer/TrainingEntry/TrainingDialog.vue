@@ -69,6 +69,8 @@
           </v-expansion-panels>
         </v-card-text>
         <TheNavigationDrawerTrainingDialogTabs
+          :setup_fixed_template="setup_fixed_template"
+          :setup_individual_template="setup_individual_template"
           :training_form_object="training_form_object"
         />
       </v-card>
@@ -81,6 +83,14 @@ import TheNavigationDrawerTrainingDialogTabs from './TrainingDialogTabs';
 export default {
   name: 'TheNavigationDrawerTrainingDialog',
   props: {
+    setup_fixed_template: {
+      type: Object,
+      required: true,
+    },
+    setup_individual_template: {
+      type: Array,
+      required: true,
+    },
     training_form_object: {
       type: Object,
       required: true,
