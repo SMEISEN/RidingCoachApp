@@ -27,7 +27,7 @@
               <v-expansion-panel-header>Location</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-col cols="12" xs="12" sm="9" md="10">
+                  <v-col cols="12" xs="12" sm="9" md="10" class="px-6">
                     <v-combobox
                       label="Race track*"
                       :rules="[v => !!v]"
@@ -35,7 +35,7 @@
                       v-model="training_form_object.race_track"
                     ></v-combobox>
                   </v-col>
-                  <v-col cols="auto" xs="12" sm="3" md="2">
+                  <v-col cols="auto" xs="12" sm="3" md="2" class="px-6">
                     <v-menu
                       v-model="date_menu"
                       :close-on-content-click="false"

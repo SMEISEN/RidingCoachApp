@@ -78,6 +78,7 @@ export default {
       setup_individual: [
         {
           category: null,
+          group: null,
           name: null,
           ticks_available: null,
           ticks_standard: null,
@@ -87,6 +88,7 @@ export default {
     },
     setup_individual_template: {
       category: null,
+      group: null,
       name: null,
       ticks_available: null,
       ticks_standard: null,

@@ -6,6 +6,7 @@
         <thead>
         <tr>
           <th class="text-left">Category</th>
+          <th class="text-left">Group</th>
           <th class="text-left">Name</th>
           <th class="text-left">Available ticks</th>
           <th class="text-left">Standard tick</th>
@@ -20,6 +21,14 @@
             dense
             height="20px"
             v-model="entry.category"
+            single-line />
+          </td>
+          <td style="border-bottom: none"><v-text-field
+            style="font-size: 12px"
+            dense
+            height="20px"
+            v-model="entry.group"
+            placeholder="default"
             single-line />
           </td>
           <td style="border-bottom: none"><v-text-field

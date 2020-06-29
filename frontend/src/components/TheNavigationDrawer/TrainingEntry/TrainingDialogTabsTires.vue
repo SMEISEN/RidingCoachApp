@@ -8,27 +8,22 @@
       >
         <v-window-item>
           <v-row dense>
-            <v-col cols="11" xs="0" sm="1" md="1"></v-col>
-            <v-col cols="11" xs="11" sm="4" md="4">
+            <v-col cols="12" xs="12" sm="6" md="6" class="px-16">
               <v-text-field
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
-                @click:append-outer=
-                  "incrementTirePressureFront(tab_item_index)"
-                @click:prepend=
-                  "decrementTirePressureFront(tab_item_index)"
+                @click:append-outer="incrementTirePressureFront(tab_item_index)"
+                @click:prepend="decrementTirePressureFront(tab_item_index)"
                 :rules="[v => !!v]"
                 required
                 label="Front tire pressure"
                 suffix="bar"
                 hint="recommended: 2.1 bar"
                 persistent-hint
-                v-model=
-                  "training_form_object.setup_fixed[tab_item_index].slick_pressure_front">
+                v-model="training_form_object.setup_fixed[tab_item_index].slick_pressure_front">
               </v-text-field>
             </v-col>
-            <v-col cols="11" xs="0" sm="1" md="1"></v-col>
-            <v-col cols="11" xs="11" sm="4" md="4">
+            <v-col cols="12" xs="12" sm="6" md="6" class="px-16">
               <v-text-field
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
@@ -42,43 +37,34 @@
                 suffix="bar"
                 hint="recommended: 2.1 bar"
                 persistent-hint
-                v-model=
-                  "training_form_object.setup_fixed[tab_item_index].slick_pressure_rear">
+                v-model="training_form_object.setup_fixed[tab_item_index].slick_pressure_rear">
               </v-text-field>
             </v-col>
-            <v-col cols="11" xs="0" sm="1" md="1"></v-col>
           </v-row>
         </v-window-item>
         <v-window-item>
           <v-row dense>
-            <v-col cols="12" xs="0" sm="1" md="1"></v-col>
-            <v-col cols="12" xs="12" sm="4" md="4">
+            <v-col cols="12" xs="12" sm="6" md="6" class="px-16">
               <v-text-field
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
-                @click:append-outer=
-                  "incrementTirePressureFront(tab_item_index)"
-                @click:prepend=
-                  "decrementTirePressureFront(tab_item_index)"
+                @click:append-outer="incrementTirePressureFront(tab_item_index)"
+                @click:prepend="decrementTirePressureFront(tab_item_index)"
                 :rules="[v => !!v]"
                 required
                 label="Front tire pressure"
                 suffix="bar"
                 hint="recommended: 2.1 bar"
                 persistent-hint
-                v-model=
-                  "training_form_object.setup_fixed[tab_item_index].rain_pressure_front">
+                v-model="training_form_object.setup_fixed[tab_item_index].rain_pressure_front">
               </v-text-field>
             </v-col>
-            <v-col cols="12" xs="0" sm="2" md="2"></v-col>
-            <v-col cols="12" xs="12" sm="4" md="4">
+            <v-col cols="12" xs="12" sm="6" md="6" class="px-16">
               <v-text-field
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
-                @click:append-outer=
-                  "incrementTirePressureRear(tab_item_index)"
-                @click:prepend=
-                  "decrementTirePressureRear(tab_item_index)"
+                @click:append-outer="incrementTirePressureRear(tab_item_index)"
+                @click:prepend="decrementTirePressureRear(tab_item_index)"
                 :rules="[v => !!v]"
                 required
                 label="Rear tire pressure"
@@ -89,13 +75,12 @@
                   "training_form_object.setup_fixed[tab_item_index].rain_pressure_rear">
               </v-text-field>
             </v-col>
-            <v-col cols="12" xs="0" sm="1" md="1"></v-col>
           </v-row>
         </v-window-item>
       </v-window>
       <br/>
       <v-divider></v-divider>
-      <v-card-actions>
+      <v-card-actions  class="px-12 pt-6">
         <v-btn
           :disabled="rain_tires === 0"
           color="primary"
