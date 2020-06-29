@@ -5,6 +5,9 @@
     :max="Number.parseInt(setup_entry.ticks_available)"
     step="1"
     ticks="always"
+    tick-size="3"
+    thumb-size="18"
+    :thumb-label="true"
     append-icon="mdi-plus"
     prepend-icon="mdi-minus"
     @click:append="incrementSetup()"
@@ -35,7 +38,7 @@ export default {
       const tick_labels = []
       for (let i = 0; i < availableTicks; i += 1) {
         if (i === Number.parseInt(standardTick)) {
-          tick_labels.push('0');
+          tick_labels.push('I');
         } else {
           tick_labels.push('');
         }
