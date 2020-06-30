@@ -4,8 +4,13 @@ import createPersistedState from 'vuex-persistedstate';
 import Cookies from 'js-cookie';
 import bike from './modules/bike';
 import authentication from './modules/authentication';
-import history from './modules/history'
-import navigation from './modules/navigation'
+import history from './modules/history';
+import navigation from './modules/navigation';
+
+Cookies.defaults = {
+  sameSite: 'None',
+  Secure: true,
+};
 
 Vue.use(Vuex);
 
