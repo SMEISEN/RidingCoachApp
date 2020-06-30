@@ -1,32 +1,48 @@
 <template v-slot:default>
   <v-app>
     <v-container fluid>
-      <v-row dense align="stretch">
-        <v-col cols="12" xs="12" sm="6" md="6">
+      <v-row
+        dense
+        align="stretch"
+      >
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-card class="card-container">
             <v-card-title>
               <span class="headerline">
-                {{ $store.getters.getCurrentBikeManufacturer + ' ' +
-                   $store.getters.getCurrentBikeModel + ' ' +
-                   $store.getters.getCurrentBikeYear }}
+                {{ bikeString }}
               </span>
             </v-card-title>
             <DashboardWearState
-              :wear_object="wear_object"
+              :wear-object="wear_object"
             />
           </v-card>
         </v-col>
-        <v-col cols="12" xs="12" sm="6" md="6">
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-card class="card-container">
             <v-card-title>
               <span class="headline">Upcoming maintenance</span>
             </v-card-title>
             <DashboardMaintenanceState
-              :maintenance_next="maintenance_array"
+              :maintenance-next="maintenance_array"
             />
           </v-card>
         </v-col>
-        <v-col cols="12" xs="12" sm="6" md="6">
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-card class="card-container">
             <v-card-title>
               <span class="headline">Recent training</span>
@@ -43,7 +59,12 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" xs="12" sm="6" md="6">
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-card class="card-container">
             <v-card-title>
               <span class="headline">Spare parts</span>
@@ -66,11 +87,14 @@
 </template>
 
 <script>
-import DashboardWearState from './DashboardWearState';
-import DashboardMaintenanceState from './DashboardMaintenanceState';
-import {DataProcessingUtils} from '../../components/utils/DataProcessingUtils';
-import {MaintenanceApi} from '../../components/api/MaintenanceApi';
-import {BikeApi} from '../../components/api/BikeApi';
+import {
+  processStateOfIntervalHours,
+  processLeftIntervalHours,
+} from '../../components/utils/DataProcessingUtils';
+import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
+import { apiGetBike } from '../../components/api/BikeApi';
+import DashboardWearState from './DashboardWearState.vue';
+import DashboardMaintenanceState from './DashboardMaintenanceState.vue';
 
 export default {
   name: 'Dashboard',
@@ -79,7 +103,7 @@ export default {
   },
   components: {
     DashboardMaintenanceState,
-    DashboardWearState
+    DashboardWearState,
   },
   data: () => ({
     bike_object: {},
@@ -91,61 +115,12 @@ export default {
     },
     maintenance_array: [],
   }),
-  methods: {
-    structureMaintenanceNext(data) {
-      const helperList1 = [];
-      for (let i = 0; i < Object.values(data).length; i += 1) {
-        Object.assign(helperList1, Object.values(data)[i]);
-      }
-      const helperList2 = [];
-      for (let i = 0; i < Object.values(helperList1).length; i += 1) {
-        if (Object.values(helperList1)[i].operating_hours !== undefined) {
-          if (Object.values(helperList1)[i].interval_unit === 'h') {
-            const name = { name: Object.keys(helperList1)[i] };
-            const entry = Object.values(helperList1)[i];
-            const HoursLeft = {
-              hours_left: DataProcessingUtils.processLeftIntervalHours(
-                Object.values(helperList1)[i].operating_hours,
-                Object.values(helperList1)[i].interval_amount,
-                this.$store.getters.getCurrentBikeOperatingHours,
-              ),
-            };
-            const state = {
-              state: DataProcessingUtils.processStateOfIntervalHours(
-                Object.values(helperList1)[i].operating_hours,
-                Object.values(helperList1)[i].interval_amount,
-                this.$store.getters.getCurrentBikeOperatingHours,
-              ),
-            };
-            helperList2.push(Object.assign(entry, name, HoursLeft, state));
-          }
-        }
-      }
-      return helperList2;
-    },
-    getBikeData() {
-      BikeApi.getBike().then((res) => this.bike_object = res.data);
-    },
-    getWear() {
-      MaintenanceApi.queryMaintenance({
-        bike_id: this.$store.getters.getCurrentBikeId,
-        interval_type: 'estimated wear'}).then((res) => {
-          this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
-          this.wear_object.brakes_front.name = 'Front brake pads';
-          this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
-          this.wear_object.brakes_rear.name = 'Rear brake pads';
-          this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
-          this.wear_object.tires.name = 'Tires';
-          this.wear_object.engine = res.data.Motor[Object.keys(res.data.Motor)[0]];
-          this.wear_object.engine.name = 'Engine revision';
-      });
-    },
-    getMaintenance() {
-      MaintenanceApi.queryMaintenance({
-        bike_id: this.$store.getters.getCurrentBikeId,
-        interval_type: 'planned cycle'}).then((res) => {
-        this.maintenance_array = this.structureMaintenanceNext(res.data);
-      });
+  computed: {
+    bikeString() {
+      return `${this.$store.getters
+        .getCurrentBikeManufacturer} ${this.$store.getters
+        .getCurrentBikeModel} ${this.$store.getters
+        .getCurrentBikeYear}`;
     },
   },
   created() {
@@ -159,6 +134,67 @@ export default {
     });
   },
   updated() {
+  },
+  methods: {
+    structureMaintenanceNext(data) {
+      const helperList1 = [];
+      for (let i = 0; i < Object.values(data).length; i += 1) {
+        Object.assign(helperList1, Object.values(data)[i]);
+      }
+      const helperList2 = [];
+      for (let i = 0; i < Object.values(helperList1).length; i += 1) {
+        if (Object.values(helperList1)[i].operating_hours !== undefined) {
+          if (Object.values(helperList1)[i].interval_unit === 'h') {
+            const name = { name: Object.keys(helperList1)[i] };
+            const entry = Object.values(helperList1)[i];
+            const HoursLeft = {
+              hours_left: processLeftIntervalHours(
+                Object.values(helperList1)[i].operating_hours,
+                Object.values(helperList1)[i].interval_amount,
+                this.$store.getters.getCurrentBikeOperatingHours,
+              ),
+            };
+            const state = {
+              state: processStateOfIntervalHours(
+                Object.values(helperList1)[i].operating_hours,
+                Object.values(helperList1)[i].interval_amount,
+                this.$store.getters.getCurrentBikeOperatingHours,
+              ),
+            };
+            helperList2.push(Object.assign(entry, name, HoursLeft, state));
+          }
+        }
+      }
+      return helperList2;
+    },
+    getBikeData() {
+      apiGetBike().then((res) => {
+        this.bike_object = res.data;
+      });
+    },
+    getWear() {
+      apiQueryMaintenance({
+        bike_id: this.$store.getters.getCurrentBikeId,
+        interval_type: 'estimated wear',
+      }).then((res) => {
+        this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
+        this.wear_object.brakes_front.name = 'Front brake pads';
+        this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
+        this.wear_object.brakes_rear.name = 'Rear brake pads';
+        this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
+        this.wear_object.tires.name = 'Tires';
+        this.wear_object.engine = res.data.Motor[Object.keys(res.data.Motor)[0]];
+        this.wear_object.engine.name = 'Engine revision';
+      });
+    },
+    getMaintenance() {
+      apiQueryMaintenance({
+        bike_id: this.$store.getters.getCurrentBikeId,
+        interval_type: 'planned cycle',
+      }).then((res) => {
+        this.maintenance_array = this.structureMaintenanceNext(res.data);
+      });
+    },
   },
 };
 </script>

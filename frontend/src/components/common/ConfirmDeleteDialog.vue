@@ -1,7 +1,8 @@
 <template>
   <v-dialog
-    v-model="confirm_delete_dialog"
-    persistent max-width="400"
+    v-model="confirmDeleteDialog"
+    persistent
+    max-width="400"
   >
     <v-card>
       <v-card-title class="headline">
@@ -9,22 +10,28 @@
       </v-card-title>
       <v-card-text>
         <p class="text--primary">
-          Do you really want to delete this {{ flagged_for_deletion }}?</p>
+          Do you really want to delete this {{ flaggedForDeletion }}?
+        </p>
         <p class="text--secondary text-sm-left">
-          The deletion is permanent and cannot be undone.</p>
+          The deletion is permanent and cannot be undone.
+        </p>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="accent"
           text
           @click.prevent="onCancel"
-        >Cancel</v-btn>
+        >
+          Cancel
+        </v-btn>
         <v-btn
           color="error"
           text
           @click.prevent="onConfirm"
-        >Delete</v-btn>
+        >
+          Delete
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -34,14 +41,18 @@
 export default {
   name: 'ConfirmDeleteDialog',
   props: {
-    confirm_delete_dialog: {
+    confirmDeleteDialog: {
       type: Boolean,
       required: true,
     },
-    flagged_for_deletion: {
+    flaggedForDeletion: {
       type: String,
       required: true,
     },
+  },
+  updated() {
+  },
+  created() {
   },
   methods: {
     onCancel() {
@@ -53,7 +64,7 @@ export default {
       this.$emit('update:confirm_delete_dialog', false);
     },
   },
-}
+};
 </script>
 
 <style scoped>

@@ -1,32 +1,30 @@
 <template>
   <v-app>
     <v-app-bar
+      v-if="isAuthenticated"
       app
       color="primary"
       dark
       hide-on-scroll
       dense
-      v-if="isAuthenticated"
     >
-      <v-app-bar-nav-icon @click="onNavBarIcon()"/>
-      <TheNavigationTabs/>
+      <v-app-bar-nav-icon @click="onNavBarIcon()" />
+      <TheNavigationTabs />
     </v-app-bar>
-
-    <v-content>
-      <router-view></router-view>
+    <v-main>
+      <router-view />
       <TheNavigationDrawer
-        :bike_array="bike_list"
-        @updated="getBikeData()"
+        :bike-array="bike_list"
+        @updated="getBike()"
       />
-
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
 <script>
-import TheNavigationTabs from './components/TheNavigationTabs';
-import TheNavigationDrawer from './components/TheNavigationDrawer';
-import {BikeApi} from './components/api/BikeApi';
+import TheNavigationTabs from './components/TheNavigationTabs/index.vue';
+import TheNavigationDrawer from './components/TheNavigationDrawer/index.vue';
+import { apiGetBike } from './components/api/BikeApi';
 
 export default {
   name: 'App',
@@ -56,22 +54,23 @@ export default {
       return this.$store.getters.isAuthenticated;
     },
   },
+  created() {
+    this.getBike();
+  },
+  updated() {
+  },
   methods: {
     onNavBarIcon() {
       this.$store.commit('setNavigationDrawerState', true);
     },
-    getBikeData() {
-      BikeApi.getBike().then((res) => {
+    getBike() {
+      apiGetBike().then((res) => {
         this.bike_list = res.data;
         if (this.$store.getters.getCurrentBikeId === null) {
           this.selectBike(0);
-      }});
+        }
+      });
     },
-  },
-  created() {
-    this.getBikeData();
-  },
-  updated() {
   },
 };
 </script>

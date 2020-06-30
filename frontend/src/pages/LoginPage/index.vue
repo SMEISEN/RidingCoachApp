@@ -1,8 +1,16 @@
 <template v-slot:default>
   <v-app>
     <v-container>
-      <v-row align="center" justify="center">
-        <v-col cols="12" xs="12" sm="6" md="4">
+      <v-row
+        align="center"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="4"
+        >
           <LoginForm
             @loginButtonClicked="login"
           />
@@ -14,7 +22,7 @@
 
 <script>
 import { AUTH_REQUEST } from '../../store/actions/authentication';
-import LoginForm from './LoginForm';
+import LoginForm from './LoginForm.vue';
 
 export default {
   name: 'Login',

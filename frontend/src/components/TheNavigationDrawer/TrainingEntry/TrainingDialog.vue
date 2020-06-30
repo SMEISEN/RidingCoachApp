@@ -1,41 +1,66 @@
 <template>
-  <v-dialog v-model="training_dialog" fullscreen hide-overlay
-            transition="dialog-bottom-transition">
+  <v-dialog
+    v-model="training_dialog"
+    fullscreen
+    hide-overlay
+    transition="dialog-bottom-transition"
+  >
     <v-form
-      v-model="valid_training_dialog"
       ref="validation_training_form"
+      v-model="valid_training_dialog"
     >
       <v-card>
-        <v-toolbar dark color="primary">
-          <v-btn icon dark @click.prevent="onTrainingCancel()">
+        <v-toolbar
+          dark
+          color="primary">
+          <v-btn
+            icon
+            @click.prevent="onTrainingCancel()"
+          >
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Training settings</v-toolbar-title>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-toolbar-items>
-            <v-btn dark text @click.prevent="onTrainingSave()" :disabled="!valid_training_dialog">
+            <v-btn
+              text
+              :disabled="!valid_training_dialog"
+              @click.prevent="onTrainingSave()"
+            >
               Save
             </v-btn>
           </v-toolbar-items>
         </v-toolbar>
         <v-card-text>
           <v-expansion-panels
-            focusable
             v-model="training_general_panel"
+            focusable
           >
             <v-expansion-panel>
               <v-expansion-panel-header>Location</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-row>
-                  <v-col cols="12" xs="12" sm="9" md="10" class="px-6">
+                  <v-col
+                    cols="12"
+                    xs="12"
+                    sm="9"
+                    md="10"
+                    class="px-6"
+                  >
                     <v-combobox
+                      v-model="trainingFormObject.race_track"
                       label="Race track*"
                       :rules="[v => !!v]"
                       required
-                      v-model="training_form_object.race_track"
-                    ></v-combobox>
+                    />
                   </v-col>
-                  <v-col cols="auto" xs="12" sm="3" md="2" class="px-6">
+                  <v-col
+                    cols="auto"
+                    xs="12"
+                    sm="3"
+                    md="2"
+                    class="px-6"
+                  >
                     <v-menu
                       v-model="date_menu"
                       :close-on-content-click="false"
@@ -47,15 +72,16 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="training_form_object.date"
+                          v-model="trainingFormObject.date"
                           prepend-icon="mdi-calendar"
                           required
                           v-on="on"
-                        ></v-text-field>
+                        />
                       </template>
-                      <v-date-picker v-model="training_form_object.date"
-                                     @input="date_menu = false">
-                      </v-date-picker>
+                      <v-date-picker
+                        v-model="trainingFormObject.date"
+                        @input="date_menu = false"
+                      />
                     </v-menu>
                   </v-col>
                 </v-row>
@@ -63,15 +89,14 @@
             </v-expansion-panel>
             <v-expansion-panel>
               <v-expansion-panel-header>Weather</v-expansion-panel-header>
-              <v-expansion-panel-content>
-              </v-expansion-panel-content>
+              <v-expansion-panel-content />
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card-text>
-        <TheNavigationDrawerTrainingDialogTabs
-          :setup_fixed_template="setup_fixed_template"
-          :setup_individual_template="setup_individual_template"
-          :training_form_object="training_form_object"
+        <TrainingDialogTabs
+          :setup-fixed-template="setupFixedTemplate"
+          :setup-individual-template="setupIndividualTemplate"
+          :training-form-object="trainingFormObject"
         />
       </v-card>
     </v-form>
@@ -79,25 +104,26 @@
 </template>
 
 <script>
-import TheNavigationDrawerTrainingDialogTabs from './TrainingDialogTabs';
+import TrainingDialogTabs from './TrainingDialogTabs.vue';
+
 export default {
   name: 'TheNavigationDrawerTrainingDialog',
+  components: {
+    TrainingDialogTabs,
+  },
   props: {
-    setup_fixed_template: {
+    setupFixedTemplate: {
       type: Object,
       required: true,
     },
-    setup_individual_template: {
+    setupIndividualTemplate: {
       type: Array,
       required: true,
     },
-    training_form_object: {
+    trainingFormObject: {
       type: Object,
       required: true,
     },
-  },
-  components: {
-    TheNavigationDrawerTrainingDialogTabs,
   },
   data: () => ({
     date_menu: false,
@@ -107,12 +133,16 @@ export default {
   computed: {
     training_dialog: {
       get() {
-        return this.$store.getters.getTrainingDialogState
+        return this.$store.getters.getTrainingDialogState;
       },
       set(value) {
-        this.$store.commit('setTrainingDialogState', value)
+        this.$store.commit('setTrainingDialogState', value);
       },
     },
+  },
+  updated() {
+  },
+  created() {
   },
   methods: {
     onTrainingSave() {
@@ -125,11 +155,7 @@ export default {
       this.$emit('cancelClicked');
     },
   },
-  updated() {
-  },
-  created() {
-  },
-}
+};
 </script>
 
 <style scoped>

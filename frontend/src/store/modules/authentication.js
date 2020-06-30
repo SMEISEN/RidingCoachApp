@@ -6,7 +6,7 @@ import {
   AUTH_SUCCESS,
   AUTH_LOGOUT,
 } from '../actions/authentication';
-import apiCall from '../../components/api/LoginApi';
+import { apiLogin } from '../../components/api/LoginApi';
 
 const state = {
   token: localStorage.getItem('user-token') || '',
@@ -22,7 +22,7 @@ const getters = {
 const actions = {
   [AUTH_REQUEST]: ({ commit }, user) => new Promise((resolve, reject) => {
     commit(AUTH_REQUEST);
-    apiCall({ url: 'auth', data: user, method: 'POST' })
+    apiLogin({ url: 'auth', data: user, method: 'POST' })
       .then((resp) => {
         localStorage.setItem('user-token', resp.token);
         // Here set the header of your ajax library to the token value.

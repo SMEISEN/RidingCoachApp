@@ -1,35 +1,35 @@
+/* eslint-disable import/prefer-default-export */
 
-
-const flattenNestedObjects = (inputObject) => {
+export const flattenNestedObjects = (inputObject) => {
   const outputArray = [];
   for (let i = 0; i < Object.keys(inputObject).length; i += 1) {
     outputArray.push(
-      Object.assign(Object.values(inputObject)[i], {name: Object.keys(inputObject)[i]}),
+      Object.assign(Object.values(inputObject)[i], { name: Object.keys(inputObject)[i] }),
     );
   }
   return outputArray;
 };
-const processStateOfIntervalHours = (latest, interval, current, digits) => {
+export const processStateOfIntervalHours = (latest, interval, current, digits) => {
   const state = ((latest + interval - current) / interval) * 100;
   return Number.parseFloat(state.toPrecision(digits));
 };
-const processLeftIntervalHours = (latest, interval, current, digits) => {
-  const hours_left = latest + interval - current;
-  return Number.parseFloat(hours_left.toPrecision(digits));
+export const processLeftIntervalHours = (latest, interval, current, digits) => {
+  const hoursLeft = latest + interval - current;
+  return Number.parseFloat(hoursLeft.toPrecision(digits));
 };
-const processLeftIntervalYears = (latest_date, digits) => {
-  const latest = new Date(latest_date);
+export const processLeftIntervalYears = (latestDate, digits) => {
+  const latest = new Date(latestDate);
   const now = new Date();
   const start = new Date(latest.getFullYear(), 0, 0);
   const diff = now - start;
   const oneDay = 1000 * 60 * 60 * 24;
   const day = Math.floor(diff / oneDay);
-  const days_left = 365 - day;
+  const daysLeft = 365 - day;
 
-  return Number.parseFloat(days_left.toPrecision(digits));
+  return Number.parseFloat(daysLeft.toPrecision(digits));
 };
-const processStateOfIntervalYears = (latest_date, digits) => {
-  const latest = new Date(latest_date);
+export const processStateOfIntervalYears = (latestDate, digits) => {
+  const latest = new Date(latestDate);
   const now = new Date();
   const start = new Date(latest.getFullYear(), 0, 0);
   const diff = now - start;
@@ -38,13 +38,4 @@ const processStateOfIntervalYears = (latest_date, digits) => {
   const state = (day / 365) * 100;
 
   return Number.parseFloat(state.toPrecision(digits));
-};
-
-
-export const DataProcessingUtils = {
-  flattenNestedObjects,
-  processStateOfIntervalHours,
-  processLeftIntervalHours,
-  processStateOfIntervalYears,
-  processLeftIntervalYears,
 };
