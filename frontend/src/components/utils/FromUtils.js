@@ -1,26 +1,21 @@
+/* eslint no-return-assign: "off" */
+/* eslint no-param-reassign: "off" */
+/* eslint-disable import/prefer-default-export */
 
-
-const incrementNumber = (inputNumber, increment, digits) => {
-  return Number(Number(parseFloat(inputNumber) + increment, ).toFixed(digits));
-};
-const decrementNumber = (inputNumber, increment, digits) => {
-  return Number(Number(parseFloat(inputNumber) - increment, ).toFixed(digits));
-};
-const initObject = (inputObject, initValue) => {
+export const incrementNumber = (inputNumber, increment, digits) => Number(
+  Number(parseFloat(inputNumber) + increment).toFixed(digits),
+);
+export const decrementNumber = (inputNumber, increment, digits) => Number(
+  Number(parseFloat(inputNumber) - increment).toFixed(digits),
+);
+export const initObject = (inputObject, initValue) => {
   Object.keys(inputObject).forEach((index) => inputObject[index] = initValue);
 };
-const indexOfObjectValueInArray = (arrayOfObjects, value) => {
+export const indexOfObjectValueInArray = (arrayOfObjects, value) => {
   for (let i = 0; i < arrayOfObjects.length; i += 1) {
     if (Object.values(arrayOfObjects[i]).includes(value)) {
       return i;
     }
   }
-};
-
-
-export const FormUtils = {
-  incrementNumber,
-  decrementNumber,
-  initObject,
-  indexOfObjectValueInArray,
+  return new Error('value not found!');
 };

@@ -3,47 +3,82 @@
     <v-subheader>Optional fields</v-subheader>
     <v-card-text>
       <v-row dense>
-        <v-col cols="12" xs="4" sm="4" md="4">
+        <v-col
+          cols="12"
+          xs="4"
+          sm="4"
+          md="4"
+        >
           <v-text-field
+            v-model="bikeFormObject.ccm"
             label="Engine ccm"
-            v-model="bike_form_object.ccm"
-          ></v-text-field>
+          />
         </v-col>
-        <v-col cols="12" xs="4" sm="4" md="4">
+        <v-col
+          cols="12"
+          xs="4"
+          sm="4"
+          md="4"
+        >
           <v-text-field
+            v-model="bikeFormObject.stroke"
             label="Engine stroke"
-            v-model="bike_form_object.stroke"
-          ></v-text-field>
+          />
         </v-col>
-        <v-col cols="12" xs="4" sm="4" md="4">
+        <v-col
+          cols="12"
+          xs="4"
+          sm="4"
+          md="4"
+        >
           <v-text-field
+            v-model="bikeFormObject.piston"
             label="Engine piston"
-            v-model="bike_form_object.piston"
-          ></v-text-field>
+          />
         </v-col>
-        <v-col cols="12" xs="12" sm="6" md="6">
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-text-field
+            v-model="bikeFormObject.slick_front"
             label="Slick front"
-            v-model="bike_form_object.slick_front"
-          ></v-text-field>
+          />
         </v-col>
-        <v-col cols="12" xs="12" sm="6" md="6">
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-text-field
+            v-model="bikeFormObject.slick_rear"
             label="Slick rear"
-            v-model="bike_form_object.slick_rear"
-          ></v-text-field>
+          />
         </v-col>
-        <v-col cols="12" xs="12" sm="6" md="6">
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-text-field
+            v-model="bikeFormObject.rain_front"
             label="Rain front"
-            v-model="bike_form_object.rain_front"
-          ></v-text-field>
+          />
         </v-col>
-        <v-col cols="12" xs="12" sm="6" md="6">
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
           <v-text-field
+            v-model="bikeFormObject.rain_rear"
             label="Rain rear"
-            v-model="bike_form_object.rain_rear"
-          ></v-text-field>
+          />
         </v-col>
       </v-row>
     </v-card-text>
@@ -54,12 +89,12 @@
 export default {
   name: 'BikeDialogOptional',
   props: {
-    bike_form_object: {
+    bikeFormObject: {
       type: Object,
       required: true,
     },
   },
-}
+};
 </script>
 
 <style scoped>

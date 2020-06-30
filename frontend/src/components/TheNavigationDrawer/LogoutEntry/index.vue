@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import {AUTH_LOGOUT} from '../../../store/actions/authentication';
+import { AUTH_LOGOUT } from '../../../store/actions/authentication';
 
 export default {
   name: 'TheNavigationDrawerLogout',
@@ -19,8 +19,8 @@ export default {
       this.$store.dispatch(AUTH_LOGOUT);
       this.$router.push('/login');
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

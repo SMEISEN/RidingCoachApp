@@ -12,12 +12,17 @@
         </v-list-item-content>
       </template>
       <v-radio-group v-model="selected_bike">
-        <v-list-item v-for="(bike, index) in bike_array" :key="index"
-                     @click="selectBike(index)"
-                     v-touch="{ right: () => editBike(bike.bike_id) }"
+        <v-list-item
+          v-for="(bike, index) in bikeArray"
+          :key="index"
+          v-touch="{ right: () => editBike(bike.bike_id) }"
+          @click="selectBike(index)"
         >
           <v-list-item-action>
-            <v-radio :value="bike.bike_id" :key="bike.bike_id"></v-radio>
+            <v-radio
+              :key="bike.bike_id"
+              :value="bike.bike_id"
+            />
           </v-list-item-action>
           <v-list-item-title>
             {{ bike.manufacturer }} {{ bike.model }} {{ bike.year }}
@@ -37,9 +42,9 @@
       </v-radio-group>
     </v-list-group>
     <TheNavigationDrawerBikeDialog
-      :bike_form_object="bike_form_object"
-      :setup_individual_template="setup_individual_template"
-      :bike_array="bike_array"
+      :bike-form-object="bike_form_object"
+      :setup-individual-template="setup_individual_template"
+      :bike-array="bikeArray"
       @clearBikeDialog="initBikeForm"
       @updatedBike="updatedBike()"
     />
@@ -47,8 +52,11 @@
 </template>
 
 <script>
-import {FormUtils} from '../../utils/FromUtils';
-import TheNavigationDrawerBikeDialog from './BikeDialog';
+import {
+  indexOfObjectValueInArray,
+  initObject,
+} from '../../utils/FromUtils';
+import TheNavigationDrawerBikeDialog from './BikeDialog.vue';
 
 export default {
   name: 'TheNavigationDrawerBike',
@@ -56,7 +64,7 @@ export default {
     TheNavigationDrawerBikeDialog,
   },
   props: {
-    bike_array: {
+    bikeArray: {
       type: Array,
       required: true,
     },
@@ -97,41 +105,45 @@ export default {
   computed: {
     selected_bike: {
       get() {
-        return this.$store.getters.getCurrentBikeId
+        return this.$store.getters.getCurrentBikeId;
       },
       set(value) {
-        this.$store.commit('selectBike', value)
+        this.$store.commit('selectBike', value);
       },
     },
+  },
+  updated() {
+  },
+  created() {
   },
   methods: {
     updatedBike() {
       this.$emit('updated');
     },
     selectBike(index) {
-      const selectedBike = this.bike_array[index];
+      const selectedBike = this.bikeArray[index];
       this.selected_bike = selectedBike.bike_id;
       this.$store.commit('selectBike', selectedBike);
       this.$forceUpdate();
     },
     editBike(BikeId) {
-      const bike_index = FormUtils.indexOfObjectValueInArray(this.bike_array, BikeId)
-      this.bike_form_object.bike_id = this.bike_array[bike_index].bike_id;
-      this.bike_form_object.manufacturer = this.bike_array[bike_index].manufacturer;
-      this.bike_form_object.model = this.bike_array[bike_index].model;
-      this.bike_form_object.year = this.bike_array[bike_index].year;
-      this.bike_form_object.operating_hours = this.bike_array[bike_index].operating_hours;
-      this.bike_form_object.ccm = this.bike_array[bike_index].ccm;
-      this.bike_form_object.stroke = this.bike_array[bike_index].stroke;
-      this.bike_form_object.piston = this.bike_array[bike_index].piston;
-      this.bike_form_object.slick_front = this.bike_array[bike_index].slick_front;
-      this.bike_form_object.slick_rear = this.bike_array[bike_index].slick_rear;
-      this.bike_form_object.rain_front = this.bike_array[bike_index].rain_front;
-      this.bike_form_object.rain_rear = this.bike_array[bike_index].rain_rear;
-      if (this.bike_array[bike_index].setup === null) {
-        this.bike_form_object.setup_individual = [_.clone(this.setup_individual_template, true)];
+      const bikeIndex = indexOfObjectValueInArray(this.bikeArray, BikeId);
+      this.bike_form_object.bike_id = this.bikeArray[bikeIndex].bike_id;
+      this.bike_form_object.manufacturer = this.bikeArray[bikeIndex].manufacturer;
+      this.bike_form_object.model = this.bikeArray[bikeIndex].model;
+      this.bike_form_object.year = this.bikeArray[bikeIndex].year;
+      this.bike_form_object.operating_hours = this.bikeArray[bikeIndex].operating_hours;
+      this.bike_form_object.ccm = this.bikeArray[bikeIndex].ccm;
+      this.bike_form_object.stroke = this.bikeArray[bikeIndex].stroke;
+      this.bike_form_object.piston = this.bikeArray[bikeIndex].piston;
+      this.bike_form_object.slick_front = this.bikeArray[bikeIndex].slick_front;
+      this.bike_form_object.slick_rear = this.bikeArray[bikeIndex].slick_rear;
+      this.bike_form_object.rain_front = this.bikeArray[bikeIndex].rain_front;
+      this.bike_form_object.rain_rear = this.bikeArray[bikeIndex].rain_rear;
+      if (this.bikeArray[bikeIndex].setup === null) {
+        this.bike_form_object.setup_individual = [this._.cloneDeep(this.setup_individual_template)];
       } else {
-        this.bike_form_object.setup_individual = this.bike_array[bike_index].setup;
+        this.bike_form_object.setup_individual = this.bikeArray[bikeIndex].setup;
       }
       this.$store.commit('setBikeEditFlag', true);
       this.$store.commit('setBikeDialogState', true);
@@ -142,16 +154,12 @@ export default {
       this.$store.commit('setNavigationDrawerState', false);
     },
     initBikeForm() {
-      FormUtils.initObject(this.bike_form_object, null);
-      this.bike_form_object.setup_individual = [_.clone(this.setup_individual_template)];
+      initObject(this.bike_form_object, null);
+      this.bike_form_object.setup_individual = [this._.cloneDeep(this.setup_individual_template)];
       this.$store.commit('setBikeEditFlag', false);
     },
   },
-  updated() {
-  },
-  created() {
-  },
-}
+};
 </script>
 
 <style scoped>

@@ -9,28 +9,30 @@
       </v-list-item-title>
     </v-list-item>
     <TheNavigationDrawerTrainingDialog
-      :setup_fixed_template="setup_fixed_template"
-      :setup_individual_template="setup_individual_template"
-      :training_form_object="training_form_object"
+      :setup-fixed-template="setup_fixed_template"
+      :setup-individual-template="setup_individual_template"
+      :training-form-object="training_form_object"
     />
   </div>
 </template>
 
 <script>
-import TheNavigationDrawerTrainingDialog from './TrainingDialog';
-import {FormUtils} from '../../utils/FromUtils';
-import _ from 'lodash';
+import {
+  indexOfObjectValueInArray,
+  initObject,
+} from '../../utils/FromUtils';
+import TheNavigationDrawerTrainingDialog from './TrainingDialog.vue';
 
 export default {
   name: 'TheNavigationDrawerTraining',
+  components: {
+    TheNavigationDrawerTrainingDialog,
+  },
   props: {
-    bike_array: {
+    bikeArray: {
       type: Array,
       required: true,
     },
-  },
-  components: {
-    TheNavigationDrawerTrainingDialog,
   },
   data: () => ({
     training_form_object: {
@@ -56,40 +58,46 @@ export default {
     },
     setup_individual_template: [],
   }),
+  updated() {
+  },
+  created() {
+  },
   methods: {
     editTraining() {
       this.$store.commit('setTrainingDialogState', true);
       this.initTrainingForm();
     },
     initTrainingForm() {
-      const bike_index = FormUtils.indexOfObjectValueInArray(
-        this.bike_array,this.$store.getters.getCurrentBikeId)
-      FormUtils.initObject(this.training_form_object, null);
-      this.training_form_object.setup_fixed = [_.cloneDeep(this.setup_fixed_template)];
-      if (this.bike_array[bike_index].setup != null) {
-        this.training_form_object.setup_individual = [_.cloneDeep(this.bike_array[bike_index].setup)];
+      const bikeIndex = indexOfObjectValueInArray(
+        this.bikeArray, this.$store.getters.getCurrentBikeId,
+      );
+      initObject(this.training_form_object, null);
+      this.training_form_object.setup_fixed = [this._.cloneDeep(this.setup_fixed_template)];
+      if (this.bikeArray[bikeIndex].setup != null) {
+        this.training_form_object.setup_individual = [
+          this._.cloneDeep(this.bikeArray[bikeIndex].setup),
+        ];
       }
-      for (let i = 0;
-           i < Object.values(this.training_form_object.setup_individual)[0].length;
-           i += 1) {
+      for (let i = 0; i < Object.values(
+        this.training_form_object.setup_individual,
+      )[0].length; i += 1) {
         this.training_form_object.setup_individual[0][i] = Object.assign(
           this.training_form_object.setup_individual[0][i],
-          {'ticks_current': _.cloneDeep(
-            this.training_form_object.setup_individual[0][i].ticks_standard)
+          {
+            ticks_curren: this._.cloneDeep(
+              this.training_form_object.setup_individual[0][i].ticks_standard,
+            ),
           },
-        )
+        );
       }
+      // eslint-disable-next-line prefer-destructuring
       this.setup_individual_template = this.training_form_object.setup_individual[0];
-      this.$store.commit('setTrainingDialogSetupPanel', 0)
-      this.$store.commit('setTrainingDialogSetupTabs', 1)
-      this.$store.commit('setTrainingDialogSetupActiveTab', 0)
+      this.$store.commit('setTrainingDialogSetupPanel', 0);
+      this.$store.commit('setTrainingDialogSetupTabs', 1);
+      this.$store.commit('setTrainingDialogSetupActiveTab', 0);
     },
   },
-  updated() {
-  },
-  created() {
-  },
-}
+};
 </script>
 
 <style scoped>

@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueMeta from 'vue-meta';
-import Dashboard from '../pages/DashboardPage';
-import Maintenance from '../pages/MaintenancePage';
-import History from '../pages/HistoryPage';
-import Login from '../pages/LoginPage';
+import Dashboard from '../pages/DashboardPage/index.vue';
+import Maintenance from '../pages/MaintenancePage/index.vue';
+import History from '../pages/HistoryPage/index.vue';
+import Login from '../pages/LoginPage/index.vue';
 import store from '../store';
 
 Vue.use(VueRouter);
@@ -26,7 +26,6 @@ const ifAuthenticated = (to, from, next) => {
     next('/login');
   }
 };
-
 
 export default new VueRouter({
   mode: 'history',

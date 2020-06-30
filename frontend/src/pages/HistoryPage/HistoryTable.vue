@@ -1,56 +1,88 @@
 <template>
   <div>
-    <v-simple-table fixed-header height="500px">
+    <v-simple-table
+      fixed-header
+      height="500px"
+    >
       <thead>
-      <tr>
-        <th class="text-left">Category</th>
-        <th class="text-left" style="min-width: 120px">Name</th>
-        <th class="text-left">Hours</th>
-        <th class="text-left">Date</th>
-        <th class="text-left">Comment</th>
-        <th></th>
-      </tr>
+        <tr>
+          <th class="text-left">
+            Category
+          </th>
+          <th
+            class="text-left"
+            style="min-width: 120px"
+          >
+            Name
+          </th>
+          <th class="text-left">
+            Hours
+          </th>
+          <th class="text-left">
+            Date
+          </th>
+          <th class="text-left">
+            Comment
+          </th>
+          <th />
+        </tr>
       </thead>
       <tbody>
-      <tr
-        v-for="(maintenance) in maintenance_history"
-        v-bind:key="maintenance.history_id"
-        v-bind:MtnId="maintenance.history_id"
-      >
-        <td style="font-size: 12px">{{ maintenance.category }}</td>
-        <td style="font-size: 12px">{{ maintenance.name }}</td>
-        <td>{{ maintenance.operating_hours }}</td>
-        <td>{{ maintenance.datetime_display | formatDateTime }}</td>
-        <td>{{ maintenance.comment }}</td>
-        <td>
-          <div class="btn-group" role="group">
-            <v-btn
-              color="warning"
-              text
-              @click.prevent="onEditButton(maintenance.history_id)"
-            >Edit</v-btn>
-            <v-btn
-              color="error"
-              text
-              @click="onDeleteButton(maintenance.history_id)"
-            >Delete</v-btn>
-          </div>
-        </td>
-      </tr>
+        <tr
+          v-for="(maintenance) in maintenanceHistory"
+          :key="maintenance.history_id"
+          :MtnId="maintenance.history_id"
+        >
+          <td style="font-size: 12px">
+            {{ maintenance.category }}
+          </td>
+          <td style="font-size: 12px">
+            {{ maintenance.name }}
+          </td>
+          <td>
+            {{ maintenance.operating_hours }}
+          </td>
+          <td>
+            {{ maintenance.datetime_display | formatDateTime }}
+          </td>
+          <td>
+            {{ maintenance.comment }}
+          </td>
+          <td>
+            <div
+              class="btn-group"
+              role="group"
+            >
+              <v-btn
+                color="warning"
+                text
+                @click.prevent="onEditButton(maintenance.history_id)"
+              >
+                Edit
+              </v-btn>
+              <v-btn
+                color="error"
+                text
+                @click="onDeleteButton(maintenance.history_id)"
+              >
+                Delete
+              </v-btn>
+            </div>
+          </td>
+        </tr>
       </tbody>
     </v-simple-table>
     <ConfirmDeleteDialog
-      :flagged_for_deletion="'history entry'"
-      :confirm_delete_dialog.sync="confirm_delete_dialog"
+      :flagged-for-deletion="'history entry'"
+      :confirm-delete-dialog="confirm_delete_dialog"
       @deleteConfirmationButtonClicked="deletionConfirmed"
     />
   </div>
 </template>
 
-
 <script>
-import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog';
-import {HistoryApi} from '../../components/api/HistoryApi';
+import { apiDeleteHistoryItem } from '../../components/api/HistoryApi';
+import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog.vue';
 
 export default {
   name: 'HistoryTable',
@@ -58,7 +90,7 @@ export default {
     ConfirmDeleteDialog,
   },
   props: {
-    maintenance_history: {
+    maintenanceHistory: {
       type: Array,
       required: true,
     },
@@ -67,6 +99,10 @@ export default {
     history_id: null,
     confirm_delete_dialog: false,
   }),
+  created() {
+  },
+  updated() {
+  },
   methods: {
     onEditButton(HistId) {
       this.history_id = HistId;
@@ -77,15 +113,11 @@ export default {
       this.confirm_delete_dialog = true;
     },
     deletionConfirmed() {
-      HistoryApi.deleteHistoryItem(this.history_id);
+      apiDeleteHistoryItem(this.history_id);
       this.$emit('deletionConfirmed', this.history_id);
-    }
+    },
   },
-  created() {
-  },
-  updated() {
-  },
-}
+};
 </script>
 
 <style scoped>

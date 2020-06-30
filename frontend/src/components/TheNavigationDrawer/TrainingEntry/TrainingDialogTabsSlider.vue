@@ -1,8 +1,8 @@
 <template>
   <v-slider
-    v-model="setup_entry.ticks_current"
-    :tick-labels="tickLabels(setup_entry.ticks_standard, setup_entry.ticks_available)"
-    :max="Number.parseInt(setup_entry.ticks_available)"
+    v-model="setupEntry.ticks_current"
+    :tick-labels="tickLabels(setupEntry.ticks_standard, setupEntry.ticks_available)"
+    :max="Number.parseInt(setupEntry.ticks_available)"
     step="1"
     ticks="always"
     tick-size="3"
@@ -12,41 +12,40 @@
     prepend-icon="mdi-minus"
     @click:append="incrementSetup()"
     @click:prepend="decrementSetup()"
-  >
-  </v-slider>
+  />
 </template>
 
 <script>
 export default {
   name: 'TrainingDialogTabsSlider',
   props: {
-    setup_entry: {
+    setupEntry: {
       type: Object,
       required: true,
     },
   },
   methods: {
     incrementSetup() {
-      this.setup_entry.ticks_current += 1;
+      this.setupEntry.ticks_current += 1;
       this.$forceUpdate();
     },
     decrementSetup() {
-      this.setup_entry.ticks_current -= 1;
+      this.setupEntry.ticks_current -= 1;
       this.$forceUpdate();
     },
     tickLabels(standardTick, availableTicks) {
-      const tick_labels = []
+      const tickLabels = [];
       for (let i = 0; i < availableTicks; i += 1) {
-        if (i === Number.parseInt(standardTick)) {
-          tick_labels.push('I');
+        if (i === Number.parseInt(standardTick, 10)) {
+          tickLabels.push('I');
         } else {
-          tick_labels.push('');
+          tickLabels.push('');
         }
       }
-      return tick_labels;
+      return tickLabels;
     },
   },
-}
+};
 </script>
 
 <style scoped>

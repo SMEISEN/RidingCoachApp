@@ -8,41 +8,40 @@
   >
     <v-list>
       <TheNavigationDrawerBike
-        :bike_array="bike_array"
+        :bike-array="bikeArray"
         @updatedBike="updatedBike()"
       />
       <TheNavigationDrawerTraining
-        :bike_array="bike_array"
+        :bike-array="bikeArray"
       />
-      <TheNavigationDrawerSpareParts/>
-      <TheNavigationDrawerSettings/>
-      <TheNavigationDrawerLogout/>
+      <TheNavigationDrawerSpareParts />
+      <TheNavigationDrawerSettings />
+      <TheNavigationDrawerLogout />
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script>
-import TheNavigationDrawerBike from './BikeEntry';
-import TheNavigationDrawerTraining from './TrainingEntry';
-import TheNavigationDrawerSpareParts from './SparePartsEntry';
-import TheNavigationDrawerSettings from './SettingsEntry';
-import TheNavigationDrawerLogout from './LogoutEntry';
-
+import TheNavigationDrawerBike from './BikeEntry/index.vue';
+import TheNavigationDrawerTraining from './TrainingEntry/index.vue';
+import TheNavigationDrawerSpareParts from './SparePartsEntry/index.vue';
+import TheNavigationDrawerSettings from './SettingsEntry/index.vue';
+import TheNavigationDrawerLogout from './LogoutEntry/index.vue';
 
 export default {
   name: 'TheNavigationDrawer',
-  props: {
-    bike_array: {
-      type: Array,
-      required: true,
-    },
-  },
   components: {
     TheNavigationDrawerBike,
     TheNavigationDrawerTraining,
     TheNavigationDrawerSpareParts,
     TheNavigationDrawerSettings,
     TheNavigationDrawerLogout,
+  },
+  props: {
+    bikeArray: {
+      type: Array,
+      required: true,
+    },
   },
   computed: {
     navigation_drawer: {
@@ -54,16 +53,16 @@ export default {
       },
     },
   },
+  updated() {
+  },
+  created() {
+  },
   methods: {
     updatedBike() {
       this.$emit('updated');
     },
   },
-  updated() {
-  },
-  created() {
-  },
-}
+};
 </script>
 
 <style scoped>

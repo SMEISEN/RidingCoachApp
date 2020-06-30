@@ -20,6 +20,7 @@
     "node-sass": "^4.14.1",
     "roboto-fontface": "*",
     "vue": "^2.6.11",
+    "vue-lodash": "^2.1.2",
     "vue-meta": "^2.4.0",
     "vue-router": "^3.3.4",
     "vuetify": "^2.3.2",
@@ -30,12 +31,12 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",
-    "@vue/cli-plugin-eslint": "~4.3.0",
+    "@vue/cli-plugin-eslint": "~4.4.6",
     "@vue/cli-plugin-router": "~4.3.0",
     "@vue/cli-service": "~4.3.0",
     "@vue/eslint-config-airbnb": "^5.1.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
+    "eslint": "^7.3.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.26.9",
@@ -51,7 +52,7 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/recommended",
       "@vue/airbnb"
     ],
     "parserOptions": {

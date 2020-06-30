@@ -2,57 +2,79 @@
   <div>
     <v-subheader>Available setup</v-subheader>
     <v-card-text>
-      <v-simple-table dense light>
+      <v-simple-table dense>
         <thead>
-        <tr>
-          <th class="text-left">Category</th>
-          <th class="text-left">Group</th>
-          <th class="text-left">Name</th>
-          <th class="text-left">Available ticks</th>
-          <th class="text-left">Standard tick</th>
-        </tr>
+          <tr>
+            <th class="text-left">
+              Category
+            </th>
+            <th class="text-left">
+              Group
+            </th>
+            <th class="text-left">
+              Name
+            </th>
+            <th class="text-left">
+              Available ticks
+            </th>
+            <th class="text-left">
+              Standard tick
+            </th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(entry, index) in setup_individual"
-            v-bind:key="index">
-          <td style="border-bottom: none"><v-select
-            :items="['Engine', 'Suspension', 'Electronic']"
-            style="font-size: 12px"
-            dense
-            height="20px"
-            v-model="entry.category"
-            single-line />
-          </td>
-          <td style="border-bottom: none"><v-text-field
-            style="font-size: 12px"
-            dense
-            height="20px"
-            v-model="entry.group"
-            placeholder="default"
-            single-line />
-          </td>
-          <td style="border-bottom: none"><v-text-field
-            style="font-size: 12px"
-            dense
-            height="20px"
-            v-model="entry.name"
-            single-line />
-          </td>
-          <td style="border-bottom: none"><v-text-field
-            style="font-size: 12px"
-            dense
-            height="20px"
-            v-model="entry.ticks_available"
-            single-line />
-          </td>
-          <td style="border-bottom: none"><v-text-field
-            style="font-size: 12px"
-            dense
-            height="20px"
-            v-model="entry.ticks_standard"
-            single-line />
-          </td>
-        </tr>
+          <tr
+            v-for="(entry, index) in setupIndividual"
+            :key="index"
+          >
+            <td style="border-bottom: none">
+              <v-select
+                v-model="entry.category"
+                :items="['Engine', 'Suspension', 'Electronic']"
+                style="font-size: 12px"
+                dense
+                height="20px"
+                single-line
+              />
+            </td>
+            <td style="border-bottom: none">
+              <v-text-field
+                v-model="entry.group"
+                style="font-size: 12px"
+                dense
+                height="20px"
+                placeholder="default"
+                single-line
+              />
+            </td>
+            <td style="border-bottom: none">
+              <v-text-field
+                v-model="entry.name"
+                style="font-size: 12px"
+                dense
+                height="20px"
+                single-line
+              />
+            </td>
+            <td style="border-bottom: none">
+              <v-text-field
+                v-model="entry.ticks_available"
+                style="font-size: 12px"
+                dense
+                height="20px"
+                single-line
+              />
+            </td>
+            <td style="border-bottom: none">
+              <v-text-field
+                v-model="entry.ticks_standard"
+                style="font-size: 12px"
+                dense
+                height="20px"
+                single-line
+              />
+            </td>
+          </tr>
         </tbody>
       </v-simple-table>
     </v-card-text>
@@ -76,25 +98,29 @@
 export default {
   name: 'BikeDialogSetup',
   props: {
-    bike_form_object: {
+    bikeFormObject: {
       type: Object,
       required: true,
     },
-    setup_individual: {
+    setupIndividual: {
       type: Array,
       required: true,
     },
-    setup_individual_template: {
+    setupIndividualTemplate: {
       type: Object,
       required: true,
     },
   },
+  updated() {
+  },
+  created() {
+  },
   methods: {
     addSetupRow() {
-      this.bike_form_object.setup_individual.push(_.clone(this.setup_individual_template, true));
-    }
-  }
-}
+      this.bikeFormObject.setup_individual.push(this._.cloneDeep(this.setupIndividualTemplate));
+    },
+  },
+};
 </script>
 
 <style scoped>

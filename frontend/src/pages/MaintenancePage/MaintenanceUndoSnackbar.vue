@@ -1,6 +1,6 @@
 <template>
   <v-snackbar
-    v-model="snackbar_state"
+    v-model="snackbarState"
     :timeout="3000"
     color="info"
   >
@@ -18,17 +18,21 @@
 export default {
   name: 'MaintenanceUndoSnackbar',
   props: {
-    snackbar_state: {
+    snackbarState: {
       type: Boolean,
       requested: true,
-    }
+    },
+  },
+  created() {
+  },
+  updated() {
   },
   methods: {
     undoButtonClicked() {
       this.$emit('undoButtonClicked');
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

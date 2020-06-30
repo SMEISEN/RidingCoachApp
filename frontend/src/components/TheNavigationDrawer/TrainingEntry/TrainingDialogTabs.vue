@@ -2,7 +2,6 @@
   <v-tabs
     v-model="training_setup_tab"
     background-color="secondary"
-    dark
   >
     <v-tab
       v-for="tab_index in training_setup_tabs"
@@ -17,25 +16,25 @@
     >
       <v-card-text>
         <v-expansion-panels
+          v-model="training_setup_panel"
           popout
           focusable
-          v-model="training_setup_panel"
         >
           <TrainingDialogTabsEngine
-            :tab_item_index="tab_item_index-1"
-            :training_form_object="training_form_object"
+            :tab-item-index="tab_item_index-1"
+            :training-form-object="trainingFormObject"
           />
           <TrainingDialogTabsTires
-            :tab_item_index="tab_item_index-1"
-            :training_form_object="training_form_object"
+            :tab-item-index="tab_item_index-1"
+            :training-form-object="trainingFormObject"
           />
           <TrainingDialogTabsSetup
-            :tab_item_index="tab_item_index-1"
-            :training_form_object="training_form_object"
+            :tab-item-index="tab_item_index-1"
+            :training-form-object="trainingFormObject"
           />
           <TrainingDialogTabsElectronic
-            :tab_item_index="tab_item_index-1"
-            :training_form_object="training_form_object"
+            :tab-item-index="tab_item_index-1"
+            :training-form-object="trainingFormObject"
           />
         </v-expansion-panels>
       </v-card-text>
@@ -43,34 +42,34 @@
     <v-tab @click="addTab">
       <v-icon>mdi-plus</v-icon>
     </v-tab>
-    <v-tab-item></v-tab-item>
+    <v-tab-item />
   </v-tabs>
 </template>
 
 <script>
-import TrainingDialogTabsEngine from './TrainingDialogTabsEngine';
-import TrainingDialogTabsTires from './TrainingDialogTabsTires';
-import TrainingDialogTabsSetup from './TrainingDialogTabsSetup';
-import TrainingDialogTabsElectronic from './TrainingDialogTabsElectronic';
-import _ from 'lodash';
+import TrainingDialogTabsEngine from './TrainingDialogTabsEngine.vue';
+import TrainingDialogTabsTires from './TrainingDialogTabsTires.vue';
+import TrainingDialogTabsSetup from './TrainingDialogTabsSetup.vue';
+import TrainingDialogTabsElectronic from './TrainingDialogTabsElectronic.vue';
 
 export default {
-  name: 'TheNavigationDrawerTrainingDialogTabs',
+  name: 'TrainingDialogTabs',
   components: {
     TrainingDialogTabsElectronic,
     TrainingDialogTabsSetup,
     TrainingDialogTabsTires,
-    TrainingDialogTabsEngine},
+    TrainingDialogTabsEngine,
+  },
   props: {
-    setup_fixed_template: {
+    setupFixedTemplate: {
       type: Object,
       required: true,
     },
-    setup_individual_template: {
+    setupIndividualTemplate: {
       type: Array,
       required: true,
     },
-    training_form_object: {
+    trainingFormObject: {
       type: Object,
       required: true,
     },
@@ -101,24 +100,24 @@ export default {
       },
     },
   },
+  updated() {
+  },
+  created() {
+  },
   methods: {
     addTab() {
-      const number_of_tabs = this.training_form_object.setup_fixed.length - 1;
-      this.training_form_object.setup_fixed
-        .push(_.cloneDeep(this.training_form_object.setup_fixed[number_of_tabs]));
-      this.training_form_object.setup_individual
-        .push(_.cloneDeep(this.training_form_object.setup_individual[number_of_tabs]));
+      const numberOfTabs = this.trainingFormObject.setup_fixed.length - 1;
+      this.trainingFormObject.setup_fixed
+        .push(this._.cloneDeep(this.trainingFormObject.setup_fixed[numberOfTabs]));
+      this.trainingFormObject.setup_individual
+        .push(this._.cloneDeep(this.trainingFormObject.setup_individual[numberOfTabs]));
       this.training_setup_tabs += 1;
       this.$nextTick(() => {
         this.training_setup_tab = this.training_setup_tabs;
       });
     },
   },
-  updated() {
-  },
-  created() {
-  },
-}
+};
 </script>
 
 <style scoped>

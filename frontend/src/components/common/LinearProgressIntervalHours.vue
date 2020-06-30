@@ -4,31 +4,35 @@
     background-color="accent"
     height="22"
     :value="currentStateIntervalHours()"
-    rounded>
+    rounded
+  >
     <template v-slot="{ value }">
-                      <span class="white--text">
-                        {{ leftIntervalHours() }} h /
-                        {{ Math.ceil(value) }} %
-                      </span>
+      <span class="white--text">
+        {{ leftIntervalHours() }} h /
+        {{ Math.ceil(value) }} %
+      </span>
     </template>
   </v-progress-linear>
 </template>
 
 <script>
-import {DataProcessingUtils} from '../utils/DataProcessingUtils';
+import {
+  processStateOfIntervalHours,
+  processLeftIntervalHours,
+} from '../utils/DataProcessingUtils';
 
 export default {
   name: 'LinearProgressIntervalHours',
   props: {
-    hours_latest: {
+    hoursLatest: {
       type: Number,
       required: true,
     },
-    hours_interval: {
+    hoursInterval: {
       type: Number,
       required: true,
     },
-    hours_current: {
+    hoursCurrent: {
       type: Number,
       required: true,
     },
@@ -36,19 +40,25 @@ export default {
       type: Number,
       required: false,
       default: 2,
-    }
+    },
+  },
+  updated() {
+  },
+  created() {
   },
   methods: {
     currentStateIntervalHours() {
-      return DataProcessingUtils.processStateOfIntervalHours(
-        this.hours_latest, this.hours_interval, this.hours_current, this.digits);
+      return processStateOfIntervalHours(
+        this.hoursLatest, this.hoursInterval, this.hoursCurrent, this.digits,
+      );
     },
     leftIntervalHours() {
-      return DataProcessingUtils.processLeftIntervalHours(
-        this.hours_latest, this.hours_interval, this.hours_current, this.digits);
+      return processLeftIntervalHours(
+        this.hoursLatest, this.hoursInterval, this.hoursCurrent, this.digits,
+      );
     },
   },
-}
+};
 </script>
 
 <style scoped>

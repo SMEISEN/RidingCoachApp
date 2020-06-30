@@ -11,8 +11,8 @@
 
 <script>
 export default {
-  name: 'TheNavigationDrawerSettings'
-}
+  name: 'TheNavigationDrawerSettings',
+};
 </script>
 
 <style scoped>

@@ -1,9 +1,10 @@
+/* eslint-disable import/prefer-default-export */
 const mocks = {
   auth: { POST: { token: 'This-is-a-mocked-token' } },
   'user/me': { GET: { name: 'doggo', title: 'sir' } },
 };
 
-const apiCall = ({ url, data, method }) => new Promise((resolve, reject) => {
+export const apiLogin = ({ url, data, method }) => new Promise((resolve, reject) => {
   setTimeout(() => {
     try {
       if (data.username !== process.env.VUE_APP_USER
@@ -17,5 +18,3 @@ const apiCall = ({ url, data, method }) => new Promise((resolve, reject) => {
     }
   }, 1000);
 });
-
-export default apiCall;

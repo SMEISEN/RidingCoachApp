@@ -4,23 +4,27 @@
     background-color="accent"
     height="22"
     :value="currentStateIntervalYears()"
-    rounded>
+    rounded
+  >
     <template v-slot="{ value }">
-                      <span class="white--text">
-                        {{ leftIntervalYears() }} d /
-                        {{ Math.ceil(value) }} %
-                      </span>
+      <span class="white--text">
+        {{ leftIntervalYears() }} d /
+        {{ Math.ceil(value) }} %
+      </span>
     </template>
   </v-progress-linear>
 </template>
 
 <script>
-import {DataProcessingUtils} from '../utils/DataProcessingUtils';
+import {
+  processLeftIntervalYears,
+  processStateOfIntervalYears,
+} from '../utils/DataProcessingUtils';
 
 export default {
   name: 'LinearProgressIntervalYears',
   props: {
-    date_latest: {
+    dateLatest: {
       type: String,
       required: true,
     },
@@ -28,17 +32,21 @@ export default {
       type: Number,
       required: false,
       default: 2,
-    }
+    },
+  },
+  updated() {
+  },
+  created() {
   },
   methods: {
     leftIntervalYears() {
-      return DataProcessingUtils.processLeftIntervalYears(this.date_latest, this.digits);
+      return processLeftIntervalYears(this.dateLatest, this.digits);
     },
     currentStateIntervalYears() {
-      return DataProcessingUtils.processStateOfIntervalYears(this.date_latest, this.digits);
+      return processStateOfIntervalYears(this.dateLatest, this.digits);
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

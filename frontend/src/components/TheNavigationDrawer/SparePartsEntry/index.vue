@@ -11,8 +11,8 @@
 
 <script>
 export default {
-  name: 'TheNavigationDrawerSpareParts'
-}
+  name: 'TheNavigationDrawerSpareParts',
+};
 </script>
 
 <style scoped>
