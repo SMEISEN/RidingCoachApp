@@ -2,6 +2,7 @@ import Vue from 'vue';
 import 'moment';
 import moment from 'moment-timezone';
 import vuetify from './plugins/vuetify';
+import lodash from './plugins/lodash';
 import App from './App.vue';
 import router from './router/index';
 import store from './store';
@@ -18,6 +19,7 @@ Vue.filter('formatDateTime', (value) => {
 new Vue({
   router,
   vuetify,
+  lodash,
   store,
   render: (h) => h(App),
 }).$mount('#app');
