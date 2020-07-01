@@ -20,6 +20,7 @@
             <th class="text-left">
               Standard tick
             </th>
+            <th class="text-left" />
           </tr>
         </thead>
         <tbody>
@@ -74,6 +75,16 @@
                 single-line
               />
             </td>
+            <td style="border-bottom: none">
+              <v-btn
+                icon
+                @click="deleteSetupRow(index)"
+              >
+                <v-icon>
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+            </td>
           </tr>
         </tbody>
       </v-simple-table>
@@ -91,12 +102,22 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-card-text>
+    <ConfirmDeleteDialog
+      :flagged-for-deletion="'setup entry'"
+      :confirm-delete-dialog.sync="confirm_delete_dialog"
+      @deleteConfirmationButtonClicked="deletionConfirmed"
+    />
   </div>
 </template>
 
 <script>
+import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
+
 export default {
   name: 'BikeDialogSetup',
+  components: {
+    ConfirmDeleteDialog,
+  },
   props: {
     bikeFormObject: {
       type: Object,
@@ -111,6 +132,10 @@ export default {
       required: true,
     },
   },
+  data: () => ({
+    confirm_delete_dialog: false,
+    row_to_be_deleted: null,
+  }),
   updated() {
   },
   created() {
@@ -118,6 +143,14 @@ export default {
   methods: {
     addSetupRow() {
       this.bikeFormObject.setup_individual.push(this._.cloneDeep(this.setupIndividualTemplate));
+    },
+    deleteSetupRow(index) {
+      this.confirm_delete_dialog = true;
+      this.row_to_be_deleted = index;
+    },
+    deletionConfirmed() {
+      this.bikeFormObject.setup_individual.splice(this.row_to_be_deleted, 1);
+      this.row_to_be_deleted = null;
     },
   },
 };
