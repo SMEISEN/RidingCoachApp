@@ -77,21 +77,23 @@ export default {
         this.training_form_object.setup_individual = [
           this._.cloneDeep(this.bikeArray[bikeIndex].setup),
         ];
+        for (let i = 0; i < Object.values(
+          this.training_form_object.setup_individual,
+        )[0].length; i += 1) {
+          this.training_form_object.setup_individual[0][i] = Object.assign(
+            this.training_form_object.setup_individual[0][i],
+            {
+              ticks_current: this._.cloneDeep(
+                this.training_form_object.setup_individual[0][i].ticks_standard,
+              ),
+            },
+          );
+        }
+        // eslint-disable-next-line prefer-destructuring
+        this.setup_individual_template = this.training_form_object.setup_individual[0];
+      } else {
+        this.training_form_object.setup_individual = [];
       }
-      for (let i = 0; i < Object.values(
-        this.training_form_object.setup_individual,
-      )[0].length; i += 1) {
-        this.training_form_object.setup_individual[0][i] = Object.assign(
-          this.training_form_object.setup_individual[0][i],
-          {
-            ticks_curren: this._.cloneDeep(
-              this.training_form_object.setup_individual[0][i].ticks_standard,
-            ),
-          },
-        );
-      }
-      // eslint-disable-next-line prefer-destructuring
-      this.setup_individual_template = this.training_form_object.setup_individual[0];
       this.$store.commit('setTrainingDialogSetupPanel', 0);
       this.$store.commit('setTrainingDialogSetupTabs', 1);
       this.$store.commit('setTrainingDialogSetupActiveTab', 0);

@@ -2,6 +2,7 @@
   <v-tabs
     v-model="training_setup_tab"
     background-color="secondary"
+    dark
   >
     <v-tab
       v-for="tab_index in training_setup_tabs"

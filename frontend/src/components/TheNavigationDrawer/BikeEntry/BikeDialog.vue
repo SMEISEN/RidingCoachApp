@@ -13,7 +13,8 @@
         <v-card>
           <v-toolbar
             dark
-            color="primary">
+            color="primary"
+          >
             <v-btn
               icon
               @click.prevent="onBikeCancel"
