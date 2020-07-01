@@ -1,5 +1,5 @@
 <template>
-  <v-expansion-panel>
+  <v-expansion-panel v-if="electronic_setup.length > 0">
     <v-expansion-panel-header>Electronic</v-expansion-panel-header>
     <v-expansion-panel-content>
       <div
@@ -53,12 +53,15 @@ export default {
     },
   },
   data: () => ({
-    setup_groups: null,
+    setup_groups: [''],
   }),
   computed: {
     electronic_setup() {
-      return this.trainingFormObject.setup_individual[this.tabItemIndex]
-        .filter((i) => i.category === 'Electronic');
+      if (this.trainingFormObject.setup_individual.length > 0) {
+        return this.trainingFormObject.setup_individual[this.tabItemIndex]
+          .filter((i) => i.category === 'Electronic');
+      }
+      return [];
     },
   },
   updated() {
@@ -72,11 +75,12 @@ export default {
     },
     getSetupGroups() {
       this.setup_groups = this._.uniq(
-        Object.values(
-          this._.mapValues(
-            this.suspension_setup, 'group',
-          ),
-        ),
+        Object.assign(this.setup_groups,
+          Object.values(
+            this._.mapValues(
+              this.electronic_setup, 'group',
+            ),
+          )),
       );
     },
   },

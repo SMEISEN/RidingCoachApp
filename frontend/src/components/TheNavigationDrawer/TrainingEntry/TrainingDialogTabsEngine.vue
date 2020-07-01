@@ -84,12 +84,15 @@ export default {
     },
   },
   data: () => ({
-    setup_groups: null,
+    setup_groups: [''],
   }),
   computed: {
     engine_setup() {
-      return this.trainingFormObject.setup_individual[this.tabItemIndex]
-        .filter((i) => i.category === 'Engine');
+      if (this.trainingFormObject.setup_individual.length > 0) {
+        return this.trainingFormObject.setup_individual[this.tabItemIndex]
+          .filter((i) => i.category === 'Engine');
+      }
+      return this.trainingFormObject.setup_individual;
     },
   },
   updated() {
@@ -113,11 +116,12 @@ export default {
     },
     getSetupGroups() {
       this.setup_groups = this._.uniq(
-        Object.values(
-          this._.mapValues(
-            this.engine_setup, 'group',
-          ),
-        ),
+        Object.assign(this.setup_groups,
+          Object.values(
+            this._.mapValues(
+              this.engine_setup, 'group',
+            ),
+          )),
       );
     },
   },
