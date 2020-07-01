@@ -57,11 +57,11 @@ export default {
   methods: {
     onCancel() {
       this.$emit('cancelButtonClicked');
-      this.$emit('update:confirm_delete_dialog', false);
+      this.$emit('update:confirmDeleteDialog', false);
     },
     onConfirm() {
       this.$emit('deleteConfirmationButtonClicked');
-      this.$emit('update:confirm_delete_dialog', false);
+      this.$emit('update:confirmDeleteDialog', false);
     },
   },
 };

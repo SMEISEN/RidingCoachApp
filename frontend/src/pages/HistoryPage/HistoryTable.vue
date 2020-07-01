@@ -74,7 +74,7 @@
     </v-simple-table>
     <ConfirmDeleteDialog
       :flagged-for-deletion="'history entry'"
-      :confirm-delete-dialog="confirm_delete_dialog"
+      :confirm-delete-dialog.sync="confirm_delete_dialog"
       @deleteConfirmationButtonClicked="deletionConfirmed"
     />
   </div>
