@@ -3,7 +3,7 @@
     hide-default-header
     hide-default-footer
     dense
-    height="95px"
+    :height="tableHeight"
   >
     <tbody>
       <tr
@@ -42,6 +42,16 @@ export default {
   computed: {
     orderedMaintenance() {
       return this._.orderBy(this.maintenanceNext, 'hours_left', 'asc');
+    },
+    tableHeight() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return '95px';
+        case 'sm': return '128px';
+        case 'md': return '500px';
+        case 'lg': return '600px';
+        case 'xl': return '800px';
+        default: return 'undefined';
+      }
     },
   },
 };

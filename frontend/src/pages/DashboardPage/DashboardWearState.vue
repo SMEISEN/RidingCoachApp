@@ -10,7 +10,7 @@
         :key="index + $store.getters.getCurrentBikeOperatingHours"
       >
         <td>{{ wear_object.name }}</td>
-        <td v-if="!Object.keys(wearObject).includes('operating_hours')" />
+        <td v-if="!Object.keys(wear_object).includes('operating_hours')" />
         <td
           v-else
           style="min-width: 120px;width: 120px;max-width: 120px"
