@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     updatedBike() {
-      this.$emit('updated');
+      this.$emit('updatedBike');
     },
     selectBike(index) {
       const selectedBike = this.bikeArray[index];

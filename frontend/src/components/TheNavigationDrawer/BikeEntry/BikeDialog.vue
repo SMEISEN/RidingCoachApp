@@ -122,10 +122,14 @@ export default {
       this.$emit('updatedBike');
     },
     postBike(payload) {
-      apiPostBike(payload).then(() => this.updatedBike());
+      apiPostBike(payload).then(() => {
+        this.updatedBike();
+      });
     },
     async putBike(BikeId, payload) {
-      apiPutBike(BikeId, payload).then(() => this.updatedBike());
+      apiPutBike(BikeId, payload).then(() => {
+        this.updatedBike();
+      });
     },
     deleteBikeData() {
       apiDeleteBike(this.bikeFormObject.bike_id).then(() => this.updatedBike());

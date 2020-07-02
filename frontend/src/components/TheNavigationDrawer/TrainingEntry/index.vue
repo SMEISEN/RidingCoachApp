@@ -8,10 +8,12 @@
         Training
       </v-list-item-title>
     </v-list-item>
-    <TheNavigationDrawerTrainingDialog
+    <TrainingDialog
       :setup-fixed-template="setup_fixed_template"
       :setup-individual-template="setup_individual_template"
       :training-form-object="training_form_object"
+      @updatedBike="updatedBike()"
+      @cancelClicked="initTrainingForm()"
     />
   </div>
 </template>
@@ -21,12 +23,12 @@ import {
   indexOfObjectValueInArray,
   initObject,
 } from '../../utils/FromUtils';
-import TheNavigationDrawerTrainingDialog from './TrainingDialog.vue';
+import TrainingDialog from './TrainingDialog.vue';
 
 export default {
   name: 'TheNavigationDrawerTraining',
   components: {
-    TheNavigationDrawerTrainingDialog,
+    TrainingDialog,
   },
   props: {
     bikeArray: {
@@ -63,6 +65,9 @@ export default {
   created() {
   },
   methods: {
+    updatedBike() {
+      this.$emit('updatedBike');
+    },
     editTraining() {
       this.$store.commit('setTrainingDialogState', true);
       this.initTrainingForm();
@@ -73,6 +78,8 @@ export default {
       );
       initObject(this.training_form_object, null);
       this.training_form_object.setup_fixed = [this._.cloneDeep(this.setup_fixed_template)];
+      this.training_form_object.setup_fixed[0].operating_hours = this
+        .$store.getters.getCurrentBikeOperatingHours;
       if (this.bikeArray[bikeIndex].setup != null) {
         this.training_form_object.setup_individual = [
           this._.cloneDeep(this.bikeArray[bikeIndex].setup),

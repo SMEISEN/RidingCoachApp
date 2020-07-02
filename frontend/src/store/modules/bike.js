@@ -22,6 +22,9 @@ const mutations = {
     state.current_bike_operating_hours = selectedBike.operating_hours;
     state.current_bike_year = selectedBike.year;
   },
+  setOperatingHours(state, operatingHours) {
+    state.current_bike_operating_hours = operatingHours;
+  },
 };
 const actions = {};
 

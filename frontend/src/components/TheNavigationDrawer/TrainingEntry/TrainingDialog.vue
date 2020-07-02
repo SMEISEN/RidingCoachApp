@@ -106,9 +106,10 @@
 
 <script>
 import TrainingDialogTabs from './TrainingDialogTabs.vue';
+import { apiGetBike, apiPutBike } from '../../api/BikeApi';
 
 export default {
-  name: 'TheNavigationDrawerTrainingDialog',
+  name: 'TrainingDialog',
   components: {
     TrainingDialogTabs,
   },
@@ -146,8 +147,22 @@ export default {
   created() {
   },
   methods: {
+    updatedBike() {
+      this.$emit('updatedBike');
+    },
     onTrainingSave() {
-      this.$emit('saveClicked');
+      const BikeId = this.$store.getters.getCurrentBikeId;
+      apiGetBike(BikeId).then((res) => {
+        const payload = res.data;
+        payload.operating_hours = Math.max.apply(null,
+          this._.map(this.trainingFormObject.setup_fixed, 'operating_hours'));
+        apiPutBike(BikeId, payload).then(() => {
+          this.$store.commit('setOperatingHours', payload.operating_hours);
+          this.updatedBike();
+        });
+        this.training_dialog = false;
+        this.$emit('saveClicked');
+      });
     },
     onTrainingCancel() {
       this.training_dialog = false;

@@ -15,7 +15,7 @@
       <router-view />
       <TheNavigationDrawer
         :bike-array="bike_list"
-        @updated="getBike()"
+        @updatedBike="getBike()"
       />
     </v-main>
   </v-app>
@@ -24,7 +24,7 @@
 <script>
 import TheNavigationTabs from './components/TheNavigationTabs/index.vue';
 import TheNavigationDrawer from './components/TheNavigationDrawer/index.vue';
-import { apiGetBike } from './components/api/BikeApi';
+import { apiGetAllBikes } from './components/api/BikeApi';
 
 export default {
   name: 'App',
@@ -64,7 +64,7 @@ export default {
       this.$store.commit('setNavigationDrawerState', true);
     },
     getBike() {
-      apiGetBike().then((res) => {
+      apiGetAllBikes().then((res) => {
         this.bike_list = res.data;
         if (this.$store.getters.getCurrentBikeId === null) {
           this.selectBike(0);
