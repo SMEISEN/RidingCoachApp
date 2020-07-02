@@ -102,7 +102,7 @@ class HistoryCollection(Resource):
 class HistoryItem(Resource):
 
     @api.response(200, "Maintenance history with requested id successfully fetched.")
-    def get(self, id_):
+    def get(self, id_: str):
         """
         Returns a maintenance history entry.
         """
@@ -119,7 +119,7 @@ class HistoryItem(Resource):
 
     @api.expect(put_history_entry_parameters)
     @api.response(204, "History entry with requested id successfully updated.")
-    def put(self, id_):
+    def put(self, id_: str):
         """
         Updates a maintenance history entry.
         """
@@ -139,7 +139,7 @@ class HistoryItem(Resource):
         return None, 204
 
     @api.response(204, "History entry with requested id successfully deleted.")
-    def delete(self, id_):
+    def delete(self, id_: str):
         """
         Deletes a maintenance history entry.
         """
