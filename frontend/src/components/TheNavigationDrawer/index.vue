@@ -13,6 +13,7 @@
       />
       <TheNavigationDrawerTraining
         :bike-array="bikeArray"
+        @updatedBike="updatedBike()"
       />
       <TheNavigationDrawerSpareParts />
       <TheNavigationDrawerSettings />
@@ -59,7 +60,7 @@ export default {
   },
   methods: {
     updatedBike() {
-      this.$emit('updated');
+      this.$emit('updatedBike');
     },
   },
 };

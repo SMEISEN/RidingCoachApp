@@ -92,7 +92,7 @@ import {
   processLeftIntervalHours,
 } from '../../components/utils/DataProcessingUtils';
 import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
-import { apiGetBike } from '../../components/api/BikeApi';
+import { apiGetAllBikes } from '../../components/api/BikeApi';
 import DashboardWearState from './DashboardWearState.vue';
 import DashboardMaintenanceState from './DashboardMaintenanceState.vue';
 
@@ -168,7 +168,7 @@ export default {
       return helperList2;
     },
     getBikeData() {
-      apiGetBike().then((res) => {
+      apiGetAllBikes().then((res) => {
         this.bike_object = res.data;
       });
     },
