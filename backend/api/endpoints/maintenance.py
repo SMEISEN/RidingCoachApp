@@ -27,7 +27,7 @@ query_parameters = api.model('MaintenanceQueryParameters', {
 })
 
 
-def query_to_dict(maintenance_query, bike_id=None):
+def query_to_dict(maintenance_query: list, bike_id: str = None):
     """
     Reformats the query to a structured dictionary, which can be json serialized.
     """
@@ -105,12 +105,12 @@ class MaintenanceCollection(Resource):
 class MaintenanceItem(Resource):
 
     @api.response(200, f"Maintenance work with requested id successfully fetched.")
-    def get(self, maintenance_id):
+    def get(self, id_: str):
         """
         Returns a maintenance work.
         """
 
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == maintenance_id).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
         response = jsonify(maintenance_schema.dump(maintenance_work))
         response.status_code = 200
@@ -118,14 +118,14 @@ class MaintenanceItem(Resource):
         return response
 
     @api.response(204, f"Maintenance work with requested id successfully updated.")
-    def put(self, maintenance_id):
+    def put(self, id_: str):
         """
         Updates a maintenance work.
         """
 
         inserted_data = request.get_json()
 
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == maintenance_id).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
         maintenance_work.interval_latest = inserted_data.get('interval_latest')
         maintenance_work.datetime_last_modified = datetime.utcfromtimestamp(inserted_data.get('datetime_display') / 1000)
 
@@ -135,12 +135,12 @@ class MaintenanceItem(Resource):
         return None, 204
 
     @api.response(204, f"Maintenance work with requested id successfully deleted.")
-    def delete(self, maintenance_id):
+    def delete(self, id_: str):
         """
         Deletes maintenance work.
         """
 
-        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == maintenance_id).one()
+        maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
         db.session.delete(maintenance_work)
         db.session.commit()
