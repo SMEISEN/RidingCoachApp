@@ -4,7 +4,7 @@ from flask_restplus import Resource, fields
 from backend.api import api
 from backend.database import db
 
-ns = api.namespace('bike', description='Operations related to blog posts')
+ns = api.namespace('bike', description='Operations related to bike entries.')
 bike_schema = BikeSchema()
 
 bike_parameters = api.model('BikeParameters', {
