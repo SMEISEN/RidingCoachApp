@@ -126,7 +126,7 @@ export default {
         this.updatedBike();
       });
     },
-    async putBike(BikeId, payload) {
+    putBike(BikeId, payload) {
       apiPutBike(BikeId, payload).then(() => {
         this.updatedBike();
       });
@@ -136,7 +136,7 @@ export default {
       this.$emit('clearBikeDialog');
       this.$store.commit('setBikeDialogState', false);
     },
-    async onBikeSubmit() {
+    onBikeSubmit() {
       const BikeId = this.bikeFormObject.bike_id;
       const payload = {
         operating_hours: this.bikeFormObject.operating_hours,
@@ -153,9 +153,9 @@ export default {
         setup: this.bikeFormObject.setup_individual,
       };
       if (this.$store.getters.getBikeEditFlag === false) {
-        await this.postBike(payload);
+        this.postBike(payload);
       } else {
-        await this.putBike(BikeId, payload);
+        this.putBike(BikeId, payload);
         if (this.$store.getters.getCurrentBikeId === BikeId) {
           payload.bike_id = BikeId;
           this.$store.commit('selectBike', payload);

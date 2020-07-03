@@ -7,7 +7,7 @@ from backend.database.models.history import HistoryModel, HistorySchema
 from flask_restplus import Resource, fields
 from collections import defaultdict
 
-ns = api.namespace('maintenance', description='Operations related to blog posts')
+ns = api.namespace('maintenance', description='Operations related to maintenance entries.')
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
 

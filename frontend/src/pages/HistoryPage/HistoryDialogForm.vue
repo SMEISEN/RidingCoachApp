@@ -257,7 +257,7 @@ export default {
             this.historyFormInput.name].maintenance_id,
           bike_id: this.$store.getters.getCurrentBikeId,
           operating_hours: this.historyFormInput.operating_hours,
-          datetime_display: Date.parse(datetime),
+          datetime_display: Date.parse(datetime) / 1000,
           comment: this.historyFormInput.comment,
         };
         if (this.$store.getters.getHistoryEditFlag === false) {
