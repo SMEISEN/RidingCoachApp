@@ -32,68 +32,10 @@
             </v-btn>
           </v-toolbar-items>
         </v-toolbar>
-        <v-card-text>
-          <v-expansion-panels
-            v-model="training_general_panel"
-            focusable
-          >
-            <v-expansion-panel>
-              <v-expansion-panel-header>Location</v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    xs="12"
-                    sm="9"
-                    md="10"
-                    class="px-6"
-                  >
-                    <v-combobox
-                      v-model="trainingFormObject.race_track"
-                      label="Race track*"
-                      :rules="[v => !!v]"
-                      required
-                    />
-                  </v-col>
-                  <v-col
-                    cols="auto"
-                    xs="12"
-                    sm="3"
-                    md="2"
-                    class="px-6"
-                  >
-                    <v-menu
-                      v-model="date_menu"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      scrollable
-                      transition="scale-transition"
-                      offset-y
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="trainingFormObject.date"
-                          prepend-icon="mdi-calendar"
-                          required
-                          v-on="on"
-                        />
-                      </template>
-                      <v-date-picker
-                        v-model="trainingFormObject.date"
-                        @input="date_menu = false"
-                      />
-                    </v-menu>
-                  </v-col>
-                </v-row>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-            <v-expansion-panel>
-              <v-expansion-panel-header>Weather</v-expansion-panel-header>
-              <v-expansion-panel-content />
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </v-card-text>
+        <TrainingDialogGeneral
+          :training-form-object="trainingFormObject"
+          :valid-training-dialog.sync="valid_training_dialog"
+        />
         <TrainingDialogTabs
           :setup-fixed-template="setupFixedTemplate"
           :setup-individual-template="setupIndividualTemplate"
@@ -106,12 +48,14 @@
 
 <script>
 import TrainingDialogTabs from './TrainingDialogTabs.vue';
+import TrainingDialogGeneral from './TrainingDialogGeneral.vue';
 import { apiGetBike, apiPutBike } from '../../api/BikeApi';
 
 export default {
   name: 'TrainingDialog',
   components: {
     TrainingDialogTabs,
+    TrainingDialogGeneral,
   },
   props: {
     setupFixedTemplate: {
@@ -128,8 +72,6 @@ export default {
     },
   },
   data: () => ({
-    date_menu: false,
-    training_general_panel: 0,
     valid_training_dialog: true,
   }),
   computed: {
