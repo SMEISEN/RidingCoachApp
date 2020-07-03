@@ -113,8 +113,9 @@ export default {
       this.confirm_delete_dialog = true;
     },
     deletionConfirmed() {
-      apiDeleteHistoryItem(this.history_id);
-      this.$emit('deletionConfirmed', this.history_id);
+      apiDeleteHistoryItem(this.history_id).then(() => {
+        this.$emit('deletionConfirmed', this.history_id);
+      });
     },
   },
 };
