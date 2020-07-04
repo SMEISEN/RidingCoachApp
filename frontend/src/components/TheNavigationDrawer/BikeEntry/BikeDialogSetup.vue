@@ -15,10 +15,13 @@
               Name
             </th>
             <th class="text-left">
-              Available ticks
+              Current tick
             </th>
             <th class="text-left">
               Standard tick
+            </th>
+            <th class="text-left">
+              Available ticks
             </th>
             <th class="text-left" />
           </tr>
@@ -59,7 +62,7 @@
             </td>
             <td style="border-bottom: none">
               <v-text-field
-                v-model="entry.ticks_available"
+                v-model="entry.ticks_current"
                 style="font-size: 12px"
                 dense
                 height="20px"
@@ -69,6 +72,15 @@
             <td style="border-bottom: none">
               <v-text-field
                 v-model="entry.ticks_standard"
+                style="font-size: 12px"
+                dense
+                height="20px"
+                single-line
+              />
+            </td>
+            <td style="border-bottom: none">
+              <v-text-field
+                v-model="entry.ticks_available"
                 style="font-size: 12px"
                 dense
                 height="20px"
