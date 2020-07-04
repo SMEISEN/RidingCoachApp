@@ -78,12 +78,14 @@ export default {
               );
             }
             this.weather_array = weatherMeasurement.concat(weatherForecast);
-            this.extractTemperatire();
           });
+        } else {
+          this.weather_array = weatherMeasurement;
         }
+        this.extractTemperature();
       });
     },
-    extractTemperatire() {
+    extractTemperature() {
       for (let i = 0; i < this.weather_array.length; i += 1) {
         this.temperature_array.push(this.weather_array[i].temp - 273.15);
         this.time_array.push(new Date(this.weather_array[i].dt * 1000)
