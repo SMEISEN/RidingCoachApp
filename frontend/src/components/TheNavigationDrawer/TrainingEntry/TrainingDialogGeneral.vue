@@ -9,7 +9,6 @@
       />
       <TrainingDialogGeneralWeather
         :training-form-object="trainingFormObject"
-        :weather-array="weather_array"
       />
     </v-expansion-panels>
   </v-card-text>
