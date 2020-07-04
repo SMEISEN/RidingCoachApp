@@ -2,14 +2,12 @@
   <v-expansion-panel>
     <v-expansion-panel-header>Weather</v-expansion-panel-header>
     <v-expansion-panel-content>
-      <v-sparkline
-        :value="temperature_array"
-        :labels="time_array"
-        show-labels
-        stroke-linecap="round"
-        line-width="2"
-        label-size="4"
-        type="trend"
+      <LineChart
+        v-if="data_processed === true"
+        :chart-data="data_collection"
+        :options="data_options"
+        :height="null"
+        width="null"
       />
     </v-expansion-panel-content>
   </v-expansion-panel>
@@ -19,9 +17,13 @@
 import moment from 'moment-timezone';
 import { apiGetWeatherForecast, apiGetWeatherHistoric } from '../../api/WeatherApi';
 import { apiGetLocation } from '../../api/LocationApi';
+import LineChart from '../../common/LineChart.vue';
 
 export default {
   name: 'TrainingDialogGeneralWeather',
+  components: {
+    LineChart,
+  },
   props: {
     trainingFormObject: {
       type: Object,
@@ -30,8 +32,30 @@ export default {
   },
   data: () => ({
     weather_array: [],
-    temperature_array: [],
     time_array: [],
+    data_collection: {
+      labels: [],
+      datasets: [],
+    },
+    data_sets: [
+      {
+        label: 'Temperature',
+        data: [],
+        backgroundColor: 'transparent',
+        borderColor: '',
+        pointBackgroundColor: '',
+      },
+    ],
+    data_options: {
+      responsive: true,
+      aspectRatio: 2,
+      maintainAspectRatio: true,
+      title: {
+        display: false,
+        text: 'Weather Data',
+      },
+    },
+    data_processed: false,
   }),
   updated() {
   },
@@ -78,19 +102,25 @@ export default {
               );
             }
             this.weather_array = weatherMeasurement.concat(weatherForecast);
+            this.extractTemperature();
           });
         } else {
           this.weather_array = weatherMeasurement;
+          this.extractTemperature();
         }
-        this.extractTemperature();
       });
     },
     extractTemperature() {
+      this.data_sets[0].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
+      this.data_sets[0].borderColor = this.$vuetify.theme.themes.light.accent;
       for (let i = 0; i < this.weather_array.length; i += 1) {
-        this.temperature_array.push(this.weather_array[i].temp - 273.15);
+        this.data_sets[0].data.push(this.weather_array[i].temp - 273.15);
         this.time_array.push(new Date(this.weather_array[i].dt * 1000)
           .toTimeString().substr(0, 5));
       }
+      this.data_collection.datasets = this.data_sets;
+      this.data_collection.labels = this.time_array;
+      this.data_processed = true;
     },
   },
 };
