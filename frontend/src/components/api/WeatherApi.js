@@ -5,7 +5,7 @@ export const apiGetWeatherForecast = (pos) => new Promise((resolve, reject) => {
   const ApiPath = 'https://api.openweathermap.org/data/2.5/onecall?'
     + `lat=${pos.coords.latitude}&`
     + `lon=${pos.coords.longitude}&`
-    + 'exclude=current,minutely,daily&'
+    + 'exclude=minutely,daily&'
     + `appid=${process.env.VUE_APP_OPENWEATHERMAP_API_KEY}`;
   axios.get(ApiPath)
     .then((res) => resolve(res.data))
