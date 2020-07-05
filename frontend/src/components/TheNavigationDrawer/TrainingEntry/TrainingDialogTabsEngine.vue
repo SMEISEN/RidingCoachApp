@@ -12,7 +12,7 @@
             align="start"
           >
             <v-col
-              v-if="setup_group === '' && group_index === 0"
+              v-if="group_index === 0"
               cols="12"
               xs="12"
               sm="6"
@@ -42,7 +42,7 @@
               md="6"
               class="px-16"
             >
-              <v-subheader v-if="setup_group === ''">
+              <v-subheader v-if="setup_group === null">
                 {{ setup_entry.name }}
               </v-subheader>
               <v-subheader v-else>
@@ -52,7 +52,6 @@
               <TrainingDialogTabsSlider
                 :setup-entry="setup_entry"
               />
-              <v-divider v-if="group_index !== Object.keys(setup_groups).length - 1" />
             </v-col>
           </v-row>
         </div>
@@ -84,7 +83,7 @@ export default {
     },
   },
   data: () => ({
-    setup_groups: [''],
+    setup_groups: [null],
   }),
   computed: {
     engine_setup() {
