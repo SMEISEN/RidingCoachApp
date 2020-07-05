@@ -1,26 +1,41 @@
 <template v-slot:default>
   <v-app>
-    <v-container fluid>
-      <v-row
-        dense
-        align="stretch"
-      >
+    <v-container
+      grid-list
+      fluid
+    >
+      <v-row dense>
         <v-col
           cols="12"
           xs="12"
           sm="6"
           md="6"
         >
-          <v-card class="card-container">
-            <v-card-title>
-              <span class="headerline">
-                {{ bikeString }}
-              </span>
-            </v-card-title>
-            <DashboardWearState
-              :wear-object="wear_object"
-            />
-          </v-card>
+          <v-row dense>
+            <v-col cols="12">
+              <v-card class="card-container">
+                <v-card-title>
+                  <span class="headerline">
+                    {{ bikeString }}
+                  </span>
+                </v-card-title>
+                <DashboardWearState
+                  :wear-object="wear_object"
+                />
+              </v-card>
+            </v-col>
+            <v-col
+              v-if="$vuetify.breakpoint.name !== 'xs'"
+              cols="12"
+            >
+              <v-card class="card-container">
+                <v-card-title>
+                  <span class="headline">Bike Setup</span>
+                </v-card-title>
+                <DashboardSetupState />
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
         <v-col
           cols="12"
@@ -38,6 +53,20 @@
           </v-card>
         </v-col>
         <v-col
+          v-if="$vuetify.breakpoint.name === 'xs'"
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
+          <v-card class="card-container">
+            <v-card-title>
+              <span class="headline">Bike Setup</span>
+            </v-card-title>
+            <DashboardSetupState />
+          </v-card>
+        </v-col>
+        <v-col
           cols="12"
           xs="12"
           sm="6"
@@ -48,14 +77,9 @@
               <span class="headline">Recent training</span>
             </v-card-title>
             <v-card-text>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-              sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-              aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-              rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
-              amet.
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+              tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+              eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea.
             </v-card-text>
           </v-card>
         </v-col>
@@ -70,14 +94,9 @@
               <span class="headline">Spare parts</span>
             </v-card-title>
             <v-card-text>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-              invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et
-              accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
-              sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
-              sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-              aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-              rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
-              amet.
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+              tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+              eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea.
             </v-card-text>
           </v-card>
         </v-col>
@@ -95,6 +114,7 @@ import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
 import { apiGetAllBikes } from '../../components/api/BikeApi';
 import DashboardWearState from './DashboardWearState.vue';
 import DashboardMaintenanceState from './DashboardMaintenanceState.vue';
+import DashboardSetupState from './DashboardSetupState.vue';
 
 export default {
   name: 'Dashboard',
@@ -102,6 +122,7 @@ export default {
     title: 'Dashboard',
   },
   components: {
+    DashboardSetupState,
     DashboardMaintenanceState,
     DashboardWearState,
   },
