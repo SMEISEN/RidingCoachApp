@@ -1,106 +1,121 @@
 <template>
   <div>
     <v-subheader>Available setup</v-subheader>
-    <v-card-text>
-      <v-simple-table dense>
-        <thead>
-          <tr>
-            <th class="text-left">
-              Category
-            </th>
-            <th class="text-left">
-              Group
-            </th>
-            <th class="text-left">
-              Name
-            </th>
-            <th class="text-left">
-              Current tick
-            </th>
-            <th class="text-left">
-              Standard tick
-            </th>
-            <th class="text-left">
-              Available ticks
-            </th>
-            <th class="text-left" />
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(entry, index) in setupIndividual"
-            :key="index"
+    <v-simple-table dense>
+      <thead>
+        <tr>
+          <th
+            class="text-left"
+            style="min-width: 100px;width: 100px;max-width: 100px"
           >
-            <td style="border-bottom: none">
-              <v-select
-                v-model="entry.category"
-                :items="['Engine', 'Suspension', 'Electronic']"
-                style="font-size: 12px"
-                dense
-                height="20px"
-                single-line
-              />
-            </td>
-            <td style="border-bottom: none">
-              <v-text-field
-                v-model="entry.group"
-                style="font-size: 12px"
-                dense
-                height="20px"
-                placeholder="default"
-                single-line
-              />
-            </td>
-            <td style="border-bottom: none">
-              <v-text-field
-                v-model="entry.name"
-                style="font-size: 12px"
-                dense
-                height="20px"
-                single-line
-              />
-            </td>
-            <td style="border-bottom: none">
-              <v-text-field
-                v-model="entry.ticks_current"
-                style="font-size: 12px"
-                dense
-                height="20px"
-                single-line
-              />
-            </td>
-            <td style="border-bottom: none">
-              <v-text-field
-                v-model="entry.ticks_standard"
-                style="font-size: 12px"
-                dense
-                height="20px"
-                single-line
-              />
-            </td>
-            <td style="border-bottom: none">
-              <v-text-field
-                v-model="entry.ticks_available"
-                style="font-size: 12px"
-                dense
-                height="20px"
-                single-line
-              />
-            </td>
-            <td style="border-bottom: none">
-              <v-btn
-                icon
-                @click="deleteSetupRow(index)"
-              >
-                <v-icon>
-                  mdi-delete
-                </v-icon>
-              </v-btn>
-            </td>
-          </tr>
-        </tbody>
-      </v-simple-table>
-    </v-card-text>
+            Category
+          </th>
+          <th class="text-left">
+            Group
+          </th>
+          <th class="text-left">
+            Name
+          </th>
+          <th
+            class="text-left"
+            style="min-width: 115px;width: 115px;max-width: 115px"
+          >
+            Current tick
+          </th>
+          <th
+            class="text-left"
+            style="min-width: 115px;width: 115px;max-width: 115px"
+          >
+            Standard tick
+          </th>
+          <th
+            class="text-left"
+            style="min-width: 115px;width: 115px;max-width: 115px"
+          >
+            Available ticks
+          </th>
+          <th class="text-left" />
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(entry, index) in setupIndividual"
+          :key="index"
+        >
+          <td style="border-bottom: none">
+            <v-select
+              v-model="entry.category"
+              :items="['Engine', 'Suspension', 'Electronic']"
+              style="font-size: 12px"
+              dense
+              height="20px"
+              single-line
+            />
+          </td>
+          <td style="border-bottom: none">
+            <v-text-field
+              v-model="entry.group"
+              style="font-size: 12px"
+              dense
+              height="20px"
+              placeholder="default"
+              single-line
+            />
+          </td>
+          <td style="border-bottom: none">
+            <v-text-field
+              v-model="entry.name"
+              style="font-size: 12px"
+              dense
+              height="20px"
+              single-line
+            />
+          </td>
+          <td style="border-bottom: none">
+            <v-text-field
+              v-model="entry.ticks_current"
+              append-outer-icon="mdi-plus"
+              prepend-icon="mdi-minus"
+              :rules="[v => v >= 0 && v <= entry.ticks_available]"
+              style="font-size: 12px"
+              dense
+              height="20px"
+              single-line
+              @click:append-outer.prevent="entry.ticks_current = increment(entry.ticks_current)"
+              @click:prepend.prevent="entry.ticks_current = decrement(entry.ticks_current)"
+            />
+          </td>
+          <td style="border-bottom: none">
+            <v-text-field
+              v-model="entry.ticks_standard"
+              style="font-size: 12px"
+              dense
+              height="20px"
+              single-line
+            />
+          </td>
+          <td style="border-bottom: none">
+            <v-text-field
+              v-model="entry.ticks_available"
+              style="font-size: 12px"
+              dense
+              height="20px"
+              single-line
+            />
+          </td>
+          <td style="border-bottom: none">
+            <v-btn
+              icon
+              @click="deleteSetupRow(index)"
+            >
+              <v-icon>
+                mdi-delete
+              </v-icon>
+            </v-btn>
+          </td>
+        </tr>
+      </tbody>
+    </v-simple-table>
     <v-card-text style="height: 50px; position: relative">
       <v-btn
         absolute
@@ -124,6 +139,7 @@
 
 <script>
 import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
+import { decrementNumber, incrementNumber } from '../../utils/FromUtils';
 
 export default {
   name: 'BikeDialogSetup',
@@ -163,6 +179,12 @@ export default {
     deletionConfirmed() {
       this.bikeFormObject.setup_individual.splice(this.row_to_be_deleted, 1);
       this.row_to_be_deleted = null;
+    },
+    increment(inputNumber) {
+      return incrementNumber(inputNumber, 1, 0);
+    },
+    decrement(inputNumber) {
+      return decrementNumber(inputNumber, 1, 0);
     },
   },
 };
