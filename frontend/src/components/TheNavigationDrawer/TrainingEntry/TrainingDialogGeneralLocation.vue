@@ -37,6 +37,8 @@
               <v-text-field
                 v-model="trainingFormObject.date"
                 prepend-icon="mdi-calendar"
+                :rules="[v => !!v]"
+                readonly
                 required
                 v-on="on"
               />

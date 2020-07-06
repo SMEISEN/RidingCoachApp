@@ -77,6 +77,7 @@ export default {
         this.bikeArray, this.$store.getters.getCurrentBikeId,
       );
       initObject(this.training_form_object, null);
+      this.training_form_object.date = new Date().toISOString().substr(0, 10);
       this.training_form_object.setup_fixed = [this._.cloneDeep(this.setup_fixed_template)];
       this.training_form_object.setup_fixed[0].operating_hours = this
         .$store.getters.getCurrentBikeOperatingHours;
