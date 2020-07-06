@@ -34,7 +34,7 @@
 <script>
 import {
   apiGetHistoryItem,
-  apiGetHistory,
+  apiQueryHistory,
 } from '../../components/api/HistoryApi';
 import { apiGetMaintenance } from '../../components/api/MaintenanceApi';
 import HistoryTable from './HistoryTable.vue';
@@ -96,7 +96,7 @@ export default {
     },
     refreshHistory() {
       const query = { bike_id: this.$store.getters.getCurrentBikeId };
-      apiGetHistory(query).then((res) => {
+      apiQueryHistory(query).then((res) => {
         this.history_array = res.data;
       });
       apiGetMaintenance().then((res) => {
