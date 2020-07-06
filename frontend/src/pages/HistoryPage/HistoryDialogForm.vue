@@ -35,6 +35,9 @@
                   <v-text-field
                     v-model="historyFormInput.date"
                     prepend-icon="mdi-calendar"
+                    :rules="[v => !!v]"
+                    readonly
+                    required
                     v-on="on"
                   />
                 </template>
@@ -67,7 +70,9 @@
                     v-model="historyFormInput.time"
                     prepend-icon="mdi-clock"
                     append-outer-icon="mdi-update"
+                    :rules="[v => !!v]"
                     readonly
+                    required
                     @click:append-outer.prevent="refreshDateTime"
                     v-on="on"
                   />
