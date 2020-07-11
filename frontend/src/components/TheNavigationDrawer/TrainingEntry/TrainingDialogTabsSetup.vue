@@ -58,8 +58,10 @@ export default {
   computed: {
     suspension_setup() {
       if (this.trainingFormObject.setup_individual.length > 0) {
-        return this.trainingFormObject.setup_individual[this.tabItemIndex]
-          .filter((i) => i.category === 'Suspension');
+        if (this.trainingFormObject.setup_individual[this.tabItemIndex].length > 0) {
+          return this.trainingFormObject.setup_individual[this.tabItemIndex]
+            .filter((i) => i.category === 'Suspension');
+        }
       }
       return [];
     },

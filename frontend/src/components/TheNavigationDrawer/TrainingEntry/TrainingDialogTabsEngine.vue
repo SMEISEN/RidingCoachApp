@@ -88,10 +88,12 @@ export default {
   computed: {
     engine_setup() {
       if (this.trainingFormObject.setup_individual.length > 0) {
-        return this.trainingFormObject.setup_individual[this.tabItemIndex]
-          .filter((i) => i.category === 'Engine');
+        if (this.trainingFormObject.setup_individual[this.tabItemIndex].length > 0) {
+          return this.trainingFormObject.setup_individual[this.tabItemIndex]
+            .filter((i) => i.category === 'Engine');
+        }
       }
-      return this.trainingFormObject.setup_individual;
+      return [];
     },
   },
   updated() {
