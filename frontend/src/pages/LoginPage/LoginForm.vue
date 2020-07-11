@@ -5,8 +5,11 @@
     class="login"
   >
     <v-card class="card-container">
-      <v-toolbar color="primary">
-        <v-toolbar-title>Sign in</v-toolbar-title>
+      <v-toolbar
+        color="primary"
+        dark
+      >
+        <v-tamoolbar-title>Sign in</v-tamoolbar-title>
       </v-toolbar>
       <v-card-text>
         <v-row dense>
