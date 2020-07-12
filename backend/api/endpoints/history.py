@@ -10,11 +10,11 @@ ns = api.namespace('history', description='Operations related to history entries
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
 
-post_history_parameters = api.model('PostHistoryParameters', {
+history_input_parameters = api.model('HistoryInputParameters', {
     "maintenance_id":
-        fields.String(description="maintenance ID", required=True),
+        fields.String(description="corresponding maintenance ID", required=True),
     "bike_id":
-        fields.String(description="bike ID", required=True),
+        fields.String(description="corresponding bike ID", required=True),
     "operating_hours":
         fields.Float(description="operating hours", required=True),
     "comment":
@@ -22,17 +22,7 @@ post_history_parameters = api.model('PostHistoryParameters', {
     "datetime_display":
         fields.Float(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
-put_history_entry_parameters = api.model('PutHistoryParameters', {
-    "maintenance_id":
-        fields.String(description="maintenance ID", required=True),
-    "operating_hours":
-        fields.Float(description="operating hours", required=True),
-    "comment":
-        fields.String(description="comment", required=False),
-    "datetime_display":
-        fields.Float(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
-})
-query_parameters = api.model('HistoryQueryParameters', {
+history_query_parameters = api.model('HistoryQueryParameters', {
     "bike_id":
         fields.String(description="", required=False),
     "operating_hours":
@@ -70,7 +60,7 @@ class HistoryCollection(Resource):
 
         return response
 
-    @api.expect(post_history_parameters)
+    @api.expect(history_input_parameters)
     @api.response(201, 'Maintenance history successfully added.')
     def post(self):
         """
@@ -117,7 +107,7 @@ class HistoryItem(Resource):
 
         return response
 
-    @api.expect(put_history_entry_parameters)
+    @api.expect(history_input_parameters)
     @api.response(204, "History entry with requested id successfully updated.")
     def put(self, id_: str):
         """
@@ -127,11 +117,17 @@ class HistoryItem(Resource):
         inserted_data = request.get_json()
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
-        history_entry.maintenance_id = inserted_data.get('maintenance_id')
-        history_entry.operating_hours = inserted_data.get('operating_hours')
-        history_entry.comment = inserted_data.get('comment')
-        history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        history_entry.datetime_last_modified = datetime.utcnow()
+
+        if inserted_data.get('maintenance_id') is not None:
+            history_entry.maintenance_id = inserted_data.get('maintenance_id')
+        if inserted_data.get('operating_hours') is not None:
+            history_entry.operating_hours = inserted_data.get('operating_hours')
+        if inserted_data.get('comment') is not None:
+            history_entry.comment = inserted_data.get('comment')
+        if inserted_data.get('datetime_display') is not None:
+            history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
+        if bool(inserted_data) is True:
+            history_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(history_entry)
         db.session.commit()
@@ -156,10 +152,10 @@ class HistoryItem(Resource):
 @api.response(404, 'Query parameters not found.')
 class HistoryQuery(Resource):
 
-    @api.expect(query_parameters)
+    @api.expect(history_query_parameters)
     def post(self):
         """
-        Returns a list of all maintenance history entries.
+        Returns a list of all maintenance history entries that match the query.
         """
 
         requested = request.get_json()

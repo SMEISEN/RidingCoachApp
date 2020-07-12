@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import jsonify, request
 from backend.database.models.bike import BikeModel, BikeSchema
 from flask_restplus import Resource, fields
@@ -7,7 +8,7 @@ from backend.database import db
 ns = api.namespace('bike', description='Operations related to bike entries.')
 bike_schema = BikeSchema()
 
-bike_parameters = api.model('BikeParameters', {
+bike_input_parameters = api.model('BikeInputParameters', {
     "operating_hours":
         fields.Float(description="operating hours", required=True),
     "manufacturer":
@@ -55,7 +56,7 @@ class BikeCollection(Resource):
 
         return response
 
-    @api.expect(bike_parameters)
+    @api.expect(bike_input_parameters)
     @api.response(201, 'Bike successfully added.')
     def post(self):
         """
@@ -77,6 +78,8 @@ class BikeCollection(Resource):
             rain_front=inserted_data.get('rain_front'),
             rain_rear=inserted_data.get('rain_rear'),
             setup=inserted_data.get('setup'),
+            datetime_created=datetime.utcnow(),
+            datetime_last_modified=datetime.utcnow(),
         )
 
         db.session.add(new_bike)
@@ -107,7 +110,7 @@ class BikeItem(Resource):
 
         return response
 
-    @api.expect(bike_parameters)
+    @api.expect(bike_input_parameters)
     @api.response(204, "Bike with requested id successfully updated.")
     def put(self, id_: str):
         """
@@ -117,18 +120,33 @@ class BikeItem(Resource):
         inserted_data = request.get_json()
 
         bike_entry = BikeModel.query.filter(BikeModel.bike_id == id_).one()
-        bike_entry.operating_hours = inserted_data.get('operating_hours')
-        bike_entry.manufacturer = inserted_data.get('manufacturer')
-        bike_entry.model = inserted_data.get('model')
-        bike_entry.year = inserted_data.get('year')
-        bike_entry.ccm = inserted_data.get('ccm')
-        bike_entry.stroke = inserted_data.get('stroke')
-        bike_entry.piston = inserted_data.get('piston')
-        bike_entry.slick_front = inserted_data.get('slick_front')
-        bike_entry.slick_rear = inserted_data.get('slick_rear')
-        bike_entry.rain_front = inserted_data.get('rain_front')
-        bike_entry.rain_rear = inserted_data.get('rain_rear')
-        bike_entry.setup = inserted_data.get('setup')
+
+        if inserted_data.get('operating_hours') is not None:
+            bike_entry.operating_hours = inserted_data.get('operating_hours')
+        if inserted_data.get('manufacturer') is not None:
+            bike_entry.manufacturer = inserted_data.get('manufacturer')
+        if inserted_data.get('model') is not None:
+            bike_entry.model = inserted_data.get('model')
+        if inserted_data.get('year') is not None:
+            bike_entry.year = inserted_data.get('year')
+        if inserted_data.get('ccm') is not None:
+            bike_entry.ccm = inserted_data.get('ccm')
+        if inserted_data.get('stroke') is not None:
+            bike_entry.stroke = inserted_data.get('stroke')
+        if inserted_data.get('piston') is not None:
+            bike_entry.piston = inserted_data.get('piston')
+        if inserted_data.get('slick_front') is not None:
+            bike_entry.slick_front = inserted_data.get('slick_front')
+        if inserted_data.get('slick_rear') is not None:
+            bike_entry.slick_rear = inserted_data.get('slick_rear')
+        if inserted_data.get('rain_front') is not None:
+            bike_entry.rain_front = inserted_data.get('rain_front')
+        if inserted_data.get('rain_rear') is not None:
+            bike_entry.rain_rear = inserted_data.get('rain_rear')
+        if inserted_data.get('setup') is not None:
+            bike_entry.setup = inserted_data.get('setup')
+        if bool(inserted_data) is True:
+            bike_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(bike_entry)
         db.session.commit()
