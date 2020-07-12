@@ -1,38 +1,38 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
 
-export const apiGetHistory = () => new Promise((resolve, reject) => {
-  const ApiPath = '/api/history';
+export const apiGetTrainings = () => new Promise((resolve, reject) => {
+  const ApiPath = '/api/training';
   axios.get(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiQueryHistory = (query) => new Promise((resolve, reject) => {
-  const ApiPath = '/api/history/query';
+export const apiQueryTrainings = (query) => new Promise((resolve, reject) => {
+  const ApiPath = '/api/training/query';
   axios.post(ApiPath, query)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiPostHistory = (payload) => new Promise((resolve, reject) => {
-  const ApiPath = '/api/history';
+export const apiPostTraining = (payload) => new Promise((resolve, reject) => {
+  const ApiPath = '/api/training';
   axios.post(ApiPath, payload)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiGetHistoryItem = (histId) => new Promise((resolve, reject) => {
-  const ApiPath = `/api/history/${histId}`;
+export const apiGetTrainingItem = (trainingId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/training/${trainingId}`;
   axios.get(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiPutHistoryItem = (payload, histId) => new Promise((resolve, reject) => {
-  const ApiPath = `/api/history/${histId}`;
+export const apiPutTrainingItem = (payload, trainingId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/training/${trainingId}`;
   axios.put(ApiPath, payload)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiDeleteHistoryItem = (histId) => new Promise((resolve, reject) => {
-  const ApiPath = `/api/history/${histId}`;
+export const apiDeleteTrainingItem = (trainingId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/training/${trainingId}`;
   axios.delete(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
