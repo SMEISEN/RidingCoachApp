@@ -15,7 +15,7 @@ class SetupModel(db.Model):
     bike_id = db.Column(UUID(as_uuid=True), db.ForeignKey('bike.bike_id'), nullable=False)
 
     operating_hours = db.Column(db.Float, nullable=False)
-    weather = db.Column(JSON, nullable=True)
+    weather_current = db.Column(JSON, nullable=True)
     slick_pressure_front = db.Column(db.Float, nullable=True)
     slick_pressure_rear = db.Column(db.Float, nullable=True)
     rain_pressure_front = db.Column(db.Float, nullable=True)
@@ -32,7 +32,14 @@ class SetupModel(db.Model):
                                backref=db.backref('setups', order_by='SetupModel.datetime_display.asc()'))
 
     def __repr__(self):
-        return f"Setup('{self.setup_id}', '{self.operating_hours}', '{self.datetime_display}')"
+        return f"Setup[" \
+               f"'{self.setup_id}': (" \
+               f"'{self.operating_hours}', " \
+               f"'{self.comment}', " \
+               f"'{self.datetime_display}', " \
+               f"training_id: '{self.training_id}', " \
+               f"bike_id: '{self.bike_id}'" \
+               f")]"
 
 
 class SetupSchema(ma.SQLAlchemyAutoSchema):
