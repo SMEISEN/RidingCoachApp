@@ -142,6 +142,9 @@ export default {
         if (hourTo - currentUtcHour > 0) {
           apiGetWeatherForecast(this.location_object).then((resForecast) => {
             const weatherForecast = resForecast.hourly.slice(1, hourTo - currentUtcHour);
+            this.trainingFormObject.weather = weatherMeasurement.concat(weatherMeasurement);
+            this.trainingFormObject.setup_fixed[this.tabItemIndex]
+              .weather_current = resForecast.current;
             weatherForecast.unshift(resForecast.current);
             for (let i = 0; i < weatherForecast.length; i += 1) {
               Object.assign(

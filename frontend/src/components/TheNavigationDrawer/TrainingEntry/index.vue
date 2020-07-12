@@ -24,6 +24,7 @@ import {
   initObject,
 } from '../../utils/FromUtils';
 import TrainingDialog from './TrainingDialog.vue';
+import { apiQueryTrainings } from '../../api/TrainingApi';
 
 export default {
   name: 'TheNavigationDrawerTraining',
@@ -38,10 +39,16 @@ export default {
   },
   data: () => ({
     training_form_object: {
+      training_id: null,
       race_track: null,
+      weather: null,
       date: null,
       setup_fixed: [
         {
+          setup_id: null,
+          weather_current: null,
+          comment: null,
+          time: null,
           operating_hours: null,
           slick_pressure_front: null,
           slick_pressure_rear: null,
@@ -49,9 +56,13 @@ export default {
           rain_pressure_rear: null,
         },
       ],
-      setup_individual: null,
+      setup_individual: [],
     },
     setup_fixed_template: {
+      setup_id: null,
+      weather_current: null,
+      comment: null,
+      time: null,
       operating_hours: null,
       slick_pressure_front: null,
       slick_pressure_rear: null,
@@ -69,8 +80,51 @@ export default {
       this.$emit('updatedBike');
     },
     editTraining() {
-      this.$store.commit('setTrainingDialogState', true);
-      this.initTrainingForm();
+      const query = {
+        datetime_display: {
+          value: Math.round(new Date().setUTCHours(0, 0, 0, 0) / 1000),
+          operator: '>=',
+        },
+      };
+      apiQueryTrainings(query)
+        .then((res) => {
+          if (res.data.length > 0) {
+            this.training_form_object.training_id = res.data[0].training_id;
+            this.training_form_object.race_track = res.data[0].location;
+            this.training_form_object.date = this.$options.filters
+              .formatDateTime(res.data[0].datetime_display).substring(0, 10);
+            this.training_form_object.setup_fixed = [];
+            this.$store.commit('setTrainingDialogSetupTabs', res.data[0].setups.length);
+            for (let i = 0; i < res.data[0].setups.length; i += 1) {
+              this.training_form_object.setup_fixed
+                .push(this._.cloneDeep(this.setup_fixed_template));
+              this.training_form_object.setup_fixed[i].setup_id = res.data[0]
+                .setups[i].setup_id;
+              this.training_form_object.setup_fixed[i].comment = res.data[0]
+                .setups[i].comment;
+              this.training_form_object.setup_fixed[i].time = this.$options.filters
+                .formatDateTime(res.data[0].setups[i].datetime_display).substring(11, 16);
+              this.training_form_object.setup_fixed[i].operating_hours = res.data[0]
+                .setups[i].operating_hours;
+              this.training_form_object.setup_fixed[i].slick_pressure_front = res.data[0]
+                .setups[i].slick_pressure_front;
+              this.training_form_object.setup_fixed[i].slick_pressure_rear = res.data[0]
+                .setups[i].slick_pressure_rear;
+              this.training_form_object.setup_fixed[i].rain_pressure_front = res.data[0]
+                .setups[i].rain_pressure_front;
+              this.training_form_object.setup_fixed[i].rain_pressure_rear = res.data[0]
+                .setups[i].rain_pressure_rear;
+              this.training_form_object.setup_fixed[i].rain_pressure_rear = res.data[0]
+                .setups[i].rain_pressure_rear;
+              this.training_form_object.setup_individual[i] = res.data[0]
+                .setups[i].setup;
+            }
+          } else {
+            this.initTrainingForm();
+          }
+          this.$store.commit('setTrainingDialogState', true);
+        })
+        .catch((error) => console.error(error));
     },
     initTrainingForm() {
       const bikeIndex = indexOfObjectValueInArray(
@@ -79,6 +133,7 @@ export default {
       initObject(this.training_form_object, null);
       this.training_form_object.date = new Date().toISOString().substr(0, 10);
       this.training_form_object.setup_fixed = [this._.cloneDeep(this.setup_fixed_template)];
+      this.training_form_object.setup_fixed[0].time = new Date().toTimeString().substr(0, 5);
       this.training_form_object.setup_fixed[0].operating_hours = this
         .$store.getters.getCurrentBikeOperatingHours;
       if (this.bikeArray[bikeIndex].setup != null) {

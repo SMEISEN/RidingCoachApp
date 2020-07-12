@@ -1,17 +1,15 @@
 <template>
-  <v-card-text>
-    <v-expansion-panels
-      v-model="training_general_panel"
-      focusable
-    >
-      <TrainingDialogGeneralLocation
-        :training-form-object="trainingFormObject"
-      />
-      <TrainingDialogGeneralWeather
-        :training-form-object="trainingFormObject"
-      />
-    </v-expansion-panels>
-  </v-card-text>
+  <v-expansion-panels
+    v-model="training_general_panel"
+    focusable
+  >
+    <TrainingDialogGeneralLocation
+      :training-form-object="trainingFormObject"
+    />
+    <TrainingDialogGeneralWeather
+      :training-form-object="trainingFormObject"
+    />
+  </v-expansion-panels>
 </template>
 
 <script>

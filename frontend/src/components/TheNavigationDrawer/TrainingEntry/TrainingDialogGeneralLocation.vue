@@ -2,7 +2,7 @@
   <v-expansion-panel>
     <v-expansion-panel-header>Location</v-expansion-panel-header>
     <v-expansion-panel-content>
-      <v-row>
+      <v-row dense>
         <v-col
           cols="12"
           xs="12"

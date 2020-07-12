@@ -26,6 +26,12 @@
             <v-btn
               text
               :disabled="!valid_training_dialog"
+            >
+              Delete
+            </v-btn>
+            <v-btn
+              text
+              :disabled="!valid_training_dialog"
               @click.prevent="onTrainingSave()"
             >
               Save
@@ -49,7 +55,9 @@
 <script>
 import TrainingDialogTabs from './TrainingDialogTabs.vue';
 import TrainingDialogGeneral from './TrainingDialogGeneral.vue';
-import { apiGetBike, apiPutBike } from '../../api/BikeApi';
+import { apiPutBike } from '../../api/BikeApi';
+import { apiPostTraining, apiPutTrainingItem } from '../../api/TrainingApi';
+import { apiPostSetup, apiPutSetupItem } from '../../api/SetupApi';
 
 export default {
   name: 'TrainingDialog',
@@ -93,24 +101,73 @@ export default {
       this.$emit('updatedBike');
     },
     onTrainingSave() {
-      const BikeId = this.$store.getters.getCurrentBikeId;
-      apiGetBike(BikeId).then((res) => {
-        const payload = res.data;
-        payload.operating_hours = Math.max.apply(null,
-          this._.map(this.trainingFormObject.setup_fixed, 'operating_hours'));
-        apiPutBike(BikeId, payload).then(() => {
-          this.$store.commit('setOperatingHours', payload.operating_hours);
-          this.updatedBike();
-        });
-        this.training_dialog = false;
-        this.$emit('saveClicked');
+      const bikeId = this.$store.getters.getCurrentBikeId;
+      const payloadBike = {
+        operating_hours: Math.max.apply(null,
+          this._.map(this.trainingFormObject.setup_fixed, 'operating_hours')),
+      };
+      apiPutBike(bikeId, payloadBike).then(() => {
+        this.$store.commit('setOperatingHours', payloadBike.operating_hours);
+        this.updatedBike();
       });
+      const datetime = this.trainingFormObject.date
+        .concat('T', new Date().toTimeString().substr(0, 5));
+      const payloadTraining = {
+        location: this.trainingFormObject.race_track,
+        weather_hourly: this.trainingFormObject.weather,
+        datetime_display: Date.parse(datetime) / 1000,
+      };
+      if (this.trainingFormObject.training_id === null) {
+        apiPostTraining(payloadTraining).then((resTraining) => {
+          this.trainingFormObject.training_id = resTraining.data;
+          for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
+            const payloadSetup = this.setupPayload(resTraining.data, i, bikeId);
+            apiPostSetup(payloadSetup).then((resSetup) => {
+              this.trainingFormObject.setup_fixed[i].setup_id = resSetup.data;
+            });
+          }
+        });
+      } else {
+        const trainingId = this.trainingFormObject.training_id;
+        apiPutTrainingItem(payloadTraining, trainingId).then(() => {
+          for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
+            const payloadSetup = this.setupPayload(trainingId, i, bikeId);
+            const setupId = this.trainingFormObject.setup_fixed[i].setup_id;
+            if (setupId === null) {
+              apiPostSetup(payloadSetup).then((resSetup) => {
+                this.trainingFormObject.setup_fixed[i].setup_id = resSetup.data;
+              });
+            } else {
+              apiPutSetupItem(payloadSetup, setupId);
+            }
+          }
+        });
+      }
+      this.training_dialog = false;
+      this.$emit('saveClicked');
     },
     onTrainingCancel() {
       this.training_dialog = false;
       this.training_setup_tabs = 1;
       this.training_setup_tab = null;
       this.$emit('cancelClicked');
+    },
+    setupPayload(trainingId, setupNo, bikeId) {
+      const datetime = this.trainingFormObject.date
+        .concat('T', this.trainingFormObject.setup_fixed[setupNo].time);
+      return {
+        training_id: trainingId,
+        bike_id: bikeId,
+        weather_current: this.trainingFormObject.setup_fixed[setupNo].weather_current,
+        comment: this.trainingFormObject.setup_fixed[setupNo].comment,
+        datetime_display: Date.parse(datetime) / 1000,
+        operating_hours: this.trainingFormObject.setup_fixed[setupNo].operating_hours,
+        slick_pressure_front: this.trainingFormObject.setup_fixed[setupNo].slick_pressure_front,
+        slick_pressure_rear: this.trainingFormObject.setup_fixed[setupNo].slick_pressure_rear,
+        rain_pressure_front: this.trainingFormObject.setup_fixed[setupNo].rain_pressure_front,
+        rain_pressure_rear: this.trainingFormObject.setup_fixed[setupNo].rain_pressure_rear,
+        setup: this.trainingFormObject.setup_individual[setupNo],
+      };
     },
   },
 };
