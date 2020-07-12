@@ -23,8 +23,8 @@ class BikeModel(db.Model):
     rain_rear = db.Column(db.String(50), nullable=True)
     setup = db.Column(JSON, nullable=True)
 
-    datetime_created = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self):
         return f"Bike[" \
