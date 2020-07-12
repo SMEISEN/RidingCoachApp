@@ -10,14 +10,18 @@ class TrainingModel(db.Model):
     training_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
 
     location = db.Column(db.String, nullable=False)
-    weather = db.Column(JSON, nullable=False)
+    weather_hourly = db.Column(JSON, nullable=True)
 
     datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"Training('{self.training_id}', '{self.datetime_display}')"
+        return f"Training[" \
+               f"'{self.training_id}': (" \
+               f"'{self.location}', " \
+               f"'{self.datetime_display}'" \
+               f")]"
 
 
 class TrainingSchema(ma.SQLAlchemyAutoSchema):

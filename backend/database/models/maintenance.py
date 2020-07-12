@@ -15,8 +15,18 @@ class MaintenanceModel(db.Model):
     interval_unit = db.Column(db.String(25), nullable=False)
     interval_type = db.Column(db.String(25), nullable=False)
 
+    datetime_created = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+
     def __repr__(self):
-        return f"Maintenance('{self.maintenance_id}', '{self.category}', '{self.name}')"
+        return f"Maintenance[" \
+               f"'{self.maintenance_id}': (" \
+               f"'{self.category}', " \
+               f"'{self.name}', " \
+               f"'{self.interval_amount}', " \
+               f"'{self.interval_unit}', " \
+               f"'{self.interval_type}'" \
+               f")]"
 
 
 class MaintenanceSchema(ma.SQLAlchemyAutoSchema):

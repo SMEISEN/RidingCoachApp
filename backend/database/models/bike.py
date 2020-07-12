@@ -1,3 +1,4 @@
+from datetime import datetime
 from backend.database import db, ma
 from sqlalchemy.dialects.postgresql import UUID, JSON
 import uuid
@@ -22,8 +23,17 @@ class BikeModel(db.Model):
     rain_rear = db.Column(db.String(50), nullable=True)
     setup = db.Column(JSON, nullable=True)
 
+    datetime_created = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+
     def __repr__(self):
-        return f"Bike('{self.operating_hours}', '{self.date_posted}')"
+        return f"Bike[" \
+               f"'{self.bike_id}': (" \
+               f"'{self.manufacturer}', " \
+               f"'{self.model}', " \
+               f"'{self.year}', " \
+               f"'{self.operating_hours}'h" \
+               f")]"
 
 
 class BikeSchema(ma.SQLAlchemyAutoSchema):

@@ -26,7 +26,14 @@ class HistoryModel(db.Model):
                                   backref=db.backref('history', order_by='HistoryModel.operating_hours.desc()'))
 
     def __repr__(self):
-        return f"History('{self.history_id}', '{self.operating_hours}', '{self.datetime_display}')"
+        return f"History[" \
+               f"'{self.history_id}': (" \
+               f"'{self.operating_hours}', " \
+               f"'{self.comment}', " \
+               f"'{self.datetime_display}', " \
+               f"mtn_id: '{self.maintenance_id}'," \
+               f"bike_id: '{self.bike_id}'" \
+               f")]"
 
 
 class HistorySchema(ma.SQLAlchemyAutoSchema):

@@ -8,6 +8,8 @@ from backend.api.endpoints.maintenance import ns as maintenance_namespace
 from backend.api.endpoints.maintenance import MaintenanceModel
 from backend.api.endpoints.history import ns as history_namespace
 from backend.api.endpoints.bike import ns as bike_namespace
+from backend.api.endpoints.training import ns as training_namespace
+from backend.api.endpoints.setup import ns as setup_namespace
 from backend.config import Config
 from backend.database import db, ma, migrate
 
@@ -20,6 +22,8 @@ api.init_app(blueprint)
 api.add_namespace(maintenance_namespace)
 api.add_namespace(history_namespace)
 api.add_namespace(bike_namespace)
+api.add_namespace(training_namespace)
+api.add_namespace(setup_namespace)
 
 app.register_blueprint(blueprint)
 
@@ -52,6 +56,8 @@ def create_tables():
             interval_amount=entry[1]['interval_amount'],
             interval_unit=entry[1]['interval_unit'],
             interval_type=entry[1]['interval_type'],
+            datetime_created=datetime.utcnow(),
+            datetime_last_modified=datetime.utcnow(),
         )
         db.session.add(new_maintenance)
     db.session.commit()
