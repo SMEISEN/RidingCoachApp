@@ -1,32 +1,32 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
 
-export const apiGetAllBikes = () => new Promise((resolve, reject) => {
-  const ApiPath = '/api/bike';
+export const apiGetSetups = () => new Promise((resolve, reject) => {
+  const ApiPath = '/api/setup';
   axios.get(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiPostBike = (payload) => new Promise((resolve, reject) => {
-  const ApiPath = '/api/bike';
+export const apiPostSetup = (payload) => new Promise((resolve, reject) => {
+  const ApiPath = '/api/setup';
   axios.post(ApiPath, payload)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiGetBike = (bikeId) => new Promise((resolve, reject) => {
-  const ApiPath = `/api/bike/${bikeId}`;
+export const apiGetSetupItem = (setupId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/setup/${setupId}`;
   axios.get(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiPutBike = (bikeId, payload) => new Promise((resolve, reject) => {
-  const ApiPath = `/api/bike/${bikeId}`;
+export const apiPutSetupItem = (payload, setupId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/setup/${setupId}`;
   axios.put(ApiPath, payload)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
-export const apiDeleteBike = (bikeId) => new Promise((resolve, reject) => {
-  const ApiPath = `/api/bike/${bikeId}`;
+export const apiDeleteSetupItem = (setupId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/setup/${setupId}`;
   axios.delete(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
