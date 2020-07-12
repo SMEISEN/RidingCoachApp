@@ -11,7 +11,19 @@ ns = api.namespace('maintenance', description='Operations related to maintenance
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
 
-query_parameters = api.model('MaintenanceQueryParameters', {
+maintenance_input_parameters = api.model('MaintenanceInputParameters', {
+    "category":
+        fields.String(description="maintenance work category according to bike module", required=True),
+    "name":
+        fields.String(description="maintenance work name", required=True),
+    "interval_amount":
+        fields.Float(description="interval of maintenance work", required=True),
+    "interval_unit":
+        fields.String(description="unit of maintenance interval", required=False),
+    "interval_type":
+        fields.String(description="type of maintenance interval", required=False),
+})
+maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "bike_id":
         fields.String(description="", required=False),
     "category":
@@ -78,6 +90,7 @@ class MaintenanceCollection(Resource):
 
         return response
 
+    @api.expect(maintenance_input_parameters)
     @api.response(201, 'Maintenance work successfully added.')
     def post(self):
         """
@@ -91,8 +104,9 @@ class MaintenanceCollection(Resource):
             name=inserted_data.get('name'),
             interval_amount=inserted_data.get('interval_amount'),
             interval_unit=inserted_data.get('interval_unit'),
-            interval_latest=inserted_data.get('interval_latest'),
-            interval_type=inserted_data.get('interval_type')
+            interval_type=inserted_data.get('interval_type'),
+            datetime_created=datetime.utcnow(),
+            datetime_last_modified=datetime.utcnow(),
         )
         db.session.add(new_maintenance)
         db.session.commit()
@@ -117,6 +131,7 @@ class MaintenanceItem(Resource):
 
         return response
 
+    @api.expect(maintenance_input_parameters)
     @api.response(204, f"Maintenance work with requested id successfully updated.")
     def put(self, id_: str):
         """
@@ -126,8 +141,19 @@ class MaintenanceItem(Resource):
         inserted_data = request.get_json()
 
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
-        maintenance_work.interval_latest = inserted_data.get('interval_latest')
-        maintenance_work.datetime_last_modified = datetime.utcfromtimestamp(inserted_data.get('datetime_display') / 1000)
+
+        if inserted_data.get('category') is not None:
+            maintenance_work.category = inserted_data.get('category')
+        if inserted_data.get('name') is not None:
+            maintenance_work.name = inserted_data.get('name')
+        if inserted_data.get('interval_amount') is not None:
+            maintenance_work.interval_amount = inserted_data.get('interval_amount')
+        if inserted_data.get('interval_unit') is not None:
+            maintenance_work.interval_unit = inserted_data.get('interval_unit')
+        if inserted_data.get('interval_type') is not None:
+            maintenance_work.interval_type = inserted_data.get('interval_type')
+        if bool(inserted_data) is True:
+            maintenance_work.datetime_last_modified = datetime.utcnow()
 
         db.session.add(maintenance_work)
         db.session.commit()
@@ -152,7 +178,7 @@ class MaintenanceItem(Resource):
 @api.response(404, 'Query parameters not found.')
 class MaintenanceQuery(Resource):
 
-    @api.expect(query_parameters)
+    @api.expect(maintenance_query_parameters)
     def post(self):
         """
         Creates a filtered query based on the input json file and returns the requested data.
