@@ -1,69 +1,79 @@
 <template>
-  <v-dialog
-    v-model="training_dialog"
-    fullscreen
-    hide-overlay
-    transition="dialog-bottom-transition"
-  >
-    <v-form
-      ref="validation_training_form"
-      v-model="valid_training_dialog"
+  <div>
+    <v-dialog
+      v-model="training_dialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
     >
-      <v-card>
-        <v-toolbar
-          dark
-          color="primary"
-        >
-          <v-btn
-            icon
-            @click.prevent="onTrainingCancel()"
+      <v-form
+        ref="validation_training_form"
+        v-model="valid_training_dialog"
+      >
+        <v-card>
+          <v-toolbar
+            dark
+            color="primary"
           >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-toolbar-title>Training settings</v-toolbar-title>
-          <v-spacer />
-          <v-toolbar-items>
             <v-btn
-              text
-              :disabled="!valid_training_dialog"
+              icon
+              @click.prevent="onTrainingCancel()"
             >
-              Delete
+              <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-btn
-              text
-              :disabled="!valid_training_dialog"
-              @click.prevent="onTrainingSave()"
-            >
-              Save
-            </v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-        <TrainingDialogGeneral
-          :training-form-object="trainingFormObject"
-          :valid-training-dialog.sync="valid_training_dialog"
-        />
-        <TrainingDialogTabs
-          :setup-fixed-template="setupFixedTemplate"
-          :setup-individual-template="setupIndividualTemplate"
-          :training-form-object="trainingFormObject"
-        />
-      </v-card>
-    </v-form>
-  </v-dialog>
+            <v-toolbar-title>Training settings</v-toolbar-title>
+            <v-spacer />
+            <v-toolbar-items>
+              <v-btn
+                text
+                :disabled="!training_saved"
+                @click.prevent="onTrainingDelete()"
+              >
+                Delete
+              </v-btn>
+              <v-btn
+                text
+                :disabled="!valid_training_dialog"
+                @click.prevent="onTrainingSave()"
+              >
+                Save
+              </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+          <TrainingDialogGeneral
+            :training-form-object="trainingFormObject"
+            :valid-training-dialog.sync="valid_training_dialog"
+          />
+          <TrainingDialogTabs
+            :setup-fixed-template="setupFixedTemplate"
+            :setup-individual-template="setupIndividualTemplate"
+            :training-form-object="trainingFormObject"
+          />
+        </v-card>
+      </v-form>
+    </v-dialog>
+    <ConfirmDeleteDialog
+      :flagged-for-deletion="'training entry'"
+      :confirm-delete-dialog.sync="confirm_delete_dialog"
+      @deleteConfirmationButtonClicked="deleteTrainingData()"
+    />
+  </div>
 </template>
 
 <script>
 import TrainingDialogTabs from './TrainingDialogTabs.vue';
 import TrainingDialogGeneral from './TrainingDialogGeneral.vue';
+import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
 import { apiPutBike } from '../../api/BikeApi';
-import { apiPostTraining, apiPutTrainingItem } from '../../api/TrainingApi';
-import { apiPostSetup, apiPutSetupItem } from '../../api/SetupApi';
+import { apiDeleteTrainingItem, apiPostTraining, apiPutTrainingItem } from '../../api/TrainingApi';
+import { apiDeleteSetupItem, apiPostSetup, apiPutSetupItem } from '../../api/SetupApi';
 
 export default {
   name: 'TrainingDialog',
   components: {
     TrainingDialogTabs,
     TrainingDialogGeneral,
+    ConfirmDeleteDialog,
   },
   props: {
     setupFixedTemplate: {
@@ -81,6 +91,7 @@ export default {
   },
   data: () => ({
     valid_training_dialog: true,
+    confirm_delete_dialog: false,
   }),
   computed: {
     training_dialog: {
@@ -90,6 +101,9 @@ export default {
       set(value) {
         this.$store.commit('setTrainingDialogState', value);
       },
+    },
+    training_saved() {
+      return this.trainingFormObject.training_id !== null;
     },
   },
   updated() {
@@ -148,9 +162,25 @@ export default {
     },
     onTrainingCancel() {
       this.training_dialog = false;
-      this.training_setup_tabs = 1;
-      this.training_setup_tab = null;
       this.$emit('cancelClicked');
+    },
+    onTrainingDelete() {
+      this.confirm_delete_dialog = true;
+    },
+    deleteTrainingData() {
+      for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
+        const setupId = this.trainingFormObject.setup_fixed[i].setup_id;
+        if (setupId !== null) {
+          apiDeleteSetupItem(setupId).then(() => {
+            this.trainingFormObject.setup_fixed[i].setup_id = null;
+          });
+        }
+      }
+      const trainingId = this.trainingFormObject.training_id;
+      apiDeleteTrainingItem(trainingId).then(() => {
+        this.training_dialog = false;
+        this.$emit('deletionConfirmed');
+      });
     },
     setupPayload(trainingId, setupNo, bikeId) {
       const datetime = this.trainingFormObject.date

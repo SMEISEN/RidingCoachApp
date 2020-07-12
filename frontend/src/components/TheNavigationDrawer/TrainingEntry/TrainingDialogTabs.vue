@@ -26,7 +26,7 @@
               class="px-6"
             >
               <v-textarea
-                v-model="trainingFormObject.setup_fixed[training_setup_no].comment"
+                v-model="trainingFormObject.setup_fixed[training_setup_tab].comment"
                 label="Comment"
                 rows="1"
                 auto-grow
@@ -44,7 +44,7 @@
                 :v-model="time_menu"
                 :close-on-content-click="false"
                 :nudge-right="40"
-                :return-value.sync="trainingFormObject.setup_fixed[training_setup_no].time"
+                :return-value.sync="trainingFormObject.setup_fixed[training_setup_tab].time"
                 transition="scale-transition"
                 offset-y
                 max-width="290px"
@@ -52,7 +52,7 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
-                    v-model="trainingFormObject.setup_fixed[training_setup_no].time"
+                    v-model="trainingFormObject.setup_fixed[training_setup_tab].time"
                     prepend-icon="mdi-clock"
                     append-outer-icon="mdi-update"
                     :rules="[v => !!v]"
@@ -64,12 +64,12 @@
                 </template>
                 <v-time-picker
                   v-if="time_menu"
-                  v-model="trainingFormObject.setup_fixed[training_setup_no].time"
+                  v-model="trainingFormObject.setup_fixed[training_setup_tab].time"
                   format="24hr"
                   scrollable
                   full-width
                   @click:minute="$refs.time_menu
-                    .save(trainingFormObject.setup_fixed[training_setup_no].time)"
+                    .save(trainingFormObject.setup_fixed[training_setup_tab].time)"
                 />
               </v-menu>
             </v-col>
@@ -98,10 +98,14 @@
         />
       </v-expansion-panels>
     </v-tab-item>
-    <v-tab @click="addTab">
+    <v-btn
+      depressed
+      height="47px"
+      color="secondary"
+      @click.prevent="addTab()"
+    >
       <v-icon>mdi-plus</v-icon>
-    </v-tab>
-    <v-tab-item />
+    </v-btn>
   </v-tabs>
 </template>
 
@@ -135,6 +139,7 @@ export default {
   },
   data: () => ({
     time_menu: false,
+    new_tabs: [],
   }),
   computed: {
     training_setup_panel: {
@@ -161,11 +166,15 @@ export default {
         this.$store.commit('setTrainingDialogSetupActiveTab', value);
       },
     },
-    training_setup_no() {
-      if (this.training_setup_tab === 0) {
-        return 0;
+    training_dialog() {
+      return this.$store.getters.getTrainingDialogState;
+    },
+  },
+  watch: {
+    training_dialog() {
+      if (this.training_dialog === true) {
+        this.training_setup_tab = this.trainingFormObject.setup_fixed.length - 1;
       }
-      return this.training_setup_tab - 1;
     },
   },
   updated() {
@@ -184,11 +193,11 @@ export default {
         .push(this._.cloneDeep(this.trainingFormObject.setup_individual[numberOfTabs]));
       this.training_setup_tabs += 1;
       this.$nextTick(() => {
-        this.training_setup_tab = this.training_setup_tabs;
+        this.training_setup_tab = this.training_setup_tabs - 1;
       });
     },
     refreshTime() {
-      this.trainingFormObject.setup_fixed[this.training_setup_no].time = new Date()
+      this.trainingFormObject.setup_fixed[this.training_setup_tab].time = new Date()
         .toTimeString().substr(0, 5);
       this.$forceUpdate();
     },

@@ -104,6 +104,11 @@ export default {
     },
     data_processed: false,
   }),
+  computed: {
+    training_setup_tab() {
+      return this.$store.getters.getTrainingDialogSetupActiveTab;
+    },
+  },
   updated() {
   },
   created() {
@@ -143,7 +148,7 @@ export default {
           apiGetWeatherForecast(this.location_object).then((resForecast) => {
             const weatherForecast = resForecast.hourly.slice(1, hourTo - currentUtcHour);
             this.trainingFormObject.weather = weatherMeasurement.concat(weatherMeasurement);
-            this.trainingFormObject.setup_fixed[this.tabItemIndex]
+            this.trainingFormObject.setup_fixed[this.training_setup_tab]
               .weather_current = resForecast.current;
             weatherForecast.unshift(resForecast.current);
             for (let i = 0; i < weatherForecast.length; i += 1) {
