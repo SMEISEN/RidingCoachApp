@@ -4,7 +4,7 @@
       <v-row dense>
         <v-col
           v-for="(category_object, category_name) in maintenance_object"
-          :key="category_name"
+          :key="category_name + '/' + Object.keys(category_object).length"
           cols="12"
           xs="12"
           sm="12"
@@ -15,8 +15,14 @@
               <span class="headline">{{ category_name }}</span>
             </v-card-title>
             <MaintenanceTable
-              :maintenance-entries.sync="category_object"
-              @doneButtonClicked="postHistoryEntry"
+              :maintenance-entries="category_object"
+              @doneButtonClicked="postHistoryEntry()"
+            />
+            <MaintenanceDial
+              :category-object="category_object"
+              :category-name="category_name"
+              @newMaintenanceAdded="$forceUpdate()"
+              @maintenanceDeleted="$forceUpdate()"
             />
           </v-card>
         </v-col>
@@ -24,7 +30,7 @@
     </v-container>
     <MaintenanceUndoSnackbar
       :snackbar-state="snackbar_state"
-      @undoButtonClicked="undoMaintenance"
+      @undoButtonClicked="undoMaintenance()"
     />
   </v-app>
 </template>
@@ -37,6 +43,7 @@ import {
 import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
 import MaintenanceTable from './MaintenanceTable.vue';
 import MaintenanceUndoSnackbar from './MaintenanceUndoSnackbar.vue';
+import MaintenanceDial from './MaintenanceDial.vue';
 
 export default {
   name: 'Maintenance',
@@ -44,12 +51,14 @@ export default {
     title: 'Maintenance',
   },
   components: {
+    MaintenanceDial,
     MaintenanceUndoSnackbar,
     MaintenanceTable,
   },
   data() {
     return {
       maintenance_object: {},
+      interval_types: [],
       snackbar_state: false,
       last_history_id: null,
     };
