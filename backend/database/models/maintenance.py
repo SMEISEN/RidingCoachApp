@@ -11,9 +11,9 @@ class MaintenanceModel(db.Model):
 
     category = db.Column(db.String(20), nullable=False)
     name = db.Column(db.String(100), unique=True, nullable=False)
-    interval_amount = db.Column(db.Float, nullable=False)
-    interval_unit = db.Column(db.String(25), nullable=False)
     interval_type = db.Column(db.String(25), nullable=False)
+    interval_amount = db.Column(db.Float, nullable=True)
+    interval_unit = db.Column(db.String(25), nullable=True)
 
     datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
