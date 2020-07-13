@@ -111,10 +111,13 @@ class MaintenanceCollection(Resource):
         db.session.add(new_maintenance)
         db.session.commit()
 
-        return 201
+        response = jsonify(new_maintenance.maintenance_id)
+        response.status_code = 201
+
+        return response
 
 
-@ns.route('/<string:maintenance_id>')
+@ns.route('/<string:id_>')
 @api.response(404, 'Maintenance work not found.')
 class MaintenanceItem(Resource):
 

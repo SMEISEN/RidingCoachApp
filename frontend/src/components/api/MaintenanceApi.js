@@ -13,3 +13,27 @@ export const apiQueryMaintenance = (query) => new Promise((resolve, reject) => {
     .then((res) => resolve(res))
     .catch((error) => reject(console.error(error)));
 });
+export const apiPostMaintenance = (payload) => new Promise((resolve, reject) => {
+  const ApiPath = '/api/maintenance';
+  axios.post(ApiPath, payload)
+    .then((res) => resolve(res))
+    .catch((error) => reject(console.error(error)));
+});
+export const apiGetMaintenanceItem = (mtnId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/maintenance/${mtnId}`;
+  axios.get(ApiPath)
+    .then((res) => resolve(res))
+    .catch((error) => reject(console.error(error)));
+});
+export const apiPutMaintenanceItem = (payload, mtnId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/maintenance/${mtnId}`;
+  axios.put(ApiPath, payload)
+    .then((res) => resolve(res))
+    .catch((error) => reject(console.error(error)));
+});
+export const apiDeleteMaintenanceItem = (mtnId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/maintenance/${mtnId}`;
+  axios.delete(ApiPath)
+    .then((res) => resolve(res))
+    .catch((error) => reject(console.error(error)));
+});
