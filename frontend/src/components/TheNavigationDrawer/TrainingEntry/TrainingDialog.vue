@@ -162,6 +162,7 @@ export default {
     },
     onTrainingCancel() {
       this.training_dialog = false;
+      this.$refs.validation_training_form.resetValidation();
       this.$emit('cancelClicked');
     },
     onTrainingDelete() {
@@ -179,6 +180,7 @@ export default {
       const trainingId = this.trainingFormObject.training_id;
       apiDeleteTrainingItem(trainingId).then(() => {
         this.training_dialog = false;
+        this.$refs.validation_training_form.resetValidation();
         this.$emit('deletionConfirmed');
       });
     },
