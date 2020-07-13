@@ -75,7 +75,7 @@
     <ConfirmDeleteDialog
       :flagged-for-deletion="'history entry'"
       :confirm-delete-dialog.sync="confirm_delete_dialog"
-      @deleteConfirmationButtonClicked="deletionConfirmed"
+      @deleteConfirmationButtonClicked="deletionConfirmed()"
     />
   </div>
 </template>
