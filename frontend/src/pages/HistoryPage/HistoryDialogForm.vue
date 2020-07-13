@@ -16,7 +16,7 @@
         <v-card-text>
           <v-row dense>
             <v-col
-              cols="auto"
+              cols="12"
               xs="12"
               sm="8"
               md="8"
@@ -43,13 +43,12 @@
                 </template>
                 <v-date-picker
                   v-model="historyFormInput.date"
-                  @input="$emit('update:history_form_input', historyFormInput);
-                          date_menu = false;"
+                  @input="date_menu = false"
                 />
               </v-menu>
             </v-col>
             <v-col
-              cols="auto"
+              cols="12"
               xs="12"
               sm="4"
               md="4"
@@ -101,7 +100,6 @@
                 :rules="[v => !!v]"
                 label="Category name*"
                 required
-                @select="$emit('update:history_form_input', historyFormInput);"
               />
             </v-col>
             <v-col
@@ -111,7 +109,7 @@
               md="4"
             >
               <v-text-field
-                v-model="historyFormInput.operating_hours"
+                v-model.number="historyFormInput.operating_hours"
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
                 :rules="[v => !!v]"
@@ -120,7 +118,6 @@
                 suffix="h*"
                 @click:append-outer.prevent="increment"
                 @click:prepend.prevent="decrement"
-                @keydown="$emit('update:history_form_input', historyFormInput);"
               />
             </v-col>
           </v-row>
@@ -133,7 +130,6 @@
                 :rules="[v => !!v]"
                 label="Maintenance*"
                 required
-                @keydown="$emit('update:history_form_input', historyFormInput);"
               />
             </v-col>
           </v-row>
@@ -142,7 +138,6 @@
               <v-text-field
                 v-model="historyFormInput.comment"
                 label="Comment"
-                @keydown="$emit('update:history_form_input', historyFormInput);"
               />
             </v-col>
           </v-row>

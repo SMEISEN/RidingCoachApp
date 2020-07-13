@@ -7,15 +7,15 @@
             <v-card-title>
               <v-btn
                 color="secondary"
-                @click.prevent="addHistory"
+                @click.prevent="addHistory()"
               >
                 Add maintenance entry
               </v-btn>
             </v-card-title>
             <HistoryTable
               :maintenance-history="orderedHistory"
-              @editButtonClicked="editHistory"
-              @deletionConfirmed="refreshHistory"
+              @editButtonClicked="editHistory()"
+              @deletionConfirmed="refreshHistory()"
             />
           </v-card>
         </v-container>
@@ -25,8 +25,8 @@
       :history-form-input="history_form_object"
       :maintenance-categories="maintenance_categories_array"
       :maintenance-names="maintenance_names_object"
-      @saveButtonClicked="refreshHistory"
-      @cancelButtonClicked="refreshHistory"
+      @saveButtonClicked="refreshHistory()"
+      @cancelButtonClicked="refreshHistory()"
     />
   </v-app>
 </template>
