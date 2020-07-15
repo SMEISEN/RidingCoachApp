@@ -21,6 +21,12 @@ export default {
   components: {
     RadarChart,
   },
+  props: {
+    setupArray: {
+      type: Array,
+      required: true,
+    },
+  },
   data: () => ({
     data_collection: {
       labels: [],
@@ -78,12 +84,12 @@ export default {
   },
   methods: {
     processSetupData() {
-      const setupData = this.$store.getters.getCurrentBikeSetup
-        .filter((i) => i.category === 'Suspension');
-      this.data_sets[1].data = setupData.map(() => 0);
-      this.data_sets[0].data = setupData.map((value) => value.ticks_current - value.ticks_standard);
+      this.data_sets[1].data = this.setupArray
+        .map(() => 0);
+      this.data_sets[0].data = this.setupArray
+        .map((value) => value.ticks_current - value.ticks_standard);
       this.data_collection.datasets = this.data_sets;
-      this.data_collection.labels = setupData.map((value) => `${value.group} ${value.name}`);
+      this.data_collection.labels = this.setupArray.map((value) => `${value.group} ${value.name}`);
       const allTicks = this.data_sets[1].data.concat(this.data_sets[0].data);
       this.data_options.scale.ticks.suggestedMin = Math.min(...allTicks) - 1;
       this.data_options.scale.ticks.suggestedMax = Math.max(...allTicks) + 1;
