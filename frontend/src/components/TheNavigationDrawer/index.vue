@@ -8,12 +8,10 @@
   >
     <v-list>
       <TheNavigationDrawerBike
-        :bike-array="bikeArray"
-        @updatedBike="updatedBike()"
+        :bike-array.sync="bike_array"
       />
       <TheNavigationDrawerTraining
-        :bike-array="bikeArray"
-        @updatedBike="updatedBike()"
+        :bike-array="bike_array"
       />
       <TheNavigationDrawerSpareParts />
       <TheNavigationDrawerSettings />
@@ -53,15 +51,18 @@ export default {
         this.$store.commit('setNavigationDrawerState', value);
       },
     },
+    bike_array: {
+      get() {
+        return this.bikeArray;
+      },
+      set(value) {
+        this.$emit('update:bikeArray', value);
+      },
+    },
   },
   updated() {
   },
   created() {
-  },
-  methods: {
-    updatedBike() {
-      this.$emit('updatedBike');
-    },
   },
 };
 </script>

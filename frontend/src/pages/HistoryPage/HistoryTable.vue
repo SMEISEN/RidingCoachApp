@@ -115,6 +115,11 @@ export default {
     deletionConfirmed() {
       apiDeleteHistoryItem(this.history_id).then(() => {
         this.$emit('deletionConfirmed', this.history_id);
+        this.$store.commit('setInfoSnackbar', {
+          state: true,
+          color: 'error',
+          message: 'Maintenance history entry deleted!',
+        });
       });
     },
   },

@@ -13,7 +13,7 @@
       </template>
       <v-radio-group v-model="selected_bike">
         <v-list-item
-          v-for="(bike, index) in bikeArray"
+          v-for="(bike, index) in bike_array"
           :key="index"
           v-touch="{ right: () => editBike(bike.bike_id) }"
           @click="selectBike(index)"
@@ -44,9 +44,8 @@
     <TheNavigationDrawerBikeDialog
       :bike-form-object="bike_form_object"
       :setup-individual-template="setup_individual_template"
-      :bike-array="bikeArray"
-      @clearBikeDialog="initBikeForm"
-      @updatedBike="updatedBike()"
+      :bike-array.sync="bike_array"
+      @clearBikeDialog="initBikeForm()"
     />
   </div>
 </template>
@@ -104,12 +103,16 @@ export default {
     },
   }),
   computed: {
-    selected_bike: {
+    selected_bike() {
+      return this.$store.getters.getCurrentBikeId;
+    },
+    bike_array: {
       get() {
-        return this.$store.getters.getCurrentBikeId;
+        return this.bikeArray;
       },
       set(value) {
-        this.$store.commit('selectBike', value);
+        this.$emit('update:bikeArray', value);
+        this.selectBike(0);
       },
     },
   },
@@ -118,37 +121,32 @@ export default {
   created() {
   },
   methods: {
-    updatedBike() {
-      this.$emit('updatedBike');
-    },
     selectBike(index) {
-      const selectedBike = this.bikeArray[index];
-      this.selected_bike = selectedBike.bike_id;
+      const selectedBike = this.bike_array[index];
       this.$store.commit('selectBike', selectedBike);
       this.$forceUpdate();
     },
     editBike(BikeId) {
-      const bikeIndex = indexOfObjectValueInArray(this.bikeArray, BikeId);
-      this.bike_form_object.bike_id = this.bikeArray[bikeIndex].bike_id;
-      this.bike_form_object.manufacturer = this.bikeArray[bikeIndex].manufacturer;
-      this.bike_form_object.model = this.bikeArray[bikeIndex].model;
-      this.bike_form_object.year = this.bikeArray[bikeIndex].year;
-      this.bike_form_object.operating_hours = this.bikeArray[bikeIndex].operating_hours;
-      this.bike_form_object.ccm = this.bikeArray[bikeIndex].ccm;
-      this.bike_form_object.stroke = this.bikeArray[bikeIndex].stroke;
-      this.bike_form_object.piston = this.bikeArray[bikeIndex].piston;
-      this.bike_form_object.slick_front = this.bikeArray[bikeIndex].slick_front;
-      this.bike_form_object.slick_rear = this.bikeArray[bikeIndex].slick_rear;
-      this.bike_form_object.rain_front = this.bikeArray[bikeIndex].rain_front;
-      this.bike_form_object.rain_rear = this.bikeArray[bikeIndex].rain_rear;
-      if (this.bikeArray[bikeIndex].setup === null) {
+      const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);
+      this.bike_form_object.bike_id = this.bike_array[bikeIndex].bike_id;
+      this.bike_form_object.manufacturer = this.bike_array[bikeIndex].manufacturer;
+      this.bike_form_object.model = this.bike_array[bikeIndex].model;
+      this.bike_form_object.year = this.bike_array[bikeIndex].year;
+      this.bike_form_object.operating_hours = this.bike_array[bikeIndex].operating_hours;
+      this.bike_form_object.ccm = this.bike_array[bikeIndex].ccm;
+      this.bike_form_object.stroke = this.bike_array[bikeIndex].stroke;
+      this.bike_form_object.piston = this.bike_array[bikeIndex].piston;
+      this.bike_form_object.slick_front = this.bike_array[bikeIndex].slick_front;
+      this.bike_form_object.slick_rear = this.bike_array[bikeIndex].slick_rear;
+      this.bike_form_object.rain_front = this.bike_array[bikeIndex].rain_front;
+      this.bike_form_object.rain_rear = this.bike_array[bikeIndex].rain_rear;
+      if (this.bike_array[bikeIndex].setup === null) {
         this.bike_form_object.setup_individual = [this._.cloneDeep(this.setup_individual_template)];
       } else {
-        this.bike_form_object.setup_individual = this.bikeArray[bikeIndex].setup;
+        this.bike_form_object.setup_individual = this.bike_array[bikeIndex].setup;
       }
       this.$store.commit('setBikeEditFlag', true);
       this.$store.commit('setBikeDialogState', true);
-      this.$store.commit('setNavigationDrawerState', false);
     },
     createBike() {
       this.$store.commit('setBikeDialogState', true);

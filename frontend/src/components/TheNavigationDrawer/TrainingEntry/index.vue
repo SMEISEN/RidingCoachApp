@@ -12,7 +12,6 @@
       :setup-fixed-template="setup_fixed_template"
       :setup-individual-template="setup_individual_template"
       :training-form-object="training_form_object"
-      @updatedBike="updatedBike()"
       @deletionConfirmed="initTrainingForm()"
     />
   </div>

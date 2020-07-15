@@ -35,8 +35,22 @@ export default {
   methods: {
     login(username, password) {
       this.$store.dispatch(AUTH_REQUEST, { username, password })
-        .then(() => this.$router.push('/dashboard'))
-        .catch((error) => console.error(error));
+        .then(() => {
+          this.$router.push('/dashboard');
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Login successful!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: 'Login failed!',
+          });
+          console.error(error);
+        });
     },
   },
 };

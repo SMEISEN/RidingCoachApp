@@ -28,7 +28,11 @@
               v-if="$vuetify.breakpoint.name !== 'xs'"
               cols="12"
             >
-              <v-card class="card-container">
+              <v-card
+                class="card-container"
+                v-if="$store.getters.getCurrentBikeSetup
+                .filter((i) => i.category === 'Suspension')"
+              >
                 <v-card-title>
                   <span class="headline">Bike Setup</span>
                 </v-card-title>

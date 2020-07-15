@@ -1,13 +1,13 @@
 <template>
   <v-snackbar
-    v-model="snackbarState"
+    v-model="snackbar_state"
     :timeout="3000"
     color="info"
   >
     Maintenance history added!
     <v-btn
       text
-      @click="undoButtonClicked"
+      @click="undoButtonClicked()"
     >
       Undo
     </v-btn>
@@ -23,6 +23,16 @@ export default {
       requested: true,
     },
   },
+  computed: {
+    snackbar_state: {
+      get() {
+        return this.snackbarState;
+      },
+      set(value) {
+        this.$emit('update:snackbarState', value);
+      },
+    },
+  },
   created() {
   },
   updated() {
@@ -30,6 +40,7 @@ export default {
   methods: {
     undoButtonClicked() {
       this.$emit('undoButtonClicked');
+      this.$emit('update:snackbarState', false);
     },
   },
 };

@@ -10,7 +10,7 @@
         ref="validation_training_form"
         v-model="valid_training_dialog"
       >
-        <v-card>
+        <v-card :min-height="window_height">
           <v-toolbar
             dark
             color="primary"
@@ -92,6 +92,7 @@ export default {
   data: () => ({
     valid_training_dialog: true,
     confirm_delete_dialog: false,
+    window_height: 0,
   }),
   computed: {
     training_dialog: {
@@ -107,13 +108,11 @@ export default {
     },
   },
   updated() {
+    this.window_height = window.innerHeight;
   },
   created() {
   },
   methods: {
-    updatedBike() {
-      this.$emit('updatedBike');
-    },
     onTrainingSave() {
       const bikeId = this.$store.getters.getCurrentBikeId;
       const payloadBike = {
@@ -122,7 +121,6 @@ export default {
       };
       apiPutBike(bikeId, payloadBike).then(() => {
         this.$store.commit('setOperatingHours', payloadBike.operating_hours);
-        this.updatedBike();
       });
       const datetime = this.trainingFormObject.date
         .concat('T', new Date().toTimeString().substr(0, 5));
@@ -140,6 +138,11 @@ export default {
               this.trainingFormObject.setup_fixed[i].setup_id = resSetup.data;
             });
           }
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Training created!',
+          });
         });
       } else {
         const trainingId = this.trainingFormObject.training_id;
@@ -155,6 +158,12 @@ export default {
               apiPutSetupItem(payloadSetup, setupId);
             }
           }
+          this.$store.commit('setNavigationDrawerState', false);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Training updated!',
+          });
         });
       }
       this.training_dialog = false;
@@ -182,6 +191,12 @@ export default {
         this.training_dialog = false;
         this.$refs.validation_training_form.resetValidation();
         this.$emit('deletionConfirmed');
+        this.$store.commit('setNavigationDrawerState', false);
+        this.$store.commit('setInfoSnackbar', {
+          state: true,
+          color: 'error',
+          message: 'Training deleted!',
+        });
       });
     },
     setupPayload(trainingId, setupNo, bikeId) {
