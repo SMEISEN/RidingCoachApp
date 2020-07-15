@@ -150,18 +150,17 @@ export default {
             this.trainingFormObject.weather = weatherMeasurement.concat(weatherMeasurement);
             this.trainingFormObject.setup_fixed[this.training_setup_tab]
               .weather_current = resForecast.current;
-            weatherForecast.unshift(resForecast.current);
             for (let i = 0; i < weatherForecast.length; i += 1) {
-              Object.assign(
-                weatherForecast[i],
-                { type: 'forecast' },
-              );
+              Object.assign(weatherForecast[i], { type: 'forecast' });
             }
+            weatherForecast.unshift(resForecast.current);
+            Object.assign(weatherForecast[0], { type: 'measurement' });
             this.weather_array = weatherMeasurement.concat(weatherForecast);
             this.extractTemperature(weatherMeasurement.length);
           });
         } else {
           this.weather_array = weatherMeasurement;
+          this.trainingFormObject.weather = weatherMeasurement;
           this.extractTemperature(weatherMeasurement.length);
         }
       });
