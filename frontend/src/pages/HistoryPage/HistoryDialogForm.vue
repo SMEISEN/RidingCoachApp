@@ -265,6 +265,11 @@ export default {
             this.$emit('saveButtonClicked');
             this.maintenance_dialog = false;
             this.initForm();
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'success',
+              message: 'Maintenance history entry added!',
+            });
           });
         } else {
           const HistId = this.historyFormInput.history_id;
@@ -272,6 +277,11 @@ export default {
             this.$emit('saveButtonClicked');
             this.maintenance_dialog = false;
             this.initForm();
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'success',
+              message: 'Maintenance history entry edited!',
+            });
           });
         }
       });

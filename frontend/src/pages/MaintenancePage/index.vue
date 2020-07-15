@@ -16,7 +16,7 @@
             </v-card-title>
             <MaintenanceTable
               :maintenance-entries="category_object"
-              @doneButtonClicked="postHistoryEntry()"
+              @doneButtonClicked="postHistoryEntry"
             />
             <MaintenanceDial
               :category-object="category_object"
@@ -29,7 +29,7 @@
       </v-row>
     </v-container>
     <MaintenanceUndoSnackbar
-      :snackbar-state="snackbar_state"
+      :snackbar-state.sync="snackbar_state"
       @undoButtonClicked="undoMaintenance()"
     />
   </v-app>
@@ -79,8 +79,14 @@ export default {
         });
     },
     undoMaintenance() {
-      this.snackbar_state = false;
-      apiDeleteHistoryItem(this.last_history_id).then(() => this.getMaintenance());
+      apiDeleteHistoryItem(this.last_history_id).then(() => {
+        this.getMaintenance();
+        this.$store.commit('setInfoSnackbar', {
+          state: true,
+          color: 'error',
+          message: 'Maintenance history entry deleted!',
+        });
+      });
     },
     postHistoryEntry(MtnId) {
       const payload = {
@@ -88,12 +94,17 @@ export default {
         bike_id: this.$store.getters.getCurrentBikeId,
         operating_hours: this.$store.getters.getCurrentBikeOperatingHours,
         comment: '',
-        datetime_display: new Date().getTime(),
+        datetime_display: new Date().getTime() / 1000,
       };
       apiPostHistory(payload).then((res) => {
         this.getMaintenance();
         this.last_history_id = res.data;
         this.snackbar_state = true;
+        this.$store.commit('setInfoSnackbar', {
+          state: true,
+          color: 'success',
+          message: 'Maintenance history entry added!',
+        });
       });
     },
   },

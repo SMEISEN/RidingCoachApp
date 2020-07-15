@@ -9,7 +9,7 @@
         color="primary"
         dark
       >
-        <v-tamoolbar-title>Sign in</v-tamoolbar-title>
+        <v-toolbar-title>Sign in</v-toolbar-title>
       </v-toolbar>
       <v-card-text>
         <v-row dense>
@@ -34,6 +34,7 @@
               :rules="[v => !!v]"
               required
               @click:append="show = !show"
+              @keydown.enter="onLoginButton()"
             />
           </v-col>
         </v-row>
@@ -59,7 +60,7 @@
           color="secondary"
           :disabled="!valid"
           text
-          @click="onLoginButton"
+          @click="onLoginButton()"
         >
           Login
         </v-btn>

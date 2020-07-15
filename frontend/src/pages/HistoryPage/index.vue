@@ -14,7 +14,7 @@
             </v-card-title>
             <HistoryTable
               :maintenance-history="orderedHistory"
-              @editButtonClicked="editHistory()"
+              @editButtonClicked="editHistory"
               @deletionConfirmed="refreshHistory()"
             />
           </v-card>

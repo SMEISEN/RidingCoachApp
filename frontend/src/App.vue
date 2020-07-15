@@ -14,9 +14,9 @@
     <v-main>
       <router-view />
       <TheNavigationDrawer
-        :bike-array="bike_list"
-        @updatedBike="getBike()"
+        :bike-array.sync="bike_array"
       />
+      <TheInfoSnackbar />
     </v-main>
   </v-app>
 </template>
@@ -24,11 +24,13 @@
 <script>
 import TheNavigationTabs from './components/TheNavigationTabs/index.vue';
 import TheNavigationDrawer from './components/TheNavigationDrawer/index.vue';
+import TheInfoSnackbar from './components/TheInfoSnackbar/index.vue';
 import { apiGetAllBikes } from './components/api/BikeApi';
 
 export default {
   name: 'App',
   components: {
+    TheInfoSnackbar,
     TheNavigationTabs,
     TheNavigationDrawer,
   },
@@ -45,7 +47,7 @@ export default {
 
   data: () => ({
     confirm_delete_dialog: false,
-    bike_list: [],
+    bike_array: [],
     active_tr: false,
     edit: false,
   }),
@@ -65,9 +67,10 @@ export default {
     },
     getBike() {
       apiGetAllBikes().then((res) => {
-        this.bike_list = res.data;
+        this.bike_array = res.data;
         if (this.$store.getters.getCurrentBikeId === null) {
-          this.selectBike(0);
+          const selectedBike = this.bike_array[0];
+          this.$store.commit('selectBike', selectedBike);
         }
       });
     },

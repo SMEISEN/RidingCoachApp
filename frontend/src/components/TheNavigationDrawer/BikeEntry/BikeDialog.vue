@@ -10,14 +10,14 @@
         ref="validation_bike_form"
         v-model="valid_bike_dialog"
       >
-        <v-card>
+        <v-card :min-height="window_height">
           <v-toolbar
             dark
             color="primary"
           >
             <v-btn
               icon
-              @click.prevent="onBikeCancel"
+              @click.prevent="onBikeCancel()"
             >
               <v-icon>mdi-close</v-icon>
             </v-btn>
@@ -35,7 +35,7 @@
               <v-btn
                 text
                 :disabled="!valid_bike_dialog"
-                @click.prevent="onBikeSubmit"
+                @click.prevent="onBikeSubmit()"
               >
                 Save
               </v-btn>
@@ -60,7 +60,7 @@
     <ConfirmDeleteDialog
       :flagged-for-deletion="'bike entry'"
       :confirm-delete-dialog.sync="confirm_delete_dialog"
-      @deleteConfirmationButtonClicked="deleteBikeData"
+      @deleteConfirmationButtonClicked="deleteBikeData()"
     />
   </div>
 </template>
@@ -102,6 +102,7 @@ export default {
     valid_bike_dialog: true,
     confirm_delete_dialog: false,
     setup_entries: 1,
+    window_height: 0,
   }),
   computed: {
     bike_dialog: {
@@ -114,27 +115,43 @@ export default {
     },
   },
   updated() {
+    this.window_height = window.innerHeight;
   },
   created() {
   },
   methods: {
-    updatedBike() {
-      this.$emit('updatedBike');
-    },
     postBike(payload) {
       apiPostBike(payload).then(() => {
-        this.updatedBike();
+        this.$store.commit('setInfoSnackbar', {
+          state: true,
+          color: 'success',
+          message: 'Bike created!',
+        });
       });
     },
     putBike(BikeId, payload) {
       apiPutBike(BikeId, payload).then(() => {
-        this.updatedBike();
+        this.$store.commit('setInfoSnackbar', {
+          state: true,
+          color: 'success',
+          message: 'Bike edited!',
+        });
       });
     },
     deleteBikeData() {
-      apiDeleteBike(this.bikeFormObject.bike_id).then(() => this.updatedBike());
+      const bikeId = this.bikeFormObject.bike_id;
+      apiDeleteBike(bikeId).then(() => {
+        const newBikeArray = this.bikeArray.filter((x) => x.bike_id !== bikeId);
+        this.$emit('update:bikeArray', newBikeArray);
+        this.$store.commit('setInfoSnackbar', {
+          state: true,
+          color: 'error',
+          message: 'Bike deleted!',
+        });
+      });
       this.$emit('clearBikeDialog');
       this.$store.commit('setBikeDialogState', false);
+      this.$store.commit('setNavigationDrawerState', false);
     },
     onBikeSubmit() {
       const BikeId = this.bikeFormObject.bike_id;
@@ -163,6 +180,7 @@ export default {
         }
       }
       this.$store.commit('setBikeDialogState', false);
+      this.$store.commit('setNavigationDrawerState', false);
     },
     onBikeCancel() {
       if (typeof this.$refs.validation_bike_form !== 'undefined') {
