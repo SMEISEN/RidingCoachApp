@@ -29,14 +29,15 @@
               cols="12"
             >
               <v-card
+                v-if="setup_array.length > 0"
                 class="card-container"
-                v-if="$store.getters.getCurrentBikeSetup
-                .filter((i) => i.category === 'Suspension')"
               >
                 <v-card-title>
                   <span class="headline">Bike Setup</span>
                 </v-card-title>
-                <DashboardSetupState />
+                <DashboardSetupState
+                  :setup-array="setup_array"
+                />
               </v-card>
             </v-col>
           </v-row>
@@ -63,11 +64,16 @@
           sm="6"
           md="6"
         >
-          <v-card class="card-container">
+          <v-card
+            v-if="setup_array.length > 0"
+            class="card-container"
+          >
             <v-card-title>
               <span class="headline">Bike Setup</span>
             </v-card-title>
-            <DashboardSetupState />
+            <DashboardSetupState
+              :setup-array="setup_array"
+            />
           </v-card>
         </v-col>
         <v-col
@@ -131,7 +137,6 @@ export default {
     DashboardWearState,
   },
   data: () => ({
-    bike_object: {},
     wear_object: {
       brakes_front: '',
       brakes_rear: '',
@@ -139,6 +144,7 @@ export default {
       engine: '',
     },
     maintenance_array: [],
+    setup_array: [],
   }),
   computed: {
     bikeString() {
@@ -152,10 +158,12 @@ export default {
     this.getBikeData();
     this.getWear();
     this.getMaintenance();
+    this.getSetup();
     this.$store.subscribe(() => {
       this.getBikeData();
       this.getWear();
       this.getMaintenance();
+      this.getSetup();
     });
   },
   updated() {
@@ -194,8 +202,12 @@ export default {
     },
     getBikeData() {
       apiGetAllBikes().then((res) => {
-        this.bike_object = res.data;
+        this.bike_array = res.data;
       });
+    },
+    getSetup() {
+      this.setup_array = this.$store.getters.getCurrentBikeSetup
+        .filter((i) => i.category === 'Suspension');
     },
     getWear() {
       apiQueryMaintenance({
