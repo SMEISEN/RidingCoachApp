@@ -30,12 +30,6 @@ export default {
   components: {
     TrainingDialog,
   },
-  props: {
-    bikeArray: {
-      type: Array,
-      required: true,
-    },
-  },
   data: () => ({
     training_form_object: {
       training_id: null,
@@ -70,6 +64,16 @@ export default {
     },
     setup_individual_template: [],
   }),
+  computed: {
+    bike_array: {
+      get() {
+        return this.$store.getters.getAllBikes;
+      },
+      set(value) {
+        this.$store.commit('setAllBikes', value);
+      },
+    },
+  },
   updated() {
   },
   created() {
@@ -130,7 +134,7 @@ export default {
     },
     initTrainingForm() {
       const bikeIndex = indexOfObjectValueInArray(
-        this.bikeArray, this.$store.getters.getCurrentBikeId,
+        this.bike_array, this.$store.getters.getCurrentBikeId,
       );
       initObject(this.training_form_object, null);
       this.training_form_object.date = new Date().toISOString().substr(0, 10);
@@ -138,9 +142,9 @@ export default {
       this.training_form_object.setup_fixed[0].time = new Date().toTimeString().substr(0, 5);
       this.training_form_object.setup_fixed[0].operating_hours = this
         .$store.getters.getCurrentBikeOperatingHours;
-      if (this.bikeArray[bikeIndex].setup != null) {
+      if (this.bike_array[bikeIndex].setup != null) {
         this.training_form_object.setup_individual = [
-          this._.cloneDeep(this.bikeArray[bikeIndex].setup),
+          this._.cloneDeep(this.bike_array[bikeIndex].setup),
         ];
         // eslint-disable-next-line prefer-destructuring
         this.setup_individual_template = this.training_form_object.setup_individual[0];
