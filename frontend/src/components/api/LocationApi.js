@@ -3,8 +3,9 @@ export const apiGetLocation = () => new Promise((resolve, reject) => {
   setTimeout(() => {
     try {
       if (!('geolocation' in navigator)) {
-        console.error('Geolocation is not available.');
-        reject(new Error());
+        const error = 'Geolocation is not available!';
+        console.error(error);
+        reject(new Error(error));
       } else {
         navigator.geolocation.getCurrentPosition((pos) => resolve(pos),
           (error) => {
