@@ -66,13 +66,21 @@ export default {
       this.$store.commit('setNavigationDrawerState', true);
     },
     getBike() {
-      apiGetAllBikes().then((res) => {
-        this.bike_array = res.data;
-        if (this.$store.getters.getCurrentBikeId === null) {
-          const selectedBike = this.bike_array[0];
-          this.$store.commit('selectBike', selectedBike);
-        }
-      });
+      apiGetAllBikes()
+        .then((res) => {
+          this.bike_array = res.data;
+          if (this.$store.getters.getCurrentBikeId === null) {
+            const selectedBike = this.bike_array[0];
+            this.$store.commit('selectBike', selectedBike);
+          }
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
   },
 };

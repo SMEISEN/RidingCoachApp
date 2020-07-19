@@ -65,9 +65,6 @@ export default {
   },
   created() {
     this.getMaintenance();
-    this.$store.subscribe(() => {
-      this.getMaintenance();
-    });
   },
   updated() {
   },
@@ -76,17 +73,32 @@ export default {
       apiQueryMaintenance({ bike_id: this.$store.getters.getCurrentBikeId })
         .then((res) => {
           this.maintenance_object = res.data;
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
     },
     undoMaintenance() {
-      apiDeleteHistoryItem(this.last_history_id).then(() => {
-        this.getMaintenance();
-        this.$store.commit('setInfoSnackbar', {
-          state: true,
-          color: 'error',
-          message: 'Maintenance history entry deleted!',
+      apiDeleteHistoryItem(this.last_history_id)
+        .then(() => {
+          this.getMaintenance();
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: 'Maintenance history entry deleted!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
-      });
     },
     postHistoryEntry(MtnId) {
       const payload = {
@@ -96,16 +108,24 @@ export default {
         comment: '',
         datetime_display: new Date().getTime() / 1000,
       };
-      apiPostHistory(payload).then((res) => {
-        this.getMaintenance();
-        this.last_history_id = res.data;
-        this.snackbar_state = true;
-        this.$store.commit('setInfoSnackbar', {
-          state: true,
-          color: 'success',
-          message: 'Maintenance history entry added!',
+      apiPostHistory(payload)
+        .then((res) => {
+          this.getMaintenance();
+          this.last_history_id = res.data;
+          this.snackbar_state = true;
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Maintenance history entry added!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
-      });
     },
   },
 };

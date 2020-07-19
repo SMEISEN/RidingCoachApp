@@ -127,43 +127,66 @@ export default {
             this.location_object = res;
             resolve(res);
           })
-          .catch((error) => reject(console.error(error)));
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error} - Database connection failed!`,
+            });
+            reject(error);
+          });
       });
     },
     getWeather() {
-      apiGetWeatherHistoric(this.location_object).then((resMeasurement) => {
-        const timezone = moment.tz.guess();
-        const utcOffset = moment.tz.zone(timezone).utcOffset(new Date().getTime()) / 60;
-        const hourFrom = 8 + utcOffset;
-        const hourTo = 19 + utcOffset;
-        const weatherMeasurement = resMeasurement.hourly.slice(hourFrom, hourTo);
-        for (let i = 0; i < weatherMeasurement.length; i += 1) {
-          Object.assign(
-            weatherMeasurement[i],
-            { type: 'measurement' },
-          );
-        }
-        const currentUtcHour = resMeasurement.hourly.length + 1 + utcOffset;
-        if (hourTo - currentUtcHour > 0) {
-          apiGetWeatherForecast(this.location_object).then((resForecast) => {
-            const weatherForecast = resForecast.hourly.slice(1, hourTo - currentUtcHour);
-            this.trainingFormObject.weather = weatherMeasurement.concat(weatherMeasurement);
-            this.trainingFormObject.setup_fixed[this.training_setup_tab]
-              .weather_current = resForecast.current;
-            for (let i = 0; i < weatherForecast.length; i += 1) {
-              Object.assign(weatherForecast[i], { type: 'forecast' });
-            }
-            weatherForecast.unshift(resForecast.current);
-            Object.assign(weatherForecast[0], { type: 'measurement' });
-            this.weather_array = weatherMeasurement.concat(weatherForecast);
+      apiGetWeatherHistoric(this.location_object)
+        .then((resMeasurement) => {
+          const timezone = moment.tz.guess();
+          const utcOffset = moment.tz.zone(timezone).utcOffset(new Date().getTime()) / 60;
+          const hourFrom = 8 + utcOffset;
+          const hourTo = 19 + utcOffset;
+          const weatherMeasurement = resMeasurement.hourly.slice(hourFrom, hourTo);
+          for (let i = 0; i < weatherMeasurement.length; i += 1) {
+            Object.assign(
+              weatherMeasurement[i],
+              { type: 'measurement' },
+            );
+          }
+          const currentUtcHour = resMeasurement.hourly.length + 1 + utcOffset;
+          if (hourTo - currentUtcHour > 0) {
+            apiGetWeatherForecast(this.location_object)
+              .then((resForecast) => {
+                const weatherForecast = resForecast.hourly.slice(1, hourTo - currentUtcHour);
+                this.trainingFormObject.weather = weatherMeasurement.concat(weatherMeasurement);
+                this.trainingFormObject.setup_fixed[this.training_setup_tab]
+                  .weather_current = resForecast.current;
+                for (let i = 0; i < weatherForecast.length; i += 1) {
+                  Object.assign(weatherForecast[i], { type: 'forecast' });
+                }
+                weatherForecast.unshift(resForecast.current);
+                Object.assign(weatherForecast[0], { type: 'measurement' });
+                this.weather_array = weatherMeasurement.concat(weatherForecast);
+                this.extractTemperature(weatherMeasurement.length);
+              })
+              .catch((error) => {
+                this.$store.commit('setInfoSnackbar', {
+                  state: true,
+                  color: 'error',
+                  message: `${error} - Database connection failed!`,
+                });
+              });
+          } else {
+            this.weather_array = weatherMeasurement;
+            this.trainingFormObject.weather = weatherMeasurement;
             this.extractTemperature(weatherMeasurement.length);
+          }
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
           });
-        } else {
-          this.weather_array = weatherMeasurement;
-          this.trainingFormObject.weather = weatherMeasurement;
-          this.extractTemperature(weatherMeasurement.length);
-        }
-      });
+        });
     },
     extractTemperature(currentTick) {
       this.data_sets[0].pointBackgroundColor = this.$vuetify.theme.themes.light.info;

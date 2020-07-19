@@ -261,28 +261,44 @@ export default {
           comment: this.historyFormInput.comment,
         };
         if (this.$store.getters.getHistoryEditFlag === false) {
-          apiPostHistory(payload).then(() => {
-            this.$emit('saveButtonClicked');
-            this.maintenance_dialog = false;
-            this.initForm();
-            this.$store.commit('setInfoSnackbar', {
-              state: true,
-              color: 'success',
-              message: 'Maintenance history entry added!',
+          apiPostHistory(payload)
+            .then(() => {
+              this.$emit('saveButtonClicked');
+              this.maintenance_dialog = false;
+              this.initForm();
+              this.$store.commit('setInfoSnackbar', {
+                state: true,
+                color: 'success',
+                message: 'Maintenance history entry added!',
+              });
+            })
+            .catch((error) => {
+              this.$store.commit('setInfoSnackbar', {
+                state: true,
+                color: 'error',
+                message: `${error} - Database connection failed!`,
+              });
             });
-          });
         } else {
           const HistId = this.historyFormInput.history_id;
-          apiPutHistoryItem(payload, HistId).then(() => {
-            this.$emit('saveButtonClicked');
-            this.maintenance_dialog = false;
-            this.initForm();
-            this.$store.commit('setInfoSnackbar', {
-              state: true,
-              color: 'success',
-              message: 'Maintenance history entry edited!',
+          apiPutHistoryItem(payload, HistId)
+            .then(() => {
+              this.$emit('saveButtonClicked');
+              this.maintenance_dialog = false;
+              this.initForm();
+              this.$store.commit('setInfoSnackbar', {
+                state: true,
+                color: 'success',
+                message: 'Maintenance history entry edited!',
+              });
+            })
+            .catch((error) => {
+              this.$store.commit('setInfoSnackbar', {
+                state: true,
+                color: 'error',
+                message: `${error} - Database connection failed!`,
+              });
             });
-          });
         }
       });
     },

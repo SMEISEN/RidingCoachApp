@@ -148,11 +148,19 @@ export default {
         interval_amount: this.new_maintenance.interval_amount,
         interval_unit: this.new_maintenance.interval_unit,
       };
-      apiPostMaintenance(payload).then((res) => {
-        this.categoryObject[maintenanceName].maintenance_id = res.data;
-        this.$emit('update:addMaintenanceDialog', false);
-        this.$emit('newMaintenanceAdded');
-      });
+      apiPostMaintenance(payload)
+        .then((res) => {
+          this.categoryObject[maintenanceName].maintenance_id = res.data;
+          this.$emit('update:addMaintenanceDialog', false);
+          this.$emit('newMaintenanceAdded');
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
     onCancel() {
       this.$emit('update:addMaintenanceDialog', false);

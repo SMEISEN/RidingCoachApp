@@ -3,37 +3,55 @@ import axios from 'axios';
 
 export const apiGetMaintenance = () => new Promise((resolve, reject) => {
   const ApiPath = '/api/maintenance';
-  axios.get(ApiPath)
+  axios.get(ApiPath, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiQueryMaintenance = (query) => new Promise((resolve, reject) => {
   const ApiPath = '/api/maintenance/query';
-  axios.post(ApiPath, query)
+  axios.post(ApiPath, query, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiPostMaintenance = (payload) => new Promise((resolve, reject) => {
   const ApiPath = '/api/maintenance';
-  axios.post(ApiPath, payload)
+  axios.post(ApiPath, payload, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiGetMaintenanceItem = (mtnId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/maintenance/${mtnId}`;
-  axios.get(ApiPath)
+  axios.get(ApiPath, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiPutMaintenanceItem = (payload, mtnId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/maintenance/${mtnId}`;
-  axios.put(ApiPath, payload)
+  axios.put(ApiPath, payload, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiDeleteMaintenanceItem = (mtnId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/maintenance/${mtnId}`;
-  axios.delete(ApiPath)
+  axios.delete(ApiPath, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });

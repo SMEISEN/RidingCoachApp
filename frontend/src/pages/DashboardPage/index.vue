@@ -159,12 +159,6 @@ export default {
     this.getWear();
     this.getMaintenance();
     this.getSetup();
-    this.$store.subscribe(() => {
-      this.getBikeData();
-      this.getWear();
-      this.getMaintenance();
-      this.getSetup();
-    });
   },
   updated() {
   },
@@ -201,9 +195,17 @@ export default {
       return helperList2;
     },
     getBikeData() {
-      apiGetAllBikes().then((res) => {
-        this.bike_array = res.data;
-      });
+      apiGetAllBikes()
+        .then((res) => {
+          this.bike_array = res.data;
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
     getSetup() {
       this.setup_array = this.$store.getters.getCurrentBikeSetup
@@ -213,24 +215,40 @@ export default {
       apiQueryMaintenance({
         bike_id: this.$store.getters.getCurrentBikeId,
         interval_type: 'estimated wear',
-      }).then((res) => {
-        this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
-        this.wear_object.brakes_front.name = 'Front brake pads';
-        this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
-        this.wear_object.brakes_rear.name = 'Rear brake pads';
-        this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
-        this.wear_object.tires.name = 'Tires';
-        this.wear_object.engine = res.data.Motor[Object.keys(res.data.Motor)[0]];
-        this.wear_object.engine.name = 'Engine revision';
-      });
+      })
+        .then((res) => {
+          this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
+          this.wear_object.brakes_front.name = 'Front brake pads';
+          this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
+          this.wear_object.brakes_rear.name = 'Rear brake pads';
+          this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
+          this.wear_object.tires.name = 'Tires';
+          this.wear_object.engine = res.data.Motor[Object.keys(res.data.Motor)[0]];
+          this.wear_object.engine.name = 'Engine revision';
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
     getMaintenance() {
       apiQueryMaintenance({
         bike_id: this.$store.getters.getCurrentBikeId,
         interval_type: 'planned cycle',
-      }).then((res) => {
-        this.maintenance_array = this.structureMaintenanceNext(res.data);
-      });
+      })
+        .then((res) => {
+          this.maintenance_array = this.structureMaintenanceNext(res.data);
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
   },
 };

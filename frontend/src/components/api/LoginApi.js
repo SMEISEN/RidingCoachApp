@@ -13,8 +13,9 @@ export const apiLogin = ({ url, data, method }) => new Promise((resolve, reject)
       } else {
         resolve(mocks[url][method || 'GET']);
       }
-    } catch (err) {
-      reject(new Error(err));
+    } catch (error) {
+      console.error(error);
+      reject(new Error(error));
     }
-  }, 1000);
+  }, 5000);
 });
