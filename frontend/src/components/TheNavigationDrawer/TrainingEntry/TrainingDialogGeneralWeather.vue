@@ -144,28 +144,27 @@ export default {
           const utcOffset = moment.tz.zone(timezone).utcOffset(new Date().getTime()) / 60;
           const hourFrom = 8 + utcOffset;
           const hourTo = 19 + utcOffset;
-          const weatherMeasurement = resMeasurement.hourly.slice(hourFrom, hourTo);
+          const weatherMeasurement = resMeasurement.slice(hourFrom, hourTo);
           for (let i = 0; i < weatherMeasurement.length; i += 1) {
             Object.assign(
               weatherMeasurement[i],
               { type: 'measurement' },
             );
           }
-          const currentUtcHour = resMeasurement.hourly.length + 1 + utcOffset;
+          [this.trainingFormObject.setup_fixed[this.training_setup_tab]
+            .weather_current] = weatherMeasurement.slice(-1);
+          const currentUtcHour = resMeasurement.length + 1 + utcOffset;
           if (hourTo - currentUtcHour > 0) {
             apiGetWeatherForecast(this.location_object)
               .then((resForecast) => {
-                const weatherForecast = resForecast.hourly.slice(1, hourTo - currentUtcHour);
-                this.trainingFormObject.weather = weatherMeasurement.concat(weatherMeasurement);
-                this.trainingFormObject.setup_fixed[this.training_setup_tab]
-                  .weather_current = resForecast.current;
+                const weatherForecast = resForecast.slice(1, hourTo - currentUtcHour + 1);
                 for (let i = 0; i < weatherForecast.length; i += 1) {
                   Object.assign(weatherForecast[i], { type: 'forecast' });
                 }
-                weatherForecast.unshift(resForecast.current);
-                Object.assign(weatherForecast[0], { type: 'measurement' });
-                this.weather_array = weatherMeasurement.concat(weatherForecast);
-                this.extractTemperature(weatherMeasurement.length);
+                const weatherComplete = weatherMeasurement.concat(weatherForecast);
+                this.weather_array = weatherComplete;
+                this.trainingFormObject.weather = weatherComplete;
+                this.extractTemperature(weatherMeasurement.length - 1);
               })
               .catch((error) => {
                 this.$store.commit('setInfoSnackbar', {
@@ -177,7 +176,7 @@ export default {
           } else {
             this.weather_array = weatherMeasurement;
             this.trainingFormObject.weather = weatherMeasurement;
-            this.extractTemperature(weatherMeasurement.length);
+            this.extractTemperature(weatherMeasurement.length - 1);
           }
         })
         .catch((error) => {
@@ -194,9 +193,27 @@ export default {
       this.data_sets[1].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[1].borderColor = this.$vuetify.theme.themes.light.error;
       for (let i = 0; i < this.weather_array.length; i += 1) {
-        const airDegrees = this.weather_array[i].temp - 273.15;
+        const airDegrees = this.weather_array[i].temp.value;
         this.data_sets[0].data.push(airDegrees);
-        this.data_sets[1].data.push(1.52 * airDegrees - 4.4436);
+        if (airDegrees !== null) {
+          const windSpeed = this.weather_array[i].wind_speed.value;
+          const humidity = this.weather_array[i].humidity.value;
+          const solarRadiation = this.weather_array[i].surface_shortwave_radiation.value;
+          const asphaltFahrenheit = 41.51
+            + 0.102 * windSpeed
+            + 1.71 * airDegrees
+            + 0.032 * humidity
+            - 0.029 * solarRadiation
+            + 0.002 * airDegrees * humidity
+            + 5.7 * (10 ** -4) * windSpeed * solarRadiation
+            + 0.0014 * solarRadiation
+            + 4.09 * (10 ** -5) * (solarRadiation ** 2)
+            - 1.15 * (10 ** -6) * airDegrees * (solarRadiation ** 2);
+          const asphaltDegrees = (asphaltFahrenheit - 32) / 1.8;
+          this.data_sets[1].data.push(asphaltDegrees);
+        } else {
+          this.data_sets[1].data.push(null);
+        }
         if (i === currentTick) {
           this.data_options.scales.xAxes[0].gridLines.color
             .push(this.$vuetify.theme.themes.light.info);
@@ -204,7 +221,7 @@ export default {
           this.data_options.scales.xAxes[0].gridLines.color
             .push('rgba(0, 0, 0, 0.1)');
         }
-        this.time_array.push(new Date(this.weather_array[i].dt * 1000));
+        this.time_array.push(new Date(this.weather_array[i].observation_time.value));
       }
       this.data_collection.datasets = this.data_sets;
       this.data_collection.labels = this.time_array;
