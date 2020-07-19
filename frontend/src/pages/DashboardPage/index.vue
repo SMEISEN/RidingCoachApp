@@ -121,7 +121,6 @@ import {
   processLeftIntervalHours,
 } from '../../components/utils/DataProcessingUtils';
 import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
-import { apiGetAllBikes } from '../../components/api/BikeApi';
 import DashboardWearState from './DashboardWearState.vue';
 import DashboardMaintenanceState from './DashboardMaintenanceState.vue';
 import DashboardSetupState from './DashboardSetupState.vue';
@@ -155,10 +154,16 @@ export default {
     },
   },
   created() {
-    this.getBikeData();
     this.getWear();
     this.getMaintenance();
     this.getSetup();
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'selectBike') {
+        this.getWear();
+        this.getMaintenance();
+        this.getSetup();
+      }
+    });
   },
   updated() {
   },
@@ -193,19 +198,6 @@ export default {
         }
       }
       return helperList2;
-    },
-    getBikeData() {
-      apiGetAllBikes()
-        .then((res) => {
-          this.bike_array = res.data;
-        })
-        .catch((error) => {
-          this.$store.commit('setInfoSnackbar', {
-            state: true,
-            color: 'error',
-            message: `${error} - Database connection failed!`,
-          });
-        });
     },
     getSetup() {
       this.setup_array = this.$store.getters.getCurrentBikeSetup

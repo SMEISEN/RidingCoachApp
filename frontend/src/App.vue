@@ -13,9 +13,7 @@
     </v-app-bar>
     <v-main>
       <router-view />
-      <TheNavigationDrawer
-        :bike-array.sync="bike_array"
-      />
+      <TheNavigationDrawer />
       <TheInfoSnackbar />
     </v-main>
   </v-app>
@@ -47,7 +45,6 @@ export default {
 
   data: () => ({
     confirm_delete_dialog: false,
-    bike_array: [],
     active_tr: false,
     edit: false,
   }),
@@ -68,10 +65,9 @@ export default {
     getBike() {
       apiGetAllBikes()
         .then((res) => {
-          this.bike_array = res.data;
+          this.$store.commit('setAllBikes', res.data);
           if (this.$store.getters.getCurrentBikeId === null) {
-            const selectedBike = this.bike_array[0];
-            this.$store.commit('selectBike', selectedBike);
+            this.$store.commit('selectBike', res.data[0]);
           }
         })
         .catch((error) => {

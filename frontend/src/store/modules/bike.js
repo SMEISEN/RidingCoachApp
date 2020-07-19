@@ -1,6 +1,7 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
 const state = () => ({
+  all_bikes: null,
   current_bike_id: null,
   current_bike_manufacturer: null,
   current_bike_model: null,
@@ -9,6 +10,7 @@ const state = () => ({
   current_bike_setup: null,
 });
 const getters = {
+  getAllBikes: (state) => state.all_bikes,
   getCurrentBikeId: (state) => state.current_bike_id,
   getCurrentBikeManufacturer: (state) => state.current_bike_manufacturer,
   getCurrentBikeModel: (state) => state.current_bike_model,
@@ -17,6 +19,9 @@ const getters = {
   getCurrentBikeSetup: (state) => state.current_bike_setup,
 };
 const mutations = {
+  setAllBikes(state, bikes) {
+    state.all_bikes = bikes;
+  },
   selectBike(state, selectedBike) {
     state.current_bike_id = selectedBike.bike_id;
     state.current_bike_manufacturer = selectedBike.manufacturer;

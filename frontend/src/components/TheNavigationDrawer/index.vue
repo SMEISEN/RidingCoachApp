@@ -7,12 +7,8 @@
     width="auto"
   >
     <v-list>
-      <TheNavigationDrawerBike
-        :bike-array.sync="bike_array"
-      />
-      <TheNavigationDrawerTraining
-        :bike-array="bike_array"
-      />
+      <TheNavigationDrawerBike />
+      <TheNavigationDrawerTraining />
       <TheNavigationDrawerSpareParts />
       <TheNavigationDrawerSettings />
       <TheNavigationDrawerLogout />
@@ -36,12 +32,6 @@ export default {
     TheNavigationDrawerSettings,
     TheNavigationDrawerLogout,
   },
-  props: {
-    bikeArray: {
-      type: Array,
-      required: true,
-    },
-  },
   computed: {
     navigation_drawer: {
       get() {
@@ -53,10 +43,10 @@ export default {
     },
     bike_array: {
       get() {
-        return this.bikeArray;
+        return this.$store.getters.getAllBikes;
       },
       set(value) {
-        this.$emit('update:bikeArray', value);
+        this.$store.commit('setAllBikes', value);
       },
     },
   },

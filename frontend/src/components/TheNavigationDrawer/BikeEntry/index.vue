@@ -44,7 +44,6 @@
     <TheNavigationDrawerBikeDialog
       :bike-form-object="bike_form_object"
       :setup-individual-template="setup_individual_template"
-      :bike-array.sync="bike_array"
       @clearBikeDialog="initBikeForm()"
     />
   </div>
@@ -61,12 +60,6 @@ export default {
   name: 'TheNavigationDrawerBike',
   components: {
     TheNavigationDrawerBikeDialog,
-  },
-  props: {
-    bikeArray: {
-      type: Array,
-      required: true,
-    },
   },
   data: () => ({
     bike_form_object: {
@@ -108,11 +101,10 @@ export default {
     },
     bike_array: {
       get() {
-        return this.bikeArray;
+        return this.$store.getters.getAllBikes;
       },
       set(value) {
-        this.$emit('update:bikeArray', value);
-        this.selectBike(0);
+        this.$store.commit('setAllBikes', value);
       },
     },
   },
@@ -123,8 +115,10 @@ export default {
   methods: {
     selectBike(index) {
       const selectedBike = this.bike_array[index];
-      this.$store.commit('selectBike', selectedBike);
-      this.$forceUpdate();
+      if (this.$store.getters.getCurrentBikeId !== selectedBike) {
+        this.$store.commit('selectBike', selectedBike);
+        this.$forceUpdate();
+      }
     },
     editBike(BikeId) {
       const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);

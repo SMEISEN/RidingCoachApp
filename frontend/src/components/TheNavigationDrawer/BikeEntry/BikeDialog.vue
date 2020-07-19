@@ -85,10 +85,6 @@ export default {
     ConfirmDeleteDialog,
   },
   props: {
-    bikeArray: {
-      type: Array,
-      required: true,
-    },
     bikeFormObject: {
       type: Object,
       required: true,
@@ -111,6 +107,14 @@ export default {
       },
       set(value) {
         this.$store.commit('setBikeDialogState', value);
+      },
+    },
+    bike_array: {
+      get() {
+        return this.$store.getters.getAllBikes;
+      },
+      set(value) {
+        this.$store.commit('setAllBikes', value);
       },
     },
   },
@@ -158,8 +162,9 @@ export default {
       const bikeId = this.bikeFormObject.bike_id;
       apiDeleteBike(bikeId)
         .then(() => {
-          const newBikeArray = this.bikeArray.filter((x) => x.bike_id !== bikeId);
-          this.$emit('update:bikeArray', newBikeArray);
+          this.bike_array = this.bike_array.filter((x) => x.bike_id !== bikeId);
+          this.$store.commit('selectBike', 0);
+          this.$forceUpdate();
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
