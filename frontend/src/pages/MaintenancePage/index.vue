@@ -78,7 +78,7 @@ export default {
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
-            message: `${error} - Database connection failed!`,
+            message: `${error}!`,
           });
         });
     },
@@ -96,7 +96,7 @@ export default {
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
-            message: `${error} - Database connection failed!`,
+            message: `${error}!`,
           });
         });
     },
@@ -123,7 +123,7 @@ export default {
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
-            message: `${error} - Database connection failed!`,
+            message: `${error}!`,
           });
         });
     },
