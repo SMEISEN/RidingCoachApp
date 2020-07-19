@@ -75,9 +75,6 @@ export default {
   created() {
   },
   methods: {
-    updatedBike() {
-      this.$emit('updatedBike');
-    },
     editTraining() {
       const query = {
         datetime_display: {
@@ -123,7 +120,13 @@ export default {
           }
           this.$store.commit('setTrainingDialogState', true);
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
     initTrainingForm() {
       const bikeIndex = indexOfObjectValueInArray(

@@ -141,9 +141,17 @@ export default {
         interval_unit: this.categoryObject[this.selected_name].interval_unit,
         interval_type: this.categoryObject[this.selected_name].interval_type,
       };
-      apiPutMaintenanceItem(payload, mtnId).then(() => {
-        this.$emit('update:editMaintenanceDialog', false);
-      });
+      apiPutMaintenanceItem(payload, mtnId)
+        .then(() => {
+          this.$emit('update:editMaintenanceDialog', false);
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
     onCancel() {
       this.$emit('update:editMaintenanceDialog', false);

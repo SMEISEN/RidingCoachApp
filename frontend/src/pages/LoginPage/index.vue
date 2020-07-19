@@ -47,9 +47,8 @@ export default {
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
-            message: 'Login failed!',
+            message: `${error} - Login failed!`,
           });
-          console.error(error);
         });
     },
   },

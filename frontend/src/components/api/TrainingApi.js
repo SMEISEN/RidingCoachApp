@@ -3,37 +3,55 @@ import axios from 'axios';
 
 export const apiGetTrainings = () => new Promise((resolve, reject) => {
   const ApiPath = '/api/training';
-  axios.get(ApiPath)
+  axios.get(ApiPath, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiQueryTrainings = (query) => new Promise((resolve, reject) => {
   const ApiPath = '/api/training/query';
-  axios.post(ApiPath, query)
+  axios.post(ApiPath, query, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiPostTraining = (payload) => new Promise((resolve, reject) => {
   const ApiPath = '/api/training';
-  axios.post(ApiPath, payload)
+  axios.post(ApiPath, payload, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiGetTrainingItem = (trainingId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/training/${trainingId}`;
-  axios.get(ApiPath)
+  axios.get(ApiPath, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiPutTrainingItem = (payload, trainingId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/training/${trainingId}`;
-  axios.put(ApiPath, payload)
+  axios.put(ApiPath, payload, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });
 export const apiDeleteTrainingItem = (trainingId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/training/${trainingId}`;
-  axios.delete(ApiPath)
+  axios.delete(ApiPath, { timeout: 5000 })
     .then((res) => resolve(res))
-    .catch((error) => reject(console.error(error)));
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
 });

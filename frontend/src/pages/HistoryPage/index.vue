@@ -71,9 +71,6 @@ export default {
   },
   created() {
     this.refreshHistory();
-    this.$store.subscribe(() => {
-      this.refreshHistory();
-    });
   },
   updated() {
   },
@@ -84,25 +81,49 @@ export default {
       this.$store.commit('setHistoryAddOrEditDialog', true);
     },
     editHistory(HistId) {
-      apiGetHistoryItem(HistId).then((res) => {
-        this.history_form_object = res.data;
-        this.history_form_object.date = this.$options.filters
-          .formatDateTime(res.data.datetime_display).substring(0, 10);
-        this.history_form_object.time = this.$options.filters
-          .formatDateTime(res.data.datetime_display).substring(11, 16);
-        this.$store.commit('setHistoryEditFlag', true);
-        this.$store.commit('setHistoryAddOrEditDialog', true);
-      });
+      apiGetHistoryItem(HistId)
+        .then((res) => {
+          this.history_form_object = res.data;
+          this.history_form_object.date = this.$options.filters
+            .formatDateTime(res.data.datetime_display).substring(0, 10);
+          this.history_form_object.time = this.$options.filters
+            .formatDateTime(res.data.datetime_display).substring(11, 16);
+          this.$store.commit('setHistoryEditFlag', true);
+          this.$store.commit('setHistoryAddOrEditDialog', true);
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
     refreshHistory() {
       const query = { bike_id: this.$store.getters.getCurrentBikeId };
-      apiQueryHistory(query).then((res) => {
-        this.history_array = res.data;
-      });
-      apiGetMaintenance().then((res) => {
-        this.maintenance_categories_array = Object.keys(res.data);
-        this.maintenance_names_object = res.data;
-      });
+      apiQueryHistory(query)
+        .then((res) => {
+          this.history_array = res.data;
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
+      apiGetMaintenance()
+        .then((res) => {
+          this.maintenance_categories_array = Object.keys(res.data);
+          this.maintenance_names_object = res.data;
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
     },
   },
 };

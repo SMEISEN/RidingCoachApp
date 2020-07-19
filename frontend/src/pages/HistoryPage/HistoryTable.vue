@@ -113,14 +113,22 @@ export default {
       this.confirm_delete_dialog = true;
     },
     deletionConfirmed() {
-      apiDeleteHistoryItem(this.history_id).then(() => {
-        this.$emit('deletionConfirmed', this.history_id);
-        this.$store.commit('setInfoSnackbar', {
-          state: true,
-          color: 'error',
-          message: 'Maintenance history entry deleted!',
+      apiDeleteHistoryItem(this.history_id)
+        .then(() => {
+          this.$emit('deletionConfirmed', this.history_id);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: 'Maintenance history entry deleted!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
-      });
     },
   },
 };

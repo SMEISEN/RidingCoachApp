@@ -95,10 +95,18 @@ export default {
         const deleteFlag = entries[i][1];
         const mtnId = this.categoryObject[name].maintenance_id;
         if (deleteFlag === true) {
-          apiDeleteMaintenanceItem(mtnId).then(() => {
-            delete this.categoryObject[name];
-            this.$emit('maintenanceDeleted');
-          });
+          apiDeleteMaintenanceItem(mtnId)
+            .then(() => {
+              delete this.categoryObject[name];
+              this.$emit('maintenanceDeleted');
+            })
+            .catch((error) => {
+              this.$store.commit('setInfoSnackbar', {
+                state: true,
+                color: 'error',
+                message: `${error} - Database connection failed!`,
+              });
+            });
         }
       }
       this.$emit('update:deleteMaintenanceDialog', false);

@@ -119,9 +119,17 @@ export default {
         operating_hours: Math.max.apply(null,
           this._.map(this.trainingFormObject.setup_fixed, 'operating_hours')),
       };
-      apiPutBike(bikeId, payloadBike).then(() => {
-        this.$store.commit('setOperatingHours', payloadBike.operating_hours);
-      });
+      apiPutBike(bikeId, payloadBike)
+        .then(() => {
+          this.$store.commit('setOperatingHours', payloadBike.operating_hours);
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
+        });
       const datetime = this.trainingFormObject.date
         .concat('T', new Date().toTimeString().substr(0, 5));
       const payloadTraining = {
@@ -130,41 +138,57 @@ export default {
         datetime_display: Date.parse(datetime) / 1000,
       };
       if (this.trainingFormObject.training_id === null) {
-        apiPostTraining(payloadTraining).then((resTraining) => {
-          this.trainingFormObject.training_id = resTraining.data;
-          for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
-            const payloadSetup = this.setupPayload(resTraining.data, i, bikeId);
-            apiPostSetup(payloadSetup).then((resSetup) => {
-              this.trainingFormObject.setup_fixed[i].setup_id = resSetup.data;
-            });
-          }
-          this.$store.commit('setInfoSnackbar', {
-            state: true,
-            color: 'success',
-            message: 'Training created!',
-          });
-        });
-      } else {
-        const trainingId = this.trainingFormObject.training_id;
-        apiPutTrainingItem(payloadTraining, trainingId).then(() => {
-          for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
-            const payloadSetup = this.setupPayload(trainingId, i, bikeId);
-            const setupId = this.trainingFormObject.setup_fixed[i].setup_id;
-            if (setupId === null) {
+        apiPostTraining(payloadTraining)
+          .then((resTraining) => {
+            this.trainingFormObject.training_id = resTraining.data;
+            for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
+              const payloadSetup = this.setupPayload(resTraining.data, i, bikeId);
               apiPostSetup(payloadSetup).then((resSetup) => {
                 this.trainingFormObject.setup_fixed[i].setup_id = resSetup.data;
               });
-            } else {
-              apiPutSetupItem(payloadSetup, setupId);
             }
-          }
-          this.$store.commit('setNavigationDrawerState', false);
-          this.$store.commit('setInfoSnackbar', {
-            state: true,
-            color: 'success',
-            message: 'Training updated!',
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'success',
+              message: 'Training created!',
+            });
+          })
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error} - Database connection failed!`,
+            });
           });
-        });
+      } else {
+        const trainingId = this.trainingFormObject.training_id;
+        apiPutTrainingItem(payloadTraining, trainingId)
+          .then(() => {
+            for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
+              const payloadSetup = this.setupPayload(trainingId, i, bikeId);
+              const setupId = this.trainingFormObject.setup_fixed[i].setup_id;
+              if (setupId === null) {
+                apiPostSetup(payloadSetup).then((resSetup) => {
+                  this.trainingFormObject.setup_fixed[i].setup_id = resSetup.data;
+                });
+              } else {
+                apiPutSetupItem(payloadSetup, setupId);
+              }
+            }
+            this.$store.commit('setNavigationDrawerState', false);
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'success',
+              message: 'Training updated!',
+            });
+          })
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error} - Database connection failed!`,
+            });
+          });
       }
       this.training_dialog = false;
       this.$emit('saveClicked');
@@ -187,17 +211,25 @@ export default {
         }
       }
       const trainingId = this.trainingFormObject.training_id;
-      apiDeleteTrainingItem(trainingId).then(() => {
-        this.training_dialog = false;
-        this.$refs.validation_training_form.resetValidation();
-        this.$emit('deletionConfirmed');
-        this.$store.commit('setNavigationDrawerState', false);
-        this.$store.commit('setInfoSnackbar', {
-          state: true,
-          color: 'error',
-          message: 'Training deleted!',
+      apiDeleteTrainingItem(trainingId)
+        .then(() => {
+          this.training_dialog = false;
+          this.$refs.validation_training_form.resetValidation();
+          this.$emit('deletionConfirmed');
+          this.$store.commit('setNavigationDrawerState', false);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: 'Training deleted!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
-      });
     },
     setupPayload(trainingId, setupNo, bikeId) {
       const datetime = this.trainingFormObject.date

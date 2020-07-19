@@ -121,34 +121,58 @@ export default {
   },
   methods: {
     postBike(payload) {
-      apiPostBike(payload).then(() => {
-        this.$store.commit('setInfoSnackbar', {
-          state: true,
-          color: 'success',
-          message: 'Bike created!',
+      apiPostBike(payload)
+        .then(() => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Bike created!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
-      });
     },
     putBike(BikeId, payload) {
-      apiPutBike(BikeId, payload).then(() => {
-        this.$store.commit('setInfoSnackbar', {
-          state: true,
-          color: 'success',
-          message: 'Bike edited!',
+      apiPutBike(BikeId, payload)
+        .then(() => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Bike edited!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
-      });
     },
     deleteBikeData() {
       const bikeId = this.bikeFormObject.bike_id;
-      apiDeleteBike(bikeId).then(() => {
-        const newBikeArray = this.bikeArray.filter((x) => x.bike_id !== bikeId);
-        this.$emit('update:bikeArray', newBikeArray);
-        this.$store.commit('setInfoSnackbar', {
-          state: true,
-          color: 'error',
-          message: 'Bike deleted!',
+      apiDeleteBike(bikeId)
+        .then(() => {
+          const newBikeArray = this.bikeArray.filter((x) => x.bike_id !== bikeId);
+          this.$emit('update:bikeArray', newBikeArray);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: 'Bike deleted!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error} - Database connection failed!`,
+          });
         });
-      });
       this.$emit('clearBikeDialog');
       this.$store.commit('setBikeDialogState', false);
       this.$store.commit('setNavigationDrawerState', false);
