@@ -19,6 +19,8 @@ history_input_parameters = api.model('HistoryInputParameters', {
         fields.Float(description="operating hours", required=True),
     "comment":
         fields.String(description="comment", required=False),
+    "tags":
+        fields.Raw(description="tags", required=False),
     "datetime_display":
         fields.Float(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
@@ -29,6 +31,8 @@ history_query_parameters = api.model('HistoryQueryParameters', {
         fields.Float(description="", required=False),
     "comment":
         fields.String(description="", required=False),
+    "tags":
+        fields.Raw(description="", required=False),
     "datetime_created":
         fields.DateTime(description="", required=False),
     "datetime_last_modified":
@@ -73,6 +77,7 @@ class HistoryCollection(Resource):
             bike_id=inserted_data.get('bike_id'),
             operating_hours=inserted_data.get('operating_hours'),
             comment=inserted_data.get('comment'),
+            tags=inserted_data.get('tags'),
             datetime_created=datetime.utcnow(),
             datetime_last_modified=datetime.utcnow(),
             datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
@@ -124,6 +129,8 @@ class HistoryItem(Resource):
             history_entry.operating_hours = inserted_data.get('operating_hours')
         if inserted_data.get('comment') is not None:
             history_entry.comment = inserted_data.get('comment')
+        if inserted_data.get('tags') is not None:
+            history_entry.tags = inserted_data.get('tags')
         if inserted_data.get('datetime_display') is not None:
             history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
         if bool(inserted_data) is True:
@@ -163,6 +170,7 @@ class HistoryQuery(Resource):
             'bike_id': requested.get('bike_id'),
             'operating_hours': requested.get('operating_hours'),
             'comment': requested.get('comment'),
+            'tags': requested.get('tags'),
             'datetime_created': requested.get('datetime_created'),
             'datetime_last_modified': requested.get('datetime_last_modified'),
             'datetime_display': requested.get('datetime_display'),
