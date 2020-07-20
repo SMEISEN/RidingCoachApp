@@ -58,13 +58,10 @@
           />
         </td>
         <td>
-          <v-btn
-            color="success"
-            text
-            @click="doneButtonClicked(maintenance_object.maintenance_id)"
-          >
-            Done!
-          </v-btn>
+          <MaintenanceTableDropdown
+            :maintenance-object="maintenance_object"
+            @doneButtonClicked="doneButtonClicked"
+          />
         </td>
         <td>
           {{ maintenance_object.interval_amount }} {{ maintenance_object.interval_unit }}
@@ -86,12 +83,14 @@ import {
   processStateOfIntervalYears,
   processLeftIntervalYears,
 } from '../../components/utils/DataProcessingUtils';
+import MaintenanceTableDropdown from './MaintenanceTableDropdown.vue';
 import LinearProgressIntervalHours from '../../components/common/LinearProgressIntervalHours.vue';
 import LinearProgressIntervalYears from '../../components/common/LinearProgressIntervalYears.vue';
 
 export default {
   name: 'MaintenanceTable',
   components: {
+    MaintenanceTableDropdown,
     LinearProgressIntervalHours,
     LinearProgressIntervalYears,
   },
@@ -122,8 +121,9 @@ export default {
     leftIntervalYears(DateLatest) {
       return processLeftIntervalYears(DateLatest, 2);
     },
-    doneButtonClicked(MtnId) {
-      this.$emit('doneButtonClicked', MtnId);
+    doneButtonClicked(mtnId, selectedChips) {
+      console.log(selectedChips);
+      this.$emit('doneButtonClicked', mtnId, selectedChips);
     },
   },
 };

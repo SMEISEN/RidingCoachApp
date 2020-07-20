@@ -1,0 +1,100 @@
+<template>
+  <v-menu
+    v-model="dropdown"
+    bottom
+    offset-x
+    open-on-hover
+    :close-on-content-click="false"
+  >
+    <template v-slot:activator="{ on }">
+      <v-btn
+        v-long-press="500"
+        color="success"
+        text
+        v-on="on"
+        @long-press-start="dropdown = true"
+        @mouseup="doneButtonClicked(maintenance_object.maintenance_id)"
+      >
+        Done!
+      </v-btn>
+    </template>
+    <v-list v-on-clickaway="clickAway">
+      <v-list-item-group
+        v-model="selected_chips_array"
+        multiple
+        active-class="success--text"
+      >
+        <template
+          v-for="(item, index) in maintenance_chips"
+        >
+          <v-list-item
+            :key="maintenance_object.maintenance_id + '/done-modifier/' + index"
+          >
+            <v-list-item-content>
+              <v-list-item-title>{{ item }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+      </v-list-item-group>
+    </v-list>
+  </v-menu>
+</template>
+
+<script>
+import LongPress from 'vue-directive-long-press';
+import { directive as onClickaway } from 'vue-clickaway';
+
+export default {
+  name: 'MaintenanceTableDropdown',
+  directives: {
+    'long-press': LongPress,
+    onClickaway,
+  },
+  props: {
+    maintenanceObject: {
+      type: Object,
+      required: true,
+    },
+  },
+  data: () => ({
+    dropdown: false,
+    maintenance_chips: ['Checked', 'Replaced', 'Fixed'],
+    selected_chips_array: [],
+  }),
+  computed: {
+    maintenance_object() {
+      return this.maintenanceObject;
+    },
+  },
+  methods: {
+    clickAway() {
+      this.dropdown = false;
+    },
+    doneButtonClicked(mtnId) {
+      const selectedChips = this.chipArrayToObject();
+      this.$emit('doneButtonClicked', mtnId, selectedChips);
+    },
+    chipArrayToObject() {
+      const selectedChipsObject = {
+        checked: false,
+        replaced: false,
+        fixed: false,
+      };
+      if (this.selected_chips_array.includes(0)) {
+        selectedChipsObject.checked = true;
+      }
+      if (this.selected_chips_array.includes(1)) {
+        selectedChipsObject.replaced = true;
+      }
+      if (this.selected_chips_array.includes(2)) {
+        selectedChipsObject.fixed = true;
+      }
+      return selectedChipsObject;
+    },
+  },
+};
+</script>
+
+<style scoped>
+
+</style>

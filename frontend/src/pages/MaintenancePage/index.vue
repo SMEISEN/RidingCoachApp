@@ -100,12 +100,13 @@ export default {
           });
         });
     },
-    postHistoryEntry(MtnId) {
+    postHistoryEntry(mtnId, selectedChips) {
       const payload = {
-        maintenance_id: MtnId,
+        maintenance_id: mtnId,
         bike_id: this.$store.getters.getCurrentBikeId,
         operating_hours: this.$store.getters.getCurrentBikeOperatingHours,
         comment: '',
+        tags: selectedChips,
         datetime_display: new Date().getTime() / 1000,
       };
       apiPostHistory(payload)

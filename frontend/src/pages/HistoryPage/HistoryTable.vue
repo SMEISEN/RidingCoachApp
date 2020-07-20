@@ -63,7 +63,7 @@
               <v-btn
                 color="error"
                 text
-                @click="onDeleteButton(maintenance.history_id)"
+                @click.prevent="onDeleteButton(maintenance.history_id)"
               >
                 Delete
               </v-btn>
