@@ -22,6 +22,8 @@ maintenance_input_parameters = api.model('MaintenanceInputParameters', {
         fields.String(description="unit of maintenance interval", required=False),
     "interval_type":
         fields.String(description="type of maintenance interval", required=False),
+    "tags_default":
+        fields.Raw(description="default tags of maintenance work", required=False),
 })
 maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "bike_id":
@@ -35,13 +37,15 @@ maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "interval_unit":
         fields.String(description="", required=False),
     "interval_type":
-        fields.String(description="", required=False)
+        fields.String(description="", required=False),
+    "tags_default":
+        fields.Raw(description="", required=False),
 })
 
 
 def query_to_dict(maintenance_query: list, bike_id: str = None):
     """
-    Reformats the query to a structured dictionary, which can be json serialized.
+    Re-formats the query to a structured dictionary, which can be json serialized.
     """
 
     maintenance_list = []
@@ -105,6 +109,7 @@ class MaintenanceCollection(Resource):
             interval_amount=inserted_data.get('interval_amount'),
             interval_unit=inserted_data.get('interval_unit'),
             interval_type=inserted_data.get('interval_type'),
+            tags_default=inserted_data.get('tags_default'),
             datetime_created=datetime.utcnow(),
             datetime_last_modified=datetime.utcnow(),
         )
@@ -155,6 +160,8 @@ class MaintenanceItem(Resource):
             maintenance_work.interval_unit = inserted_data.get('interval_unit')
         if inserted_data.get('interval_type') is not None:
             maintenance_work.interval_type = inserted_data.get('interval_type')
+        if inserted_data.get('tags_default') is not None:
+            maintenance_work.interval_type = inserted_data.get('tags_default')
         if bool(inserted_data) is True:
             maintenance_work.datetime_last_modified = datetime.utcnow()
 
@@ -194,6 +201,7 @@ class MaintenanceQuery(Resource):
             'interval_amount': requested.get('interval_amount'),
             'interval_unit': requested.get('interval_unit'),
             'interval_type': requested.get('interval_type'),
+            'tags_default': requested.get('tags_default'),
         }
         filter_data = {key: value for (key, value) in filter_data.items() if value}
 

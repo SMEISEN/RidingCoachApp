@@ -13,7 +13,7 @@
         text
         v-on="on"
         @long-press-start="dropdown = true"
-        @mouseup="doneButtonClicked(maintenance_object.maintenance_id)"
+        @mouseup="doneButtonClicked(maintenanceObject.maintenance_id)"
       >
         Done!
       </v-btn>
@@ -28,7 +28,7 @@
           v-for="(item, index) in maintenance_chips"
         >
           <v-list-item
-            :key="maintenance_object.maintenance_id + '/done-modifier/' + index"
+            :key="maintenanceObject.maintenance_id + '/done-modifier/' + index"
           >
             <v-list-item-content>
               <v-list-item-title>{{ item }}</v-list-item-title>
@@ -61,12 +61,26 @@ export default {
     maintenance_chips: ['checked', 'fixed', 'replaced'],
     selected_chips_array: [],
   }),
-  computed: {
-    maintenance_object() {
-      return this.maintenanceObject;
-    },
+  created() {
+    this.selected_chips_array = this.getDefaultTags();
+  },
+  updated() {
   },
   methods: {
+    getDefaultTags() {
+      const tagsDefault = this.maintenanceObject.tags_default;
+      const selectedChipsArray = [];
+      if (tagsDefault.includes('checked')) {
+        selectedChipsArray.push(0);
+      }
+      if (tagsDefault.includes('fixed')) {
+        selectedChipsArray.push(1);
+      }
+      if (tagsDefault.includes('replaced')) {
+        selectedChipsArray.push(2);
+      }
+      return selectedChipsArray;
+    },
     clickAway() {
       this.dropdown = false;
     },
