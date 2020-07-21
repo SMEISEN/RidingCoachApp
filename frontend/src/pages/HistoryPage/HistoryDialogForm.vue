@@ -134,6 +134,48 @@
             </v-col>
           </v-row>
           <v-row no-gutters>
+            <v-select
+              v-model="historyFormInput.tags"
+              :items="maintenanceTags"
+              :rules="[v => !!v]"
+              label="Tags"
+              chips
+              multiple
+            >
+              <template v-slot:selection="{ attrs, item, select, selected }">
+                <v-chip
+                  v-bind="attrs"
+                  :input-value="selected"
+                  :color="chipColor(item)"
+                  close
+                  outlined
+                  @click="select"
+                  @click:close="removeTagChips(item)"
+                >
+                  <v-icon
+                    v-if="item === 'checked'"
+                    left
+                  >
+                    mdi-check-circle-outline
+                  </v-icon>
+                  <v-icon
+                    v-if="item === 'fixed'"
+                    left
+                  >
+                    mdi-progress-wrench
+                  </v-icon>
+                  <v-icon
+                    v-if="item === 'replaced'"
+                    left
+                  >
+                    mdi-refresh
+                  </v-icon>
+                  <span>{{ item }}</span>
+                </v-chip>
+              </template>
+            </v-select>
+          </v-row>
+          <v-row no-gutters>
             <v-col cols="12">
               <v-text-field
                 v-model="historyFormInput.comment"
@@ -195,6 +237,10 @@ export default {
       type: Object,
       required: true,
     },
+    maintenanceTags: {
+      type: Array,
+      required: true,
+    },
   },
   data: () => ({
     date_menu: false,
@@ -216,6 +262,22 @@ export default {
   updated() {
   },
   methods: {
+    chipColor(item) {
+      if (item === 'checked') {
+        return 'success';
+      }
+      if (item === 'fixed') {
+        return 'warning';
+      }
+      if (item === 'replaced') {
+        return 'error';
+      }
+      return 'grey';
+    },
+    removeTagChips(item) {
+      this.historyFormInput.tags.splice(this.historyFormInput.tags.indexOf(item), 1);
+      this.historyFormInput.tags = [...this.historyFormInput.tags];
+    },
     getMaintenanceNamesFromCategory(category) {
       if (this.maintenanceCategories.includes(category)) {
         return Object.keys(this.maintenanceNames[category]);
@@ -258,6 +320,7 @@ export default {
           bike_id: this.$store.getters.getCurrentBikeId,
           operating_hours: this.historyFormInput.operating_hours,
           datetime_display: Date.parse(datetime) / 1000,
+          tags: this.historyFormInput.tags,
           comment: this.historyFormInput.comment,
         };
         if (this.$store.getters.getHistoryEditFlag === false) {

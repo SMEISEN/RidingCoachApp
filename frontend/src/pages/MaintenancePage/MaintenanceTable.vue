@@ -122,7 +122,6 @@ export default {
       return processLeftIntervalYears(DateLatest, 2);
     },
     doneButtonClicked(mtnId, selectedChips) {
-      console.log(selectedChips);
       this.$emit('doneButtonClicked', mtnId, selectedChips);
     },
   },

@@ -21,6 +21,12 @@
           <th class="text-left">
             Date
           </th>
+          <th
+            class="text-left"
+            style="min-width: 140px"
+          >
+            Tags
+          </th>
           <th class="text-left">
             Comment
           </th>
@@ -44,6 +50,65 @@
           </td>
           <td>
             {{ maintenance.datetime_display | formatDateTime }}
+          </td>
+          <td>
+            <div
+              v-if="maintenance.tags !== null"
+              class="btn-group"
+              role="group"
+            >
+              <v-tooltip
+                v-if="maintenance.tags.includes('checked')"
+                bottom
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon color="success">
+                      mdi-check-circle-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ 'checked' }}</span>
+              </v-tooltip>
+              <v-tooltip
+                v-if="maintenance.tags.includes('fixed')"
+                bottom
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon color="warning">
+                      mdi-progress-wrench
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ 'fixed' }}</span>
+              </v-tooltip>
+              <v-tooltip
+                v-if="maintenance.tags.includes('replaced')"
+                bottom
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon color="error">
+                      mdi-refresh
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ 'replaced' }}</span>
+              </v-tooltip>
+            </div>
           </td>
           <td>
             {{ maintenance.comment }}
