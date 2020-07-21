@@ -246,6 +246,7 @@ export default {
     date_menu: false,
     time_menu: false,
     valid: true,
+    changed: false,
   }),
   computed: {
     maintenance_dialog: {
@@ -256,19 +257,26 @@ export default {
         this.$store.commit('setHistoryAddOrEditDialog', value);
       },
     },
+    maintenance_name() {
+      return this.historyFormInput.name;
+    },
   },
   watch: {
-    historyFormInput: {
-      handler() {
-        const { category } = this.historyFormInput;
-        const { name } = this.historyFormInput;
-        if (category !== null) {
-          if (name !== null) {
+    maintenance_name() {
+      const { category } = this.historyFormInput;
+      const { name } = this.historyFormInput;
+      if (category !== null) {
+        if (name !== null) {
+          if (this.$store.getters.getHistoryEditFlag === false) {
+            this.historyFormInput.tags = this.getDefaultTags(category, name);
+          }
+          if (this.changed === false) {
+            this.changed = true;
+          } else {
             this.historyFormInput.tags = this.getDefaultTags(category, name);
           }
         }
-      },
-      deep: true,
+      }
     },
   },
   created() {
@@ -314,6 +322,7 @@ export default {
         this.$refs.validation_form.resetValidation();
       }
       this.$store.commit('setHistoryEditFlag', false);
+      this.changed = false;
     },
     refreshDateTime() {
       this.historyFormInput.date = new Date().toISOString().substr(0, 10);
