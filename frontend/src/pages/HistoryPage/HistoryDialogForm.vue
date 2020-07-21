@@ -257,6 +257,20 @@ export default {
       },
     },
   },
+  watch: {
+    historyFormInput: {
+      handler() {
+        const { category } = this.historyFormInput;
+        const { name } = this.historyFormInput;
+        if (category !== null) {
+          if (name !== null) {
+            this.historyFormInput.tags = this.getDefaultTags(category, name);
+          }
+        }
+      },
+      deep: true,
+    },
+  },
   created() {
   },
   updated() {
@@ -282,6 +296,14 @@ export default {
       if (this.maintenanceCategories.includes(category)) {
         return Object.keys(this.maintenanceNames[category]);
       } return [];
+    },
+    getDefaultTags(category, name) {
+      if (this.maintenanceCategories.includes(category)) {
+        if (Object.keys(this.maintenanceNames[category]).includes(name)) {
+          return this.maintenanceNames[category][name].tags_default;
+        }
+      }
+      return [];
     },
     initForm() {
       initObject(this.historyFormInput, null);

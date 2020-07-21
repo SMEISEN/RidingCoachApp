@@ -1,6 +1,6 @@
 from datetime import datetime
 from backend.database import db, ma
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSON
 import uuid
 
 
@@ -14,6 +14,7 @@ class MaintenanceModel(db.Model):
     interval_type = db.Column(db.String(25), nullable=False)
     interval_amount = db.Column(db.Float, nullable=True)
     interval_unit = db.Column(db.String(25), nullable=True)
+    tags_default = db.Column(JSON, nullable=True)
 
     datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
