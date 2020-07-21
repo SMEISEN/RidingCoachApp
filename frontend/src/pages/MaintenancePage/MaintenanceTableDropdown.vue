@@ -58,7 +58,7 @@ export default {
   },
   data: () => ({
     dropdown: false,
-    maintenance_chips: ['Checked', 'Replaced', 'Fixed'],
+    maintenance_chips: ['checked', 'fixed', 'replaced'],
     selected_chips_array: [],
   }),
   computed: {
@@ -71,25 +71,21 @@ export default {
       this.dropdown = false;
     },
     doneButtonClicked(mtnId) {
-      const selectedChips = this.chipArrayToObject();
+      const selectedChips = this.chipNumberToString();
       this.$emit('doneButtonClicked', mtnId, selectedChips);
     },
-    chipArrayToObject() {
-      const selectedChipsObject = {
-        checked: false,
-        replaced: false,
-        fixed: false,
-      };
+    chipNumberToString() {
+      const selectedChipsArray = [];
       if (this.selected_chips_array.includes(0)) {
-        selectedChipsObject.checked = true;
+        selectedChipsArray.push('checked');
       }
       if (this.selected_chips_array.includes(1)) {
-        selectedChipsObject.replaced = true;
+        selectedChipsArray.push('fixed');
       }
       if (this.selected_chips_array.includes(2)) {
-        selectedChipsObject.fixed = true;
+        selectedChipsArray.push('replaced');
       }
-      return selectedChipsObject;
+      return selectedChipsArray;
     },
   },
 };

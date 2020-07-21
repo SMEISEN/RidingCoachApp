@@ -11,6 +11,7 @@
   "main": "frontend/src/main.js",
   "dependencies": {
     "@mdi/font": "^3.9.97",
+    "@mdi/js": "^5.3.45",
     "axios": "^0.19.2",
     "chart.js": "^2.9.3",
     "core-js": "^3.6.4",

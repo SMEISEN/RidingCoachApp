@@ -25,6 +25,7 @@
       :history-form-input="history_form_object"
       :maintenance-categories="maintenance_categories_array"
       :maintenance-names="maintenance_names_object"
+      :maintenance-tags="maintenance_tags_array"
       @saveButtonClicked="refreshHistory()"
       @cancelButtonClicked="refreshHistory()"
     />
@@ -60,8 +61,10 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       time: new Date().toTimeString().substr(0, 5),
       comment: null,
+      tags: null,
     },
     maintenance_categories_array: [],
+    maintenance_tags_array: ['checked', 'fixed', 'replaced'],
     maintenance_names_object: {},
   }),
   computed: {
