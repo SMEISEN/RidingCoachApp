@@ -221,6 +221,7 @@ import {
   incrementNumber,
   decrementNumber,
 } from '../../components/utils/FromUtils';
+import { apiPostMaintenance } from '../../components/api/MaintenanceApi';
 
 export default {
   name: 'HistoryForm',
@@ -343,48 +344,29 @@ export default {
       this.$refs.NameComboBox.blur();
       this.$nextTick(() => {
         const datetime = this.historyFormInput.date.concat('T', this.historyFormInput.time);
-        const payload = {
-          maintenance_id:
-          this.maintenanceNames[
-            this.historyFormInput.category][
-            this.historyFormInput.name].maintenance_id,
+        const histPayload = {
           bike_id: this.$store.getters.getCurrentBikeId,
           operating_hours: this.historyFormInput.operating_hours,
           datetime_display: Date.parse(datetime) / 1000,
           tags: this.historyFormInput.tags,
           comment: this.historyFormInput.comment,
         };
-        if (this.$store.getters.getHistoryEditFlag === false) {
-          apiPostHistory(payload)
-            .then(() => {
-              this.$emit('saveButtonClicked');
-              this.maintenance_dialog = false;
-              this.initForm();
-              this.$store.commit('setInfoSnackbar', {
-                state: true,
-                color: 'success',
-                message: 'Maintenance history entry added!',
-              });
-            })
-            .catch((error) => {
-              this.$store.commit('setInfoSnackbar', {
-                state: true,
-                color: 'error',
-                message: `${error}!`,
-              });
-            });
+        if (Object.keys(this.maintenanceNames[this.historyFormInput.category])
+          .includes(this.historyFormInput.name)) {
+          histPayload.maintenance_id = this.maintenanceNames[
+            this.historyFormInput.category][
+            this.historyFormInput.name].maintenance_id;
+          this.pushHistory(histPayload);
         } else {
-          const HistId = this.historyFormInput.history_id;
-          apiPutHistoryItem(payload, HistId)
-            .then(() => {
-              this.$emit('saveButtonClicked');
-              this.maintenance_dialog = false;
-              this.initForm();
-              this.$store.commit('setInfoSnackbar', {
-                state: true,
-                color: 'success',
-                message: 'Maintenance history entry edited!',
-              });
+          const mtnPayload = {
+            category: this.historyFormInput.category,
+            name: this.historyFormInput.name,
+            interval_type: 'unplanned cycle',
+          };
+          apiPostMaintenance(mtnPayload)
+            .then((res) => {
+              histPayload.maintenance_id = res.data;
+              this.pushHistory(histPayload);
             })
             .catch((error) => {
               this.$store.commit('setInfoSnackbar', {
@@ -395,6 +377,48 @@ export default {
             });
         }
       });
+    },
+    pushHistory(payload) {
+      if (this.$store.getters.getHistoryEditFlag === false) {
+        apiPostHistory(payload)
+          .then(() => {
+            this.$emit('saveButtonClicked');
+            this.maintenance_dialog = false;
+            this.initForm();
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'success',
+              message: 'Maintenance history entry added!',
+            });
+          })
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error}!`,
+            });
+          });
+      } else {
+        const HistId = this.historyFormInput.history_id;
+        apiPutHistoryItem(payload, HistId)
+          .then(() => {
+            this.$emit('saveButtonClicked');
+            this.maintenance_dialog = false;
+            this.initForm();
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'success',
+              message: 'Maintenance history entry edited!',
+            });
+          })
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error}!`,
+            });
+          });
+      }
     },
     onCancel() {
       this.$emit('cancelButtonClicked');
