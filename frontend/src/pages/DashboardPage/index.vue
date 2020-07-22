@@ -215,7 +215,7 @@ export default {
           this.wear_object.brakes_rear.name = 'Rear brake pads';
           this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
           this.wear_object.tires.name = 'Tires';
-          this.wear_object.engine = res.data.Motor[Object.keys(res.data.Motor)[0]];
+          this.wear_object.engine = res.data.Engine[Object.keys(res.data.Engine)[0]];
           this.wear_object.engine.name = 'Engine revision';
         })
         .catch((error) => {
