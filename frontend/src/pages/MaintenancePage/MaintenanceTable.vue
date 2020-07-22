@@ -107,7 +107,10 @@ export default {
   methods: {
     sort_maintenance(nestedEntries) {
       const flattenedEntries = flattenNestedObjects(nestedEntries);
-      return this._.orderBy(flattenedEntries, ['interval_unit', 'interval_amount'], ['desc', 'asc']);
+      const filteredEntries = flattenedEntries
+        .filter((i) => i.interval_type === 'planned cycle' || i.interval_type === 'estimated wear')
+        .filter((i) => i.interval_unit !== 't');
+      return this._.orderBy(filteredEntries, ['interval_unit', 'interval_amount'], ['desc', 'asc']);
     },
     currentStateIntervalHours(HoursLatest, HoursInterval, BikeHours) {
       return processStateOfIntervalHours(HoursLatest, HoursInterval, BikeHours, 2);
