@@ -12,6 +12,7 @@
           md="4"
         >
           <LoginForm
+            :loading.sync="loading"
             @loginButtonClicked="login"
           />
         </v-col>
@@ -32,6 +33,9 @@ export default {
   components: {
     LoginForm,
   },
+  data: () => ({
+    loading: false,
+  }),
   methods: {
     login(username, password) {
       this.$store.dispatch(AUTH_REQUEST, { username, password })
@@ -44,6 +48,7 @@ export default {
           });
         })
         .catch((error) => {
+          this.loading = false;
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',

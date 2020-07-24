@@ -1,5 +1,4 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
-
 import {
   AUTH_REQUEST,
   AUTH_ERROR,
@@ -8,17 +7,16 @@ import {
 } from '../actions/authentication';
 import { apiLogin } from '../../components/api/LoginApi';
 
-const state = {
-  token: localStorage.getItem('user-token') || '',
+const getDefaultState = () => ({
+  token: '',
   status: '',
   hasLoadedOnce: false,
-};
-
+});
+const state = getDefaultState();
 const getters = {
   isAuthenticated: (state) => !!state.token,
   authStatus: (state) => state.status,
 };
-
 const actions = {
   [AUTH_REQUEST]: ({ commit }, user) => new Promise((resolve, reject) => {
     commit(AUTH_REQUEST);
@@ -43,7 +41,6 @@ const actions = {
     resolve();
   }),
 };
-
 const mutations = {
   [AUTH_REQUEST]: (state) => {
     state.status = 'loading';
@@ -59,6 +56,9 @@ const mutations = {
   },
   [AUTH_LOGOUT]: (state) => {
     state.token = '';
+  },
+  resetAuthenticationState(state) {
+    Object.assign(state, getDefaultState());
   },
 };
 
