@@ -58,7 +58,8 @@
         <v-spacer />
         <v-btn
           color="secondary"
-          :disabled="!valid"
+          :loading="loading"
+          :disabled="!valid || loading"
           text
           @click="onLoginButton()"
         >
@@ -72,14 +73,18 @@
 <script>
 export default {
   name: 'LoginForm',
-  data() {
-    return {
-      valid: true,
-      show: false,
-      username: '',
-      password: '',
-    };
+  props: {
+    loading: {
+      type: Boolean,
+      required: true,
+    },
   },
+  data: () => ({
+    valid: true,
+    show: false,
+    username: '',
+    password: '',
+  }),
   computed: {
     checkVersion() {
       return process.env.VUE_APP_VERSION === 'demo';
@@ -87,6 +92,7 @@ export default {
   },
   methods: {
     onLoginButton() {
+      this.$emit('update:loading', true);
       this.$emit('loginButtonClicked', this.username, this.password);
     },
   },

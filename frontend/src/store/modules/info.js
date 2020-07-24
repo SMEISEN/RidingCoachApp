@@ -1,10 +1,11 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
-const state = () => ({
+const getDefaultState = () => ({
   snackbar_state: false,
   snackbar_color: null,
   snackbar_message: null,
 });
+const state = getDefaultState();
 const getters = {
   getInfoSnackbarState: (state) => state.snackbar_state,
   getInfoSnackbarColor: (state) => state.snackbar_color,
@@ -24,6 +25,9 @@ const mutations = {
   },
   setInfoSnackbarMessage(state, snackbarMessage) {
     state.snackbar_message = snackbarMessage;
+  },
+  resetSnackbarState(state) {
+    Object.assign(state, getDefaultState());
   },
 };
 const actions = {};

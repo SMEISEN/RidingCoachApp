@@ -24,6 +24,7 @@ export default new Vuex.Store({
     info,
   },
   plugins: [createPersistedState({
+    paths: ['authentication.token'],
     storage: {
       getItem: (key) => Cookies.get(key),
       setItem: (key, value) => Cookies.set(key, value, { expires: 90, secure: true }),

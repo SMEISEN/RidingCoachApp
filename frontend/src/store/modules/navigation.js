@@ -1,6 +1,6 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
-const state = () => ({
+const getDefaultState = () => ({
   navigation_drawer: false,
   bike_dialog: false,
   bike_edit_flag: false,
@@ -9,6 +9,7 @@ const state = () => ({
   training_setup_tabs: 1,
   training_setup_tab: 0,
 });
+const state = getDefaultState();
 const getters = {
   getNavigationDrawerState: (state) => state.navigation_drawer,
   getBikeDialogState: (state) => state.bike_dialog,
@@ -39,6 +40,9 @@ const mutations = {
   },
   setTrainingDialogSetupActiveTab(state, activeTab) {
     state.training_setup_tab = activeTab;
+  },
+  resetNavigationState(state) {
+    Object.assign(state, getDefaultState());
   },
 };
 const actions = {};

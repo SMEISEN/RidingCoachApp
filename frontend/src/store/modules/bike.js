@@ -1,6 +1,6 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
-const state = () => ({
+const getDefaultState = () => ({
   all_bikes: null,
   current_bike_id: null,
   current_bike_manufacturer: null,
@@ -9,6 +9,7 @@ const state = () => ({
   current_bike_year: null,
   current_bike_setup: null,
 });
+const state = getDefaultState();
 const getters = {
   getAllBikes: (state) => state.all_bikes,
   getCurrentBikeId: (state) => state.current_bike_id,
@@ -32,6 +33,9 @@ const mutations = {
   },
   setOperatingHours(state, operatingHours) {
     state.current_bike_operating_hours = operatingHours;
+  },
+  resetBikeState(state) {
+    Object.assign(state, getDefaultState());
   },
 };
 const actions = {};
