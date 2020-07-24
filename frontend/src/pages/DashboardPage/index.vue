@@ -200,8 +200,11 @@ export default {
       return helperList2;
     },
     getSetup() {
-      this.setup_array = this.$store.getters.getCurrentBikeSetup
-        .filter((i) => i.category === 'Suspension');
+      const setupArray = this.$store.getters.getCurrentBikeSetup;
+      if (setupArray !== null) {
+        this.setup_array = this.$store.getters.getCurrentBikeSetup
+          .filter((i) => i.category === 'Suspension');
+      }
     },
     getWear() {
       apiQueryMaintenance({
