@@ -23,12 +23,24 @@ export default new Vuex.Store({
     navigation,
     info,
   },
-  plugins: [createPersistedState({
-    paths: ['authentication.token'],
-    storage: {
-      getItem: (key) => Cookies.get(key),
-      setItem: (key, value) => Cookies.set(key, value, { expires: 90, secure: true }),
-      removeItem: (key) => Cookies.remove(key),
-    },
-  })],
+  plugins: [
+    createPersistedState({
+      key: 'authentication_state',
+      paths: ['authentication.token'],
+      storage: {
+        getItem: (key) => Cookies.get(key),
+        setItem: (key, value) => Cookies.set(key, value, { expires: 90, secure: true }),
+        removeItem: (key) => Cookies.remove(key),
+      },
+    }),
+    createPersistedState({
+      key: 'dialog_states',
+      paths: ['navigation', 'history', 'info'],
+      storage: window.sessionStorage,
+    }),
+    createPersistedState({
+      key: 'bike_state',
+      paths: ['bike'],
+    }),
+  ],
 });
