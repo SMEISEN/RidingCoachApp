@@ -82,6 +82,11 @@ export default {
   created() {
     this.processSetupData();
   },
+  watch: {
+    setupArray() {
+      this.processSetupData();
+    },
+  },
   methods: {
     processSetupData() {
       this.data_sets[1].data = this.setupArray
