@@ -204,10 +204,10 @@ export default {
         this.putBike(BikeId, payload);
         if (this.$store.getters.getCurrentBikeId === BikeId) {
           payload.bike_id = BikeId;
-          this.$store.commit('selectBike', payload);
           this.$forceUpdate();
         }
       }
+      this.$store.commit('selectBike', payload);
       this.$store.commit('setBikeDialogState', false);
       this.$store.commit('setNavigationDrawerState', false);
     },

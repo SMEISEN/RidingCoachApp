@@ -13,7 +13,10 @@
         >
           <v-row dense>
             <v-col cols="12">
-              <v-card class="card-container">
+              <v-card
+                :key="bikeId +'/wear'"
+                class="card-container"
+              >
                 <v-card-title>
                   <span class="headerline">
                     {{ bikeString }}
@@ -30,6 +33,7 @@
             >
               <v-card
                 v-if="setup_array.length > 0"
+                :key="bikeId +'/setup/sm+'"
                 class="card-container"
               >
                 <v-card-title>
@@ -48,7 +52,10 @@
           sm="6"
           md="6"
         >
-          <v-card class="card-container">
+          <v-card
+            :key="bikeId +'/maintenance'"
+            class="card-container"
+          >
             <v-card-title>
               <span class="headline">Upcoming maintenance</span>
             </v-card-title>
@@ -66,6 +73,7 @@
         >
           <v-card
             v-if="setup_array.length > 0"
+            :key="bikeId +'/setup/xs'"
             class="card-container"
           >
             <v-card-title>
@@ -152,6 +160,9 @@ export default {
         .getCurrentBikeModel} ${this.$store.getters
         .getCurrentBikeYear}`;
     },
+    bikeId() {
+      return this.$store.getters.getCurrentBikeId;
+    },
   },
   created() {
     this.getWear();
@@ -202,13 +213,14 @@ export default {
     getSetup() {
       const setupArray = this.$store.getters.getCurrentBikeSetup;
       if (setupArray !== null) {
-        this.setup_array = this.$store.getters.getCurrentBikeSetup
-          .filter((i) => i.category === 'Suspension');
+        this.setup_array = setupArray.filter((i) => i.category === 'Suspension');
+      } else {
+        this.setup_array = [];
       }
     },
     getWear() {
       apiQueryMaintenance({
-        bike_id: this.$store.getters.getCurrentBikeId,
+        bike_id: this.bikeId,
         interval_type: 'estimated wear',
       })
         .then((res) => {
@@ -231,7 +243,7 @@ export default {
     },
     getMaintenance() {
       apiQueryMaintenance({
-        bike_id: this.$store.getters.getCurrentBikeId,
+        bike_id: this.bikeId,
         interval_type: 'planned cycle',
       })
         .then((res) => {
