@@ -51,11 +51,27 @@
           />
         </v-card>
       </v-form>
+      <v-btn
+        fab
+        fixed
+        bottom
+        right
+        small
+        color="primary"
+        @click.prevent="advice_dialog = true"
+      >
+        <v-icon dark>
+          mdi-comment-question-outline
+        </v-icon>
+      </v-btn>
     </v-dialog>
     <ConfirmDeleteDialog
       :flagged-for-deletion="'training entry'"
       :confirm-delete-dialog.sync="confirm_delete_dialog"
       @deleteConfirmationButtonClicked="deleteTrainingData()"
+    />
+    <TrainingDialogAdviceDialog
+      :advice-dialog.sync="advice_dialog"
     />
   </div>
 </template>
@@ -63,6 +79,7 @@
 <script>
 import TrainingDialogTabs from './TrainingDialogTabs.vue';
 import TrainingDialogGeneral from './TrainingDialogGeneral.vue';
+import TrainingDialogAdviceDialog from './TrainingDialogAdviceDialog.vue';
 import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
 import { apiPutBike } from '../../api/BikeApi';
 import { apiDeleteTrainingItem, apiPostTraining, apiPutTrainingItem } from '../../api/TrainingApi';
@@ -71,6 +88,7 @@ import { apiDeleteSetupItem, apiPostSetup, apiPutSetupItem } from '../../api/Set
 export default {
   name: 'TrainingDialog',
   components: {
+    TrainingDialogAdviceDialog,
     TrainingDialogTabs,
     TrainingDialogGeneral,
     ConfirmDeleteDialog,
@@ -93,6 +111,7 @@ export default {
     valid_training_dialog: true,
     confirm_delete_dialog: false,
     window_height: 0,
+    advice_dialog: false,
   }),
   computed: {
     training_dialog: {

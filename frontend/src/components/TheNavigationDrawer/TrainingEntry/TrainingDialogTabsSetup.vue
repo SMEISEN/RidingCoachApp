@@ -30,6 +30,7 @@
         </v-row>
         <v-divider v-if="group_index !== Object.keys(setup_groups).length - 1" />
       </div>
+      <br>
     </v-expansion-panel-content>
   </v-expansion-panel>
 </template>

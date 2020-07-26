@@ -1,0 +1,1129 @@
+[
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#1",
+            "name": "Bottoms - Too Soft, Mushy"
+        },
+        "notes": null,
+        "questions": [
+            "What kind of conditions? (G-outs, landing on jumps, face of jumps, etc.) We are determining whether the velocity is low or high",
+            "Does it feel good otherwise? (If yes, go to A)",
+            "Does it feel too soft everywhere? (If yes, skip A, go to B and C)"
+        ],
+        "advice": {
+            "A": {
+                "problem": "Oil level low—raise oil level—affects mostly the last 1/3 of travel",
+                "solution": []
+            },
+            "B": {
+                "problem": "Not enough low-speed compression damping",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough high-speed compression damping",
+                "solution": []
+            },
+            "D": {
+                "problem": "Spring rate too soft",
+                "solution": []
+            },
+            "E": {
+                "problem": "Not enough preload",
+                "solution": []
+            },
+            "F": {
+                "problem": "Dirt in valving, broken valve, bent shim, burr on the piston/shim",
+                "solution": []
+            },
+            "G": {
+                "problem": "Cartridge rod bushing worn out (typical problem with pre-1996 KYB)",
+                "solution": []
+            },
+            "H": {
+                "problem": "Compression valve 0-ring broken, especially if just rebuilt",
+                "solution": []
+            },
+            "I": {
+                "problem": "Cartridge rod not attached to cap—broken or unscrewed—oops",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#2",
+            "name": "Too Stiff - Deflects, Harsh, Nervous, Twitchy"
+        },
+        "notes": null,
+        "questions": [
+            "Everywhere or just on square edges? (Just square-edged: see B and C)"
+        ],
+        "advice": {
+            "A": {
+                "problem": "Too much compression damping adjustment— high-speed and/or low-speed",
+                "solution": []
+            },
+            "B": {
+                "problem": "Too much compression damping internally—change high-speed first, then low-speed",
+                "solution": []
+            },
+            "C": {
+                "problem": "Spring rate too stiff",
+                "solution": []
+            },
+            "D": {
+                "problem": "Too much low-speed rebound damping—packing",
+                "solution": []
+            },
+            "E": {
+                "problem": "Oil level too high",
+                "solution": []
+            },
+            "F": {
+                "problem": "See #9 (sticky forks)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#3",
+            "name": "Poor Traction"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Poor tire type/compound",
+                "solution": []
+            },
+            "B": {
+                "problem": "Too much tire pressure",
+                "solution": []
+            },
+            "C": {
+                "problem": "Tire pressure way too low",
+                "solution": []
+            },
+            "D": {
+                "problem": "Too much low-speed rebound damping",
+                "solution": []
+            },
+            "E": {
+                "problem": "Too much low-speed compression damping",
+                "solution": []
+            },
+            "F": {
+                "problem": "Not enough low-speed rebound damping",
+                "solution": []
+            },
+            "G": {
+                "problem": "Not enough low-speed compression damping",
+                "solution": []
+            },
+            "H": {
+                "problem": "Not enough weight on the front end",
+                "solution": [
+                    "Swingarm too short",
+                    "Rear axle moved up too far",
+                    "Seat too far back",
+                    "Bars too high or too far back"
+                ]
+            },
+            "I": {
+                "problem": "See #5 (pushes, not enough trail)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#4",
+            "name": "Doesn't Turn"
+        },
+        "notes": "This may be the most misunderstood and misdiagnosed fork symptom. It is quite often more a geometry issue than a suspension issue though these overlap. Ninety-nine percent of suspension issue though these overlap. Ninety-nine percent of the time the tuner/rider drops the front end (raises the fork tubes in the triple clamps) in an attempt to cure this. His thinking is typically one of two things: either he's trying to 'weight the front end' or he is trying to decrease trail Does dropping the front end weight the front end? Yes, but not so much as you'd notice it. This is a common misconception. As to decreasing the trail—the reason you'd want to decrease trail is because it is too difficult to turn the bars. If there is a lack of traction, you'd want to go the other way—increase the trail. Along with an increase in trail generally comes an increase in traction (grip). So, begin by asking the question:",
+        "questions": [
+            "Do the bars turn easily or is it hard to turn the bars?",
+            "If it is easy to turn the bars start with #3 (poor traction), then #5 (pushes)",
+            "If it is hard to turn the bars go to #6 (excessive force required)"
+        ],
+        "advice": {
+            "A": {
+                "problem": "Tire profiles too flat or too wide, rim too wide",
+                "solution": []
+            },
+            "B": {
+                "problem": "Riding Position—not enough weight on the front end",
+                "solution": []
+            },
+            "C": {
+                "problem": "Riding Style (not everything is the bike!)",
+                "solution": [
+                    "Seat too low",
+                    "Bars too high",
+                    "Rider doesn't understand the concept of countersteering",
+                    "Not weighting the front end",
+                    "Elbow down riding style—wrong for dirt",
+                    "Elbow up riding style—wrong for pavement",
+                    "Sitting too far back, not weighting the front end—wrong for dirt and pavement",
+                    "Rider centerline to outside of bike centerline—wrong for pavement",
+                    "Steering with both arms—wrong for pavement (steering should be done with inside arm only)",
+                    "Not looking through turn",
+                    "Riding two-up—passenger not leaning with the bike",
+                    "Riding two-up—not enough weight on the front, too much on the rear",
+                    "Luggage added to the rear"
+                ]
+            },
+            "D": {
+                "problem": "Wheelbase too long",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#5",
+            "name": "Pushes"
+        },
+        "notes": "(easy to turn the bars but the bike doesn't turn, low traction), Steering Feels Loose, Power Steering (flat track term), Chatters When Entering a Turn, Runs Wide Mid-Corner and Exit, Tucks (turns too quickly—this is not enough trail but not as severe as Pushing), this is usually a chassis geometry problem—not enough trail.",
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Front end rides too low in comparison to the rear",
+                "solution": []
+            },
+            "B": {
+                "problem": "Raise the front end (slide fork tubes down in triple clamps)",
+                "solution": []
+            },
+            "C": {
+                "problem": "Lower the rear end",
+                "solution": []
+            },
+            "D": {
+                "problem": "Fork spring rate too soft",
+                "solution": []
+            },
+            "E": {
+                "problem": "Not enough fork spring preload",
+                "solution": []
+            },
+            "F": {
+                "problem": "Low-speed rebound too high, causing packing",
+                "solution": []
+            },
+            "G": {
+                "problem": "Not enough low-speed compression damping",
+                "solution": []
+            },
+            "H": {
+                "problem": "Increase low-speed compression damping adjustment or valving stack stiffness",
+                "solution": []
+            },
+            "I": {
+                "problem": "Go to a single-stage valving stack instead of two-stage—dirt",
+                "solution": []
+            },
+            "J": {
+                "problem": "Anything that makes the rear higher than the front",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#6",
+            "name": "Takes excessive force to turn the bars, plenty of traction, doesn't complete the turn"
+        },
+        "notes": "This is a chassis geometry problem—too much trail.",
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Front end rides high dynamically in comparison to the rear",
+                "solution": []
+            },
+            "B": {
+                "problem": "Lower the front end (slide the fork tubes up in the triple clamps)",
+                "solution": []
+            },
+            "C": {
+                "problem": "Too much fork spring preload",
+                "solution": []
+            },
+            "D": {
+                "problem": "Spring rate too stiff",
+                "solution": []
+            },
+            "E": {
+                "problem": "Rear ride height too low",
+                "solution": []
+            },
+            "F": {
+                "problem": "Air pump—replace fork seals",
+                "solution": []
+            },
+            "G": {
+                "problem": "Anything that makes the rear lower than the front",
+                "solution": []
+            },
+            "H": {
+                "problem": "Too much low-speed compression damping",
+                "solution": []
+            },
+            "I": {
+                "problem": "Bars too narrow, uncomfortable bend",
+                "solution": []
+            },
+            "J": {
+                "problem": "See #9 (sticky forks)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#7",
+            "name": "Dives under Braking—(steady state)"
+        },
+        "notes": "Damping affects the rate of dive and 'overshoot' but does not affect the front ride height after any appreciable length of time.",
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "With telescopic forks it should! Linkage-type front ends may not dive or may even rise",
+                "solution": []
+            },
+            "B": {
+                "problem": "On braking, the total dive is controlled by spring forces only (rate, preload and air slightly), not damping.",
+                "solution": []
+            },
+            "C": {
+                "problem": "Fork angle too flat (choppered), too much rake",
+                "solution": []
+            },
+            "D": {
+                "problem": "Fork springs too soft",
+                "solution": []
+            },
+            "E": {
+                "problem": "Too much rear ride height",
+                "solution": [
+                    "Ride height adjuster too high",
+                    "Rear preload excessive"
+                ]
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#8",
+            "name": "Feels Loose"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Not enough low-speed rebound damping",
+                "solution": []
+            },
+            "B": {
+                "problem": "Not enough high-speed rebound damping—big bumps only",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough compression damping",
+                "solution": []
+            },
+            "D": {
+                "problem": "Spring rate too soft",
+                "solution": []
+            },
+            "E": {
+                "problem": "Steering bearings loose or worn",
+                "solution": []
+            },
+            "F": {
+                "problem": "Swingarm pivot or linkage bearings loose or worn",
+                "solution": []
+            },
+            "G": {
+                "problem": "Tire pressure too low or way too high",
+                "solution": []
+            },
+            "H": {
+                "problem": "Fork flex, chassis flex, swingarm flex",
+                "solution": []
+            },
+            "I": {
+                "problem": "Worn-out fluid",
+                "solution": []
+            },
+            "J": {
+                "problem": "Damping rod bushings worn out (pre-1996 KYB cartridge type forks)",
+                "solution": []
+            },
+            "K": {
+                "problem": "Worn-out rebound piston ring—very rare",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#9",
+            "name": "Sticky Forks"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Misaligned fork tubes when viewed from the front (splayed out or wedged in)—axle clamp not centered (most common)",
+                "solution": []
+            },
+            "B": {
+                "problem": "Triple clamps bent",
+                "solution": []
+            },
+            "C": {
+                "problem": "Bent fork tubes",
+                "solution": []
+            },
+            "D": {
+                "problem": "Bent axle",
+                "solution": []
+            },
+            "E": {
+                "problem": "Dented sliders",
+                "solution": []
+            },
+            "F": {
+                "problem": "Upside-down forks with poor bushing design",
+                "solution": []
+            },
+            "G": {
+                "problem": "Outer tube anodizing worn through",
+                "solution": []
+            },
+            "H": {
+                "problem": "Air pump—replace seals, particularly at the lower triple clamp",
+                "solution": []
+            },
+            "I": {
+                "problem": "Seals not broken in or poor design (aftermarket)",
+                "solution": []
+            },
+            "J": {
+                "problem": "Seals not lubricated",
+                "solution": []
+            },
+            "K": {
+                "problem": "Poor quality oil",
+                "solution": []
+            },
+            "L": {
+                "problem": "Poorly designed fork brace or fork brace adjustment—right side up forks",
+                "solution": []
+            },
+            "M": {
+                "problem": "Triple clamp too tight—USD (upside-down) forks",
+                "solution": []
+            },
+            "N": {
+                "problem": "Misaligned fork tube height",
+                "solution": []
+            },
+            "O": {
+                "problem": "Forks not broken in—(twin-chamber)",
+                "solution": []
+            },
+            "P": {
+                "problem": "Bushings damaged from dent or worn out",
+                "solution": []
+            },
+            "Q": {
+                "problem": "Metal imbedded in bushings",
+                "solution": [
+                    "Preload washers not located properly—USD forks",
+                    "Aluminum preload washers",
+                    "Steel spring spacer directly on aluminum cap",
+                    "Bottom-out system needs chamfering—pre-1995 KYB cartridge forks",
+                    "Fork caps 'shedding' on installation—burr on thread"
+                ]
+            },
+            "R": {
+                "problem": "Cartridge rod bushing too tight",
+                "solution": []
+            },
+            "S": {
+                "problem": "Spring guide rubbing on inner diameter of spring/incorrect manufacturing or guide growing from soaking in solvent—USD forks",
+                "solution": []
+            },
+            "T": {
+                "problem": "Fork spring outer diameter too large—spring outer diameter grows during compression and can bind on inner diameter of fork tube",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#10",
+            "name": "Headshakes—(fast side-to-side movement of the bars)"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Chassis not straight—twisted or offset",
+                "solution": []
+            },
+            "B": {
+                "problem": "Misalignment of wheels—chain adjuster marks are off",
+                "solution": []
+            },
+            "C": {
+                "problem": "Fork flex, chassis flex, swingarm flex",
+                "solution": []
+            },
+            "D": {
+                "problem": "Worn-out or loose steering bearing or binding dragging",
+                "solution": []
+            },
+            "E": {
+                "problem": "Not enough trail—not enough self-centering effect",
+                "solution": []
+            },
+            "F": {
+                "problem": "Too much trail—returns past center then re-corrects the other way quickly",
+                "solution": []
+            },
+            "G": {
+                "problem": "Oil level too high (street)—headshakes during braking",
+                "solution": []
+            },
+            "H": {
+                "problem": "Bottom-out mechanism too long or too abrupt (street)—headshakes during heavy braking",
+                "solution": []
+            },
+            "I": {
+                "problem": "Not enough low-speed rebound damping",
+                "solution": []
+            },
+            "J": {
+                "problem": "Too much rebound damping",
+                "solution": []
+            },
+            "K": {
+                "problem": "Too much high-speed compression damping—deflects on bumps",
+                "solution": []
+            },
+            "L": {
+                "problem": "Tire pressure too high or too low",
+                "solution": []
+            },
+            "M": {
+                "problem": "Poor tire compound or type",
+                "solution": []
+            },
+            "N": {
+                "problem": "Tire not mounted properly on rim, bent rim, or cord not straight",
+                "solution": []
+            },
+            "O": {
+                "problem": "Wheel out of balance—bent rim",
+                "solution": []
+            },
+            "P": {
+                "problem": "Brake rotor bent—headshakes during braking",
+                "solution": []
+            },
+            "Q": {
+                "problem": "Fork mounted fairing not aerodynamically balanced",
+                "solution": []
+            },
+            "R": {
+                "problem": "Any type of aerodynamic imbalance",
+                "solution": []
+            },
+            "S": {
+                "problem": "Anything that makes the front end lower than the rear decreases trail",
+                "solution": []
+            },
+            "T": {
+                "problem": "Too much steering swing inertia",
+                "solution": []
+            },
+            "U": {
+                "problem": "See #9 (sticky forks)",
+                "solution": []
+            },
+            "V": {
+                "problem": "Additional solutions",
+                "solution": [
+                    "Steering damper—Scott's Performance has an excellent damper",
+                    "Tighten steering bearings so that they drag slightly—poor man's steering damper"
+                ]
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#11",
+            "name": "Chatters (Patters)—(up and down wheel movement)"
+        },
+        "notes": "This can be a vibrations/harmonics problem where the excitation (input) frequency matches the natural frequency of the suspended system. It is often confused with, and can cause, headshake.",
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "See #5 (pushes, not enough trail)",
+                "solution": []
+            },
+            "B": {
+                "problem": "Not enough rebound damping",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough compression damping",
+                "solution": []
+            },
+            "D": {
+                "problem": "Change spring rates stiffer or softer to change natural frequency—start with stiffer",
+                "solution": []
+            },
+            "E": {
+                "problem": "Too much compression damping",
+                "solution": []
+            },
+            "F": {
+                "problem": "Too much rebound damping",
+                "solution": []
+            },
+            "G": {
+                "problem": "Tire pressure—too much or too little",
+                "solution": []
+            },
+            "H": {
+                "problem": "Tire design",
+                "solution": []
+            },
+            "I": {
+                "problem": "Chassis/swingarm flex",
+                "solution": []
+            },
+            "J": {
+                "problem": "Preload change—changes center of pressure height",
+                "solution": []
+            },
+            "K": {
+                "problem": "See #9 (sticky forks)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#12",
+            "name": "Bounces off the Ground on Jump Landings"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Bottoms severely, loads the frame, and recoils (see #1, bottoms)",
+                "solution": []
+            },
+            "B": {
+                "problem": "Not enough high-speed rebound damping",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough low-speed rebound damping",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#13",
+            "name": "Deflects on Square-Edged Bumps, Roots, Rocks, Expansion Joints, Square Holes, 'Botts´Dots'"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Too much high-speed compression damping—either valving stack or piston orifice restriction",
+                "solution": []
+            },
+            "B": {
+                "problem": "Spring rate too stiff",
+                "solution": []
+            },
+            "C": {
+                "problem": "Too much preload",
+                "solution": []
+            },
+            "D": {
+                "problem": "Too much low-speed compression damping",
+                "solution": []
+            },
+            "E": {
+                "problem": "Too much low-speed rebound damping",
+                "solution": []
+            },
+            "F": {
+                "problem": "Way too soft and bottoms severely",
+                "solution": []
+            },
+            "G": {
+                "problem": "See #9 (sticky forks)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#14",
+            "name": "Leaky Seals"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Old seals",
+                "solution": []
+            },
+            "B": {
+                "problem": "Nicks in tube",
+                "solution": []
+            },
+            "C": {
+                "problem": "Worn bushings",
+                "solution": []
+            },
+            "D": {
+                "problem": "Bent tube",
+                "solution": []
+            },
+            "E": {
+                "problem": "Improper installation",
+                "solution": []
+            },
+            "F": {
+                "problem": "Fork tube too smooth",
+                "solution": []
+            },
+            "G": {
+                "problem": "Excessive brake dust (sintered metallic pads)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Fork",
+        "symptom": {
+            "id": "#15",
+            "name": "Front Tire Wear—Road Race"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Tire edge tear",
+                "solution": [
+                    "Improper tire pressure",
+                    "See #5—chassis geometry issue, not enough trail"
+                ]
+            },
+            "B": {
+                "problem": "Tire center wear",
+                "solution": [
+                    "Too much tire pressure",
+                    "Front end chatter",
+                    "Tire out of balance",
+                    "Excessively stiff forks",
+                    "Improperly adjusted steering bearings",
+                    "Not enough turns on your way to work or exhibition of speed—too much drag racing on the way to the pub"
+                ]
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#1",
+            "name": "Kicks"
+        },
+        "notes": "This is the most commonly misdiagnosed symptom on a dirt bike. This symptom is usually diagnosed as not enough rebound damping, however it is usually one of two things: 1) it's way too stiff or 2) it's way too soft. caused by:",
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Kicks #1   Too Stiff",
+                "solution": [
+                    "Too much high-speed compression damping",
+                    "Spring rate too stiff",
+                    "Way too much low-speed compression damping",
+                    "Too much rebound damping (not too little)",
+                    "Linkage bearings bad, tight, dry",
+                    "Too high tire pressure",
+                    "Way too much preload",
+                    "See #8 (sticky shock)"
+                ]
+            },
+            "B": {
+                "problem": "Kicks #2—Too Soft",
+                "solution": [
+                    "Severe Bottoming (see #2, bottoms)"
+                ]
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#2",
+            "name": "Bottoms"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Not enough low-speed compression damping",
+                "solution": []
+            },
+            "B": {
+                "problem": "Not enough high-speed compression damping (landing on jumps)",
+                "solution": []
+            },
+            "C": {
+                "problem": "Spring rate too soft",
+                "solution": []
+            },
+            "D": {
+                "problem": "Too much static sag",
+                "solution": []
+            },
+            "E": {
+                "problem": "Worn piston ring 0-ring, piston ring, or body",
+                "solution": []
+            },
+            "F": {
+                "problem": "Suspension fluid worn out or poor quality (fades when shock heats up due to low viscosity index)",
+                "solution": []
+            },
+            "G": {
+                "problem": "Shaft seal blown",
+                "solution": []
+            },
+            "H": {
+                "problem": "Not enough nitrogen pressure, cavitation",
+                "solution": []
+            },
+            "I": {
+                "problem": "Blown bladder (usually caused by blown shaft seal)",
+                "solution": []
+            },
+            "J": {
+                "problem": "Bent or distorted valving shims",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#3",
+            "name": "Swaps—Dirt"
+        },
+        "notes": null,
+        "questions": [
+            "Does it feel harsh/deflect? Too Stiff",
+            "Does it bottom out easily? Too Soft",
+            "One bump or into a series of whoops? If it is on a series of whoops, it could be a rebound problem. Too much rebound damping (packing especially on a series of whoops) or too little high-speed rebound damping (uncontrolled rebound on a series of whoops)."
+        ],
+        "advice": {
+            "A": {
+                "problem": "Too much high-speed compression damping—deflecting, not bottoming",
+                "solution": []
+            },
+            "B": {
+                "problem": "Not enough low-speed rebound damping—loose",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough high-speed rebound damping loose on whoop section",
+                "solution": []
+            },
+            "D": {
+                "problem": "Spring rate too stiff—deflects",
+                "solution": []
+            },
+            "E": {
+                "problem": "Spring rate too soft—mushy/bottoms",
+                "solution": []
+            },
+            "F": {
+                "problem": "Bottoming severely",
+                "solution": []
+            },
+            "G": {
+                "problem": "See #8 (sticky shock)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#4",
+            "name": "Feels Loose/Shock Pumps"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Not enough low-speed rebound damping",
+                "solution": []
+            },
+            "B": {
+                "problem": "Not enough high-speed rebound damping",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough low-speed compression damping",
+                "solution": []
+            },
+            "D": {
+                "problem": "Spring rate too soft",
+                "solution": []
+            },
+            "E": {
+                "problem": "Too little preload",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#5",
+            "name": "Poor Traction"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Too much low-speed rebound damping (main cause)",
+                "solution": []
+            },
+            "B": {
+                "problem": "Too much low-speed compression damping",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough low-speed rebound damping (much too little)",
+                "solution": []
+            },
+            "D": {
+                "problem": "Not enough low-speed compression damping",
+                "solution": []
+            },
+            "E": {
+                "problem": "Too much tire pressure",
+                "solution": []
+            },
+            "F": {
+                "problem": "Poor tire type/compound",
+                "solution": []
+            },
+            "G": {
+                "problem": "Tire worn out",
+                "solution": []
+            },
+            "H": {
+                "problem": "Shock heim bearings worn out (loose)",
+                "solution": []
+            },
+            "I": {
+                "problem": "Linkage bearings worn out (loose)",
+                "solution": []
+            },
+            "J": {
+                "problem": "Spring rate too stiff",
+                "solution": []
+            },
+            "K": {
+                "problem": "Not enough swingarm angle—not enough anti-squat",
+                "solution": []
+            },
+            "L": {
+                "problem": "Too much swingarm angle—too much anti-squat",
+                "solution": []
+            },
+            "M": {
+                "problem": "Too much preload",
+                "solution": []
+            },
+            "N": {
+                "problem": "Too much rear ride height (adjuster too high)",
+                "solution": []
+            },
+            "O": {
+                "problem": "See #8 (sticky shock)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#6",
+            "name": "Squats on Acceleration"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Too little swingarm angle—not enough anti-squat",
+                "solution": []
+            },
+            "B": {
+                "problem": "Spring too soft",
+                "solution": []
+            },
+            "C": {
+                "problem": "Not enough preload (too much static sag)",
+                "solution": []
+            },
+            "D": {
+                "problem": "Countershaft sprocket too big—not enough anti-squat",
+                "solution": []
+            },
+            "E": {
+                "problem": "Rear sprocket too small—not enough anti-squat",
+                "solution": []
+            },
+            "F": {
+                "problem": "Compression damping too soft—changes rate of squat, not final amount of squat",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#7",
+            "name": "Not Tracking"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Too much low-speed rebound damping—poor traction",
+                "solution": []
+            },
+            "B": {
+                "problem": "Too much high-speed compression damping—deflecting on square-edged bumps",
+                "solution": []
+            },
+            "C": {
+                "problem": "Too much low-speed compression damping—skating, poor traction",
+                "solution": []
+            },
+            "D": {
+                "problem": "Misaligned chassis",
+                "solution": []
+            },
+            "E": {
+                "problem": "See Forks #9 (sticky forks) and Shock #8 (sticky shock, front and rear)",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#8",
+            "name": "Sticky Shock"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Linkage not maintained",
+                "solution": []
+            },
+            "B": {
+                "problem": "Swingarm bearings not maintained",
+                "solution": []
+            },
+            "C": {
+                "problem": "Shock eyelet bearings not lubed",
+                "solution": []
+            },
+            "D": {
+                "problem": "Floating brake rod or backing plate not lubed—common on vintage bikes with floating rear brake",
+                "solution": []
+            },
+            "E": {
+                "problem": "Missing or improper bearing spacers",
+                "solution": []
+            },
+            "F": {
+                "problem": "Bent shock shaft—usually caused by mounting bolt or clevis installed backwards",
+                "solution": []
+            }
+        }
+    },
+    {
+        "category": "Shock",
+        "symptom": {
+            "id": "#9",
+            "name": "Blown Shock Bladder"
+        },
+        "notes": null,
+        "questions": [],
+        "advice": {
+            "A": {
+                "problem": "Oil leak—shaft seal blown—caused by nicked or pitted shaft, hard-chrome worn through, old or worn-out seal",
+                "solution": []
+            },
+            "B": {
+                "problem": "Improperly rebuilt shock recently finished with way too little oil",
+                "solution": []
+            }
+        }
+    }
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
