@@ -49,14 +49,14 @@ def index_client(path):
 def create_tables():
     db.create_all()
 
-    create_maintenance_template()
-    create_coach_template()
+    copy_maintenance_template()
+    copy_coach_template()
 
     print('Database created!')
 
 
-@app.cli.command(name='create_maintenance_template')
-def create_maintenance_template():
+@app.cli.command(name='copy_maintenance_template')
+def copy_maintenance_template():
 
     with open('backend/database/templates/maintenance_model_template.json') as json_file:
         maintenance_template = json.load(json_file)
@@ -75,9 +75,11 @@ def create_maintenance_template():
 
     db.session.commit()
 
+    print('Template copied into database!')
 
-@app.cli.command(name='create_coach_template')
-def create_coach_template():
+
+@app.cli.command(name='copy_coach_template')
+def copy_coach_template():
 
     with open('backend/database/templates/coach_model_template.json') as json_file:
         coach_template = json.load(json_file)
@@ -95,6 +97,8 @@ def create_coach_template():
         db.session.add(new_coach)
 
     db.session.commit()
+
+    print('Template copied into database!')
 
 
 @app.cli.command(name='drop_tables')
