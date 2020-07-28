@@ -23,37 +23,47 @@
             :height="0.5 * window_height"
           >
             <v-slide-group
-              v-model="bike_end_slide_group"
+              v-model="category_slide_group"
               center-active
               show-arrows
               class="py-12"
             >
               <v-slide-item
-                v-for="n in 2"
-                :key="n"
+                v-for="category in coach_categories_array"
+                :key="'category/' + category.toLowerCase()"
                 v-slot:default="{ active, toggle }"
               >
                 <v-card
-                  :color="active ? 'primary' : 'blue-grey lighten-4'"
+                  color="blue-grey lighten-4"
                   :height="0.35 * window_height"
-                  width="170"
+                  :width="0.45 * window_width"
                   class="mx-4"
                   @click="toggle"
                 >
-                  <v-row
-                    class="fill-height"
-                    align="center"
-                    justify="center"
+                  <v-img
+                    class="secondary--text align-end"
+                    contain
+                    :height="0.35 * window_height"
+                    :width="0.45 * window_width"
+                    :src="`/assets/coach-category-${category.toLowerCase()}.svg`"
                   >
-                    <v-scale-transition>
-                      <v-icon
-                        v-if="active"
-                        color="white"
-                        size="48"
-                        v-text="'mdi-close-circle-outline'"
-                      ></v-icon>
-                    </v-scale-transition>
-                  </v-row>
+                    <v-card-title>{{ category }} troubleshooting</v-card-title>
+                  </v-img>
+                  <v-overlay
+                    absolute
+                    :value="active"
+                  >
+                    <v-btn
+                      v-if="active"
+                      icon
+                      x-large
+                      @click="active = false"
+                    >
+                      <v-icon x-large>
+                        mdi-close-circle-outline
+                      </v-icon>
+                    </v-btn>
+                  </v-overlay>
                 </v-card>
               </v-slide-item>
             </v-slide-group>
@@ -82,11 +92,58 @@
         </v-stepper-step>
         <v-stepper-content step="2">
           <v-card
-            color="grey lighten-1"
+            color="blue-grey lighten-5"
             class="mb-3"
             :height="0.5 * window_height"
           >
-            test
+            <v-slide-group
+              v-model="symptom_slide_group"
+              center-active
+              show-arrows
+              class="py-12"
+            >
+              <v-slide-item
+                v-for="(symptom, index) in symptom_by_category"
+                :key="'symptom/' + index"
+                v-slot:default="{ active, toggle }"
+              >
+                <v-card
+                  color="blue-grey lighten-4"
+                  :height="0.35 * window_height"
+                  :width="0.45 * window_width"
+                  class="mx-4"
+                  @click="toggle"
+                >
+                  <v-img
+                    class="secondary--text align-end"
+                    contain
+                    :height="0.35 * window_height"
+                    :width="0.45 * window_width"
+                    :src="'/assets/coach-' +
+                      `category-${symptom.category.toLowerCase()}-` +
+                      `symptom-${symptom.symptom.id.substring(1)}.png`"
+                  >
+                    <v-card-title>{{ symptom.symptom.id + ': '
+                      + symptom.symptom.name }}</v-card-title>
+                  </v-img>
+                  <v-overlay
+                    absolute
+                    :value="active"
+                  >
+                    <v-btn
+                      v-if="active"
+                      icon
+                      x-large
+                      @click="active = false"
+                    >
+                      <v-icon x-large>
+                        mdi-close-circle-outline
+                      </v-icon>
+                    </v-btn>
+                  </v-overlay>
+                </v-card>
+              </v-slide-item>
+            </v-slide-group>
           </v-card>
           <v-card-actions>
             <v-spacer />
@@ -112,11 +169,36 @@
         </v-stepper-step>
         <v-stepper-content step="3">
           <v-card
-            color="grey lighten-1"
-            class="mb-3"
+            color="blue-grey lighten-5"
+            class="overflow-y-auto mb-3"
             :height="0.5 * window_height"
           >
-            test
+            <v-card-text>
+              <v-radio-group
+                v-model="troubleshooting_problem_radio"
+                :mandatory="false"
+              >
+                <v-radio
+                  v-for="(advice, index) in advices_by_symptom"
+                  :key="'advice/' + index"
+                  :label="index + ':\t' + advice.problem"
+                  :value="index"
+                  >
+                  <v-radio-group
+                    v-if="advice.solution.length > 0"
+                    v-model="troubleshooting_solution_radio"
+                    :mandatory="false"
+                  >
+                    <v-radio
+                      v-for="(solution, index) in advice.solution"
+                      :key="'advice/solution' + index"
+                      :label="solution"
+                      :value="index"
+                    />
+                  </v-radio-group>
+                </v-radio>
+              </v-radio-group>
+            </v-card-text>
           </v-card>
           <v-card-actions>
             <v-spacer />
@@ -140,6 +222,8 @@
 </template>
 
 <script>
+import { apiGetAllCoaches } from '../../api/CoachApi';
+
 export default {
   name: 'TrainingDialogAdviceDialog',
   props: {
@@ -151,7 +235,13 @@ export default {
   data: () => ({
     current_step: 1,
     window_height: 0,
-    bike_end_slide_group: null,
+    window_width: 0,
+    category_slide_group: null,
+    symptom_slide_group: null,
+    troubleshooting_problem_radio: null,
+    troubleshooting_solution_radio: null,
+    coach_object: {},
+    coach_categories_array: [],
   }),
   computed: {
     advice_dialog: {
@@ -162,18 +252,54 @@ export default {
         this.$emit('update:adviceDialog', value);
       },
     },
+    symptom_by_category() {
+      console.log(this.category_slide_group);
+      if (this.category_slide_group !== null && this.category_slide_group !== undefined) {
+        const category = this.coach_categories_array[this.category_slide_group];
+        return this.coach_object.filter((i) => i.category === category);
+      }
+      return [];
+    },
+    advices_by_symptom() {
+      if (this.category_slide_group !== null && this.category_slide_group !== undefined) {
+        if (this.symptom_slide_group !== null && this.symptom_slide_group !== undefined) {
+          return this.symptom_by_category[this.symptom_slide_group].advice;
+        }
+      }
+      return [];
+    },
   },
   updated() {
     this.window_height = window.innerHeight;
+    this.window_width = window.innerWidth;
+    console.log(this.troubleshooting_radio);
   },
   created() {
+    this.getCoach();
   },
   methods: {
-
+    getCoach() {
+      apiGetAllCoaches().then((res) => {
+        this.coach_object = res.data;
+        this.getCoachCategories();
+      });
+    },
+    getCoachCategories() {
+      this.coach_categories_array = this._.uniq(
+        Object.assign(this.coach_categories_array,
+          Object.values(
+            this._.mapValues(
+              this.coach_object, 'category',
+            ),
+          )),
+      );
+    },
   },
 };
 </script>
 
 <style scoped>
-
+  .v-card__text, .v-card__title {
+    word-break: normal; /* maybe !important  */
+  }
 </style>
