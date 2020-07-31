@@ -45,6 +45,20 @@ def index_client(path):
     return send_file(entry)
 
 
+@app.route('/favicon.svg')
+def favicon_client():
+    dist_dir = current_app.config['DIST_DIR']
+    entry = os.path.join(dist_dir, 'favicon.svg')
+    return send_file(entry)
+
+
+@app.route('/assets/<path:file>')
+def assets_client(file):
+    dist_dir = current_app.config['DIST_DIR']
+    entry = os.path.join(dist_dir, 'assets', file)
+    return send_file(entry)
+
+
 @app.cli.command(name='create_tables')
 def create_tables():
     db.create_all()

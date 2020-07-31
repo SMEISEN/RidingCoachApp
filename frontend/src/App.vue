@@ -48,7 +48,7 @@ export default {
       {
         rel: 'shortcut icon',
         type: 'image/svg',
-        href: '/rc-logo.svg',
+        href: 'favicon.svg',
       },
     ],
   },
