@@ -39,7 +39,7 @@ export default {
       { name: 'mobile-web-app-capable', content: 'yes' },
     ],
     link: [
-      { rel: 'shortcut icon', type: 'image/svg', href: '/rc-logo.svg' },
+      { rel: 'shortcut icon', type: 'image/svg', href: `${process.env.BASE_URL}rc-logo.svg` },
     ],
   },
 
