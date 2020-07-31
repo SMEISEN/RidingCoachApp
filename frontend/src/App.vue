@@ -35,11 +35,21 @@ export default {
   metaInfo: {
     titleTemplate: '%s | Riding Coach',
     meta: [
-      { name: 'viewport', content: 'width=device-width' },
-      { name: 'mobile-web-app-capable', content: 'yes' },
+      {
+        name: 'viewport',
+        content: 'width=device-width',
+      },
+      {
+        name: 'mobile-web-app-capable',
+        content: 'yes',
+      },
     ],
     link: [
-      { rel: 'shortcut icon', type: 'image/svg', href: `${process.env.BASE_URL}rc-logo.svg` },
+      {
+        rel: 'shortcut icon',
+        type: 'image/svg',
+        href: '/rc-logo.svg',
+      },
     ],
   },
 

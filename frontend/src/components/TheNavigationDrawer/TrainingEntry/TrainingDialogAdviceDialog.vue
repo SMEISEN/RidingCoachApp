@@ -45,7 +45,8 @@
                     contain
                     :height="0.35 * window_height"
                     :width="0.45 * window_width"
-                    :src="`${$publicPath}/assets/coach-category-${category.toLowerCase()}.svg`"
+                    :src="`${$publicPath}/assets/` +
+                      `coach-category-${category.toLowerCase()}.svg`"
                   >
                     <v-card-title>{{ category }} troubleshooting</v-card-title>
                   </v-img>
@@ -119,8 +120,8 @@
                     contain
                     :height="0.35 * window_height"
                     :width="0.45 * window_width"
-                    :src="`${$publicPath}/assets/coach-` +
-                      `category-${symptom.category.toLowerCase()}-` +
+                    :src="`${$publicPath}/assets/` +
+                      `coach-category-${symptom.category.toLowerCase()}-` +
                       `symptom-${symptom.symptom.id.substring(1)}.png`"
                   >
                     <v-card-title>
@@ -275,6 +276,7 @@ export default {
   },
   created() {
     this.getCoach();
+    console.log(process.env.DIST_DIR);
   },
   methods: {
     getCoach() {
