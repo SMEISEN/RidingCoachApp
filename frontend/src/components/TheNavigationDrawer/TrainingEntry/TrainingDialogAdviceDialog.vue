@@ -45,7 +45,7 @@
                     contain
                     :height="0.35 * window_height"
                     :width="0.45 * window_width"
-                    :src="`/assets/coach-category-${category.toLowerCase()}.svg`"
+                    :src="`${$publicPath}/assets/coach-category-${category.toLowerCase()}.svg`"
                   >
                     <v-card-title>{{ category }} troubleshooting</v-card-title>
                   </v-img>
@@ -119,12 +119,13 @@
                     contain
                     :height="0.35 * window_height"
                     :width="0.45 * window_width"
-                    :src="'/assets/coach-' +
+                    :src="`${$publicPath}/assets/coach-` +
                       `category-${symptom.category.toLowerCase()}-` +
                       `symptom-${symptom.symptom.id.substring(1)}.png`"
                   >
-                    <v-card-title>{{ symptom.symptom.id + ': '
-                      + symptom.symptom.name }}</v-card-title>
+                    <v-card-title>
+                      {{ symptom.symptom.id + ': ' + symptom.symptom.name }}
+                    </v-card-title>
                   </v-img>
                   <v-overlay
                     absolute
@@ -179,19 +180,19 @@
                 :mandatory="false"
               >
                 <v-radio
-                  v-for="(advice, index) in advices_by_symptom"
-                  :key="'advice/' + index"
-                  :label="index + ':\t' + advice.problem"
-                  :value="index"
-                  >
+                  v-for="(advice, problem_index) in advices_by_symptom"
+                  :key="'advice/' + problem_index"
+                  :label="problem_index + ':\t' + advice.problem"
+                  :value="problem_index"
+                >
                   <v-radio-group
                     v-if="advice.solution.length > 0"
                     v-model="troubleshooting_solution_radio"
                     :mandatory="false"
                   >
                     <v-radio
-                      v-for="(solution, index) in advice.solution"
-                      :key="'advice/solution' + index"
+                      v-for="(solution, sulution_index) in advice.solution"
+                      :key="'advice/solution' + sulution_index"
                       :label="solution"
                       :value="index"
                     />
@@ -253,7 +254,6 @@ export default {
       },
     },
     symptom_by_category() {
-      console.log(this.category_slide_group);
       if (this.category_slide_group !== null && this.category_slide_group !== undefined) {
         const category = this.coach_categories_array[this.category_slide_group];
         return this.coach_object.filter((i) => i.category === category);
@@ -272,7 +272,6 @@ export default {
   updated() {
     this.window_height = window.innerHeight;
     this.window_width = window.innerWidth;
-    console.log(this.troubleshooting_radio);
   },
   created() {
     this.getCoach();
