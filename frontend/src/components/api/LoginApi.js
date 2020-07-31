@@ -17,5 +17,5 @@ export const apiLogin = ({ url, data, method }) => new Promise((resolve, reject)
       console.error(error);
       reject(new Error(error));
     }
-  }, 5000);
+  }, 15000);
 });

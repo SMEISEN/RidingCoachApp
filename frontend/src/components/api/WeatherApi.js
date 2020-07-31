@@ -26,7 +26,7 @@ export const apiGetWeatherForecast = (pos) => new Promise((resolve, reject) => {
       + 'cloud_cover'
     + '&'
     + `apikey=${process.env.VUE_APP_CLIMACELL_API_KEY}`;
-  axios.get(ApiPath, { timeout: 5000 })
+  axios.get(ApiPath, { timeout: 15000 })
     .then((res) => resolve(res.data))
     .catch((error) => {
       console.error(error);
@@ -57,7 +57,7 @@ export const apiGetWeatherHistoric = (pos) => new Promise((resolve, reject) => {
       + 'cloud_cover'
     + '&'
     + `apikey=${process.env.VUE_APP_CLIMACELL_API_KEY}`;
-  axios.get(ApiPath, { timeout: 5000 })
+  axios.get(ApiPath, { timeout: 15000 })
     .then((res) => resolve(res.data))
     .catch((error) => {
       console.error(error);
