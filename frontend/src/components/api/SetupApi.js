@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const apiGetSetups = () => new Promise((resolve, reject) => {
   const ApiPath = '/api/setup';
-  axios.get(ApiPath, { timeout: 15000 })
+  axios.get(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => {
       console.error(error);
@@ -12,7 +12,7 @@ export const apiGetSetups = () => new Promise((resolve, reject) => {
 });
 export const apiPostSetup = (payload) => new Promise((resolve, reject) => {
   const ApiPath = '/api/setup';
-  axios.post(ApiPath, payload, { timeout: 15000 })
+  axios.post(ApiPath, payload)
     .then((res) => resolve(res))
     .catch((error) => {
       console.error(error);
@@ -21,7 +21,7 @@ export const apiPostSetup = (payload) => new Promise((resolve, reject) => {
 });
 export const apiGetSetupItem = (setupId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/setup/${setupId}`;
-  axios.get(ApiPath, { timeout: 15000 })
+  axios.get(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => {
       console.error(error);
@@ -30,7 +30,7 @@ export const apiGetSetupItem = (setupId) => new Promise((resolve, reject) => {
 });
 export const apiPutSetupItem = (payload, setupId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/setup/${setupId}`;
-  axios.put(ApiPath, payload, { timeout: 15000 })
+  axios.put(ApiPath, payload)
     .then((res) => resolve(res))
     .catch((error) => {
       console.error(error);
@@ -39,7 +39,7 @@ export const apiPutSetupItem = (payload, setupId) => new Promise((resolve, rejec
 });
 export const apiDeleteSetupItem = (setupId) => new Promise((resolve, reject) => {
   const ApiPath = `/api/setup/${setupId}`;
-  axios.delete(ApiPath, { timeout: 15000 })
+  axios.delete(ApiPath)
     .then((res) => resolve(res))
     .catch((error) => {
       console.error(error);
