@@ -11,8 +11,8 @@
     >
       <template v-slot:activator>
         <v-btn
-          fab
-          small
+          icon
+          outlined
           color="primary"
         >
           <v-icon>mdi-wrench</v-icon>

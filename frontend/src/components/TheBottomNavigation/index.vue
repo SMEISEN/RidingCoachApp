@@ -1,35 +1,77 @@
 <template>
   <v-bottom-navigation
+    v-model="current_page"
     app
     grow
-    height="48px"
+    dark
+    background-color="primary"
   >
-    <TheNavigationTabs
-      @currentPage="setPage"
-    />
+    <v-btn
+      icon
+      value="Dashboard"
+      to="/dashboard"
+    >
+      <v-icon>
+        mdi-home
+      </v-icon>
+    </v-btn>
+    <v-btn
+      value="Maintenance"
+      to="/maintenance"
+    >
+      <v-icon>
+        mdi-wrench
+      </v-icon>
+    </v-btn>
+    <v-btn
+      value="Spare Parts"
+      to="/spareparts"
+    >
+      <v-icon>
+        mdi-medical-bag
+      </v-icon>
+    </v-btn>
+    <v-btn
+      value="Training"
+      to="/training"
+    >
+      <v-icon>
+        mdi-racing-helmet
+      </v-icon>
+    </v-btn>
+    <v-btn
+      value="History"
+      to="/history"
+    >
+      <v-icon>
+        mdi-calendar-edit
+      </v-icon>
+    </v-btn>
   </v-bottom-navigation>
 </template>
 
 <script>
-import TheNavigationTabs from '../TheNavigationTabs/index.vue';
-
 export default {
   name: 'TheBottomNavigation',
-  components: {
-    TheNavigationTabs,
+  data: () => ({
+    current_page: null,
+  }),
+  watch: {
+    current_page() {
+      this.$emit('currentPage', this.current_page);
+    },
   },
   created() {
+    this.current_page = this.$route.name;
   },
   updated() {
-  },
-  methods: {
-    setPage(test) {
-      this.$emit('currentPage', test);
-    },
   },
 };
 </script>
 
 <style scoped>
-
+.v-bottom-navigation {
+  justify-content: start;
+  overflow-x: scroll;
+}
 </style>
