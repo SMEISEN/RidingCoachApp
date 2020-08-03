@@ -9,27 +9,32 @@
       dense
     >
       <v-app-bar-nav-icon @click="onNavBarIcon()" />
-      <TheNavigationTabs />
+      <v-toolbar-title>
+        {{ current_tab }}
+      </v-toolbar-title>
     </v-app-bar>
     <v-main>
       <router-view />
       <TheNavigationDrawer />
       <TheInfoSnackbar />
+      <TheNavigationFooter
+        @currentPage="setPage"
+      />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import TheNavigationTabs from './components/TheNavigationTabs/index.vue';
 import TheNavigationDrawer from './components/TheNavigationDrawer/index.vue';
 import TheInfoSnackbar from './components/TheInfoSnackbar/index.vue';
+import TheNavigationFooter from './components/TheNavigationFooter/index.vue';
 import { apiGetAllBikes } from './components/api/BikeApi';
 
 export default {
   name: 'App',
   components: {
+    TheNavigationFooter,
     TheInfoSnackbar,
-    TheNavigationTabs,
     TheNavigationDrawer,
   },
   metaInfo: {
@@ -52,11 +57,11 @@ export default {
       },
     ],
   },
-
   data: () => ({
     confirm_delete_dialog: false,
     active_tr: false,
     edit: false,
+    current_tab: 'test',
   }),
   computed: {
     isAuthenticated() {
@@ -69,6 +74,9 @@ export default {
   updated() {
   },
   methods: {
+    setPage(value) {
+      this.current_tab = value;
+    },
     onNavBarIcon() {
       this.$store.commit('setNavigationDrawerState', true);
     },
