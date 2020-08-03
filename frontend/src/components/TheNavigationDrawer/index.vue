@@ -1,10 +1,13 @@
 <template>
   <v-navigation-drawer
     v-model="navigation_drawer"
+    app
     absolute
-    style="position:fixed; top:48px; left:0;"
+    right
+    style="position:fixed; top:48px; left:0"
     temporary
     width="auto"
+    :height="window_height - 97"
   >
     <v-list>
       <TheNavigationDrawerBike />
@@ -32,6 +35,9 @@ export default {
     TheNavigationDrawerSettings,
     TheNavigationDrawerLogout,
   },
+  data: () => ({
+    window_height: window.innerHeight,
+  }),
   computed: {
     navigation_drawer: {
       get() {
@@ -51,6 +57,8 @@ export default {
     },
   },
   updated() {
+    this.window_height = window.innerHeight;
+    console.log(this.window_height);
   },
   created() {
   },

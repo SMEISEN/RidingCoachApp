@@ -8,32 +8,46 @@
       hide-on-scroll
       dense
     >
-      <v-app-bar-nav-icon @click="onNavBarIcon()" />
-      <v-toolbar-title>
+      <v-avatar
+        tile
+        size="30px"
+      >
+        <v-img
+          contain
+          :src="'/favicon.svg'"
+          alt="Riding Coach"
+        />
+      </v-avatar>
+      <v-toolbar-title class="pl-4">
         {{ current_tab }}
       </v-toolbar-title>
+      <v-spacer />
+      <v-app-bar-nav-icon @click="onNavBarIcon()" />
     </v-app-bar>
     <v-main>
       <router-view />
-      <TheNavigationDrawer />
       <TheInfoSnackbar />
-      <TheNavigationFooter
-        @currentPage="setPage"
-      />
     </v-main>
+    <TheNavigationDrawer />
+    <TheBottomNavigation
+      @currentPage="setPage"
+    />
+    <TheFooter />
   </v-app>
 </template>
 
 <script>
 import TheNavigationDrawer from './components/TheNavigationDrawer/index.vue';
 import TheInfoSnackbar from './components/TheInfoSnackbar/index.vue';
-import TheNavigationFooter from './components/TheNavigationFooter/index.vue';
+import TheBottomNavigation from './components/TheBottomNavigation/index.vue';
+import TheFooter from './components/TheFooter/index.vue';
 import { apiGetAllBikes } from './components/api/BikeApi';
 
 export default {
   name: 'App',
   components: {
-    TheNavigationFooter,
+    TheBottomNavigation,
+    TheFooter,
     TheInfoSnackbar,
     TheNavigationDrawer,
   },
