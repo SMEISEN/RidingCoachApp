@@ -24,15 +24,16 @@
       <v-spacer />
       <v-app-bar-nav-icon @click="onNavBarIcon()" />
     </v-app-bar>
+    <TheNavigationDrawer />
+    <TheBottomNavigation
+      v-if="isAuthenticated"
+      @currentPage="setPage"
+    />
+    <TheFooter />
     <v-main>
       <router-view />
       <TheInfoSnackbar />
     </v-main>
-    <TheNavigationDrawer />
-    <TheBottomNavigation
-      @currentPage="setPage"
-    />
-    <TheFooter />
   </v-app>
 </template>
 

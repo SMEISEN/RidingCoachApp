@@ -71,7 +71,7 @@ export default {
 
 <style scoped>
 .v-bottom-navigation {
-  justify-content: start;
-  overflow-x: scroll;
+  justify-content: center;
+  overflow-x: auto;
 }
 </style>
