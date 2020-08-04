@@ -58,7 +58,6 @@ export default {
   },
   updated() {
     this.window_height = window.innerHeight;
-    console.log(this.window_height);
   },
   created() {
   },

@@ -115,13 +115,18 @@ export default {
   methods: {
     selectBike(index) {
       const selectedBike = this.bike_array[index];
-      if (this.$store.getters.getCurrentBikeId !== selectedBike) {
-        this.$store.commit('selectBike', selectedBike);
-        this.$store.commit('setNavigationDrawerState', false);
-        this.$forceUpdate();
-      }
+      this.$nextTick(() => {
+        if (this.$store.getters.getCurrentBikeId !== selectedBike.bike_id
+          && this.$store.getters.getBikeDialogState === false) {
+          this.$store.commit('selectBike', selectedBike);
+          this.$store.commit('setNavigationDrawerState', false);
+          this.$forceUpdate();
+        }
+      });
     },
     editBike(BikeId) {
+      this.$store.commit('setBikeEditFlag', true);
+      this.$store.commit('setBikeDialogState', true);
       const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);
       this.bike_form_object.bike_id = this.bike_array[bikeIndex].bike_id;
       this.bike_form_object.manufacturer = this.bike_array[bikeIndex].manufacturer;
@@ -140,8 +145,6 @@ export default {
       } else {
         this.bike_form_object.setup_individual = this.bike_array[bikeIndex].setup;
       }
-      this.$store.commit('setBikeEditFlag', true);
-      this.$store.commit('setBikeDialogState', true);
     },
     createBike() {
       this.$store.commit('setBikeDialogState', true);
