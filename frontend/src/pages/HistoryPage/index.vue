@@ -74,6 +74,11 @@ export default {
   },
   created() {
     this.refreshHistory();
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'selectBike') {
+        this.refreshHistory();
+      }
+    });
   },
   updated() {
   },

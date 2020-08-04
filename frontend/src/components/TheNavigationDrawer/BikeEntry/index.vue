@@ -117,6 +117,7 @@ export default {
       const selectedBike = this.bike_array[index];
       if (this.$store.getters.getCurrentBikeId !== selectedBike) {
         this.$store.commit('selectBike', selectedBike);
+        this.$store.commit('setNavigationDrawerState', false);
         this.$forceUpdate();
       }
     },
