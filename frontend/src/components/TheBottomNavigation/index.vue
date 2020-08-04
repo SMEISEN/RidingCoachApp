@@ -4,6 +4,7 @@
     app
     grow
     dark
+    shift
     background-color="primary"
   >
     <v-btn
@@ -11,6 +12,7 @@
       value="Dashboard"
       to="/dashboard"
     >
+      <span>Dashboard</span>
       <v-icon>
         mdi-home
       </v-icon>
@@ -19,6 +21,7 @@
       value="Maintenance"
       to="/maintenance"
     >
+      <span>Maintenance</span>
       <v-icon>
         mdi-wrench
       </v-icon>
@@ -27,6 +30,7 @@
       value="Spare Parts"
       to="/spareparts"
     >
+      <span>Spare Parts</span>
       <v-icon>
         mdi-medical-bag
       </v-icon>
@@ -35,6 +39,7 @@
       value="Training"
       to="/training"
     >
+      <span>Training</span>
       <v-icon>
         mdi-racing-helmet
       </v-icon>
@@ -43,6 +48,7 @@
       value="History"
       to="/history"
     >
+      <span>History</span>
       <v-icon>
         mdi-calendar-edit
       </v-icon>

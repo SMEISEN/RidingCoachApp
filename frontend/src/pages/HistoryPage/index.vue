@@ -1,26 +1,22 @@
 <template v-slot:default>
   <v-app>
-    <v-flex>
-      <v-layout wrap>
-        <v-container>
-          <v-card class="card-container">
-            <v-card-title>
-              <v-btn
-                color="secondary"
-                @click.prevent="addHistory()"
-              >
-                Add maintenance entry
-              </v-btn>
-            </v-card-title>
-            <HistoryTable
-              :maintenance-history="orderedHistory"
-              @editButtonClicked="editHistory"
-              @deletionConfirmed="refreshHistory()"
-            />
-          </v-card>
-        </v-container>
-      </v-layout>
-    </v-flex>
+    <v-container fluid>
+      <v-card class="card-container">
+        <v-card-title>
+          <v-btn
+            color="secondary"
+            @click.prevent="addHistory()"
+          >
+            Add maintenance entry
+          </v-btn>
+        </v-card-title>
+        <HistoryTable
+          :maintenance-history="orderedHistory"
+          @editButtonClicked="editHistory"
+          @deletionConfirmed="refreshHistory()"
+        />
+      </v-card>
+    </v-container>
     <HistoryDialogForm
       :history-form-input="history_form_object"
       :maintenance-categories="maintenance_categories_array"

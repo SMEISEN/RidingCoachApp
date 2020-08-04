@@ -1,9 +1,6 @@
 <template v-slot:default>
   <v-app>
-    <v-container
-      grid-list
-      fluid
-    >
+    <v-container fluid>
       <v-row dense>
         <v-col
           cols="12"
@@ -11,7 +8,7 @@
           sm="6"
           md="6"
         >
-          <v-row dense>
+          <v-row no-gutters>
             <v-col cols="12">
               <v-card
                 :key="bikeId +'/wear'"
