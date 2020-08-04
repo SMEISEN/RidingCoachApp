@@ -71,10 +71,18 @@ export default {
       ccm: null,
       stroke: null,
       piston: null,
-      slick_front: null,
-      slick_rear: null,
-      rain_front: null,
-      rain_rear: null,
+      slick_front_name: null,
+      slick_front_notes: null,
+      slick_front_pressure: null,
+      slick_rear_name: null,
+      slick_rear_notes: null,
+      slick_rear_pressure: null,
+      rain_front_name: null,
+      rain_front_notes: null,
+      rain_front_pressure: null,
+      rain_rear_name: null,
+      rain_rear_notes: null,
+      rain_rear_pressure: null,
       setup_individual: [
         {
           category: null,
@@ -136,10 +144,18 @@ export default {
       this.bike_form_object.ccm = this.bike_array[bikeIndex].ccm;
       this.bike_form_object.stroke = this.bike_array[bikeIndex].stroke;
       this.bike_form_object.piston = this.bike_array[bikeIndex].piston;
-      this.bike_form_object.slick_front = this.bike_array[bikeIndex].slick_front;
-      this.bike_form_object.slick_rear = this.bike_array[bikeIndex].slick_rear;
-      this.bike_form_object.rain_front = this.bike_array[bikeIndex].rain_front;
-      this.bike_form_object.rain_rear = this.bike_array[bikeIndex].rain_rear;
+      this.bike_form_object.slick_front_name = this.bike_array[bikeIndex].slick_front_name;
+      this.bike_form_object.slick_front_notes = this.bike_array[bikeIndex].slick_front_notes;
+      this.bike_form_object.slick_front_pressure = this.bike_array[bikeIndex].slick_front_pressure;
+      this.bike_form_object.slick_rear_name = this.bike_array[bikeIndex].slick_rear_name;
+      this.bike_form_object.slick_rear_notes = this.bike_array[bikeIndex].slick_rear_notes;
+      this.bike_form_object.slick_rear_pressure = this.bike_array[bikeIndex].slick_rear_pressure;
+      this.bike_form_object.rain_front_name = this.bike_array[bikeIndex].rain_front_name;
+      this.bike_form_object.rain_front_notes = this.bike_array[bikeIndex].rain_front_notes;
+      this.bike_form_object.rain_front_pressure = this.bike_array[bikeIndex].rain_front_pressure;
+      this.bike_form_object.rain_rear_name = this.bike_array[bikeIndex].rain_rear_name;
+      this.bike_form_object.rain_rear_notes = this.bike_array[bikeIndex].rain_rear_notes;
+      this.bike_form_object.rain_rear_pressure = this.bike_array[bikeIndex].rain_rear_pressure;
       if (this.bike_array[bikeIndex].setup === null) {
         this.bike_form_object.setup_individual = [this._.cloneDeep(this.setup_individual_template)];
       } else {

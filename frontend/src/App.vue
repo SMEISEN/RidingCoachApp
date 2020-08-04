@@ -85,6 +85,11 @@ export default {
   },
   created() {
     this.getBike();
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'selectBike') {
+        this.getBike();
+      }
+    });
   },
   updated() {
   },

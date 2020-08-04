@@ -39,12 +39,45 @@
         <v-col
           cols="12"
           xs="12"
-          sm="6"
-          md="6"
+          sm="5"
+          md="5"
         >
           <v-text-field
-            v-model="bikeFormObject.slick_front"
-            label="Slick front"
+            v-model="bikeFormObject.slick_front_name"
+            label="Slick tire front"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="1"
+          md="1"
+        >
+          <v-text-field
+            v-model="bikeFormObject.slick_front_pressure"
+            label="Pressure"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="5"
+          md="5"
+        >
+          <v-text-field
+            v-model="bikeFormObject.slick_rear_name"
+            label="Slick tire rear"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="1"
+          md="1"
+        >
+          <v-text-field
+            v-model="bikeFormObject.slick_rear_pressure"
+            label="Pressure"
           />
         </v-col>
         <v-col
@@ -53,9 +86,11 @@
           sm="6"
           md="6"
         >
-          <v-text-field
-            v-model="bikeFormObject.slick_rear"
-            label="Slick rear"
+          <v-textarea
+            v-model="bikeFormObject.slick_front_notes"
+            label="Slick tire front application notes"
+            rows="1"
+            auto-grow
           />
         </v-col>
         <v-col
@@ -64,9 +99,55 @@
           sm="6"
           md="6"
         >
+          <v-textarea
+            v-model="bikeFormObject.slick_rear_notes"
+            label="Slick tire rear application notes"
+            rows="1"
+            auto-grow
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="5"
+          md="5"
+        >
           <v-text-field
-            v-model="bikeFormObject.rain_front"
-            label="Rain front"
+            v-model="bikeFormObject.rain_front_name"
+            label="Rain tire front"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="1"
+          md="1"
+        >
+          <v-text-field
+            v-model="bikeFormObject.rain_front_pressure"
+            label="Pressure"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="5"
+          md="5"
+        >
+          <v-text-field
+            v-model="bikeFormObject.rain_rear_name"
+            label="Rain tire rear"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="1"
+          md="1"
+        >
+          <v-text-field
+            v-model="bikeFormObject.rain_rear_pressure"
+            label="Pressure"
           />
         </v-col>
         <v-col
@@ -75,9 +156,24 @@
           sm="6"
           md="6"
         >
-          <v-text-field
-            v-model="bikeFormObject.rain_rear"
-            label="Rain rear"
+          <v-textarea
+            v-model="bikeFormObject.rain_front_notes"
+            label="Rain tire front application notes"
+            rows="1"
+            auto-grow
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
+          <v-textarea
+            v-model="bikeFormObject.rain_rear_notes"
+            label="Rain tire rear application notes"
+            rows="1"
+            auto-grow
           />
         </v-col>
       </v-row>

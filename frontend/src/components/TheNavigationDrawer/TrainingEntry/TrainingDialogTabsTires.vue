@@ -19,7 +19,7 @@
                 v-model="trainingFormObject.setup_fixed[tabItemIndex].slick_pressure_front"
                 label="Front tire pressure"
                 suffix="bar"
-                hint="recommended: 2.1 bar"
+                :hint="tire_pressure_recommendation.slick_front"
                 persistent-hint
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
@@ -38,7 +38,7 @@
                 v-model="trainingFormObject.setup_fixed[tabItemIndex].slick_pressure_rear"
                 label="Rear tire pressure"
                 suffix="bar"
-                hint="recommended: 2.1 bar"
+                :hint="tire_pressure_recommendation.slick_rear"
                 persistent-hint
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
@@ -61,7 +61,7 @@
                 v-model="trainingFormObject.setup_fixed[tabItemIndex].rain_pressure_front"
                 label="Front tire pressure"
                 suffix="bar"
-                hint="recommended: 2.1 bar"
+                :hint="tire_pressure_recommendation.rain_front"
                 persistent-hint
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
@@ -80,7 +80,7 @@
                 v-model="trainingFormObject.setup_fixed[tabItemIndex].rain_pressure_rear"
                 label="Rear tire pressure"
                 suffix="bar"
-                hint="recommended: 2.1 bar"
+                :hint="tire_pressure_recommendation.rain_rear"
                 persistent-hint
                 append-outer-icon="mdi-plus"
                 prepend-icon="mdi-minus"
@@ -134,12 +134,45 @@ export default {
   },
   data: () => ({
     rain_tires: 0,
+    tire_pressure_recommendation: {
+      slick_front: null,
+      slick_rear: null,
+      rain_front: null,
+      rain_rear: null,
+    },
   }),
   updated() {
   },
   created() {
+    this.getRecommendedTirePressure();
   },
   methods: {
+    getRecommendedTirePressure() {
+      const slickFrontPressure = this.$store.getters.getCurrentBikeSlickFrontPressure;
+      const slickRearPressure = this.$store.getters.getCurrentBikeSlickRearPressure;
+      const rainFrontPressure = this.$store.getters.getCurrentBikeRainFrontPressure;
+      const rainRearPressure = this.$store.getters.getCurrentBikeRainRearPressure;
+      if (slickFrontPressure !== null) {
+        this.tire_pressure_recommendation.slick_front = `recommended: ${slickFrontPressure} bar`;
+      } else {
+        this.tire_pressure_recommendation.slick_front = '';
+      }
+      if (slickRearPressure !== null) {
+        this.tire_pressure_recommendation.slick_rear = `recommended: ${slickRearPressure} bar`;
+      } else {
+        this.tire_pressure_recommendation.slick_rear = '';
+      }
+      if (rainFrontPressure !== null) {
+        this.tire_pressure_recommendation.rain_front = `recommended: ${rainFrontPressure} bar`;
+      } else {
+        this.tire_pressure_recommendation.rain_front = '';
+      }
+      if (rainRearPressure !== null) {
+        this.tire_pressure_recommendation.rain_rear = `recommended: ${rainRearPressure} bar`;
+      } else {
+        this.tire_pressure_recommendation.rain_rear = '';
+      }
+    },
     incrementTirePressureFront(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_front = incrementNumber(

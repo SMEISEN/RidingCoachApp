@@ -7,6 +7,10 @@ const getDefaultState = () => ({
   current_bike_model: null,
   current_bike_operating_hours: null,
   current_bike_year: null,
+  current_bike_slick_front_pressure: null,
+  current_bike_slick_rear_pressure: null,
+  current_bike_rain_front_pressure: null,
+  current_bike_rain_rear_pressure: null,
   current_bike_setup: null,
 });
 const state = getDefaultState();
@@ -17,6 +21,10 @@ const getters = {
   getCurrentBikeModel: (state) => state.current_bike_model,
   getCurrentBikeOperatingHours: (state) => state.current_bike_operating_hours,
   getCurrentBikeYear: (state) => state.current_bike_year,
+  getCurrentBikeSlickFrontPressure: (state) => state.current_bike_slick_front_pressure,
+  getCurrentBikeSlickRearPressure: (state) => state.current_bike_slick_rear_pressure,
+  getCurrentBikeRainFrontPressure: (state) => state.current_bike_rain_front_pressure,
+  getCurrentBikeRainRearPressure: (state) => state.current_bike_rain_rear_pressure,
   getCurrentBikeSetup: (state) => state.current_bike_setup,
 };
 const mutations = {
@@ -29,6 +37,10 @@ const mutations = {
     state.current_bike_model = selectedBike.model;
     state.current_bike_operating_hours = selectedBike.operating_hours;
     state.current_bike_year = selectedBike.year;
+    state.current_bike_slick_front_pressure = selectedBike.slick_front_pressure;
+    state.current_bike_slick_rear_pressure = selectedBike.slick_rear_pressure;
+    state.current_bike_rain_front_pressure = selectedBike.rain_front_pressure;
+    state.current_bike_rain_rear_pressure = selectedBike.rain_rear_pressure;
     state.current_bike_setup = selectedBike.setup;
   },
   setOperatingHours(state, operatingHours) {
