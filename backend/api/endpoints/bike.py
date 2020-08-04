@@ -18,21 +18,37 @@ bike_input_parameters = api.model('BikeInputParameters', {
     "year":
         fields.Integer(description="bike year", required=True),
     "ccm":
-        fields.Float(description="engine size", required=False, example={}),
+        fields.Float(description="engine size", required=False),
     "stroke":
-        fields.Float(description="engine stroke", required=False, default=None),
+        fields.Float(description="engine stroke", required=False),
     "piston":
-        fields.Float(description="engine piston", required=False, default=None),
-    "slick_front":
-        fields.Float(description="front slick tire", required=False, default=None),
-    "slick_rear":
-        fields.Float(description="rear slick tire", required=False, default=None),
-    "rain_front":
-        fields.Float(description="front rain tire", required=False, default=None),
-    "rain_rear":
-        fields.Float(description="rear rain tire", required=False, default=None),
+        fields.Float(description="engine piston", required=False),
+    "slick_front_name":
+        fields.String(description="name of front slick tire", required=False),
+    "slick_front_notes":
+        fields.String(description="front slick tire application notes", required=False),
+    "slick_front_pressure":
+        fields.Float(description="recommended pressure of front slick tire", required=False),
+    "slick_rear_name":
+        fields.String(description="name of rear slick tire", required=False),
+    "slick_rear_notes":
+        fields.String(description="rear slick tire application notes", required=False),
+    "slick_rear_pressure":
+        fields.Float(description="recommended pressure of rear slick tire", required=False),
+    "rain_front_name":
+        fields.String(description="name of front rain tire", required=False),
+    "rain_front_notes":
+        fields.String(description="front rain tire application notes", required=False),
+    "rain_front_pressure":
+        fields.Float(description="recommended pressure of front rain tire", required=False),
+    "rain_rear_name":
+        fields.String(description="name of rear rain tire", required=False),
+    "rain_rear_notes":
+        fields.String(description="rear rain tire application notes", required=False),
+    "rain_rear_pressure":
+        fields.Float(description="recommended pressure of rear rain tire", required=False),
     "setup":
-        fields.Raw(description="bike suspension and engine setup", required=False, default=None),
+        fields.Raw(description="bike suspension and engine setup", required=False),
 })
 
 
@@ -73,10 +89,18 @@ class BikeCollection(Resource):
             ccm=inserted_data.get('ccm'),
             stroke=inserted_data.get('stroke'),
             piston=inserted_data.get('piston'),
-            slick_front=inserted_data.get('slick_front'),
-            slick_rear=inserted_data.get('slick_rear'),
-            rain_front=inserted_data.get('rain_front'),
-            rain_rear=inserted_data.get('rain_rear'),
+            slick_front_name=inserted_data.get('slick_front_name'),
+            slick_front_notes=inserted_data.get('slick_front_pressure_notes'),
+            slick_front_pressure=inserted_data.get('slick_front_pressure'),
+            slick_rear_name=inserted_data.get('slick_rear_name'),
+            slick_rear_notes=inserted_data.get('slick_rear_notes'),
+            slick_rear_pressure=inserted_data.get('slick_rear_pressure'),
+            rain_front_name=inserted_data.get('rain_front_name'),
+            rain_front_notes=inserted_data.get('rain_front_notes'),
+            rain_front_pressure=inserted_data.get('rain_front_pressure'),
+            rain_rear_name=inserted_data.get('rain_rear_name'),
+            rain_rear_notes=inserted_data.get('rain_rear_notes'),
+            rain_rear_pressure=inserted_data.get('rain_rear_pressure'),
             setup=inserted_data.get('setup'),
             datetime_created=datetime.utcnow(),
             datetime_last_modified=datetime.utcnow(),
@@ -135,14 +159,30 @@ class BikeItem(Resource):
             bike_entry.stroke = inserted_data.get('stroke')
         if inserted_data.get('piston') is not None:
             bike_entry.piston = inserted_data.get('piston')
-        if inserted_data.get('slick_front') is not None:
-            bike_entry.slick_front = inserted_data.get('slick_front')
-        if inserted_data.get('slick_rear') is not None:
-            bike_entry.slick_rear = inserted_data.get('slick_rear')
-        if inserted_data.get('rain_front') is not None:
-            bike_entry.rain_front = inserted_data.get('rain_front')
-        if inserted_data.get('rain_rear') is not None:
-            bike_entry.rain_rear = inserted_data.get('rain_rear')
+        if inserted_data.get('slick_front_name') is not None:
+            bike_entry.slick_front_name = inserted_data.get('slick_front_name')
+        if inserted_data.get('slick_front_notes') is not None:
+            bike_entry.slick_front_notes = inserted_data.get('slick_front_notes')
+        if inserted_data.get('slick_front_pressure') is not None:
+            bike_entry.slick_front_pressure = inserted_data.get('slick_front_pressure')
+        if inserted_data.get('slick_rear_name') is not None:
+            bike_entry.slick_rear_name = inserted_data.get('slick_rear_name')
+        if inserted_data.get('slick_rear_notes') is not None:
+            bike_entry.slick_rear_notes = inserted_data.get('slick_rear_notes')
+        if inserted_data.get('slick_rear_pressure') is not None:
+            bike_entry.slick_rear_pressure = inserted_data.get('slick_rear_pressure')
+        if inserted_data.get('rain_front_name') is not None:
+            bike_entry.rain_front_name = inserted_data.get('rain_front_name')
+        if inserted_data.get('rain_front_notes') is not None:
+            bike_entry.rain_front_notes = inserted_data.get('rain_front_notes')
+        if inserted_data.get('rain_front_pressure') is not None:
+            bike_entry.rain_front_pressure = inserted_data.get('rain_front_pressure')
+        if inserted_data.get('rain_rear_name') is not None:
+            bike_entry.rain_rear_name = inserted_data.get('rain_rear_name')
+        if inserted_data.get('rain_rear_notes') is not None:
+            bike_entry.rain_rear_notes = inserted_data.get('rain_rear_notes')
+        if inserted_data.get('rain_rear_pressure') is not None:
+            bike_entry.rain_rear_pressure = inserted_data.get('rain_rear_pressure')
         if inserted_data.get('setup') is not None:
             bike_entry.setup = inserted_data.get('setup')
         if bool(inserted_data) is True:

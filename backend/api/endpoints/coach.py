@@ -12,13 +12,13 @@ coach_input_parameters = api.model('CoachInputParameters', {
     "category":
         fields.String(description="bike suspension end", required=True),
     "symptom":
-        fields.Raw(description="suspension symptom", required=True, example={}),
+        fields.Raw(description="suspension symptom", required=True),
     "notes":
         fields.String(description="notes", required=False),
     "questions":
-        fields.Raw(description="array of questions in terms of troubleshouting", required=False, example=[]),
+        fields.Raw(description="array of questions in terms of troubleshouting", required=False),
     "advice":
-        fields.Raw(description="object of possible problems and solutions", required=True, example={}),
+        fields.Raw(description="object of possible problems and solutions", required=True),
 })
 
 
