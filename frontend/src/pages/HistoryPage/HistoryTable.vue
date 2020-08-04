@@ -2,7 +2,6 @@
   <div>
     <v-simple-table
       fixed-header
-      height="500px"
     >
       <thead>
         <tr>
