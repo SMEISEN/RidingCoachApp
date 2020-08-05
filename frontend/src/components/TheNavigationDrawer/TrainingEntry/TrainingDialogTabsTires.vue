@@ -146,6 +146,17 @@ export default {
   created() {
     this.getRecommendedTirePressure();
   },
+  watch: {
+    rain_tires() {
+      if (this.rain_tires === 0) {
+        this.trainingFormObject.setup_fixed[this.tabItemIndex].rain_pressure_front = null;
+        this.trainingFormObject.setup_fixed[this.tabItemIndex].rain_pressure_rear = null;
+      } else {
+        this.trainingFormObject.setup_fixed[this.tabItemIndex].slick_pressure_front = null;
+        this.trainingFormObject.setup_fixed[this.tabItemIndex].slick_pressure_rear = null;
+      }
+    },
+  },
   methods: {
     getRecommendedTirePressure() {
       const slickFrontPressure = this.$store.getters.getCurrentBikeSlickFrontPressure;
