@@ -77,25 +77,41 @@ export default {
   updated() {
   },
   created() {
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'setTrainingEditId') {
+        if (this.$store.getters.getTrainingEditId !== null) {
+          this.editTraining();
+        }
+      }
+    });
   },
   methods: {
     editTraining() {
-      const query = {
-        datetime_display: {
+      const trainingId = this.$store.getters.getTrainingEditId;
+      const query = {};
+      if (trainingId !== null) {
+        query.training_id = {
+          value: trainingId,
+          operator: '==',
+        };
+      } else {
+        query.datetime_display = {
           value: Math.round(new Date().setUTCHours(0, 0, 0, 0) / 1000),
           operator: '>=',
-        },
-      };
+        };
+      }
       apiQueryTrainings(query)
         .then((res) => {
           if (res.data.length > 0) {
+            const numberOfSetups = res.data[0].setups.length;
             this.training_form_object.training_id = res.data[0].training_id;
             this.training_form_object.race_track = res.data[0].location;
             this.training_form_object.date = this.$options.filters
               .formatDateTime(res.data[0].datetime_display).substring(0, 10);
             this.training_form_object.setup_fixed = [];
-            this.$store.commit('setTrainingDialogSetupTabs', res.data[0].setups.length);
-            for (let i = 0; i < res.data[0].setups.length; i += 1) {
+            this.$store.commit('setTrainingDialogSetupTabs', numberOfSetups);
+            this.$store.commit('setTrainingDialogSetupActiveTab', numberOfSetups - 1);
+            for (let i = 0; i < numberOfSetups; i += 1) {
               this.training_form_object.setup_fixed
                 .push(this._.cloneDeep(this.setup_fixed_template));
               this.training_form_object.setup_fixed[i].setup_id = res.data[0]
@@ -121,8 +137,11 @@ export default {
             }
           } else {
             this.initTrainingForm();
+            this.$store.commit('setTrainingDialogSetupTabs', 1);
+            this.$store.commit('setTrainingDialogSetupActiveTab', 0);
           }
           this.$store.commit('setTrainingDialogState', true);
+          this.$store.commit('setTrainingEditId', null);
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {

@@ -141,11 +141,6 @@ export default {
       rain_rear: null,
     },
   }),
-  updated() {
-  },
-  created() {
-    this.getRecommendedTirePressure();
-  },
   watch: {
     rain_tires() {
       if (this.rain_tires === 0) {
@@ -156,6 +151,11 @@ export default {
         this.trainingFormObject.setup_fixed[this.tabItemIndex].slick_pressure_rear = null;
       }
     },
+  },
+  updated() {
+  },
+  created() {
+    this.getRecommendedTirePressure();
   },
   methods: {
     getRecommendedTirePressure() {

@@ -166,6 +166,8 @@ export default {
                 this.trainingFormObject.setup_fixed[i].setup_id = resSetup.data;
               });
             }
+            this.training_dialog = false;
+            this.$store.commit('setNavigationDrawerState', false);
             this.$store.commit('setInfoSnackbar', {
               state: true,
               color: 'success',
@@ -173,6 +175,8 @@ export default {
             });
           })
           .catch((error) => {
+            this.training_dialog = false;
+            this.$store.commit('setNavigationDrawerState', false);
             this.$store.commit('setInfoSnackbar', {
               state: true,
               color: 'error',
@@ -194,6 +198,7 @@ export default {
                 apiPutSetupItem(payloadSetup, setupId);
               }
             }
+            this.training_dialog = false;
             this.$store.commit('setNavigationDrawerState', false);
             this.$store.commit('setInfoSnackbar', {
               state: true,
@@ -202,6 +207,8 @@ export default {
             });
           })
           .catch((error) => {
+            this.training_dialog = false;
+            this.$store.commit('setNavigationDrawerState', false);
             this.$store.commit('setInfoSnackbar', {
               state: true,
               color: 'error',
@@ -209,7 +216,6 @@ export default {
             });
           });
       }
-      this.training_dialog = false;
       this.$emit('saveClicked');
     },
     onTrainingCancel() {
