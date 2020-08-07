@@ -76,8 +76,5 @@ export default {
 </script>
 
 <style scoped>
-.v-bottom-navigation {
-  justify-content: center;
-  overflow-x: auto;
-}
+
 </style>

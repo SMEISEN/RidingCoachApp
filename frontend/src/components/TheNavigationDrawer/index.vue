@@ -7,7 +7,7 @@
     style="position:fixed; top:48px; left:0"
     temporary
     width="auto"
-    :height="window_height - 105"
+    :height="window_height - 104"
   >
     <v-list>
       <TheNavigationDrawerBike />
