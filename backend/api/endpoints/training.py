@@ -101,14 +101,12 @@ class TrainingItem(Resource):
         training_data = training_schema.dump(training_entry)
         setup_data = setup_schema.dump(training_entry.setups, many=True)
 
-        training_entry_list = []
+        training_data['setups'] = []
         if len(setup_data) > 0:
             for setup_entry in setup_data:
-                training_entry_list.append({**setup_entry, **training_data})
-        else:
-            training_entry_list = training_data
+                training_data['setups'].append(setup_entry)
 
-        response = jsonify(training_entry_list)
+        response = jsonify(training_data)
         response.status_code = 200
 
         return response

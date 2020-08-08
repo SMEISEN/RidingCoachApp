@@ -23,7 +23,7 @@ import {
   initObject,
 } from '../../utils/FromUtils';
 import TrainingDialog from './TrainingDialog.vue';
-import { apiQueryTrainings } from '../../api/TrainingApi';
+import { apiGetTrainingItem, apiQueryTrainings } from '../../api/TrainingApi';
 
 export default {
   name: 'TheNavigationDrawerTraining',
@@ -90,66 +90,37 @@ export default {
       const trainingId = this.$store.getters.getTrainingEditId;
       const query = {};
       if (trainingId !== null) {
-        query.training_id = {
-          value: trainingId,
-          operator: '==',
-        };
+        apiGetTrainingItem(trainingId)
+          .then((res) => {
+            this.$store.commit('setTrainingEditId', null);
+            this.$store.commit('setTrainingDialogState', true);
+            this.compileTrainingData(res.data);
+          });
       } else {
         query.datetime_display = {
           value: Math.round(new Date().setUTCHours(0, 0, 0, 0) / 1000),
           operator: '>=',
         };
-      }
-      apiQueryTrainings(query)
-        .then((res) => {
-          if (res.data.length > 0) {
-            const numberOfSetups = res.data[0].setups.length;
-            this.training_form_object.training_id = res.data[0].training_id;
-            this.training_form_object.race_track = res.data[0].location;
-            this.training_form_object.date = this.$options.filters
-              .formatDateTime(res.data[0].datetime_display).substring(0, 10);
-            this.training_form_object.setup_fixed = [];
-            this.$store.commit('setTrainingDialogSetupTabs', numberOfSetups);
-            this.$store.commit('setTrainingDialogSetupActiveTab', numberOfSetups - 1);
-            for (let i = 0; i < numberOfSetups; i += 1) {
-              this.training_form_object.setup_fixed
-                .push(this._.cloneDeep(this.setup_fixed_template));
-              this.training_form_object.setup_fixed[i].setup_id = res.data[0]
-                .setups[i].setup_id;
-              this.training_form_object.setup_fixed[i].comment = res.data[0]
-                .setups[i].comment;
-              this.training_form_object.setup_fixed[i].time = this.$options.filters
-                .formatDateTime(res.data[0].setups[i].datetime_display).substring(11, 16);
-              this.training_form_object.setup_fixed[i].operating_hours = res.data[0]
-                .setups[i].operating_hours;
-              this.training_form_object.setup_fixed[i].slick_pressure_front = res.data[0]
-                .setups[i].slick_pressure_front;
-              this.training_form_object.setup_fixed[i].slick_pressure_rear = res.data[0]
-                .setups[i].slick_pressure_rear;
-              this.training_form_object.setup_fixed[i].rain_pressure_front = res.data[0]
-                .setups[i].rain_pressure_front;
-              this.training_form_object.setup_fixed[i].rain_pressure_rear = res.data[0]
-                .setups[i].rain_pressure_rear;
-              this.training_form_object.setup_fixed[i].rain_pressure_rear = res.data[0]
-                .setups[i].rain_pressure_rear;
-              this.training_form_object.setup_individual[i] = res.data[0]
-                .setups[i].setup;
+        apiQueryTrainings(query)
+          .then((res) => {
+            if (res.data.length > 0) {
+              this.compileTrainingData(res.data[0]);
+            } else {
+              this.initTrainingForm();
+              this.$store.commit('setTrainingDialogSetupTabs', 1);
+              this.$store.commit('setTrainingDialogSetupActiveTab', 0);
             }
-          } else {
-            this.initTrainingForm();
-            this.$store.commit('setTrainingDialogSetupTabs', 1);
-            this.$store.commit('setTrainingDialogSetupActiveTab', 0);
-          }
-          this.$store.commit('setTrainingDialogState', true);
-          this.$store.commit('setTrainingEditId', null);
-        })
-        .catch((error) => {
-          this.$store.commit('setInfoSnackbar', {
-            state: true,
-            color: 'error',
-            message: `${error}!`,
+            this.$store.commit('setTrainingDialogState', true);
+            this.$store.commit('setTrainingEditId', null);
+          })
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error}!`,
+            });
           });
-        });
+      }
     },
     initTrainingForm() {
       const bikeIndex = indexOfObjectValueInArray(
@@ -173,6 +144,40 @@ export default {
       this.$store.commit('setTrainingDialogSetupPanel', 0);
       this.$store.commit('setTrainingDialogSetupTabs', 1);
       this.$store.commit('setTrainingDialogSetupActiveTab', 0);
+    },
+    compileTrainingData(data) {
+      const numberOfSetups = data.setups.length;
+      this.training_form_object.training_id = data.training_id;
+      this.training_form_object.race_track = data.location;
+      this.training_form_object.date = this.$options.filters
+        .formatDateTime(data.datetime_display).substring(0, 10);
+      this.training_form_object.setup_fixed = [];
+      this.$store.commit('setTrainingDialogSetupTabs', numberOfSetups);
+      this.$store.commit('setTrainingDialogSetupActiveTab', numberOfSetups - 1);
+      for (let i = 0; i < numberOfSetups; i += 1) {
+        this.training_form_object.setup_fixed
+          .push(this._.cloneDeep(this.setup_fixed_template));
+        this.training_form_object.setup_fixed[i].setup_id = data
+          .setups[i].setup_id;
+        this.training_form_object.setup_fixed[i].comment = data
+          .setups[i].comment;
+        this.training_form_object.setup_fixed[i].time = this.$options.filters
+          .formatDateTime(data.setups[i].datetime_display).substring(11, 16);
+        this.training_form_object.setup_fixed[i].operating_hours = data
+          .setups[i].operating_hours;
+        this.training_form_object.setup_fixed[i].slick_pressure_front = data
+          .setups[i].slick_pressure_front;
+        this.training_form_object.setup_fixed[i].slick_pressure_rear = data
+          .setups[i].slick_pressure_rear;
+        this.training_form_object.setup_fixed[i].rain_pressure_front = data
+          .setups[i].rain_pressure_front;
+        this.training_form_object.setup_fixed[i].rain_pressure_rear = data
+          .setups[i].rain_pressure_rear;
+        this.training_form_object.setup_fixed[i].rain_pressure_rear = data
+          .setups[i].rain_pressure_rear;
+        this.training_form_object.setup_individual[i] = data
+          .setups[i].setup;
+      }
     },
   },
 };
