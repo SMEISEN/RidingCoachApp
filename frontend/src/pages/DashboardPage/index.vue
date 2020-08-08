@@ -8,13 +8,16 @@
           sm="6"
           md="6"
         >
-          <v-row no-gutters>
-            <v-col cols="12">
+          <v-row dense>
+            <v-col
+              class="pt-0"
+              cols="12"
+            >
               <v-card
                 :key="bikeId +'/wear'"
                 class="card-container"
               >
-                <v-card-title>
+                <v-card-title class="py-2">
                   <span class="headerline">
                     {{ bikeString }}
                   </span>
@@ -33,7 +36,7 @@
                 :key="bikeId +'/setup/sm+'"
                 class="card-container"
               >
-                <v-card-title>
+                <v-card-title class="py-2">
                   <span class="headline">Bike Setup</span>
                 </v-card-title>
                 <DashboardSetupState
@@ -44,6 +47,41 @@
           </v-row>
         </v-col>
         <v-col
+          v-if="$vuetify.breakpoint.name !== 'xs'"
+          cols="12"
+          xs="12"
+          sm="6"
+          md="6"
+        >
+          <v-row dense>
+            <v-col
+              class="pt-0"
+              cols="12"
+            >
+              <v-card
+                :key="bikeId +'/maintenance'"
+                class="card-container"
+              >
+                <v-card-title class="py-2">
+                  <span class="headline">Upcoming maintenance</span>
+                </v-card-title>
+                <DashboardMaintenanceState
+                  :maintenance-next="maintenance_array"
+                />
+              </v-card>
+            </v-col>
+            <v-col cols="12">
+              <v-card class="card-container">
+                <v-card-title class="py-2">
+                  <span class="headline">Recent activity</span>
+                </v-card-title>
+                <DashboardTimeline />
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col
+          v-if="$vuetify.breakpoint.name === 'xs'"
           cols="12"
           xs="12"
           sm="6"
@@ -53,7 +91,7 @@
             :key="bikeId +'/maintenance'"
             class="card-container"
           >
-            <v-card-title>
+            <v-card-title class="py-2">
               <span class="headline">Upcoming maintenance</span>
             </v-card-title>
             <DashboardMaintenanceState
@@ -73,7 +111,7 @@
             :key="bikeId +'/setup/xs'"
             class="card-container"
           >
-            <v-card-title>
+            <v-card-title class="py-2">
               <span class="headline">Bike Setup</span>
             </v-card-title>
             <DashboardSetupState
@@ -82,37 +120,14 @@
           </v-card>
         </v-col>
         <v-col
+          v-if="$vuetify.breakpoint.name === 'xs'"
           cols="12"
-          xs="12"
-          sm="6"
-          md="6"
         >
           <v-card class="card-container">
-            <v-card-title>
-              <span class="headline">Recent training</span>
+            <v-card-title class="py-2">
+              <span class="headline">Recent activity</span>
             </v-card-title>
-            <v-card-text>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-              tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
-              eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea.
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col
-          cols="12"
-          xs="12"
-          sm="6"
-          md="6"
-        >
-          <v-card class="card-container">
-            <v-card-title>
-              <span class="headline">Spare parts</span>
-            </v-card-title>
-            <v-card-text>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
-              tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
-              eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea.
-            </v-card-text>
+            <DashboardTimeline />
           </v-card>
         </v-col>
       </v-row>
@@ -129,6 +144,7 @@ import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
 import DashboardWearState from './DashboardWearState.vue';
 import DashboardMaintenanceState from './DashboardMaintenanceState.vue';
 import DashboardSetupState from './DashboardSetupState.vue';
+import DashboardTimeline from './DashboardTimeline.vue';
 
 export default {
   name: 'Dashboard',
@@ -136,6 +152,7 @@ export default {
     title: 'Dashboard',
   },
   components: {
+    DashboardTimeline,
     DashboardSetupState,
     DashboardMaintenanceState,
     DashboardWearState,

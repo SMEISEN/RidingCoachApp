@@ -29,6 +29,9 @@ import { indexOfObjectValueInArray } from '../../components/utils/FromUtils';
 
 export default {
   name: 'Training',
+  metaInfo: {
+    title: 'Training',
+  },
   components: {
     TimelineCard,
   },

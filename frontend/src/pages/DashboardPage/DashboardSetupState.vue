@@ -1,16 +1,10 @@
 <template>
-  <v-row>
-    <v-col
-      cols="12"
-    >
-      <RadarChart
-        :chart-data="data_collection"
-        :options="data_options"
-        :height="null"
-        :width="null"
-      />
-    </v-col>
-  </v-row>
+  <RadarChart
+    :chart-data="data_collection"
+    :options="data_options"
+    :height="null"
+    :width="null"
+  />
 </template>
 
 <script>
@@ -74,18 +68,22 @@ export default {
       legend: {
         position: 'bottom',
         align: 'end',
+        labels: {
+          usePointStyle: true,
+          fontSize: 10,
+        },
       },
     },
   }),
-  updated() {
-  },
-  created() {
-    this.processSetupData();
-  },
   watch: {
     setupArray() {
       this.processSetupData();
     },
+  },
+  updated() {
+  },
+  created() {
+    this.processSetupData();
   },
   methods: {
     processSetupData() {

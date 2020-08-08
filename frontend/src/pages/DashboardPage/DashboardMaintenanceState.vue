@@ -46,9 +46,9 @@ export default {
     tableHeight() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return '95px';
-        case 'sm': return '128px';
-        case 'md': return '500px';
-        case 'lg': return '600px';
+        case 'sm': return '256px';
+        case 'md': return '256px';
+        case 'lg': return '256px';
         case 'xl': return '800px';
         default: return 'undefined';
       }
