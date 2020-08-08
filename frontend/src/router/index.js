@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import VueMeta from 'vue-meta';
 import Dashboard from '../pages/DashboardPage/index.vue';
 import Maintenance from '../pages/MaintenancePage/index.vue';
+import Training from '../pages/TrainingPage/index.vue';
 import History from '../pages/HistoryPage/index.vue';
 import Login from '../pages/LoginPage/index.vue';
 import store from '../store';
@@ -48,6 +49,12 @@ export default new VueRouter({
       path: '/maintenance',
       name: 'Maintenance',
       component: Maintenance,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/training',
+      name: 'Training',
+      component: Training,
       beforeEnter: ifAuthenticated,
     },
     {
