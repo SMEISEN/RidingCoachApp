@@ -36,7 +36,7 @@
           md="2"
         >
           <v-text-field
-            v-model="bikeFormObject.year"
+            v-model.number="bikeFormObject.year"
             :rules="[v => !!v]"
             required
             label="Year*"
@@ -59,7 +59,7 @@
           md="2"
         >
           <v-text-field
-            v-model="bikeFormObject.operating_hours"
+            v-model.number="bikeFormObject.operating_hours"
             :rules="[v => !!v]"
             required
             label="Operating hours*"

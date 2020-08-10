@@ -73,7 +73,7 @@
           </td>
           <td style="border-bottom: none">
             <v-text-field
-              v-model="entry.ticks_current"
+              v-model.number="entry.ticks_current"
               append-outer-icon="mdi-plus"
               prepend-icon="mdi-minus"
               :rules="[v => v >= 0 && v <= entry.ticks_available]"
@@ -87,7 +87,7 @@
           </td>
           <td style="border-bottom: none">
             <v-text-field
-              v-model="entry.ticks_standard"
+              v-model.number="entry.ticks_standard"
               style="font-size: 12px"
               dense
               height="20px"
@@ -96,7 +96,7 @@
           </td>
           <td style="border-bottom: none">
             <v-text-field
-              v-model="entry.ticks_available"
+              v-model.number="entry.ticks_available"
               style="font-size: 12px"
               dense
               height="20px"

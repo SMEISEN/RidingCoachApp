@@ -16,7 +16,7 @@
               class="px-16"
             >
               <v-text-field
-                v-model="trainingFormObject.setup_fixed[tabItemIndex].slick_pressure_front"
+                v-model.number="trainingFormObject.setup_fixed[tabItemIndex].slick_pressure_front"
                 label="Front tire pressure"
                 suffix="bar"
                 :hint="tire_pressure_recommendation.slick_front"
@@ -35,7 +35,7 @@
               class="px-16"
             >
               <v-text-field
-                v-model="trainingFormObject.setup_fixed[tabItemIndex].slick_pressure_rear"
+                v-model.number="trainingFormObject.setup_fixed[tabItemIndex].slick_pressure_rear"
                 label="Rear tire pressure"
                 suffix="bar"
                 :hint="tire_pressure_recommendation.slick_rear"
@@ -58,7 +58,7 @@
               class="px-16"
             >
               <v-text-field
-                v-model="trainingFormObject.setup_fixed[tabItemIndex].rain_pressure_front"
+                v-model.number="trainingFormObject.setup_fixed[tabItemIndex].rain_pressure_front"
                 label="Front tire pressure"
                 suffix="bar"
                 :hint="tire_pressure_recommendation.rain_front"
@@ -77,7 +77,7 @@
               class="px-16"
             >
               <v-text-field
-                v-model="trainingFormObject.setup_fixed[tabItemIndex].rain_pressure_rear"
+                v-model.number="trainingFormObject.setup_fixed[tabItemIndex].rain_pressure_rear"
                 label="Rear tire pressure"
                 suffix="bar"
                 :hint="tire_pressure_recommendation.rain_rear"

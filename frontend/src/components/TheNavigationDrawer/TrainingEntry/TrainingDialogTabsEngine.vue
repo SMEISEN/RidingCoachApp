@@ -21,7 +21,7 @@
             >
               <v-subheader>Operating hours*</v-subheader>
               <v-text-field
-                v-model="trainingFormObject.setup_fixed[tabItemIndex].operating_hours"
+                v-model.number="trainingFormObject.setup_fixed[tabItemIndex].operating_hours"
                 dense
                 :rules="[v => !!v]"
                 required

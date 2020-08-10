@@ -10,7 +10,7 @@
           md="4"
         >
           <v-text-field
-            v-model="bikeFormObject.ccm"
+            v-model.number="bikeFormObject.ccm"
             label="Engine ccm"
           />
         </v-col>
@@ -21,7 +21,7 @@
           md="4"
         >
           <v-text-field
-            v-model="bikeFormObject.stroke"
+            v-model.number="bikeFormObject.stroke"
             label="Engine stroke"
           />
         </v-col>
@@ -32,7 +32,7 @@
           md="4"
         >
           <v-text-field
-            v-model="bikeFormObject.piston"
+            v-model.number="bikeFormObject.piston"
             label="Engine piston"
           />
         </v-col>
@@ -54,7 +54,7 @@
           md="1"
         >
           <v-text-field
-            v-model="bikeFormObject.slick_front_pressure"
+            v-model.number="bikeFormObject.slick_front_pressure"
             label="Pressure"
           />
         </v-col>
@@ -76,7 +76,7 @@
           md="1"
         >
           <v-text-field
-            v-model="bikeFormObject.slick_rear_pressure"
+            v-model.number="bikeFormObject.slick_rear_pressure"
             label="Pressure"
           />
         </v-col>
@@ -124,7 +124,7 @@
           md="1"
         >
           <v-text-field
-            v-model="bikeFormObject.rain_front_pressure"
+            v-model.number="bikeFormObject.rain_front_pressure"
             label="Pressure"
           />
         </v-col>
@@ -146,7 +146,7 @@
           md="1"
         >
           <v-text-field
-            v-model="bikeFormObject.rain_rear_pressure"
+            v-model.number="bikeFormObject.rain_rear_pressure"
             label="Pressure"
           />
         </v-col>

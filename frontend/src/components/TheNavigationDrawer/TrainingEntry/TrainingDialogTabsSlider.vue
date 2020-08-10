@@ -1,6 +1,6 @@
 <template>
   <v-slider
-    v-model="setupEntry.ticks_current"
+    v-model.number="setupEntry.ticks_current"
     :tick-labels="tickLabels(setupEntry.ticks_standard, setupEntry.ticks_available)"
     :max="Number.parseInt(setupEntry.ticks_available)"
     step="1"
