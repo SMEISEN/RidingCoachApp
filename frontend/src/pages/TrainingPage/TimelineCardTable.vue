@@ -69,7 +69,10 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-avatar
-                color="primary"
+                :color="getColor(
+                  setup_item.slick_pressure_front + 0.0,
+                  $store.getters.getCurrentBikeSlickFrontPressure + 0.0,
+                  $store.getters.getCurrentBikeSlickFrontPressure + 0.3)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -85,7 +88,10 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-avatar
-                color="primary"
+                :color="getColor(
+                  setup_item.slick_pressure_rear + 0.0,
+                  $store.getters.getCurrentBikeSlickRearPressure + 0.0,
+                  $store.getters.getCurrentBikeSlickRearPressure + 0.3)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -101,7 +107,10 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-avatar
-                color="primary"
+                :color="getColor(
+                  setup_item.rain_pressure_front + 0.0,
+                  $store.getters.getCurrentBikeRainFrontPressure + 0.0,
+                  $store.getters.getCurrentBikeRainFrontPressure + 0.3)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -117,7 +126,10 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-avatar
-                color="primary"
+                :color="getColor(
+                  setup_item.rain_pressure_rear + 0.0,
+                  $store.getters.getCurrentBikeRainRearPressure + 0.0,
+                  $store.getters.getCurrentBikeRainRearPressure + 0.3)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -139,7 +151,10 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-avatar
-                  color="primary"
+                  :color="getColor(
+                    suspension_setup.ticks_current,
+                    suspension_setup.ticks_standard,
+                    suspension_setup.ticks_available)"
                   size="24"
                   v-bind="attrs"
                   v-on="on"
@@ -179,7 +194,10 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-avatar
-                  color="primary"
+                  :color="getColor(
+                    engine_setup.ticks_current,
+                    engine_setup.ticks_standard,
+                    engine_setup.ticks_available)"
                   size="24"
                   v-bind="attrs"
                   v-on="on"
@@ -210,6 +228,23 @@ export default {
   created() {
   },
   methods: {
+    getColor(current, baseline, available) {
+      const diff = current - baseline;
+      const max = available;
+      const min = 0;
+      if (diff < 0) {
+        return `rgb(
+          ${13 + ((max - current) / (baseline - min)) * 50},
+          ${71 + ((max - current) / (baseline - min)) * 25},
+          161`;
+      } if (diff === 0) {
+        return 'rgb(179, 181, 198)';
+      }
+      return `rgb(
+          183,
+          ${28 + ((current - min) / (max - baseline)) * 35},
+          ${28 + ((current - min) / (max - baseline)) * 35}`;
+    },
     tire_setups(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
