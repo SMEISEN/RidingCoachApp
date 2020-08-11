@@ -88,18 +88,18 @@ export default {
   methods: {
     editTraining() {
       const trainingId = this.$store.getters.getTrainingEditId;
-      const query = {};
       if (trainingId !== null) {
         apiGetTrainingItem(trainingId)
           .then((res) => {
-            this.$store.commit('setTrainingEditId', null);
             this.$store.commit('setTrainingDialogState', true);
             this.compileTrainingData(res.data);
           });
       } else {
-        query.datetime_display = {
-          value: Math.round(new Date().setUTCHours(0, 0, 0, 0) / 1000),
-          operator: '>=',
+        const query = {
+          datetime_display: {
+            value: Math.round(new Date().setUTCHours(0, 0, 0, 0) / 1000),
+            operator: '>=',
+          },
         };
         apiQueryTrainings(query)
           .then((res) => {
@@ -111,7 +111,6 @@ export default {
               this.$store.commit('setTrainingDialogSetupActiveTab', 0);
             }
             this.$store.commit('setTrainingDialogState', true);
-            this.$store.commit('setTrainingEditId', null);
           })
           .catch((error) => {
             this.$store.commit('setInfoSnackbar', {
@@ -128,7 +127,8 @@ export default {
       );
       initObject(this.training_form_object, null);
       this.training_form_object.date = new Date().toISOString().substr(0, 10);
-      this.training_form_object.setup_fixed = [this._.cloneDeep(this.setup_fixed_template)];
+      this.training_form_object.setup_fixed = [];
+      this.training_form_object.setup_fixed.push(this._.cloneDeep(this.setup_fixed_template));
       this.training_form_object.setup_fixed[0].time = new Date().toTimeString().substr(0, 5);
       this.training_form_object.setup_fixed[0].operating_hours = this
         .$store.getters.getCurrentBikeOperatingHours;
@@ -155,8 +155,7 @@ export default {
       this.$store.commit('setTrainingDialogSetupTabs', numberOfSetups);
       this.$store.commit('setTrainingDialogSetupActiveTab', numberOfSetups - 1);
       for (let i = 0; i < numberOfSetups; i += 1) {
-        this.training_form_object.setup_fixed
-          .push(this._.cloneDeep(this.setup_fixed_template));
+        this.training_form_object.setup_fixed.push(this._.cloneDeep(this.setup_fixed_template));
         this.training_form_object.setup_fixed[i].setup_id = data
           .setups[i].setup_id;
         this.training_form_object.setup_fixed[i].comment = data
@@ -175,8 +174,7 @@ export default {
           .setups[i].rain_pressure_rear;
         this.training_form_object.setup_fixed[i].rain_pressure_rear = data
           .setups[i].rain_pressure_rear;
-        this.training_form_object.setup_individual[i] = data
-          .setups[i].setup;
+        this.$set(this.training_form_object.setup_individual, i, data.setups[i].setup);
       }
     },
   },
