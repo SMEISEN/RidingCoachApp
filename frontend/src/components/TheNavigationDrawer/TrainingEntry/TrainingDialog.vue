@@ -153,9 +153,11 @@ export default {
         .concat('T', new Date().toTimeString().substr(0, 5));
       const payloadTraining = {
         location: this.trainingFormObject.race_track,
-        weather_hourly: this.trainingFormObject.weather,
         datetime_display: Date.parse(datetime) / 1000,
       };
+      if (this.$store.getters.getTrainingEditId !== null) {
+        payloadTraining.weather_hourly = this.trainingFormObject.weather;
+      }
       if (this.trainingFormObject.training_id === null) {
         apiPostTraining(payloadTraining)
           .then((resTraining) => {
@@ -216,11 +218,13 @@ export default {
             });
           });
       }
+      this.$store.commit('setTrainingEditId', null);
       this.$emit('saveClicked');
     },
     onTrainingCancel() {
       this.training_dialog = false;
       this.$refs.validation_training_form.resetValidation();
+      this.$store.commit('setTrainingEditId', null);
       this.$emit('cancelClicked');
     },
     onTrainingDelete() {
@@ -255,6 +259,7 @@ export default {
             message: `${error}!`,
           });
         });
+      this.$store.commit('setTrainingEditId', null);
     },
     setupPayload(trainingId, setupNo, bikeId) {
       const datetime = this.trainingFormObject.date

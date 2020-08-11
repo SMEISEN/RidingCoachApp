@@ -7,6 +7,7 @@
       :training-form-object="trainingFormObject"
     />
     <TrainingDialogGeneralWeather
+      v-if="$store.getters.getTrainingEditId === null"
       :training-form-object="trainingFormObject"
     />
   </v-expansion-panels>
