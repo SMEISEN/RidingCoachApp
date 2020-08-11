@@ -107,7 +107,6 @@ export default {
   methods: {
     onTrainingEdit() {
       this.$store.commit('setTrainingEditId', this.trainingItem.training_id);
-      this.training_dialog = true;
     },
     onTrainingDelete() {
       this.confirm_delete_dialog = true;
