@@ -237,10 +237,6 @@ export default {
     getColor(value, min, max, baseline) {
       const diff = value - baseline;
       if (diff < 0) {
-        console.log(value);
-        console.log(min);
-        console.log(max);
-        console.log(baseline);
         return this.linearGradient('#0D47A1', '#B3B5C6', value, min, baseline);
       }
       return this.linearGradient('#B3B5C6', '#B71C1C', value, baseline, max);
@@ -255,12 +251,13 @@ export default {
       diffRed = (diffRed * percentFade) + startRGB.r;
       diffGreen = (diffGreen * percentFade) + startRGB.g;
       diffBlue = (diffBlue * percentFade) + startRGB.b;
-      console.log(`rgb(${Math.round(diffRed)}, ${Math.round(diffGreen)}, ${Math.round(diffBlue)})`);
       return `rgb(${Math.round(diffRed)}, ${Math.round(diffGreen)}, ${Math.round(diffBlue)})`;
     },
     mapColor(value, fromSource, toSource, fromTarget, toTarget) {
       return fromTarget
-        + (((value - fromSource) / (toSource - fromSource)) * (toTarget - fromTarget));
+        + (
+          ((value - fromSource) / (toSource - fromSource + Number.EPSILON)
+          ) * (toTarget - fromTarget));
     },
     hexToRgb(hex) {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
