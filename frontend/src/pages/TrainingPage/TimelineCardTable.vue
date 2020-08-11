@@ -71,8 +71,9 @@
               <v-avatar
                 :color="getColor(
                   setup_item.slick_pressure_front + 0.0,
-                  $store.getters.getCurrentBikeSlickFrontPressure + 0.0,
-                  $store.getters.getCurrentBikeSlickFrontPressure + 0.3)"
+                  $store.getters.getCurrentBikeSlickFrontPressure - 0.5,
+                  $store.getters.getCurrentBikeSlickFrontPressure + 0.5,
+                  $store.getters.getCurrentBikeSlickFrontPressure + 0.0)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -90,8 +91,9 @@
               <v-avatar
                 :color="getColor(
                   setup_item.slick_pressure_rear + 0.0,
-                  $store.getters.getCurrentBikeSlickRearPressure + 0.0,
-                  $store.getters.getCurrentBikeSlickRearPressure + 0.3)"
+                  $store.getters.getCurrentBikeSlickRearPressure - 0.5,
+                  $store.getters.getCurrentBikeSlickRearPressure + 0.5,
+                  $store.getters.getCurrentBikeSlickRearPressure + 0.0)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -109,8 +111,9 @@
               <v-avatar
                 :color="getColor(
                   setup_item.rain_pressure_front + 0.0,
-                  $store.getters.getCurrentBikeRainFrontPressure + 0.0,
-                  $store.getters.getCurrentBikeRainFrontPressure + 0.3)"
+                  $store.getters.getCurrentBikeRainFrontPressure - 0.5,
+                  $store.getters.getCurrentBikeRainFrontPressure + 0.5,
+                  $store.getters.getCurrentBikeRainFrontPressure + 0.0)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -128,8 +131,9 @@
               <v-avatar
                 :color="getColor(
                   setup_item.rain_pressure_rear + 0.0,
-                  $store.getters.getCurrentBikeRainRearPressure + 0.0,
-                  $store.getters.getCurrentBikeRainRearPressure + 0.3)"
+                  $store.getters.getCurrentBikeRainRearPressure - 0.5,
+                  $store.getters.getCurrentBikeRainRearPressure + 0.5,
+                  $store.getters.getCurrentBikeRainRearPressure + 0.0)"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -152,9 +156,10 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-avatar
                   :color="getColor(
-                    suspension_setup.ticks_current,
-                    suspension_setup.ticks_standard,
-                    suspension_setup.ticks_available)"
+                    suspension_setup.ticks_current + 0,
+                    0,
+                    suspension_setup.ticks_available + 0,
+                    suspension_setup.ticks_standard + 0)"
                   size="24"
                   v-bind="attrs"
                   v-on="on"
@@ -195,9 +200,10 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-avatar
                   :color="getColor(
-                    engine_setup.ticks_current,
-                    engine_setup.ticks_standard,
-                    engine_setup.ticks_available)"
+                    engine_setup.ticks_current + 0,
+                    0,
+                    engine_setup.ticks_available + 0,
+                    engine_setup.ticks_standard + 0)"
                   size="24"
                   v-bind="attrs"
                   v-on="on"
@@ -228,22 +234,41 @@ export default {
   created() {
   },
   methods: {
-    getColor(current, baseline, available) {
-      const diff = current - baseline;
-      const max = available;
-      const min = 0;
+    getColor(value, min, max, baseline) {
+      const diff = value - baseline;
       if (diff < 0) {
-        return `rgb(
-          ${13 + ((max - current) / (baseline - min)) * 50},
-          ${71 + ((max - current) / (baseline - min)) * 25},
-          161`;
-      } if (diff === 0) {
-        return 'rgb(179, 181, 198)';
+        console.log(value);
+        console.log(min);
+        console.log(max);
+        console.log(baseline);
+        return this.linearGradient('#0D47A1', '#B3B5C6', value, min, baseline);
       }
-      return `rgb(
-          183,
-          ${28 + ((current - min) / (max - baseline)) * 35},
-          ${28 + ((current - min) / (max - baseline)) * 35}`;
+      return this.linearGradient('#B3B5C6', '#B71C1C', value, baseline, max);
+    },
+    linearGradient(startColour, endColour, value, min, max) {
+      const startRGB = this.hexToRgb(startColour);
+      const endRGB = this.hexToRgb(endColour);
+      const percentFade = this.mapColor(value, min, max, 0, 1);
+      let diffRed = endRGB.r - startRGB.r;
+      let diffGreen = endRGB.g - startRGB.g;
+      let diffBlue = endRGB.b - startRGB.b;
+      diffRed = (diffRed * percentFade) + startRGB.r;
+      diffGreen = (diffGreen * percentFade) + startRGB.g;
+      diffBlue = (diffBlue * percentFade) + startRGB.b;
+      console.log(`rgb(${Math.round(diffRed)}, ${Math.round(diffGreen)}, ${Math.round(diffBlue)})`);
+      return `rgb(${Math.round(diffRed)}, ${Math.round(diffGreen)}, ${Math.round(diffBlue)})`;
+    },
+    mapColor(value, fromSource, toSource, fromTarget, toTarget) {
+      return fromTarget
+        + (((value - fromSource) / (toSource - fromSource)) * (toTarget - fromTarget));
+    },
+    hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      } : null;
     },
     tire_setups(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
