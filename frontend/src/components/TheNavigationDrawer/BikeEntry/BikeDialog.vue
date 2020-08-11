@@ -7,6 +7,7 @@
       transition="dialog-bottom-transition"
     >
       <v-form
+        v-if="bike_dialog"
         ref="validation_bike_form"
         v-model="valid_bike_dialog"
       >

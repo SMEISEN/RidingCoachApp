@@ -6,6 +6,7 @@
     max-width="500px"
   >
     <v-form
+      v-if="maintenance_dialog"
       ref="validation_form"
       v-model="valid"
     >

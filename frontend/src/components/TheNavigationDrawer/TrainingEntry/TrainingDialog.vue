@@ -7,6 +7,7 @@
       transition="dialog-bottom-transition"
     >
       <v-form
+        v-if="training_dialog"
         ref="validation_training_form"
         v-model="valid_training_dialog"
       >
