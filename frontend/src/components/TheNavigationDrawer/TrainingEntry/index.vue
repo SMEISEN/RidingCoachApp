@@ -97,8 +97,8 @@ export default {
       } else {
         const query = {
           datetime_display: {
-            value: Math.round(new Date().setUTCHours(0, 0, 0, 0) / 1000),
-            operator: '>=',
+            values: [Math.round(new Date().setUTCHours(0, 0, 0, 0) / 1000)],
+            operators: ['>='],
           },
         };
         apiQueryTrainings(query)

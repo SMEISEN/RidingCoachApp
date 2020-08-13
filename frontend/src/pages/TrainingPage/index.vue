@@ -5,68 +5,10 @@
       style="overflow-y:auto;"
     >
       <v-card-title class="pa-0">
-        <v-toolbar app top short flat>
-          <v-btn-toggle
-            v-model="timeline_buttons"
-            mandatory
-            dense
-            style="width:100%"
-          >
-            <v-menu
-              ref="menu"
-              v-model="date_menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  style="min-width:20%"
-                  x-small
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ displayed_date }}
-                </v-btn>
-              </template>
-              <v-date-picker
-                v-model="picked_date"
-                type="month"
-                scrollable
-                no-title
-                @input="date_menu = false"
-              >
-              </v-date-picker>
-            </v-menu>
-            <v-btn
-              style="min-width:20%"
-              x-small
-            >
-              {{ new Date().getFullYear() }}
-            </v-btn>
-            <v-btn
-              style="min-width:20%"
-              x-small
-            >
-              {{ new Date(new Date().setMonth(new Date().getMonth() - 1))
-                .toLocaleString('en-US', { month: 'short' }) }}
-            </v-btn>
-            <v-btn
-              style="min-width:20%"
-              x-small
-            >
-              {{ new Date().toLocaleString('en-US', { month: 'short' }) }}
-            </v-btn>
-            <v-btn
-              style="min-width:20%"
-              x-small
-            >
-              now
-            </v-btn>
-          </v-btn-toggle>
-        </v-toolbar>
+        <TimelineToolbar
+          :timeline-buttons.sync="timeline_buttons"
+          :picked-date.sync="picked_date"
+        />
       </v-card-title>
       <v-container>
         <v-timeline
@@ -93,7 +35,8 @@
 
 <script>
 import TimelineCard from './TimelineCard.vue';
-import { apiGetTrainings } from '../../components/api/TrainingApi';
+import TimelineToolbar from './TimelineToolbar.vue';
+import { apiQueryTrainings } from '../../components/api/TrainingApi';
 import { indexOfObjectValueInArray } from '../../components/utils/FromUtils';
 
 export default {
@@ -102,54 +45,135 @@ export default {
     title: 'Training',
   },
   components: {
+    TimelineToolbar,
     TimelineCard,
   },
   data: () => ({
     timeline_buttons: 4,
     show_training: false,
     training_array: null,
-    date_menu: false,
-    picked_date: null,
     window_height: null,
+    picked_date: new Date().toISOString().substr(0, 7),
   }),
-  computed: {
-    displayed_date() {
-      if (this.timeline_buttons !== 0) {
-        return 'pick';
-      } if (this.picked_date === null) {
-        return new Date().toLocaleString('en-US',
-          {
-            year: '2-digit',
-            month: 'short',
-          });
+  watch: {
+    timeline_buttons() {
+      if (this.timeline_buttons === 4) {
+        this.getDateNow();
+      } if (this.timeline_buttons === 3) {
+        this.getDateThisMonth();
+      } if (this.timeline_buttons === 2) {
+        this.getDateLastMonth();
+      } if (this.timeline_buttons === 1) {
+        this.getDateThisYear();
       }
-      const pickedDate = new Date(this.picked_date);
-      return `${
-        pickedDate.toLocaleString('en-US', { month: 'short' })} ${
-        pickedDate.toLocaleString('en-US', { year: '2-digit' })}`;
+    },
+    picked_date() {
+      if (this.timeline_buttons === 0) {
+        const year = new Date(this.picked_date).getFullYear();
+        const monthStart = new Date(this.picked_date).getMonth();
+        const monthEnd = new Date(this.picked_date).getMonth() + 1;
+        const dateStart = new Date(
+          new Date(this.picked_date).setUTCHours(0, 0, 0, 0),
+        ).setUTCFullYear(year, monthStart, 1) / 1000;
+        const dateEnd = new Date(
+          new Date(this.picked_date).setUTCHours(0, 0, 0, 0),
+        ).setUTCFullYear(year, monthEnd, 0) / 1000;
+        const query = {
+          datetime_display: {
+            values: [Math.round(dateStart), Math.round(dateEnd)],
+            operators: ['>=', '<='],
+          },
+        };
+        this.queryTrainings(query);
+      }
     },
   },
   updated() {
     this.window_height = window.innerHeight;
   },
   created() {
-    this.getTrainings();
+    this.getDateNow();
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'setTrainingDialogState'
         && this.$store.getters.getTrainingDialogState === false) {
-        this.getTrainings();
+        this.getDateNow();
       }
     });
   },
   methods: {
-    getTrainings() {
-      apiGetTrainings().then((res) => {
+    queryTrainings(query) {
+      apiQueryTrainings(query).then((res) => {
         this.training_array = res.data;
       });
     },
     removeTraining(trainingId) {
       const trainingIndex = indexOfObjectValueInArray(this.training_array, trainingId);
       this.training_array.splice(trainingIndex, 1);
+    },
+    getDateNow() {
+      const dateValue = new Date()
+        .setUTCHours(0, 0, 0, 0) / 1000 - 30 * 24 * 60 * 60;
+      const query = {
+        datetime_display: {
+          values: [Math.round(dateValue)],
+          operators: ['>='],
+        },
+      };
+      this.queryTrainings(query);
+    },
+    getDateThisMonth() {
+      const year = new Date().getFullYear();
+      const monthStart = new Date().getMonth();
+      const monthEnd = new Date().getMonth() + 1;
+      const dateStart = new Date(
+        new Date().setUTCHours(0, 0, 0, 0),
+      ).setUTCFullYear(year, monthStart, 1) / 1000;
+      const dateEnd = new Date(
+        new Date().setUTCHours(0, 0, 0, 0),
+      ).setUTCFullYear(year, monthEnd, 0) / 1000;
+      const query = {
+        datetime_display: {
+          values: [Math.round(dateStart), Math.round(dateEnd)],
+          operators: ['>=', '<='],
+        },
+      };
+      this.queryTrainings(query);
+    },
+    getDateLastMonth() {
+      const year = new Date().getFullYear();
+      const monthStart = new Date().getMonth() - 1;
+      const monthEnd = new Date().getMonth();
+      const dateStart = new Date(
+        new Date().setUTCHours(0, 0, 0, 0),
+      ).setUTCFullYear(year, monthStart, 1) / 1000;
+      const dateEnd = new Date(
+        new Date().setUTCHours(0, 0, 0, 0),
+      ).setUTCFullYear(year, monthEnd, 0) / 1000;
+      const query = {
+        datetime_display: {
+          values: [Math.round(dateStart), Math.round(dateEnd)],
+          operators: ['>=', '<='],
+        },
+      };
+      this.queryTrainings(query);
+    },
+    getDateThisYear() {
+      const year = new Date().getFullYear();
+      const monthStart = 0;
+      const monthEnd = new Date().getMonth() + 1;
+      const dateStart = new Date(
+        new Date().setUTCHours(0, 0, 0, 0),
+      ).setUTCFullYear(year, monthStart, 1) / 1000;
+      const dateEnd = new Date(
+        new Date().setUTCHours(0, 0, 0, 0),
+      ).setUTCFullYear(year, monthEnd, 0) / 1000;
+      const query = {
+        datetime_display: {
+          values: [Math.round(dateStart), Math.round(dateEnd)],
+          operators: ['>=', '<='],
+        },
+      };
+      this.queryTrainings(query);
     },
   },
 };

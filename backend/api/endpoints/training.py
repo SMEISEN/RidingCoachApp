@@ -168,28 +168,29 @@ class TrainingQuery(Resource):
 
         filter_data = {
             'datetime_display': {
-                'value': datetime.utcfromtimestamp(requested.get('datetime_display')['value']),
-                'operator': requested.get('datetime_display')['operator'],
+                'values': [datetime.utcfromtimestamp(entry) for entry in requested.get('datetime_display')['values']],
+                'operators': requested.get('datetime_display')['operators'],
             },
         }
 
         training_query = TrainingModel.query.filter_by(**filter_by_data)
 
         for attr, item in filter_data.items():
-            if item['operator'] == '==':
-                training_query = training_query.filter(getattr(TrainingModel, attr) == item['value'])
-            elif item['operator'] == '<=':
-                training_query = training_query.filter(getattr(TrainingModel, attr) <= item['value'])
-            elif item['operator'] == '>=':
-                training_query = training_query.filter(getattr(TrainingModel, attr) >= item['value'])
-            elif item['operator'] == '<':
-                training_query = training_query.filter(getattr(TrainingModel, attr) < item['value'])
-            elif item['operator'] == '>':
-                training_query = training_query.filter(getattr(TrainingModel, attr) > item['value'])
-            elif item['operator'] == '!=':
-                training_query = training_query.filter(getattr(TrainingModel, attr) != item['value'])
-            else:
-                raise ValueError('Given operator does not match available operators!')
+            for operator, value in zip(item['operators'], item['values']):
+                if operator == '==':
+                    training_query = training_query.filter(getattr(TrainingModel, attr) == value)
+                elif operator == '<=':
+                    training_query = training_query.filter(getattr(TrainingModel, attr) <= value)
+                elif operator == '>=':
+                    training_query = training_query.filter(getattr(TrainingModel, attr) >= value)
+                elif operator == '<':
+                    training_query = training_query.filter(getattr(TrainingModel, attr) < value)
+                elif operator == '>':
+                    training_query = training_query.filter(getattr(TrainingModel, attr) > value)
+                elif operator == '!=':
+                    training_query = training_query.filter(getattr(TrainingModel, attr) != value)
+                else:
+                    raise ValueError('Given operator does not match available operators!')
 
         training_query = training_query.all()
 
