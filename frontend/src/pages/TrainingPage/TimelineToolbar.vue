@@ -75,6 +75,7 @@ export default {
       required: true,
     },
     pickedDate: {
+      type: String,
       required: true,
     },
   },

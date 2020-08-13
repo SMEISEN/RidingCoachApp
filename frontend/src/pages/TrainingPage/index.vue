@@ -16,17 +16,37 @@
           clipped
           class="ml-n9"
         >
-          <v-timeline-item
-            v-for="training_item in training_array"
-            :key="'training/' + training_item.training_id"
-            color="primary"
-            small
+          <div
+            v-for="(month, index) in training_array_sorted"
+            :key="'training/month' + index"
           >
-            <TimelineCard
-              :training-item="training_item"
-              @removedTraining="removeTraining"
-            />
-          </v-timeline-item>
+            <v-timeline-item hide-dot>
+              <v-row>
+                <v-col
+                  cols="12"
+                  class="text-right text-caption text--secondary"
+                >
+                  <v-divider />
+                  {{ new Date(month[0].datetime_display)
+                    .toLocaleString('en-US', { month: 'long' }) }}
+                </v-col>
+              </v-row>
+            </v-timeline-item>
+            <div
+              v-for="(training_item) in month"
+              :key="'training/month/' + index + '/item/' + training_item.training_id"
+            >
+              <v-timeline-item
+                color="primary"
+                small
+              >
+                <TimelineCard
+                  :training-item="training_item"
+                  @removedTraining="removeTraining"
+                />
+              </v-timeline-item>
+            </div>
+          </div>
         </v-timeline>
       </v-container>
     </v-card>
@@ -52,6 +72,7 @@ export default {
     timeline_buttons: 4,
     show_training: false,
     training_array: null,
+    training_array_sorted: null,
     window_height: null,
     picked_date: new Date().toISOString().substr(0, 7),
   }),
@@ -104,6 +125,11 @@ export default {
     queryTrainings(query) {
       apiQueryTrainings(query).then((res) => {
         this.training_array = res.data;
+        if (res.data.length > 0) {
+          this.sortTraining(res.data);
+        } else {
+          this.training_array_sorted = [];
+        }
       });
     },
     removeTraining(trainingId) {
@@ -120,6 +146,22 @@ export default {
         },
       };
       this.queryTrainings(query);
+    },
+    sortTraining(trainingArray) {
+      const trainingArraySorted = [];
+      let lastDate = new Date(trainingArray[0].datetime_display);
+      let helperArray = [];
+      for (let i = 0; i < trainingArray.length; i += 1) {
+        const thisDate = new Date(trainingArray[i].datetime_display);
+        if (thisDate.getMonth() !== lastDate.getMonth()) {
+          trainingArraySorted.push(helperArray);
+          helperArray = [];
+        }
+        helperArray.push(trainingArray[i]);
+        lastDate = thisDate;
+      }
+      trainingArraySorted.push(helperArray);
+      this.training_array_sorted = trainingArraySorted;
     },
     getDateThisMonth() {
       const year = new Date().getFullYear();
