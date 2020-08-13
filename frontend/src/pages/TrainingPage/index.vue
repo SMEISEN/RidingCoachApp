@@ -56,6 +56,7 @@
                 fab
                 x-small
                 color="accent"
+                :loading="loading_trainings"
                 @click="appendTraining()"
               >
                 <v-icon>
@@ -92,10 +93,12 @@ export default {
     training_array_sorted: null,
     window_height: null,
     query: {},
+    loading_trainings: false,
     picked_date: new Date().toISOString().substr(0, 7),
   }),
   watch: {
     timeline_buttons() {
+      this.loading_trainings = true;
       if (this.timeline_buttons === 4) {
         this.getDateNow();
       } if (this.timeline_buttons === 3) {
@@ -146,6 +149,7 @@ export default {
         } else {
           this.training_array_sorted = [];
         }
+        this.loading_trainings = false;
       });
     },
     removeTraining(trainingId) {
@@ -153,6 +157,7 @@ export default {
       this.training_array.splice(trainingIndex, 1);
     },
     appendTraining() {
+      this.loading_trainings = true;
       this.query.datetime_display.values[0] -= 30 * 24 * 60 * 60;
       this.queryTrainings();
     },
