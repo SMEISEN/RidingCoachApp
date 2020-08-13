@@ -47,6 +47,23 @@
               </v-timeline-item>
             </div>
           </div>
+          <v-row>
+            <v-col
+              cols="12"
+              class="text-center"
+            >
+              <v-btn
+                fab
+                x-small
+                color="accent"
+                @click="appendTraining()"
+              >
+                <v-icon>
+                  mdi-chevron-down
+                </v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-timeline>
       </v-container>
     </v-card>
@@ -74,6 +91,7 @@ export default {
     training_array: null,
     training_array_sorted: null,
     window_height: null,
+    query: {},
     picked_date: new Date().toISOString().substr(0, 7),
   }),
   watch: {
@@ -99,13 +117,11 @@ export default {
         const dateEnd = new Date(
           new Date(this.picked_date).setUTCHours(0, 0, 0, 0),
         ).setUTCFullYear(year, monthEnd, 0) / 1000;
-        const query = {
-          datetime_display: {
-            values: [Math.round(dateStart), Math.round(dateEnd)],
-            operators: ['>=', '<='],
-          },
+        this.query.datetime_display = {
+          values: [Math.round(dateStart), Math.round(dateEnd)],
+          operators: ['>=', '<='],
         };
-        this.queryTrainings(query);
+        this.queryTrainings();
       }
     },
   },
@@ -122,8 +138,8 @@ export default {
     });
   },
   methods: {
-    queryTrainings(query) {
-      apiQueryTrainings(query).then((res) => {
+    queryTrainings() {
+      apiQueryTrainings(this.query).then((res) => {
         this.training_array = res.data;
         if (res.data.length > 0) {
           this.sortTraining(res.data);
@@ -136,16 +152,18 @@ export default {
       const trainingIndex = indexOfObjectValueInArray(this.training_array, trainingId);
       this.training_array.splice(trainingIndex, 1);
     },
+    appendTraining() {
+      this.query.datetime_display.values[0] -= 30 * 24 * 60 * 60;
+      this.queryTrainings();
+    },
     getDateNow() {
       const dateValue = new Date()
         .setUTCHours(0, 0, 0, 0) / 1000 - 30 * 24 * 60 * 60;
-      const query = {
-        datetime_display: {
-          values: [Math.round(dateValue)],
-          operators: ['>='],
-        },
+      this.query.datetime_display = {
+        values: [Math.round(dateValue)],
+        operators: ['>='],
       };
-      this.queryTrainings(query);
+      this.queryTrainings();
     },
     sortTraining(trainingArray) {
       const trainingArraySorted = [];
@@ -173,13 +191,11 @@ export default {
       const dateEnd = new Date(
         new Date().setUTCHours(0, 0, 0, 0),
       ).setUTCFullYear(year, monthEnd, 0) / 1000;
-      const query = {
-        datetime_display: {
-          values: [Math.round(dateStart), Math.round(dateEnd)],
-          operators: ['>=', '<='],
-        },
+      this.query.datetime_display = {
+        values: [Math.round(dateStart), Math.round(dateEnd)],
+        operators: ['>=', '<='],
       };
-      this.queryTrainings(query);
+      this.queryTrainings();
     },
     getDateLastMonth() {
       const year = new Date().getFullYear();
@@ -191,13 +207,11 @@ export default {
       const dateEnd = new Date(
         new Date().setUTCHours(0, 0, 0, 0),
       ).setUTCFullYear(year, monthEnd, 0) / 1000;
-      const query = {
-        datetime_display: {
-          values: [Math.round(dateStart), Math.round(dateEnd)],
-          operators: ['>=', '<='],
-        },
+      this.query.datetime_display = {
+        values: [Math.round(dateStart), Math.round(dateEnd)],
+        operators: ['>=', '<='],
       };
-      this.queryTrainings(query);
+      this.queryTrainings();
     },
     getDateThisYear() {
       const year = new Date().getFullYear();
@@ -209,13 +223,11 @@ export default {
       const dateEnd = new Date(
         new Date().setUTCHours(0, 0, 0, 0),
       ).setUTCFullYear(year, monthEnd, 0) / 1000;
-      const query = {
-        datetime_display: {
-          values: [Math.round(dateStart), Math.round(dateEnd)],
-          operators: ['>=', '<='],
-        },
+      this.query.datetime_display = {
+        values: [Math.round(dateStart), Math.round(dateEnd)],
+        operators: ['>=', '<='],
       };
-      this.queryTrainings(query);
+      this.queryTrainings();
     },
   },
 };
