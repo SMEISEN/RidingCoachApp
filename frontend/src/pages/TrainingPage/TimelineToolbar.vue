@@ -8,7 +8,9 @@
       v-model="timeline_buttons"
       mandatory
       dense
+      background-color="accent"
       style="width:100%"
+      active-class="v-btn--active-toolbar"
     >
       <v-menu
         ref="menu"
@@ -21,6 +23,8 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
+            color="white"
+            class="primary--text"
             style="min-width:20%"
             x-small
             v-bind="attrs"
@@ -38,12 +42,16 @@
         />
       </v-menu>
       <v-btn
+        color="white"
+        class="primary--text"
         style="min-width:20%"
         x-small
       >
         {{ new Date().getFullYear() }}
       </v-btn>
       <v-btn
+        color="white"
+        class="primary--text"
         style="min-width:20%"
         x-small
       >
@@ -51,12 +59,15 @@
           .toLocaleString('en-US', { month: 'short' }) }}
       </v-btn>
       <v-btn
+        color="white"
+        class="primary--text"
         style="min-width:20%"
         x-small
       >
         {{ new Date().toLocaleString('en-US', { month: 'short' }) }}
       </v-btn>
       <v-btn
+        class="primary--text"
         style="min-width:20%"
         x-small
       >
