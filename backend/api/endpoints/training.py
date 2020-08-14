@@ -192,7 +192,7 @@ class TrainingQuery(Resource):
                 else:
                     raise ValueError('Given operator does not match available operators!')
 
-        training_query = training_query.all()
+        training_query = training_query.order_by(TrainingModel.datetime_display.desc()).all()
 
         training_entry_list = []
         for training_entry in training_query:
