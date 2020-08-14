@@ -156,7 +156,7 @@ export default {
         location: this.trainingFormObject.race_track,
         datetime_display: Date.parse(datetime) / 1000,
       };
-      if (this.$store.getters.getTrainingEditId !== null) {
+      if (this.$store.getters.getTrainingEditId === null) {
         payloadTraining.weather_hourly = this.trainingFormObject.weather;
       }
       if (this.trainingFormObject.training_id === null) {
