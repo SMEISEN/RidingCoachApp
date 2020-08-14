@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      class="secondary"
+      class="secondary ml-n2"
       dark
     >
       <v-card-title
@@ -9,13 +9,17 @@
         class="pl-3 py-0 pr-0"
       >
         <span
-          style="font-size: 16px"
+          style="font-size: 14px"
         >
           {{ trainingItem.location }}
         </span>
         <v-spacer />
+        <TimelineCardTitleWeather
+          :weather-daily="trainingItem.weather_daily"
+        />
+        <v-spacer />
         <span
-          style="font-size: 16px"
+          style="font-size: 14px"
         >
           {{ trainingItem.datetime_display | formatDate }}
         </span>
@@ -73,13 +77,15 @@
 <script>
 import TimelineCardTable from './TimelineCardTable.vue';
 import TimelineCardWeather from './TimelineCardWeather.vue';
+import TimelineCardTitleWeather from './TimelineCardTitleWeather.vue';
+import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog.vue';
 import { apiDeleteTrainingItem } from '../../components/api/TrainingApi';
 import { apiDeleteSetupItem } from '../../components/api/SetupApi';
-import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog.vue';
 
 export default {
   name: 'TimelineCard',
   components: {
+    TimelineCardTitleWeather,
     ConfirmDeleteDialog,
     TimelineCardWeather,
     TimelineCardTable,

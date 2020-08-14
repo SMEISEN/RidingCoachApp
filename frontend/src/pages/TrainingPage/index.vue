@@ -2,7 +2,7 @@
   <v-app>
     <v-card
       :height="0.88 * window_height"
-      style="overflow-y:auto;"
+      style="overflow-y:auto; overflow-x: hidden;"
     >
       <v-card-title class="pa-0">
         <TimelineToolbar
@@ -20,7 +20,10 @@
             v-for="(month, index) in training_array_sorted"
             :key="'training/month' + index"
           >
-            <v-timeline-item hide-dot>
+            <v-timeline-item
+              hide-dot
+              class="ml-n3"
+            >
               <v-row>
                 <v-col
                   cols="12"
@@ -47,26 +50,26 @@
               </v-timeline-item>
             </div>
           </div>
-          <v-row>
-            <v-col
-              cols="12"
-              class="text-center"
-            >
-              <v-btn
-                fab
-                x-small
-                color="accent"
-                :loading="loading_trainings"
-                @click="appendTraining()"
-              >
-                <v-icon>
-                  mdi-chevron-down
-                </v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
         </v-timeline>
       </v-container>
+      <v-row>
+        <v-col
+          cols="12"
+          class="text-center"
+        >
+          <v-btn
+            fab
+            x-small
+            color="accent"
+            :loading="loading_trainings"
+            @click="appendTraining()"
+          >
+            <v-icon>
+              mdi-chevron-down
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-card>
   </v-app>
 </template>
@@ -91,6 +94,7 @@ export default {
     show_training: false,
     training_array: null,
     training_array_sorted: null,
+    weather_array_sorted: null,
     window_height: null,
     query: {},
     loading_trainings: false,
@@ -145,7 +149,7 @@ export default {
       apiQueryTrainings(this.query).then((res) => {
         this.training_array = res.data;
         if (res.data.length > 0) {
-          this.sortTraining(res.data);
+          this.sortTrainingData(res.data);
         } else {
           this.training_array_sorted = [];
         }
@@ -170,7 +174,7 @@ export default {
       };
       this.queryTrainings();
     },
-    sortTraining(trainingArray) {
+    sortTrainingData(trainingArray) {
       const trainingArraySorted = [];
       let lastDate = new Date(trainingArray[0].datetime_display);
       let helperArray = [];
@@ -180,6 +184,20 @@ export default {
           trainingArraySorted.push(helperArray);
           helperArray = [];
         }
+        this.$set(trainingArray[i], 'weather_daily', [
+          {
+            weather_code: trainingArray[i].weather_hourly[2].weather_code.value,
+            temp: trainingArray[i].weather_hourly[2].temp.value,
+          },
+          {
+            weather_code: trainingArray[i].weather_hourly[5].weather_code.value,
+            temp: trainingArray[i].weather_hourly[5].temp.value,
+          },
+          {
+            weather_code: trainingArray[i].weather_hourly[8].weather_code.value,
+            temp: trainingArray[i].weather_hourly[8].temp.value,
+          },
+        ]);
         helperArray.push(trainingArray[i]);
         lastDate = thisDate;
       }
