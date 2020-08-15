@@ -195,17 +195,53 @@ class MaintenanceQuery(Resource):
         """
 
         requested = request.get_json()
-        filter_data = {
+        filter_by_data = {
             'category': requested.get('category'),
             'name': requested.get('name'),
-            'interval_amount': requested.get('interval_amount'),
             'interval_unit': requested.get('interval_unit'),
             'interval_type': requested.get('interval_type'),
             'tags_default': requested.get('tags_default'),
         }
-        filter_data = {key: value for (key, value) in filter_data.items() if value}
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
 
-        maintenance_query = MaintenanceModel.query.filter_by(**filter_data).all()
+        maintenance_query = MaintenanceModel.query.filter_by(**filter_by_data)
+
+        filter_data = {}
+        if requested.get('interval_amount') is not None:
+            filter_data.interval_amount = {
+                'values': requested.get('interval_amount').values,
+                'operators': requested.get('interval_amount').operators,
+            }
+        elif requested.get('tags_default') is not None:
+            filter_data.interval_amount = {
+                'values': requested.get('tags_default').values,
+                'operators': requested.get('tags_default').operators,
+            }
+
+        for attr, item in filter_data.items():
+            for operator, value in zip(item['operators'], item['values']):
+                if operator == '==':
+                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) == value)
+                elif operator == '<=':
+                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) <= value)
+                elif operator == '>=':
+                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) >= value)
+                elif operator == '<':
+                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) < value)
+                elif operator == '>':
+                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) > value)
+                elif operator == '!=':
+                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) != value)
+                else:
+                    raise ValueError('Given operator does not match available operators!')
+
+        maintenance_query = maintenance_query\
+            .order_by(MaintenanceModel.category.asc()) \
+            .order_by(MaintenanceModel.name.asc())\
+            .order_by(MaintenanceModel.interval_type.asc())\
+            .order_by(MaintenanceModel.interval_unit.asc())\
+            .order_by(MaintenanceModel.interval_amount.asc())\
+            .all()
 
         maintenance_categories_dict = query_to_dict(maintenance_query, requested.get('bike_id'))
 

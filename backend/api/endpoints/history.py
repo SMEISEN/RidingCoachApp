@@ -166,18 +166,61 @@ class HistoryQuery(Resource):
         """
 
         requested = request.get_json()
-        filter_data = {
+        filter_by_data = {
             'bike_id': requested.get('bike_id'),
-            'operating_hours': requested.get('operating_hours'),
             'comment': requested.get('comment'),
-            'tags': requested.get('tags'),
-            'datetime_created': requested.get('datetime_created'),
-            'datetime_last_modified': requested.get('datetime_last_modified'),
-            'datetime_display': requested.get('datetime_display'),
         }
-        filter_data = {key: value for (key, value) in filter_data.items() if value}
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
 
-        history_query = HistoryModel.query.filter_by(**filter_data).all()
+        history_query = HistoryModel.query.filter_by(**filter_by_data)
+
+        filter_data = {}
+        if requested.get('datetime_created') is not None:
+            filter_data.interval_amount = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created').values],
+                'operators': requested.get('datetime_created').operators,
+            }
+        elif requested.get('datetime_last_modified') is not None:
+            filter_data.interval_amount = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified').values],
+                'operators': requested.get('datetime_last_modified').operators,
+            }
+        elif requested.get('datetime_display') is not None:
+            filter_data.interval_amount = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_display').values],
+                'operators': requested.get('datetime_display').operators,
+            }
+        elif requested.get('operating_hours') is not None:
+            filter_data.interval_amount = {
+                'values': requested.get('operating_hours').values,
+                'operators': requested.get('datetime_display').operators,
+            }
+        elif requested.get('tags') is not None:
+            filter_data.interval_amount = {
+                'values': requested.get('tags').values,
+                'operators': requested.get('tags').operators,
+            }
+
+        for attr, item in filter_data.items():
+            for operator, value in zip(item['operators'], item['values']):
+                if operator == '==':
+                    history_query = history_query.filter(getattr(HistoryModel, attr) == value)
+                elif operator == '<=':
+                    history_query = history_query.filter(getattr(HistoryModel, attr) <= value)
+                elif operator == '>=':
+                    history_query = history_query.filter(getattr(HistoryModel, attr) >= value)
+                elif operator == '<':
+                    history_query = history_query.filter(getattr(HistoryModel, attr) < value)
+                elif operator == '>':
+                    history_query = history_query.filter(getattr(HistoryModel, attr) > value)
+                elif operator == '!=':
+                    history_query = history_query.filter(getattr(HistoryModel, attr) != value)
+                else:
+                    raise ValueError('Given operator does not match available operators!')
+
+        history_query = history_query\
+            .order_by(HistoryModel.datetime_display.desc())\
+            .all()
 
         history_entry_list = []
         for history_entry in history_query:

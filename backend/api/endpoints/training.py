@@ -21,17 +21,17 @@ training_input_parameters = api.model('TrainingInputParameters', {
 })
 training_query_parameters = api.model('TrainingQueryParameters', {
     "location":
-        fields.String(description="", required=False),
+        fields.String(description="location to be queried", required=False),
     "bike_id":
-        fields.String(description="", required=False),
+        fields.String(description="bike_id to be queried", required=False),
     "operating_hours":
-        fields.Float(description="", required=False),
+        fields.Float(description="operating hours to be queried", required=False),
     "datetime_created":
-        fields.DateTime(description="", required=False),
+        fields.DateTime(description="datetime of creation to be queried", required=False),
     "datetime_last_modified":
-        fields.DateTime(description="", required=False),
+        fields.DateTime(description="datetime of last modification to be queried", required=False),
     "datetime_display":
-        fields.DateTime(description="", required=False)
+        fields.DateTime(description="displayed datetime to be queried", required=False)
 })
 
 
@@ -166,14 +166,24 @@ class TrainingQuery(Resource):
         }
         filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
 
-        filter_data = {
-            'datetime_display': {
-                'values': [datetime.utcfromtimestamp(entry) for entry in requested.get('datetime_display')['values']],
-                'operators': requested.get('datetime_display')['operators'],
-            },
-        }
-
         training_query = TrainingModel.query.filter_by(**filter_by_data)
+
+        filter_data = {}
+        if requested.get('datetime_created') is not None:
+            filter_data.interval_amount = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created').values],
+                'operators': requested.get('datetime_created').operators,
+            }
+        elif requested.get('datetime_last_modified') is not None:
+            filter_data.interval_amount = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified').values],
+                'operators': requested.get('datetime_last_modified').operators,
+            }
+        elif requested.get('datetime_display') is not None:
+            filter_data.interval_amount = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_display').values],
+                'operators': requested.get('datetime_display').operators,
+            }
 
         for attr, item in filter_data.items():
             for operator, value in zip(item['operators'], item['values']):
@@ -192,7 +202,9 @@ class TrainingQuery(Resource):
                 else:
                     raise ValueError('Given operator does not match available operators!')
 
-        training_query = training_query.order_by(TrainingModel.datetime_display.desc()).all()
+        training_query = training_query\
+            .order_by(TrainingModel.datetime_display.desc())\
+            .all()
 
         training_entry_list = []
         for training_entry in training_query:
