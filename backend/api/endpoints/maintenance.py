@@ -208,14 +208,14 @@ class MaintenanceQuery(Resource):
 
         filter_data = {}
         if requested.get('interval_amount') is not None:
-            filter_data.interval_amount = {
-                'values': requested.get('interval_amount').values,
-                'operators': requested.get('interval_amount').operators,
+            filter_data['interval_amount'] = {
+                'values': requested.get('interval_amount')['values'],
+                'operators': requested.get('interval_amount')['operators'],
             }
         elif requested.get('tags_default') is not None:
-            filter_data.interval_amount = {
-                'values': requested.get('tags_default').values,
-                'operators': requested.get('tags_default').operators,
+            filter_data['tags_default'] = {
+                'values': requested.get('tags_default')['values'],
+                'operators': requested.get('tags_default')['operators'],
             }
 
         for attr, item in filter_data.items():

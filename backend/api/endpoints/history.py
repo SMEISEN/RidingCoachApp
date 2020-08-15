@@ -176,29 +176,29 @@ class HistoryQuery(Resource):
 
         filter_data = {}
         if requested.get('datetime_created') is not None:
-            filter_data.interval_amount = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created').values],
-                'operators': requested.get('datetime_created').operators,
+            filter_data['datetime_created'] = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created')['values']],
+                'operators': requested.get('datetime_created')['operators'],
             }
         elif requested.get('datetime_last_modified') is not None:
-            filter_data.interval_amount = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified').values],
-                'operators': requested.get('datetime_last_modified').operators,
+            filter_data['datetime_last_modified'] = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified')['values']],
+                'operators': requested.get('datetime_last_modified')['operators'],
             }
         elif requested.get('datetime_display') is not None:
-            filter_data.interval_amount = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_display').values],
-                'operators': requested.get('datetime_display').operators,
+            filter_data['datetime_display'] = {
+                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_display')['values']],
+                'operators': requested.get('datetime_display')['operators'],
             }
         elif requested.get('operating_hours') is not None:
-            filter_data.interval_amount = {
-                'values': requested.get('operating_hours').values,
-                'operators': requested.get('datetime_display').operators,
+            filter_data['operating_hours'] = {
+                'values': requested.get('operating_hours')['values'],
+                'operators': requested.get('datetime_display')['operators'],
             }
         elif requested.get('tags') is not None:
-            filter_data.interval_amount = {
-                'values': requested.get('tags').values,
-                'operators': requested.get('tags').operators,
+            filter_data['tags'] = {
+                'values': requested.get('tags')['values'],
+                'operators': requested.get('tags')['operators'],
             }
 
         for attr, item in filter_data.items():
