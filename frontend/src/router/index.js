@@ -6,6 +6,7 @@ import Maintenance from '../pages/MaintenancePage/index.vue';
 import Training from '../pages/TrainingPage/index.vue';
 import History from '../pages/HistoryPage/index.vue';
 import Login from '../pages/LoginPage/index.vue';
+import NotFound from '../pages/NotFound/index.vue';
 import store from '../store';
 
 Vue.use(VueRouter);
@@ -61,6 +62,16 @@ export default new VueRouter({
       path: '/history',
       name: 'History',
       component: History,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/api',
+      component: NotFound,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '*',
+      component: NotFound,
       beforeEnter: ifAuthenticated,
     },
   ],
