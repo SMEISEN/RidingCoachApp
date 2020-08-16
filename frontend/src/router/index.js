@@ -66,11 +66,14 @@ export default new VueRouter({
     },
     {
       path: '/api',
-      component: NotFound,
-      beforeEnter: ifAuthenticated,
+      redirect: '/not-found',
     },
     {
       path: '*',
+      redirect: '/not-found',
+    },
+    {
+      path: '/not-found',
       component: NotFound,
       beforeEnter: ifAuthenticated,
     },
