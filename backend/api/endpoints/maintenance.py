@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import jsonify, request
 from backend.api import api
+from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.maintenance import MaintenanceModel, MaintenanceSchema
 from backend.database.models.history import HistoryModel, HistorySchema
@@ -79,11 +80,16 @@ def query_to_dict(maintenance_query: list, bike_id: str = None):
 @ns.route('/')
 class MaintenanceCollection(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
         """
         Returns all maintenance work.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.category.asc()).all()
 
@@ -94,12 +100,17 @@ class MaintenanceCollection(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(maintenance_input_parameters)
     @api.response(201, 'Maintenance work successfully added.')
     def post(self):
         """
         Creates a new maintenance work.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -126,11 +137,16 @@ class MaintenanceCollection(Resource):
 @api.response(404, 'Maintenance work not found.')
 class MaintenanceItem(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, f"Maintenance work with requested id successfully fetched.")
     def get(self, id_: str):
         """
         Returns a maintenance work.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
@@ -139,12 +155,17 @@ class MaintenanceItem(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(maintenance_input_parameters)
     @api.response(204, f"Maintenance work with requested id successfully updated.")
     def put(self, id_: str):
         """
         Updates a maintenance work.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -170,11 +191,16 @@ class MaintenanceItem(Resource):
 
         return None, 204
 
+    @api.doc(security='apikey')
     @api.response(204, f"Maintenance work with requested id successfully deleted.")
     def delete(self, id_: str):
         """
         Deletes maintenance work.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
@@ -188,11 +214,16 @@ class MaintenanceItem(Resource):
 @api.response(404, 'Query parameters not found.')
 class MaintenanceQuery(Resource):
 
+    @api.doc(security='apikey')
     @api.expect(maintenance_query_parameters)
     def post(self):
         """
         Creates a filtered query based on the input json file and returns the requested data.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         requested = request.get_json()
         filter_by_data = {

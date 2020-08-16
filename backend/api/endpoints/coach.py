@@ -1,9 +1,10 @@
 from datetime import datetime
 from flask import jsonify, request
+from backend.api import api
+from backend.api.authentication.validation import validate_api_key
+from backend.database import db
 from backend.database.models.coach import CoachModel, CoachSchema
 from flask_restplus import Resource, fields
-from backend.api import api
-from backend.database import db
 
 ns = api.namespace('coach', description='Operations related to bike entries.')
 coach_schema = CoachSchema()
@@ -25,11 +26,16 @@ coach_input_parameters = api.model('CoachInputParameters', {
 @ns.route('/')
 class CoachCollection(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
         """
         Returns a list the coach advices.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         coach_all_entries = CoachModel.query.all()
 
@@ -42,12 +48,17 @@ class CoachCollection(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(coach_input_parameters)
     @api.response(201, 'Coach advice successfully added.')
     def post(self):
         """
         Adds a coach advice.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -74,27 +85,37 @@ class CoachCollection(Resource):
 @api.response(404, 'Coach advice not found.')
 class CoachItem(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, "Coach advice with requested id successfully fetched.")
     def get(self, id_: str):
         """
         Returns a coach advice.
         """
 
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
+
         coach_entry = CoachModel.query.filter(CoachModel.coach_id == id_).one()
 
         coach_data = coach_schema.dump(coach_entry)
 
-        response = jsonify(bike_data)
+        response = jsonify(coach_data)
         response.status_code = 200
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(coach_input_parameters)
     @api.response(204, "Coach advice with requested id successfully updated.")
     def put(self, id_: str):
         """
         Updates a coach advice.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -118,11 +139,16 @@ class CoachItem(Resource):
 
         return None, 204
 
+    @api.doc(security='apikey')
     @api.response(204, "Coach advice entry with requested id successfully deleted.")
     def delete(self, id_: str):
         """
         Deletes a coach advice.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         coach_entry = CoachModel.query.filter(CoachModel.coach_id == id_).one()
 

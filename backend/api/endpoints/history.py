@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import jsonify, request
 from backend.api import api
+from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.history import HistoryModel, HistorySchema
 from backend.database.models.maintenance import MaintenanceSchema
@@ -45,11 +46,16 @@ history_query_parameters = api.model('HistoryQueryParameters', {
 @ns.route('/')
 class HistoryCollection(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, 'Maintenance history list successfully fetched.')
     def get(self):
         """
         Returns a list of all maintenance history entries.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         history_all_entries = HistoryModel.query.order_by(HistoryModel.datetime_display.desc()).all()
 
@@ -64,12 +70,17 @@ class HistoryCollection(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(history_input_parameters)
     @api.response(201, 'Maintenance history successfully added.')
     def post(self):
         """
         Adds a maintenance history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
         new_history = HistoryModel(
@@ -96,11 +107,16 @@ class HistoryCollection(Resource):
 @api.response(404, 'Maintenance history entry not found.')
 class HistoryItem(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, "Maintenance history with requested id successfully fetched.")
     def get(self, id_: str):
         """
         Returns a maintenance history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
 
@@ -112,12 +128,17 @@ class HistoryItem(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(history_input_parameters)
     @api.response(204, "History entry with requested id successfully updated.")
     def put(self, id_: str):
         """
         Updates a maintenance history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -141,11 +162,16 @@ class HistoryItem(Resource):
 
         return None, 204
 
+    @api.doc(security='apikey')
     @api.response(204, "History entry with requested id successfully deleted.")
     def delete(self, id_: str):
         """
         Deletes a maintenance history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
 
@@ -159,11 +185,16 @@ class HistoryItem(Resource):
 @api.response(404, 'Query parameters not found.')
 class HistoryQuery(Resource):
 
+    @api.doc(security='apikey')
     @api.expect(history_query_parameters)
     def post(self):
         """
         Returns a list of all maintenance history entries that match the query.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         requested = request.get_json()
         filter_by_data = {

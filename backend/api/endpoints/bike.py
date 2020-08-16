@@ -1,9 +1,10 @@
 from datetime import datetime
 from flask import jsonify, request
+from backend.api import api
+from backend.api.authentication.validation import validate_api_key
+from backend.database import db
 from backend.database.models.bike import BikeModel, BikeSchema
 from flask_restplus import Resource, fields
-from backend.api import api
-from backend.database import db
 
 ns = api.namespace('bike', description='Operations related to bike entries.')
 bike_schema = BikeSchema()
@@ -55,11 +56,16 @@ bike_input_parameters = api.model('BikeInputParameters', {
 @ns.route('/')
 class BikeCollection(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, 'Maintenance work list successfully fetched.')
     def get(self):
         """
         Returns a list the bike characteristics.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         bike_all_entries = BikeModel.query.all()
 
@@ -72,12 +78,17 @@ class BikeCollection(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(bike_input_parameters)
     @api.response(201, 'Bike successfully added.')
     def post(self):
         """
         Adds a bike entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -119,11 +130,16 @@ class BikeCollection(Resource):
 @api.response(404, 'Bike not found.')
 class BikeItem(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, "Bike with requested id successfully fetched.")
     def get(self, id_: str):
         """
         Returns a bike.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         bike_entry = BikeModel.query.filter(BikeModel.bike_id == id_).one()
 
@@ -134,12 +150,17 @@ class BikeItem(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(bike_input_parameters)
     @api.response(204, "Bike with requested id successfully updated.")
     def put(self, id_: str):
         """
         Updates a bike.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -193,11 +214,16 @@ class BikeItem(Resource):
 
         return None, 204
 
+    @api.doc(security='apikey')
     @api.response(204, "History entry with requested id successfully deleted.")
     def delete(self, id_: str):
         """
         Deletes a bike.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         bike_entry = BikeModel.query.filter(BikeModel.bike_id == id_).one()
 

@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import jsonify, request
 from backend.api import api
+from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.training import TrainingModel, TrainingSchema
 from backend.database.models.setup import SetupModel, SetupSchema
@@ -38,11 +39,16 @@ training_query_parameters = api.model('TrainingQueryParameters', {
 @ns.route('/')
 class TrainingCollection(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, 'Training history list successfully fetched.')
     def get(self):
         """
         Returns a list of all training history entries.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         training_all_entries = TrainingModel.query.order_by(TrainingModel.datetime_display.desc()).all()
 
@@ -61,12 +67,17 @@ class TrainingCollection(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(training_input_parameters)
     @api.response(201, 'Training history successfully added.')
     def post(self):
         """
         Adds a training history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
         new_training = TrainingModel(
@@ -90,11 +101,16 @@ class TrainingCollection(Resource):
 @api.response(404, 'Training history entry not found.')
 class TrainingItem(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, "Training history with requested id successfully fetched.")
     def get(self, id_: str):
         """
         Returns a training history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         training_entry = TrainingModel.query.filter(TrainingModel.training_id == id_).one()
 
@@ -111,12 +127,17 @@ class TrainingItem(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(training_input_parameters)
     @api.response(204, "Training entry with requested id successfully updated.")
     def put(self, id_: str):
         """
         Updates a training history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -136,11 +157,16 @@ class TrainingItem(Resource):
 
         return None, 204
 
+    @api.doc(security='apikey')
     @api.response(204, "History entry with requested id successfully deleted.")
     def delete(self, id_: str):
         """
         Deletes a training history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         training_entry = TrainingModel.query.filter(TrainingModel.training_id == id_).one()
 
@@ -154,11 +180,16 @@ class TrainingItem(Resource):
 @api.response(404, 'Query parameters not found.')
 class TrainingQuery(Resource):
 
+    @api.doc(security='apikey')
     @api.expect(training_query_parameters)
     def post(self):
         """
         Returns a list of all training entries that match the query.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         requested = request.get_json()
         filter_by_data = {

@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import jsonify, request
 from backend.api import api
+from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.setup import SetupModel, SetupSchema
 from backend.database.models.training import TrainingModel, TrainingSchema
@@ -40,11 +41,16 @@ setup_input_parameters = api.model('SetupInputParameters', {
 @ns.route('/')
 class SetupCollection(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, 'Setup list successfully fetched.')
     def get(self):
         """
         Returns a list of all setup entries.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         setup_all_entries = SetupModel.query.order_by(SetupModel.datetime_display.desc()).all()
 
@@ -59,12 +65,17 @@ class SetupCollection(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(setup_input_parameters)
     @api.response(201, 'Training history successfully added.')
     def post(self):
         """
         Adds a training history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
         new_setup = SetupModel(
@@ -96,11 +107,16 @@ class SetupCollection(Resource):
 @api.response(404, 'Setup entry not found.')
 class SetupItem(Resource):
 
+    @api.doc(security='apikey')
     @api.response(200, "Setup with requested id successfully fetched.")
     def get(self, id_: str):
         """
         Returns a setup entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         setup_entry = SetupModel.query.filter(SetupModel.setup_id == id_).one()
 
@@ -111,12 +127,17 @@ class SetupItem(Resource):
 
         return response
 
+    @api.doc(security='apikey')
     @api.expect(setup_input_parameters)
     @api.response(204, "Training entry with requested id successfully updated.")
     def put(self, id_: str):
         """
         Updates a training history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         inserted_data = request.get_json()
 
@@ -152,11 +173,16 @@ class SetupItem(Resource):
 
         return None, 204
 
+    @api.doc(security='apikey')
     @api.response(204, "Setup entry with requested id successfully deleted.")
     def delete(self, id_: str):
         """
         Deletes a training history entry.
         """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
 
         setup_entry = SetupModel.query.filter(SetupModel.setup_id == id_).one()
 
