@@ -65,15 +65,8 @@ export default new VueRouter({
       beforeEnter: ifAuthenticated,
     },
     {
-      path: '/api',
-      redirect: '/not-found',
-    },
-    {
       path: '*',
-      redirect: '/not-found',
-    },
-    {
-      path: '/not-found',
+      name: 'Page not found',
       component: NotFound,
       beforeEnter: ifAuthenticated,
     },

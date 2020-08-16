@@ -11,6 +11,8 @@ class Config(object):
     FLASK_ENV = os.getenv('FLASK_ENV')
     SECRET_KEY = os.getenv('FLASK_SECRET')
 
+    SWAGGER_SUPPORTED_SUBMIT_METHODS = os.getenv('SWAGGER_SUPPORTED_SUBMIT_METHODS')
+
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS')
     APP_DIR = os.path.dirname(__file__)

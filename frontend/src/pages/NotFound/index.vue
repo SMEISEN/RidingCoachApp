@@ -45,7 +45,7 @@
             dense
           >
             <p>
-              {{ `The requested URL was not found on this server.` }}
+              {{ `The requested URL ${$route.path} was not found on this server.` }}
             </p>
           </v-row>
           <v-row
@@ -65,6 +65,9 @@
 <script>
 export default {
   name: 'NotFound',
+  metaInfo: {
+    title: 'Page not found',
+  },
 };
 </script>
 

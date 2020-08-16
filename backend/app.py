@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from flask import Flask, Blueprint, current_app, send_file
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 from backend.api import api
 from backend.api.endpoints.maintenance import ns as maintenance_namespace
 from backend.api.endpoints.history import ns as history_namespace
@@ -15,7 +16,7 @@ from backend.api.endpoints.coach import CoachModel
 from backend.config import Config
 from backend.database import db, ma, migrate
 
-app = Flask(__name__, static_folder='../frontend/dist/static', template_folder="../frontend/dist")
+app = Flask(__name__, static_folder='../frontend/dist/static', template_folder='../frontend/dist')
 app.url_map.strict_slashes = False
 app.config.from_object(Config())
 
@@ -71,7 +72,6 @@ def create_tables():
 
 @app.cli.command(name='copy_maintenance_template')
 def copy_maintenance_template():
-
     with open('backend/database/templates/maintenance_model_template.json') as json_file:
         maintenance_template = json.load(json_file)
 
@@ -94,7 +94,6 @@ def copy_maintenance_template():
 
 @app.cli.command(name='copy_coach_template')
 def copy_coach_template():
-
     with open('backend/database/templates/coach_model_template.json') as json_file:
         coach_template = json.load(json_file)
 
