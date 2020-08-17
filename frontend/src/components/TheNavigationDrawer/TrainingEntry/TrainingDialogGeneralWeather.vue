@@ -151,8 +151,9 @@ export default {
               { type: 'measurement' },
             );
           }
+          const weatherCurrent = weatherMeasurement.splice(-1);
           [this.trainingFormObject.setup_fixed[this.training_setup_tab]
-            .weather_current] = weatherMeasurement.slice(-1);
+            .weather_current] = weatherCurrent;
           const currentUtcHour = resMeasurement.length + 1 + utcOffset;
           if (hourTo - currentUtcHour > 0) {
             apiGetWeatherForecast(this.location_object)
@@ -161,9 +162,11 @@ export default {
                 for (let i = 0; i < weatherForecast.length; i += 1) {
                   Object.assign(weatherForecast[i], { type: 'forecast' });
                 }
-                const weatherComplete = weatherMeasurement.concat(weatherForecast);
-                this.weather_array = weatherComplete;
-                this.trainingFormObject.weather = weatherComplete;
+                this.weather_array = weatherMeasurement
+                  .concat(weatherCurrent)
+                  .concat(weatherForecast);
+                this.trainingFormObject.weather = weatherMeasurement
+                  .concat(weatherForecast);
                 this.extractTemperature(weatherMeasurement.length - 1);
               })
               .catch((error) => {
