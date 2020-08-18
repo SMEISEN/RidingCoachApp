@@ -23,7 +23,7 @@ history_input_parameters = api.model('HistoryInputParameters', {
     "tags":
         fields.Raw(description="tags", required=False),
     "datetime_display":
-        fields.Float(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
 history_query_parameters = api.model('HistoryQueryParameters', {
     "bike_id":

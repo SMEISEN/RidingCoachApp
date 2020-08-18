@@ -18,7 +18,7 @@ training_input_parameters = api.model('TrainingInputParameters', {
     "weather_hourly":
         fields.Raw(description="hourly track weather data", required=False),
     "datetime_display":
-        fields.Float(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
 training_query_parameters = api.model('TrainingQueryParameters', {
     "location":

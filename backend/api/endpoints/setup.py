@@ -34,7 +34,7 @@ setup_input_parameters = api.model('SetupInputParameters', {
     "comment":
         fields.String(description="comment", required=False),
     "datetime_display":
-        fields.Float(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
 
 
