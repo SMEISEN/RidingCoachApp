@@ -4,13 +4,11 @@ from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.setup import SetupModel, SetupSchema
-from backend.database.models.training import TrainingModel, TrainingSchema
 from flask_restplus import Resource, fields
 from collections import defaultdict
 
 ns = api.namespace('setup', description='Operations related to bike setup entries.')
 setup_schema = SetupSchema()
-training_schema = TrainingSchema()
 
 setup_input_parameters = api.model('SetupInputParameters', {
     "training_id":
@@ -56,9 +54,8 @@ class SetupCollection(Resource):
 
         setup_entry_list = []
         for setup_entry in setup_all_entries:
-            training_data = training_schema.dump(setup_entry.training)
             setup_data = setup_schema.dump(setup_entry)
-            setup_entry_list.append({**training_data, **setup_data})
+            setup_entry_list.append(setup_data)
 
         response = jsonify(setup_entry_list)
         response.status_code = 200

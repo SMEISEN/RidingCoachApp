@@ -27,9 +27,10 @@ class SetupModel(db.Model):
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    bike = db.relationship('BikeModel', backref=db.backref('setups'))
-    training = db.relationship('TrainingModel',
-                               backref=db.backref('setups', order_by='SetupModel.datetime_display.asc()'))
+    bike = db.relationship(
+        'BikeModel', backref=db.backref('setups', order_by='SetupModel.datetime_display.asc()'))
+    training = db.relationship(
+        'TrainingModel', backref=db.backref('setups', order_by='SetupModel.datetime_display.asc()'))
 
     def __repr__(self):
         return f"Setup[" \
