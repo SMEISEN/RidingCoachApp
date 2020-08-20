@@ -1,1 +1,1 @@
-web: gunicorn backend.wsgi:app
+web: gunicorn --bind 0.0.0.0:${FLASK_PORT} backend.wsgi:app
