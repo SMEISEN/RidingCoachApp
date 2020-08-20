@@ -122,11 +122,17 @@ export default {
       }
     },
     initTrainingForm() {
+      initObject(this.training_form_object, null);
+      this.training_form_object.date = new Date().toISOString().substr(0, 10);
+      this.initTrainingFormSetup();
+      this.$store.commit('setTrainingDialogSetupPanel', 0);
+      this.$store.commit('setTrainingDialogSetupTabs', 1);
+      this.$store.commit('setTrainingDialogSetupActiveTab', 0);
+    },
+    initTrainingFormSetup() {
       const bikeIndex = indexOfObjectValueInArray(
         this.bike_array, this.$store.getters.getCurrentBikeId,
       );
-      initObject(this.training_form_object, null);
-      this.training_form_object.date = new Date().toISOString().substr(0, 10);
       this.training_form_object.setup_fixed = [];
       this.training_form_object.setup_fixed.push(this._.cloneDeep(this.setup_fixed_template));
       this.training_form_object.setup_fixed[0].time = new Date().toTimeString().substr(0, 5);
@@ -136,45 +142,47 @@ export default {
         this.training_form_object.setup_individual = [
           this._.cloneDeep(this.bike_array[bikeIndex].setup),
         ];
-        // eslint-disable-next-line prefer-destructuring
-        this.setup_individual_template = this.training_form_object.setup_individual[0];
+        [this.setup_individual_template] = this.training_form_object.setup_individual;
       } else {
         this.training_form_object.setup_individual = [];
       }
-      this.$store.commit('setTrainingDialogSetupPanel', 0);
-      this.$store.commit('setTrainingDialogSetupTabs', 1);
-      this.$store.commit('setTrainingDialogSetupActiveTab', 0);
     },
     compileTrainingData(data) {
-      const numberOfSetups = data.setups.length;
       this.training_form_object.training_id = data.training_id;
       this.training_form_object.race_track = data.location;
       this.training_form_object.date = this.$options.filters
         .formatDateTime(data.datetime_display).substring(0, 10);
-      this.training_form_object.setup_fixed = [];
-      this.$store.commit('setTrainingDialogSetupTabs', numberOfSetups);
-      this.$store.commit('setTrainingDialogSetupActiveTab', numberOfSetups - 1);
-      for (let i = 0; i < numberOfSetups; i += 1) {
-        this.training_form_object.setup_fixed.push(this._.cloneDeep(this.setup_fixed_template));
-        this.training_form_object.setup_fixed[i].setup_id = data
-          .setups[i].setup_id;
-        this.training_form_object.setup_fixed[i].comment = data
-          .setups[i].comment;
-        this.training_form_object.setup_fixed[i].time = this.$options.filters
-          .formatDateTime(data.setups[i].datetime_display).substring(11, 16);
-        this.training_form_object.setup_fixed[i].operating_hours = data
-          .setups[i].operating_hours;
-        this.training_form_object.setup_fixed[i].slick_pressure_front = data
-          .setups[i].slick_pressure_front;
-        this.training_form_object.setup_fixed[i].slick_pressure_rear = data
-          .setups[i].slick_pressure_rear;
-        this.training_form_object.setup_fixed[i].rain_pressure_front = data
-          .setups[i].rain_pressure_front;
-        this.training_form_object.setup_fixed[i].rain_pressure_rear = data
-          .setups[i].rain_pressure_rear;
-        this.training_form_object.setup_fixed[i].rain_pressure_rear = data
-          .setups[i].rain_pressure_rear;
-        this.$set(this.training_form_object.setup_individual, i, data.setups[i].setup);
+      const numberOfSetups = data.setups.length;
+      if (numberOfSetups > 0) {
+        this.training_form_object.setup_fixed = [];
+        this.$store.commit('setTrainingDialogSetupTabs', numberOfSetups);
+        this.$store.commit('setTrainingDialogSetupActiveTab', numberOfSetups - 1);
+        for (let i = 0; i < numberOfSetups; i += 1) {
+          this.training_form_object.setup_fixed.push(this._.cloneDeep(this.setup_fixed_template));
+          this.training_form_object.setup_fixed[i].setup_id = data
+            .setups[i].setup_id;
+          this.training_form_object.setup_fixed[i].comment = data
+            .setups[i].comment;
+          this.training_form_object.setup_fixed[i].time = this.$options.filters
+            .formatDateTime(data.setups[i].datetime_display).substring(11, 16);
+          this.training_form_object.setup_fixed[i].operating_hours = data
+            .setups[i].operating_hours;
+          this.training_form_object.setup_fixed[i].slick_pressure_front = data
+            .setups[i].slick_pressure_front;
+          this.training_form_object.setup_fixed[i].slick_pressure_rear = data
+            .setups[i].slick_pressure_rear;
+          this.training_form_object.setup_fixed[i].rain_pressure_front = data
+            .setups[i].rain_pressure_front;
+          this.training_form_object.setup_fixed[i].rain_pressure_rear = data
+            .setups[i].rain_pressure_rear;
+          this.training_form_object.setup_fixed[i].rain_pressure_rear = data
+            .setups[i].rain_pressure_rear;
+          this.$set(this.training_form_object.setup_individual, i, data.setups[i].setup);
+        }
+      } else {
+        this.initTrainingFormSetup();
+        this.$store.commit('setTrainingDialogSetupTabs', 1);
+        this.$store.commit('setTrainingDialogSetupActiveTab', 0);
       }
     },
   },
