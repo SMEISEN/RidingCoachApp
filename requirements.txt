@@ -1,6 +1,6 @@
 python-dotenv~=0.14.0
 flask~=1.1.2
-flask_sqlalchemy~=2.4.1
+flask_sqlalchemy~=2.4.3
 flask_marshmallow~=0.12.0
 flask_cors~=3.0.8
 flask_restplus~=0.13.0
@@ -14,3 +14,5 @@ psycopg2-binary~=2.8.5
 werkzeug==0.16.1
 click~=7.1.2
 alembic~=1.4.2
+ezodf~=0.3.2
+requests~=2.24.0

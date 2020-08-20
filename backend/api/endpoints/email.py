@@ -1,7 +1,6 @@
 from datetime import datetime
 import email
 from io import BytesIO
-import pandas as pd
 import ezodf
 import requests
 from flask import jsonify, request, current_app
