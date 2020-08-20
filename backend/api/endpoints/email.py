@@ -98,38 +98,35 @@ class EmailCollection(Resource):
                     }
                 }
                 current_training = requests.post(
-                    url='http://localhost:5000/api/training/query',
+                    url=f"http://{current_app.config['FLASK_BASE_URL']}/api/training/query",
                     json=training_query,
                     headers={'apikey': current_app.config['FLASK_RESTPLUS_API_KEY']},
                     allow_redirects=True
                 ).json()
                 if len(current_training) < 0:
                     current_training_id = current_training[0]['training_id']
-                    print(f"Using current training with id {current_training_id}")
                 else:
                     training_payload = {
                         'location': location_str,
                         'datetime_display': session_start_dt.timestamp(),
                     }
                     current_training_id = requests.post(
-                        url='http://localhost:5000/api/training',
+                        url=f"http://{current_app.config['FLASK_BASE_URL']}/api/training",
                         json=training_payload,
                         headers={'apikey': current_app.config['FLASK_RESTPLUS_API_KEY']},
                         allow_redirects=True,
                     ).json()
-                    print(f"Added training with id {current_training_id}")
                 session_payload = {
                     'training_id': current_training_id,
                     'application': application_str,
                     'datetime_display': session_start_dt.timestamp(),
                 }
                 current_session_id = requests.post(
-                    url='http://localhost:5000/api/session',
+                    url=f"http://{current_app.config['FLASK_BASE_URL']}/api/session",
                     json=session_payload,
                     headers={'apikey': current_app.config['FLASK_RESTPLUS_API_KEY']},
                     allow_redirects=True,
                 ).json()
-                print(f"Added session with id {current_session_id}")
 
                 for i, (lap_no, laptime_second, datetime_display)\
                         in enumerate(zip(lap_numbers, laptime_seconds, datetimes_display)):
@@ -144,9 +141,8 @@ class EmailCollection(Resource):
                         'datetime_display': datetime_display.timestamp(),
                     }
                     current_laptime_id = requests.post(
-                        url='http://localhost:5000/api/laptime',
+                        url=f"http://{current_app.config['FLASK_BASE_URL']}/api/laptime",
                         json=laptime_payload,
                         headers={'apikey': current_app.config['FLASK_RESTPLUS_API_KEY']},
                         allow_redirects=True,
                     ).json()
-                    print(f"Added laptime with id {current_laptime_id}")
