@@ -20,6 +20,6 @@ class Config(object):
     ROOT_DIR = os.path.dirname(APP_DIR)
     DIST_DIR = os.path.join(ROOT_DIR, 'frontend/dist')
 
-    FLASK_HOST = os.getenv('FLASK_HOST')
-    FLASK_PORT = os.getenv('FLASK_PORT')
-    FLASK_BASE_URL = f"{FLASK_HOST}:{FLASK_PORT}"
+    FLASK_HOST = os.getenv('HOST')
+    FLASK_PORT = os.getenv('PORT')
+    FLASK_BASE_URL = f"{HOST}:{PORT}"
