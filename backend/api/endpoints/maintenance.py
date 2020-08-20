@@ -121,8 +121,6 @@ class MaintenanceCollection(Resource):
             interval_unit=inserted_data.get('interval_unit'),
             interval_type=inserted_data.get('interval_type'),
             tags_default=inserted_data.get('tags_default'),
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
         )
         db.session.add(new_maintenance)
         db.session.commit()

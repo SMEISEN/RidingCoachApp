@@ -68,8 +68,6 @@ class CoachCollection(Resource):
             notes=inserted_data.get('notes'),
             questions=inserted_data.get('questions'),
             advice=inserted_data.get('advice'),
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
         )
 
         db.session.add(new_coach)

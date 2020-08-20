@@ -89,8 +89,6 @@ class HistoryCollection(Resource):
             operating_hours=inserted_data.get('operating_hours'),
             comment=inserted_data.get('comment'),
             tags=inserted_data.get('tags'),
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
             datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
         )
 

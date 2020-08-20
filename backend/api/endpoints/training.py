@@ -83,8 +83,6 @@ class TrainingCollection(Resource):
         new_training = TrainingModel(
             location=inserted_data.get('location'),
             weather_hourly=inserted_data.get('weather_hourly'),
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
             datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
         )
 

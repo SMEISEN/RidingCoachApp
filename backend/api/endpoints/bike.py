@@ -113,8 +113,6 @@ class BikeCollection(Resource):
             rain_rear_notes=inserted_data.get('rain_rear_notes'),
             rain_rear_pressure=inserted_data.get('rain_rear_pressure'),
             setup=inserted_data.get('setup'),
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
         )
 
         db.session.add(new_bike)
