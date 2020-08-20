@@ -11,6 +11,9 @@ from backend.api.endpoints.bike import ns as bike_namespace
 from backend.api.endpoints.training import ns as training_namespace
 from backend.api.endpoints.setup import ns as setup_namespace
 from backend.api.endpoints.coach import ns as coach_namespace
+from backend.api.endpoints.email import ns as email_namespace
+from backend.api.endpoints.session import ns as session_namespace
+from backend.api.endpoints.laptime import ns as laptime_namespace
 from backend.api.endpoints.maintenance import MaintenanceModel
 from backend.api.endpoints.coach import CoachModel
 from backend.config import Config
@@ -28,6 +31,9 @@ api.add_namespace(bike_namespace)
 api.add_namespace(training_namespace)
 api.add_namespace(setup_namespace)
 api.add_namespace(coach_namespace)
+api.add_namespace(email_namespace)
+api.add_namespace(session_namespace)
+api.add_namespace(laptime_namespace)
 
 app.register_blueprint(blueprint)
 
