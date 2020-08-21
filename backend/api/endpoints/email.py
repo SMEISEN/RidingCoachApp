@@ -68,15 +68,30 @@ class EmailCollection(Resource):
                         continue
                     for j, (cell_channels, cell_sectors) in enumerate(zip(row_channels, row_sectors)):
                         if j <= 3:
+                            cell_value = cell_channels.value
                             if j == 0:
-                                cell_value = int(cell_channels.value)
+                                cell_value = int(cell_value)
                             elif j == 1:
-                                cell_value = float(cell_channels.value.replace(',', '.'))
+                                if ':' in cell_value:
+                                    cell_value = cell_value.replace(',', '.')
+                                    cell_value = (datetime.strptime(cell_value, '%M:%S.%f') -
+                                                  datetime.strptime('00:00.0', '%M:%S.%f')).total_seconds()
+                                else:
+                                    cell_value = cell_value.replace(',', '.')
+                                    cell_value = (datetime.strptime(cell_value, '%S.%f') -
+                                                  datetime.strptime('00.0', '%S.%f')).total_seconds()
                             elif j == 2:
-                                cell_value = float(cell_channels.value.replace(',', '.').replace('+', ''))
+                                if ':' in cell_value:
+                                    cell_value = cell_value.replace(',', '.').replace('+', '')
+                                    cell_value = (datetime.strptime(cell_value, '%M:%S.%f') -
+                                                  datetime.strptime('00:00.0', '%M:%S.%f')).total_seconds()
+                                else:
+                                    cell_value = cell_value.replace(',', '.').replace('+', '')
+                                    cell_value = (datetime.strptime(cell_value, '%S.%f') -
+                                                  datetime.strptime('00.0', '%S.%f')).total_seconds()
                             elif j == 3:
                                 cell_value = datetime\
-                                    .strptime(f"{session_start_str[0:10]} {cell_channels.value}", '%d/%m/%Y %H:%M')
+                                    .strptime(f"{session_start_str[0:10]} {cell_value}", '%d/%m/%Y %H:%M')
                             else:
                                 cell_value = cell_channels.value
                             channels_dict[channels_col_index[j]].append(cell_value)
@@ -85,7 +100,14 @@ class EmailCollection(Resource):
                             if not cell_value.strip():
                                 cell_value = float(0)
                             else:
-                                cell_value = float(cell_value.replace(',', '.'))
+                                if ':' in cell_value:
+                                    cell_value = cell_value.replace(',', '.')
+                                    cell_value = (datetime.strptime(cell_value, '%M:%S.%f') -
+                                                  datetime.strptime('00:00.0', '%M:%S.%f')).total_seconds()
+                                else:
+                                    cell_value = cell_value.replace(',', '.')
+                                    cell_value = (datetime.strptime(cell_value, '%S.%f') -
+                                                  datetime.strptime('00.0', '%S.%f')).total_seconds()
                             sectors_dict[sectors_col_index[j]].append(cell_value)
                 lap_numbers = channels_dict.get('Lap')
                 laptime_seconds = channels_dict.get('Full')
