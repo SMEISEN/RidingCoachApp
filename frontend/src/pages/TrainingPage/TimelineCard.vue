@@ -13,11 +13,10 @@
         >
           {{ trainingItem.location }}
         </span>
-        <v-spacer />
         <TimelineCardTitleWeather
+          v-if="trainingItem.weather_daily !== null"
           :weather-daily="trainingItem.weather_daily"
         />
-        <v-spacer />
         <span
           style="font-size: 14px"
         >
@@ -34,6 +33,7 @@
         <div v-show="show_training">
           <v-card-text class="white text--primary pa-1">
             <TimelineCardWeather
+              v-if="trainingItem.weather_hourly !== null"
               :weather-array="trainingItem.weather_hourly"
             />
           </v-card-text>
