@@ -127,6 +127,8 @@ class EmailCollection(Resource):
                 ).json()
                 if len(current_training) > 0:
                     current_training_id = current_training[0]['training_id']
+                    current_bike_id = current_training.setups[-1]['bike_id']
+                    current_setup_id = current_training.setups[-1]['setup_id']
                 else:
                     training_payload = {
                         'location': location_str,
@@ -138,8 +140,12 @@ class EmailCollection(Resource):
                         headers={'apikey': current_app.config['FLASK_RESTPLUS_API_KEY']},
                         allow_redirects=True,
                     ).json()
+                    current_bike_id = None
+                    current_setup_id = None
                 session_payload = {
                     'training_id': current_training_id,
+                    'bike_id': current_bike_id,
+                    'setup_id': current_setup_id,
                     'application': application_str,
                     'datetime_display': session_start_dt.timestamp(),
                 }
@@ -152,6 +158,8 @@ class EmailCollection(Resource):
 
                 response = {
                     'session_id': current_session_id,
+                    'bike_id': current_bike_id,
+                    'setup_id': current_setup_id,
                     'laptime_ids': [],
                 }
                 for i, (lap_no, laptime_second, datetime_display)\
