@@ -125,7 +125,7 @@ class EmailCollection(Resource):
                     headers={'apikey': current_app.config['FLASK_RESTPLUS_API_KEY']},
                     allow_redirects=True
                 ).json()
-                if len(current_training) < 0:
+                if len(current_training) > 0:
                     current_training_id = current_training[0]['training_id']
                 else:
                     training_payload = {
@@ -150,6 +150,10 @@ class EmailCollection(Resource):
                     allow_redirects=True,
                 ).json()
 
+                response = {
+                    'session_id': current_session_id,
+                    'laptime_ids': [],
+                }
                 for i, (lap_no, laptime_second, datetime_display)\
                         in enumerate(zip(lap_numbers, laptime_seconds, datetimes_display)):
                     sectors = {}
@@ -168,3 +172,6 @@ class EmailCollection(Resource):
                         headers={'apikey': current_app.config['FLASK_RESTPLUS_API_KEY']},
                         allow_redirects=True,
                     ).json()
+                    response['laptime_ids'].append(current_laptime_id)
+
+                return response
