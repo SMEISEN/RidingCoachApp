@@ -52,11 +52,17 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <span class="white--text">{{ index + 1 }}</span>
+                <span class="white--text">
+                  {{ index + 1 }}
+                </span>
               </v-avatar>
             </template>
-            <span>{{ setup_item.datetime_display | formatTime }}</span>
-            <span v-if="setup_item.comment !== null">{{ ' - ' + setup_item.comment }}</span>
+            <span>
+              {{ setup_item.datetime_display | formatTime }}
+            </span>
+            <span v-if="setup_item.comment !== null">
+              {{ ' - ' + setup_item.comment }}
+            </span>
           </v-tooltip>
         </td>
         <td
@@ -78,10 +84,14 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <span class="white--text">{{ setup_item.slick_pressure_front }}</span>
+                <span class="white--text">
+                  {{ setup_item.slick_pressure_front }}
+                </span>
               </v-avatar>
             </template>
-            <span>{{ 'Pressure of front slick tire' }}</span>
+            <span>
+              {{ 'Pressure of front slick tire' }}
+            </span>
           </v-tooltip>
           <v-tooltip
             v-if="setup_item.slick_pressure_rear !== null"
@@ -101,7 +111,9 @@
                 <span class="white--text">{{ setup_item.slick_pressure_rear }}</span>
               </v-avatar>
             </template>
-            <span>{{ 'Pressure of rear slick tire' }}</span>
+            <span>
+              {{ 'Pressure of rear slick tire' }}
+            </span>
           </v-tooltip>
           <v-tooltip
             v-if="setup_item.rain_pressure_front !== null"
@@ -118,10 +130,14 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <span class="white--text">{{ setup_item.rain_pressure_front }}</span>
+                <span class="white--text">
+                  {{ setup_item.rain_pressure_front }}
+                </span>
               </v-avatar>
             </template>
-            <span>{{ 'Pressure of front rain tire' }}</span>
+            <span>
+              {{ 'Pressure of front rain tire' }}
+            </span>
           </v-tooltip>
           <v-tooltip
             v-if="setup_item.rain_pressure_rear !== null"
@@ -138,10 +154,14 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <span class="white--text">{{ setup_item.rain_pressure_rear }}</span>
+                <span class="white--text">
+                  {{ setup_item.rain_pressure_rear }}
+                </span>
               </v-avatar>
             </template>
-            <span>{{ 'Pressure of rear rain tire' }}</span>
+            <span>
+              {{ 'Pressure of rear rain tire' }}
+            </span>
           </v-tooltip>
         </td>
         <td
@@ -164,10 +184,15 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <span class="white--text">{{ suspension_setup.ticks_current }}</span>
+                  <span class="white--text">
+                    {{ suspension_setup.ticks_current }}
+                  </span>
                 </v-avatar>
               </template>
-              <span>{{ `${suspension_setup.group} ${suspension_setup.name}` }}</span>
+              <span>
+                {{ `${suspension_setup.group === null ? '' : suspension_setup.group}` }}
+                {{ ` ${suspension_setup.name === null ? '' : suspension_setup.name}` }}
+              </span>
             </v-tooltip>
           </span>
         </td>
@@ -187,10 +212,14 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                <span class="white--text">{{ setup_item.operating_hours }}</span>
+                <span class="white--text">
+                  {{ setup_item.operating_hours }}
+                </span>
               </v-avatar>
             </template>
-            <span>{{ 'Engine operating hours' }}</span>
+            <span>
+              {{ 'Engine operating hours' }}
+            </span>
           </v-tooltip>
           <span
             v-for="(engine_setup) in engine_setups(index)"
@@ -208,10 +237,15 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <span class="white--text">{{ engine_setup.ticks_current }}</span>
+                  <span class="white--text">
+                    {{ engine_setup.ticks_current }}
+                  </span>
                 </v-avatar>
               </template>
-              <span>{{ `${engine_setup.group} ${engine_setup.name}` }}</span>
+              <span>
+                {{ `${engine_setup.group === null ? '' : engine_setup.group}` }}
+                {{ ` ${engine_setup.name === null ? '' : engine_setup.name}` }}
+              </span>
             </v-tooltip>
           </span>
         </td>
