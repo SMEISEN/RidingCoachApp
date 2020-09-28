@@ -184,20 +184,24 @@ export default {
           trainingArraySorted.push(helperArray);
           helperArray = [];
         }
-        this.$set(trainingArray[i], 'weather_daily', [
-          {
-            weather_code: trainingArray[i].weather_hourly[2].weather_code.value,
-            temp: trainingArray[i].weather_hourly[2].temp.value,
-          },
-          {
-            weather_code: trainingArray[i].weather_hourly[5].weather_code.value,
-            temp: trainingArray[i].weather_hourly[5].temp.value,
-          },
-          {
-            weather_code: trainingArray[i].weather_hourly[8].weather_code.value,
-            temp: trainingArray[i].weather_hourly[8].temp.value,
-          },
-        ]);
+        if (trainingArray[i].weather_hourly !== null) {
+          this.$set(trainingArray[i], 'weather_daily', [
+            {
+              weather_code: trainingArray[i].weather_hourly[2].weather_code.value,
+              temp: trainingArray[i].weather_hourly[2].temp.value,
+            },
+            {
+              weather_code: trainingArray[i].weather_hourly[5].weather_code.value,
+              temp: trainingArray[i].weather_hourly[5].temp.value,
+            },
+            {
+              weather_code: trainingArray[i].weather_hourly[8].weather_code.value,
+              temp: trainingArray[i].weather_hourly[8].temp.value,
+            },
+          ]);
+        } else {
+          this.$set(trainingArray[i], 'weather_daily', []);
+        }
         helperArray.push(trainingArray[i]);
         lastDate = thisDate;
       }
