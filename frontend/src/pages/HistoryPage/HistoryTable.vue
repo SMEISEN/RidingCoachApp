@@ -21,7 +21,7 @@
             Date
           </th>
           <th
-            class="text-left"
+            class="button"
             style="min-width: 140px"
           >
             Tags
@@ -29,7 +29,7 @@
           <th class="text-left">
             Comment
           </th>
-          <th />
+          <th class="button" />
         </tr>
       </thead>
       <tbody>
@@ -61,15 +61,15 @@
                 bottom
               >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    icon
+                  <v-avatar
+                    size="32"
                     v-bind="attrs"
                     v-on="on"
                   >
                     <v-icon color="success">
                       mdi-check-circle-outline
                     </v-icon>
-                  </v-btn>
+                  </v-avatar>
                 </template>
                 <span>{{ 'checked' }}</span>
               </v-tooltip>
@@ -78,15 +78,15 @@
                 bottom
               >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    icon
+                  <v-avatar
+                    size="32"
                     v-bind="attrs"
                     v-on="on"
                   >
                     <v-icon color="warning">
                       mdi-progress-wrench
                     </v-icon>
-                  </v-btn>
+                  </v-avatar>
                 </template>
                 <span>{{ 'fixed' }}</span>
               </v-tooltip>
@@ -95,15 +95,15 @@
                 bottom
               >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    icon
+                  <v-avatar
+                    size="32"
                     v-bind="attrs"
                     v-on="on"
                   >
                     <v-icon color="error">
                       mdi-refresh
                     </v-icon>
-                  </v-btn>
+                  </v-avatar>
                 </template>
                 <span>{{ 'replaced' }}</span>
               </v-tooltip>
