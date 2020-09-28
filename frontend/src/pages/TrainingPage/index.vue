@@ -187,14 +187,17 @@ export default {
         if (trainingArray[i].weather_hourly !== null) {
           this.$set(trainingArray[i], 'weather_daily', [
             {
+              observation_time: trainingArray[i].weather_hourly[2].observation_time.value,
               weather_code: trainingArray[i].weather_hourly[2].weather_code.value,
               temp: trainingArray[i].weather_hourly[2].temp.value,
             },
             {
+              observation_time: trainingArray[i].weather_hourly[5].observation_time.value,
               weather_code: trainingArray[i].weather_hourly[5].weather_code.value,
               temp: trainingArray[i].weather_hourly[5].temp.value,
             },
             {
+              observation_time: trainingArray[i].weather_hourly[8].observation_time.value,
               weather_code: trainingArray[i].weather_hourly[8].weather_code.value,
               temp: trainingArray[i].weather_hourly[8].temp.value,
             },
