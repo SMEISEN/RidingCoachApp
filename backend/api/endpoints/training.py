@@ -5,12 +5,16 @@ from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.training import TrainingModel, TrainingSchema
 from backend.database.models.setup import SetupModel, SetupSchema
+from backend.database.models.session import SessionModel, SessionSchema
+from backend.database.models.laptime import LaptimeModel, LaptimeSchema
 from flask_restplus import Resource, fields
 from collections import defaultdict
 
 ns = api.namespace('training', description='Operations related to training entries.')
 training_schema = TrainingSchema()
 setup_schema = SetupSchema()
+session_schema = SessionSchema()
+laptime_schema = LaptimeSchema()
 
 training_input_parameters = api.model('TrainingInputParameters', {
     "location":
@@ -55,11 +59,21 @@ class TrainingCollection(Resource):
         training_entry_list = []
         for training_entry in training_all_entries:
             setup_data = setup_schema.dump(training_entry.setups, many=True)
+            session_data = session_schema.dump(training_entry.sessions, many=True)
             training_data = training_schema.dump(training_entry)
             training_data['setups'] = []
             if len(setup_data) > 0:
                 for setup_entry in setup_data:
                     training_data['setups'].append(setup_entry)
+            training_data['sessions'] = []
+            if len(session_data) > 0:
+                for session_entry in session_data:
+                    laptime_data = SessionModel.query\
+                        .filter(SessionModel.session_id == session_entry['session_id']).all()
+                    session_entry['laptimes'] = []
+                    for laptime_entry in laptime_data:
+                        session_entry['laptimes'].append(laptime_schema.dump(laptime_entry.laptimes, many=True))
+                    training_data['sessions'].append(session_entry)
             training_entry_list.append(training_data)
 
         response = jsonify(training_entry_list)
@@ -114,11 +128,20 @@ class TrainingItem(Resource):
 
         training_data = training_schema.dump(training_entry)
         setup_data = setup_schema.dump(training_entry.setups, many=True)
+        session_data = session_schema.dump(training_entry.sessions, many=True)
 
         training_data['setups'] = []
         if len(setup_data) > 0:
             for setup_entry in setup_data:
                 training_data['setups'].append(setup_entry)
+        training_data['sessions'] = []
+        if len(session_data) > 0:
+            for session_entry in session_data:
+                laptime_data = SessionModel.query.filter(SessionModel.session_id == session_entry['session_id']).all()
+                session_entry['laptimes'] = []
+                for laptime_entry in laptime_data:
+                    session_entry['laptimes'].append(laptime_schema.dump(laptime_entry.laptimes, many=True))
+                training_data['sessions'].append(session_entry)
 
         response = jsonify(training_data)
         response.status_code = 200
