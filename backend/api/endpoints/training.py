@@ -59,21 +59,18 @@ class TrainingCollection(Resource):
         training_entry_list = []
         for training_entry in training_all_entries:
             setup_data = setup_schema.dump(training_entry.setups, many=True)
-            session_data = session_schema.dump(training_entry.sessions, many=True)
             training_data = training_schema.dump(training_entry)
             training_data['setups'] = []
             if len(setup_data) > 0:
                 for setup_entry in setup_data:
+                    session_data = SessionModel.query.filter(SessionModel.setup_id == setup_entry['setup_id']).all()
+                    setup_entry['sessions'] = []
+                    if len(session_data) > 0:
+                        for session_entry in session_data:
+                            session = session_schema.dump(session_entry)
+                            session['laptimes'] = laptime_schema.dump(session_entry.laptimes, many=True)
+                            setup_entry['sessions'].append(session)
                     training_data['setups'].append(setup_entry)
-            training_data['sessions'] = []
-            if len(session_data) > 0:
-                for session_entry in session_data:
-                    laptime_data = SessionModel.query\
-                        .filter(SessionModel.session_id == session_entry['session_id']).all()
-                    session_entry['laptimes'] = []
-                    for laptime_entry in laptime_data:
-                        session_entry['laptimes'].append(laptime_schema.dump(laptime_entry.laptimes, many=True))
-                    training_data['sessions'].append(session_entry)
             training_entry_list.append(training_data)
 
         response = jsonify(training_entry_list)
@@ -128,20 +125,18 @@ class TrainingItem(Resource):
 
         training_data = training_schema.dump(training_entry)
         setup_data = setup_schema.dump(training_entry.setups, many=True)
-        session_data = session_schema.dump(training_entry.sessions, many=True)
 
         training_data['setups'] = []
         if len(setup_data) > 0:
             for setup_entry in setup_data:
+                session_data = SessionModel.query.filter(SessionModel.setup_id == setup_entry['setup_id']).all()
+                setup_entry['sessions'] = []
+                if len(session_data) > 0:
+                    for session_entry in session_data:
+                        session = session_schema.dump(session_entry)
+                        session['laptimes'] = laptime_schema.dump(session_entry.laptimes, many=True)
+                        setup_entry['sessions'].append(session)
                 training_data['setups'].append(setup_entry)
-        training_data['sessions'] = []
-        if len(session_data) > 0:
-            for session_entry in session_data:
-                laptime_data = SessionModel.query.filter(SessionModel.session_id == session_entry['session_id']).all()
-                session_entry['laptimes'] = []
-                for laptime_entry in laptime_data:
-                    session_entry['laptimes'].append(laptime_schema.dump(laptime_entry.laptimes, many=True))
-                training_data['sessions'].append(session_entry)
 
         response = jsonify(training_data)
         response.status_code = 200
@@ -265,6 +260,13 @@ class TrainingQuery(Resource):
             training_data['setups'] = []
             if len(setup_data) > 0:
                 for setup_entry in setup_data:
+                    session_data = SessionModel.query.filter(SessionModel.setup_id == setup_entry['setup_id']).all()
+                    setup_entry['sessions'] = []
+                    if len(session_data) > 0:
+                        for session_entry in session_data:
+                            session = session_schema.dump(session_entry)
+                            session['laptimes'] = laptime_schema.dump(session_entry.laptimes, many=True)
+                            setup_entry['sessions'].append(session)
                     training_data['setups'].append(setup_entry)
             training_entry_list.append(training_data)
 
