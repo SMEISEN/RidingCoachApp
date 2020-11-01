@@ -5,6 +5,9 @@ import uniq from 'lodash/uniq';
 import map from 'lodash/map';
 import mapValues from 'lodash/mapValues';
 import orderBy from 'lodash/orderBy';
+import flatten from 'lodash/flatten';
+import mean from 'lodash/mean';
+import min from 'lodash/min';
 
 Vue.use(VueLodash, {
   lodash: {
@@ -13,6 +16,9 @@ Vue.use(VueLodash, {
     map,
     mapValues,
     orderBy,
+    flatten,
+    mean,
+    min,
   },
 });
 

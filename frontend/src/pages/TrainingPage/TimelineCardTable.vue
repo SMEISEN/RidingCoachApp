@@ -35,6 +35,11 @@
         >
           Engine
         </th>
+        <th
+          class="text-left"
+        >
+          Laptimes
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -249,6 +254,59 @@
             </v-tooltip>
           </span>
         </td>
+        <td
+          v-if="setup_item.operating_hours !== null"
+          style="font-size: 12px"
+        >
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                color="info darken-1"
+                text-color="white"
+                small
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon
+                  class="pr-1 ml-n1"
+                  small
+                >
+                  mdi-diameter-variant
+                </v-icon>
+                <span class="white--text">
+                  {{ average_laptime(index) }}
+                </span>
+              </v-chip>
+            </template>
+            <span>
+              {{ 'Average laptime' }}
+            </span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                color="error darken-2"
+                text-color="white"
+                small
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon
+                  class="pr-1 ml-n1"
+                  small
+                >
+                  mdi-fire
+                </v-icon>
+                <span class="white--text">
+                  {{ min_laptime(index) }}
+                </span>
+              </v-chip>
+            </template>
+            <span>
+              {{ 'Fastet laptime' }}
+            </span>
+          </v-tooltip>
+        </td>
       </tr>
     </tbody>
   </v-simple-table>
@@ -344,6 +402,37 @@ export default {
         }
       }
       return [];
+    },
+    laptimes(index) {
+      if (Object.keys(this.trainingItem).includes('setups')) {
+        if (this.trainingItem.setups.length > 0) {
+          if (this.trainingItem.setups[index].sessions.length > 0) {
+            const sessions = [];
+            for (let i = 0; i < this.trainingItem.setups[index].sessions.length; i += 1) {
+              sessions.push(
+                this.trainingItem.setups[index].sessions[i].laptimes
+                  .map((a) => a.laptime_seconds),
+              );
+            }
+            return sessions;
+          }
+        }
+      }
+      return [];
+    },
+    average_laptime(index) {
+      const flattenLaptimes = this._.flatten(this.laptimes(index));
+      if (flattenLaptimes.length > 0) {
+        return this._.mean(flattenLaptimes).toFixed(2);
+      }
+      return NaN;
+    },
+    min_laptime(index) {
+      const flattenLaptimes = this._.flatten(this.laptimes(index));
+      if (flattenLaptimes.length > 0) {
+        return this._.min(this._.flatten(flattenLaptimes)).toFixed(2);
+      }
+      return NaN;
     },
   },
 };
