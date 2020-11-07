@@ -50,6 +50,7 @@ export default {
         },
       ],
       setup_individual: [],
+      sessions: [],
     },
     setup_fixed_template: {
       setup_id: null,

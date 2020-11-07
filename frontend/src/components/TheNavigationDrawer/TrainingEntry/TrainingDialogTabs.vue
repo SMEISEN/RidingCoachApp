@@ -6,15 +6,15 @@
       dark
     >
       <v-tab
-        v-for="tab_index in training_setup_tabs"
-        :key="'tab/' + tab_index"
+        v-for="training_tab_index in training_setup_tabs"
+        :key="'tab/' + training_tab_index"
         @click="$forceUpdate()"
       >
-        Setup {{ tab_index }}
+        Setup {{ training_tab_index }}
       </v-tab>
       <v-tab-item
-        v-for="tab_item_index in training_setup_tabs"
-        :key="'tab-item/' + tab_item_index"
+        v-for="training_tab_item_index in training_setup_tabs"
+        :key="'tab-item/' + training_tab_item_index"
       >
         <v-card class="px-2">
           <v-btn
@@ -96,19 +96,19 @@
           focusable
         >
           <TrainingDialogTabsEngine
-            :tab-item-index="tab_item_index-1"
+            :tab-item-index="training_tab_item_index-1"
             :training-form-object="trainingFormObject"
           />
           <TrainingDialogTabsTires
-            :tab-item-index="tab_item_index-1"
+            :tab-item-index="training_tab_item_index-1"
             :training-form-object="trainingFormObject"
           />
           <TrainingDialogTabsSetup
-            :tab-item-index="tab_item_index-1"
+            :tab-item-index="training_tab_item_index-1"
             :training-form-object="trainingFormObject"
           />
           <TrainingDialogTabsElectronic
-            :tab-item-index="tab_item_index-1"
+            :tab-item-index="training_tab_item_index-1"
             :training-form-object="trainingFormObject"
           />
         </v-expansion-panels>
@@ -117,10 +117,35 @@
         depressed
         height="47px"
         color="secondary"
-        @click.prevent="addTab()"
+        @click.prevent="addSetupTab()"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
+    </v-tabs>
+    <v-tabs
+      v-model="training_session_tab"
+      background-color="secondary"
+      dark
+    >
+      <v-tab
+        v-for="session_tab_index in training_session_tabs"
+        :key="'tab/' + session_tab_index"
+        @click="$forceUpdate()"
+      >
+        Session {{ session_tab_index }}
+      </v-tab>
+      <v-tab-item
+        v-for="session_tab_item_index in training_setup_tabs"
+        :key="'tab-item/' + session_tab_item_index"
+      >
+        <v-card class="px-2">
+          empty
+          <TrainingDialogTabsLaptimes
+            :tab-item-index="session_tab_item_index-1"
+            :training-form-object="trainingFormObject"
+          />
+        </v-card>
+      </v-tab-item>
     </v-tabs>
     <ConfirmDeleteDialog
       :flagged-for-deletion="'setup entry'"
@@ -139,6 +164,7 @@ import TrainingDialogTabsEngine from './TrainingDialogTabsEngine.vue';
 import TrainingDialogTabsTires from './TrainingDialogTabsTires.vue';
 import TrainingDialogTabsSetup from './TrainingDialogTabsSetup.vue';
 import TrainingDialogTabsElectronic from './TrainingDialogTabsElectronic.vue';
+import TrainingDialogTabsLaptimes from './TrainingDialogTabsLaptimes.vue';
 import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
 import InfoDialog from '../../common/InfoDialog.vue';
 import { apiDeleteSetupItem } from '../../api/SetupApi';
@@ -152,6 +178,7 @@ export default {
     TrainingDialogTabsSetup,
     TrainingDialogTabsTires,
     TrainingDialogTabsEngine,
+    TrainingDialogTabsLaptimes,
   },
   props: {
     setupFixedTemplate: {
@@ -198,6 +225,22 @@ export default {
         this.$store.commit('setTrainingDialogSetupActiveTab', value);
       },
     },
+    training_session_tabs: {
+      get() {
+        return this.$store.getters.getTrainingDialogSessionTabs;
+      },
+      set(value) {
+        this.$store.commit('setTrainingDialogSessionTabs', value);
+      },
+    },
+    training_session_tab: {
+      get() {
+        return this.$store.getters.getTrainingDialogSessionActiveTab;
+      },
+      set(value) {
+        this.$store.commit('setTrainingDialogSessionActiveTab', value);
+      },
+    },
     training_dialog() {
       return this.$store.getters.getTrainingDialogState;
     },
@@ -207,7 +250,7 @@ export default {
   created() {
   },
   methods: {
-    addTab() {
+    addSetupTab() {
       const numberOfTabs = this.trainingFormObject.setup_fixed.length - 1;
       this.trainingFormObject.setup_fixed
         .push(this._.cloneDeep(this.trainingFormObject.setup_fixed[numberOfTabs]));
@@ -228,6 +271,14 @@ export default {
     },
     onSetupDelete() {
       const currentTab = this.training_setup_tab;
+      if (currentTab !== 0) {
+        this.confirm_delete_dialog = true;
+      } else {
+        this.info_dialog = true;
+      }
+    },
+    onSessionDelete() {
+      const currentTab = this.training_session_tab;
       if (currentTab !== 0) {
         this.confirm_delete_dialog = true;
       } else {

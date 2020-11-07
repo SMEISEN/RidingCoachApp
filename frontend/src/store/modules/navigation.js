@@ -9,6 +9,8 @@ const getDefaultState = () => ({
   training_setup_panel: 0,
   training_setup_tabs: 1,
   training_setup_tab: 0,
+  training_session_tabs: 1,
+  training_session_tab: 0,
 });
 const state = getDefaultState();
 const getters = {
@@ -20,6 +22,8 @@ const getters = {
   getTrainingDialogSetupPanel: (state) => state.training_setup_panel,
   getTrainingDialogSetupTabs: (state) => state.training_setup_tabs,
   getTrainingDialogSetupActiveTab: (state) => state.training_setup_tab,
+  getTrainingDialogSessionTabs: (state) => state.training_session_tabs,
+  getTrainingDialogSessionActiveTab: (state) => state.training_session_tab,
 };
 const mutations = {
   setNavigationDrawerState(state, drawerState) {
@@ -45,6 +49,12 @@ const mutations = {
   },
   setTrainingDialogSetupActiveTab(state, activeTab) {
     state.training_setup_tab = activeTab;
+  },
+  setTrainingDialogSessionTabs(state, activeTab) {
+    state.training_session_tabs = activeTab;
+  },
+  setTrainingDialogSessionActiveTab(state, activeTab) {
+    state.training_session_tab = activeTab;
   },
   resetNavigationState(state) {
     Object.assign(state, getDefaultState());
