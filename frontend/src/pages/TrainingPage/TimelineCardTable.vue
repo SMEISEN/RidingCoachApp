@@ -215,7 +215,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-avatar
-                color="primary"
+                color="info"
                 size="24"
                 v-bind="attrs"
                 v-on="on"
@@ -264,7 +264,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-chip
-                color="info darken-1"
+                color="info"
                 text-color="white"
                 small
                 v-bind="attrs"
@@ -288,7 +288,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-chip
-                color="error darken-2"
+                color="error darken-1"
                 text-color="white"
                 small
                 v-bind="attrs"
