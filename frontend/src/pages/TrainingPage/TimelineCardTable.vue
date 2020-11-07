@@ -1,18 +1,20 @@
 <template>
   <v-simple-table
+    v-if="Object.keys(trainingItem).includes('setups')"
     light
     dense
   >
     <thead>
       <tr>
         <th
+          v-if="trainingItem.setups.length > 0"
           class="text-left"
           style="width: 24px"
         >
           Setup
         </th>
         <th
-          v-if="tire_setups(0)"
+          v-if="tire_setups(0).length > 0"
           class="text-left"
         >
           Tires
@@ -36,6 +38,7 @@
           Engine
         </th>
         <th
+          v-if="laptimes(0).length > 0"
           class="text-left"
         >
           Laptimes
