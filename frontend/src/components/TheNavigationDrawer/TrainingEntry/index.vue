@@ -76,6 +76,7 @@ export default {
     },
   },
   updated() {
+    console.log(this.training_form_object);
   },
   created() {
     this.$store.subscribe((mutation) => {
@@ -154,6 +155,7 @@ export default {
       this.training_form_object.date = this.$options.filters
         .formatDateTime(data.datetime_display).substring(0, 10);
       const numberOfSetups = data.setups.length;
+      let numberOfSessions = 0;
       if (numberOfSetups > 0) {
         this.training_form_object.setup_fixed = [];
         this.$store.commit('setTrainingDialogSetupTabs', numberOfSetups);
@@ -179,12 +181,18 @@ export default {
           this.training_form_object.setup_fixed[i].rain_pressure_rear = data
             .setups[i].rain_pressure_rear;
           this.$set(this.training_form_object.setup_individual, i, data.setups[i].setup);
+          const { sessions } = data.setups[i];
+          sessions.map((o) => Object.assign(o, { setup_no: i + 1 }));
+          this.training_form_object.sessions.push(...sessions);
+          numberOfSessions += data.setups[i].sessions.length;
         }
       } else {
         this.initTrainingFormSetup();
         this.$store.commit('setTrainingDialogSetupTabs', 1);
         this.$store.commit('setTrainingDialogSetupActiveTab', 0);
       }
+      this.$store.commit('setTrainingDialogSessionTabs', numberOfSessions);
+      this.$store.commit('setTrainingDialogSessionActiveTab', numberOfSessions - 1);
     },
   },
 };

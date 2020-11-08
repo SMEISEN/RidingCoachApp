@@ -122,31 +122,54 @@
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </v-tabs>
-    <v-tabs
-      v-model="training_session_tab"
-      background-color="secondary"
+    <v-card
+      color="secondary"
       dark
     >
-      <v-tab
-        v-for="session_tab_index in training_session_tabs"
-        :key="'tab/' + session_tab_index"
-        @click="$forceUpdate()"
+      <v-card-title
+        style="height: 50px"
+        class="pl-4 py-0 pr-2"
+        @click="training_session_panel = !training_session_panel"
       >
-        Session {{ session_tab_index }}
-      </v-tab>
-      <v-tab-item
-        v-for="session_tab_item_index in training_setup_tabs"
-        :key="'tab-item/' + session_tab_item_index"
-      >
-        <v-card class="px-2">
-          empty
-          <TrainingDialogTabsLaptimes
-            :tab-item-index="session_tab_item_index-1"
-            :training-form-object="trainingFormObject"
-          />
-        </v-card>
-      </v-tab-item>
-    </v-tabs>
+        <span
+          style="font-size: 16px"
+        >
+          Laptimes
+        </span>
+        <v-spacer />
+        <v-avatar
+          icon
+        >
+          <v-icon>{{ training_session_panel ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+        </v-avatar>
+      </v-card-title>
+      <v-expand-transition>
+        <div v-show="training_session_panel">
+          <v-tabs
+            v-model="training_session_tab"
+            background-color="secondary"
+            dark
+            vertical
+          >
+            <v-tab
+              v-for="session_tab_index in training_session_tabs"
+              :key="'tab/' + session_tab_index"
+              @click="$forceUpdate()"
+            >
+              Session {{ session_tab_index }}
+            </v-tab>
+            <v-tab-item
+              v-for="session_tab_item_index in training_session_tabs"
+              :key="'tab-item/' + session_tab_item_index"
+            >
+              <TrainingDialogTabsLaptimes
+                :session-object="trainingFormObject.sessions[session_tab_item_index-1]"
+              />
+            </v-tab-item>
+          </v-tabs>
+        </div>
+      </v-expand-transition>
+    </v-card>
     <ConfirmDeleteDialog
       :flagged-for-deletion="'setup entry'"
       :confirm-delete-dialog.sync="confirm_delete_dialog"
@@ -239,6 +262,14 @@ export default {
       },
       set(value) {
         this.$store.commit('setTrainingDialogSessionActiveTab', value);
+      },
+    },
+    training_session_panel: {
+      get() {
+        return this.$store.getters.getTrainingDialogSessionPanel;
+      },
+      set(value) {
+        this.$store.commit('setTrainingDialogSessionPanel', value);
       },
     },
     training_dialog() {
