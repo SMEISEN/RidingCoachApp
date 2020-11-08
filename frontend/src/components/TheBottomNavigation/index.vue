@@ -4,7 +4,6 @@
     app
     grow
     dark
-    shift
     background-color="primary"
   >
     <v-btn
@@ -22,7 +21,19 @@
       to="/maintenance"
     >
       <span>Maintenance</span>
-      <v-icon>
+      <v-badge
+        v-if="maintenance_message === true"
+        color="red"
+        overlap
+      >
+        <template v-slot:badge>
+          1
+        </template>
+        <v-icon>
+          mdi-wrench
+        </v-icon>
+      </v-badge>
+      <v-icon v-else>
         mdi-wrench
       </v-icon>
     </v-btn>
@@ -31,7 +42,19 @@
       to="/spareparts"
     >
       <span>Spare Parts</span>
-      <v-icon>
+      <v-badge
+        v-if="spareparts_message === true"
+        color="red"
+        overlap
+      >
+        <template v-slot:badge>
+          1
+        </template>
+        <v-icon>
+          mdi-medical-bag
+        </v-icon>
+      </v-badge>
+      <v-icon v-else>
         mdi-medical-bag
       </v-icon>
     </v-btn>
@@ -61,6 +84,8 @@ export default {
   name: 'TheBottomNavigation',
   data: () => ({
     current_page: null,
+    maintenance_message: false,
+    spareparts_message: false,
   }),
   watch: {
     current_page() {
