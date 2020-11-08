@@ -7,6 +7,7 @@
       <v-card-title
         style="height: 40px"
         class="pl-3 py-0 pr-0"
+        @click="show_training = !show_training"
       >
         <span
           style="font-size: 14px"
@@ -22,12 +23,11 @@
         >
           {{ trainingItem.datetime_display | formatDate }}
         </span>
-        <v-btn
+        <v-avatar
           icon
-          @click="show_training = !show_training"
         >
           <v-icon>{{ show_training ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-        </v-btn>
+        </v-avatar>
       </v-card-title>
       <v-expand-transition>
         <div v-show="show_training">
