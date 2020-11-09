@@ -38,7 +38,7 @@
           Engine
         </th>
         <th
-          v-if="laptimes(0).length > 0"
+          v-if="valid_laptimes(0).length > 0"
           class="text-left"
         >
           Laptimes
@@ -258,7 +258,7 @@
           </span>
         </td>
         <td
-          v-if="laptimes(0).length > 0"
+          v-if="valid_laptimes(0).length > 0"
           style="font-size: 12px"
         >
           <v-tooltip bottom>
@@ -406,15 +406,16 @@ export default {
       }
       return [];
     },
-    laptimes(index) {
+    valid_laptimes(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
           if (this.trainingItem.setups[index].sessions.length > 0) {
             const sessions = [];
             for (let i = 0; i < this.trainingItem.setups[index].sessions.length; i += 1) {
-              const { laptimes } = this.trainingItem.setups[index].sessions[i];
-              if (laptimes.length > 0) {
-                sessions.push(laptimes.map((a) => a.laptime_seconds));
+              const validLaptimes = this.trainingItem.setups[index].sessions[i]
+                .laptimes.filter((o) => o.valid === true);
+              if (validLaptimes.length > 0) {
+                sessions.push(...validLaptimes.map((a) => a.laptime_seconds));
               }
             }
             return sessions;
@@ -424,16 +425,16 @@ export default {
       return [];
     },
     average_laptime(index) {
-      const flattenLaptimes = this._.flatten(this.laptimes(index));
-      if (flattenLaptimes.length > 0) {
-        return this._.mean(flattenLaptimes).toFixed(2);
+      const validLaptimes = this.valid_laptimes(index);
+      if (validLaptimes.length > 0) {
+        return this._.mean(validLaptimes).toFixed(2);
       }
       return NaN;
     },
     min_laptime(index) {
-      const flattenLaptimes = this._.flatten(this.laptimes(index));
-      if (flattenLaptimes.length > 0) {
-        return this._.min(this._.flatten(flattenLaptimes)).toFixed(2);
+      const validLaptimes = this.valid_laptimes(index);
+      if (validLaptimes.length > 0) {
+        return this._.min(validLaptimes).toFixed(2);
       }
       return NaN;
     },
