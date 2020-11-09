@@ -258,7 +258,7 @@
           </span>
         </td>
         <td
-          v-if="setup_item.operating_hours !== null"
+          v-if="laptimes(0).length > 0"
           style="font-size: 12px"
         >
           <v-tooltip bottom>
@@ -412,10 +412,10 @@ export default {
           if (this.trainingItem.setups[index].sessions.length > 0) {
             const sessions = [];
             for (let i = 0; i < this.trainingItem.setups[index].sessions.length; i += 1) {
-              sessions.push(
-                this.trainingItem.setups[index].sessions[i].laptimes
-                  .map((a) => a.laptime_seconds),
-              );
+              const { laptimes } = this.trainingItem.setups[index].sessions[i];
+              if (laptimes.length > 0) {
+                sessions.push(laptimes.map((a) => a.laptime_seconds));
+              }
             }
             return sessions;
           }
