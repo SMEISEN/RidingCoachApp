@@ -123,6 +123,7 @@
       </v-btn>
     </v-tabs>
     <v-card
+      v-if="trainingFormObject.sessions.length > 0"
       color="secondary"
       dark
     >
@@ -302,14 +303,6 @@ export default {
     },
     onSetupDelete() {
       const currentTab = this.training_setup_tab;
-      if (currentTab !== 0) {
-        this.confirm_delete_dialog = true;
-      } else {
-        this.info_dialog = true;
-      }
-    },
-    onSessionDelete() {
-      const currentTab = this.training_session_tab;
       if (currentTab !== 0) {
         this.confirm_delete_dialog = true;
       } else {

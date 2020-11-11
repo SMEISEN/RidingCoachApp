@@ -76,7 +76,6 @@ export default {
     },
   },
   updated() {
-    console.log(this.training_form_object);
   },
   created() {
     this.$store.subscribe((mutation) => {
@@ -148,6 +147,7 @@ export default {
       } else {
         this.training_form_object.setup_individual = [];
       }
+      this.training_form_object.sessions = [];
     },
     compileTrainingData(data) {
       this.training_form_object.training_id = data.training_id;
