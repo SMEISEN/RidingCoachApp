@@ -1,5 +1,6 @@
 <template>
   <v-simple-table
+    v-if="laptimes.length > 0"
     light
     dense
   >
@@ -24,35 +25,35 @@
           Delta
         </th>
         <th
-          v-if="Object.keys(sessionObject.laptimes[0].sectors).length >= 1"
+          v-if="Object.keys(laptimes[0].sectors).length >= 1"
           class="text-left"
           style="width: 24px"
         >
           Sector 1
         </th>
         <th
-          v-if="Object.keys(sessionObject.laptimes[0].sectors).length >= 2"
+          v-if="Object.keys(laptimes[0].sectors).length >= 2"
           class="text-left"
           style="width: 24px"
         >
           Sector 2
         </th>
         <th
-          v-if="Object.keys(sessionObject.laptimes[0].sectors).length >= 3"
+          v-if="Object.keys(laptimes[0].sectors).length >= 3"
           class="text-left"
           style="width: 24px"
         >
           Sector 3
         </th>
         <th
-          v-if="Object.keys(sessionObject.laptimes[0].sectors).length >= 4"
+          v-if="Object.keys(laptimes[0].sectors).length >= 4"
           class="text-left"
           style="width: 24px"
         >
           Sector 4
         </th>
         <th
-          v-if="Object.keys(sessionObject.laptimes[0].sectors).length >= 5"
+          v-if="Object.keys(laptimes[0].sectors).length >= 5"
           class="text-left"
           style="width: 24px"
         >
@@ -160,8 +161,26 @@ export default {
       return (thisLap - this.fastest_lap).toFixed(2);
     },
     changeLapValidity(lapId, valid) {
-      const payload = { valid: !valid };
-      apiPutLaptimeItem(payload, lapId);
+      let payload = { valid: !valid };
+      apiPutLaptimeItem(payload, lapId)
+        .then(() => {
+          payload = { state: true };
+          if (valid === true) {
+            payload.color = 'error';
+            payload.message = 'Lap time set invalid';
+          } else {
+            payload.color = 'success';
+            payload.message = 'Lap time set valid';
+          }
+          this.$store.commit('setInfoSnackbar', payload);
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
     },
   },
 };
