@@ -168,9 +168,6 @@
           {{ `: ${Math.round(weather_item.temp, 0)} °C` }}
         </span>
       </v-tooltip>
-      <v-avatar v-else>
-        <v-icon small />
-      </v-avatar>
     </div>
   </v-row>
 </template>

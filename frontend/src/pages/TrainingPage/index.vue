@@ -14,7 +14,7 @@
         <v-timeline
           dense
           clipped
-          class="ml-n9"
+          class="ml-n9 mr-n4"
         >
           <div
             v-for="(month, index) in training_array_sorted"
@@ -22,7 +22,7 @@
           >
             <v-timeline-item
               hide-dot
-              class="ml-n3"
+              class="ml-n6 mr-6"
             >
               <v-row>
                 <v-col

@@ -1,16 +1,16 @@
 <template>
   <div>
     <v-card
-      class="secondary ml-n2"
+      class="secondary ml-n6"
       dark
     >
       <v-card-title
-        style="height: 40px"
+        style="height: 100%"
         class="pl-3 py-0 pr-0"
         @click="show_training = !show_training"
       >
         <span
-          style="font-size: 14px"
+          style="font-size: 14px; width: 90px"
         >
           {{ trainingItem.location }}
         </span>
@@ -19,11 +19,12 @@
           :weather-daily="trainingItem.weather_daily"
         />
         <span
-          style="font-size: 14px"
+          style="font-size: 14px; width: 76px"
         >
           {{ trainingItem.datetime_display | formatDate }}
         </span>
         <v-avatar
+          class="mr-n2 ml-n3"
           icon
         >
           <v-icon>{{ show_training ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
