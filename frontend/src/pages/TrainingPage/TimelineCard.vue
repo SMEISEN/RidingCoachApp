@@ -10,7 +10,7 @@
         @click="show_training = !show_training"
       >
         <span
-          style="font-size: 14px; width: 90px"
+          :style="{ 'font-size': 14 + 'px', 'width': location_width + 'px'}"
         >
           {{ trainingItem.location }}
         </span>
@@ -109,6 +109,12 @@ export default {
       set(value) {
         this.$store.commit('setTrainingDialogState', value);
       },
+    },
+    location_width() {
+      if (window.innerWidth < 400) {
+        return 115;
+      }
+      return 150;
     },
   },
   methods: {
