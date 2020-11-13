@@ -226,7 +226,6 @@ export default {
       this.training_dialog = false;
       this.$refs.validation_training_form.resetValidation();
       this.$store.commit('setTrainingEditId', null);
-      this.$emit('cancelClicked');
     },
     onTrainingDelete() {
       this.confirm_delete_dialog = true;

@@ -103,15 +103,7 @@ export default {
   watch: {
     timeline_buttons() {
       this.loading_trainings = true;
-      if (this.timeline_buttons === 4) {
-        this.getDateNow();
-      } if (this.timeline_buttons === 3) {
-        this.getDateThisMonth();
-      } if (this.timeline_buttons === 2) {
-        this.getDateLastMonth();
-      } if (this.timeline_buttons === 1) {
-        this.getDateThisYear();
-      }
+      this.getTrainings();
     },
     picked_date() {
       if (this.timeline_buttons === 0) {
@@ -136,15 +128,29 @@ export default {
     this.window_height = window.innerHeight;
   },
   created() {
-    this.getDateNow();
+    this.getTrainings();
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'setTrainingDialogState'
         && this.$store.getters.getTrainingDialogState === false) {
-        this.getDateNow();
+        this.getTrainings();
       }
     });
   },
   methods: {
+    getTrainings() {
+      if (this.timeline_buttons === 4) {
+        this.getDateNow();
+      }
+      if (this.timeline_buttons === 3) {
+        this.getDateThisMonth();
+      }
+      if (this.timeline_buttons === 2) {
+        this.getDateLastMonth();
+      }
+      if (this.timeline_buttons === 1) {
+        this.getDateThisYear();
+      }
+    },
     queryTrainings() {
       apiQueryTrainings(this.query).then((res) => {
         this.training_array = res.data;
