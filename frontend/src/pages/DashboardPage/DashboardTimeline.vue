@@ -64,8 +64,8 @@
 </template>
 
 <script>
-import { apiGetTrainings } from '../../components/api/TrainingApi';
-import { apiGetHistory } from '../../components/api/HistoryApi';
+import { apiQueryTrainings } from '../../components/api/TrainingApi';
+import { apiQueryHistory } from '../../components/api/HistoryApi';
 
 export default {
   name: 'DashboardTimeline',
@@ -74,6 +74,11 @@ export default {
     history_array: [],
     latest_activity: [],
   }),
+  computed: {
+    current_bike_id() {
+      return this.$store.getters.getCurrentBikeId;
+    },
+  },
   updated() {
   },
   created() {
@@ -81,6 +86,9 @@ export default {
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'setTrainingDialogState'
         && this.$store.getters.getTrainingDialogState === false) {
+        this.getTrainingsAndHistory();
+      }
+      if (mutation.type === 'selectBike') {
         this.getTrainingsAndHistory();
       }
     });
@@ -94,13 +102,14 @@ export default {
       }
     },
     getTrainingsAndHistory() {
-      apiGetHistory().then((resHistory) => {
+      apiQueryHistory({ bike_id: this.current_bike_id }).then((resHistory) => {
         let lastDay = resHistory.data[0].datetime_display;
         let historyData = {
           categories: [],
           names: [],
           datetime_display: null,
         };
+        this.history_array = [];
         for (let i = 0; i < resHistory.data.length; i += 1) {
           const currentDay = resHistory.data[i].datetime_display;
           const { category } = resHistory.data[i];
@@ -120,7 +129,7 @@ export default {
             lastDay = currentDay;
           }
         }
-        apiGetTrainings().then((resTraining) => {
+        apiQueryTrainings({ bike_id: this.current_bike_id }).then((resTraining) => {
           this.training_array = resTraining.data;
           this.latest_activity = this._.orderBy(
             this.training_array.concat(this.history_array),
