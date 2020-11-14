@@ -257,18 +257,24 @@ class TrainingQuery(Resource):
         for training_entry in training_query:
             setup_data = setup_schema.dump(training_entry.setups, many=True)
             training_data = training_schema.dump(training_entry)
+
             training_data['setups'] = []
             if len(setup_data) > 0:
                 for setup_entry in setup_data:
-                    session_data = SessionModel.query.filter(SessionModel.setup_id == setup_entry['setup_id']).all()
-                    setup_entry['sessions'] = []
-                    if len(session_data) > 0:
-                        for session_entry in session_data:
-                            session = session_schema.dump(session_entry)
-                            session['laptimes'] = laptime_schema.dump(session_entry.laptimes, many=True)
-                            setup_entry['sessions'].append(session)
-                    training_data['setups'].append(setup_entry)
-            training_entry_list.append(training_data)
+                    if setup_entry['bike_id'] == requested.get('bike_id') or requested.get('bike_id') is None:
+                        session_data = SessionModel.query.filter(SessionModel.setup_id == setup_entry['setup_id']).all()
+                        setup_entry['sessions'] = []
+                        if len(session_data) > 0:
+                            for session_entry in session_data:
+                                session = session_schema.dump(session_entry)
+                                session['laptimes'] = laptime_schema.dump(session_entry.laptimes, many=True)
+                                setup_entry['sessions'].append(session)
+                        training_data['setups'].append(setup_entry)
+
+            if requested.get('bike_id') is not None and len(training_data['setups']) == 0:
+                pass
+            else:
+                training_entry_list.append(training_data)
 
         response = jsonify(training_entry_list)
         response.status_code = 200
