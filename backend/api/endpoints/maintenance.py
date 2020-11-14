@@ -225,6 +225,7 @@ class MaintenanceQuery(Resource):
 
         requested = request.get_json()
         filter_by_data = {
+            'bike_id': requested.get('bike_id'),
             'category': requested.get('category'),
             'name': requested.get('name'),
             'interval_unit': requested.get('interval_unit'),

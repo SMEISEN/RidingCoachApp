@@ -33,7 +33,7 @@ import {
   apiGetHistoryItem,
   apiQueryHistory,
 } from '../../components/api/HistoryApi';
-import { apiGetMaintenance } from '../../components/api/MaintenanceApi';
+import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
 import HistoryTable from './HistoryTable.vue';
 import HistoryDialogForm from './HistoryDialogForm.vue';
 
@@ -66,6 +66,9 @@ export default {
   computed: {
     orderedHistory() {
       return this._.orderBy(this.history_array, 'datetime_display', 'desc');
+    },
+    currentBikeId() {
+      return this.$store.getters.getCurrentBikeId;
     },
   },
   created() {
@@ -116,7 +119,7 @@ export default {
             message: `${error}!`,
           });
         });
-      apiGetMaintenance()
+      apiQueryMaintenance({ bike_id: this.currentBikeId })
         .then((res) => {
           this.maintenance_categories_array = Object.keys(res.data);
           this.maintenance_names_object = res.data;

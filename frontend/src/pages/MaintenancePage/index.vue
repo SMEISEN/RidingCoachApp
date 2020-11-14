@@ -63,6 +63,14 @@ export default {
       last_history_id: null,
     };
   },
+  computed: {
+    currentBikeId() {
+      return this.$store.getters.getCurrentBikeId;
+    },
+    currentBikeHours() {
+      return this.$store.getters.getCurrentBikeOperatingHours;
+    },
+  },
   created() {
     this.getMaintenance();
     this.$store.subscribe((mutation) => {
@@ -75,7 +83,7 @@ export default {
   },
   methods: {
     getMaintenance() {
-      apiQueryMaintenance({ bike_id: this.$store.getters.getCurrentBikeId })
+      apiQueryMaintenance({ bike_id: this.currentBikeId })
         .then((res) => {
           this.maintenance_object = res.data;
         })
@@ -108,8 +116,8 @@ export default {
     postHistoryEntry(mtnId, selectedChips) {
       const payload = {
         maintenance_id: mtnId,
-        bike_id: this.$store.getters.getCurrentBikeId,
-        operating_hours: this.$store.getters.getCurrentBikeOperatingHours,
+        bike_id: this.currentBikeId,
+        operating_hours: this.currentBikeHours,
         comment: '',
         tags: selectedChips,
         datetime_display: new Date().getTime() / 1000,

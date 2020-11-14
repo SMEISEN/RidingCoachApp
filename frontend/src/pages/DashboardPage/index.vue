@@ -141,6 +141,7 @@ import {
   processLeftIntervalHours,
 } from '../../components/utils/DataProcessingUtils';
 import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
+import { initObject } from '../../components/utils/FromUtils';
 import DashboardWearState from './DashboardWearState.vue';
 import DashboardMaintenanceState from './DashboardMaintenanceState.vue';
 import DashboardSetupState from './DashboardSetupState.vue';
@@ -184,6 +185,9 @@ export default {
     this.getSetup();
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'selectBike') {
+        initObject(this.wear_object, '');
+        this.maintenance_array = [];
+        this.setup_array = [];
         this.getWear();
         this.getMaintenance();
         this.getSetup();
@@ -238,14 +242,16 @@ export default {
         interval_type: 'estimated wear',
       })
         .then((res) => {
-          this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
-          this.wear_object.brakes_front.name = 'Front brake pads';
-          this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
-          this.wear_object.brakes_rear.name = 'Rear brake pads';
-          this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
-          this.wear_object.tires.name = 'Tires';
-          this.wear_object.engine = res.data.Engine[Object.keys(res.data.Engine)[0]];
-          this.wear_object.engine.name = 'Engine revision';
+          if (Object.keys(res.data).length > 0) {
+            this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
+            this.wear_object.brakes_front.name = 'Front brake pads';
+            this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
+            this.wear_object.brakes_rear.name = 'Rear brake pads';
+            this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
+            this.wear_object.tires.name = 'Tires';
+            this.wear_object.engine = res.data.Engine[Object.keys(res.data.Engine)[0]];
+            this.wear_object.engine.name = 'Engine revision';
+          }
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {
@@ -261,7 +267,9 @@ export default {
         interval_type: 'planned cycle',
       })
         .then((res) => {
-          this.maintenance_array = this.structureMaintenanceNext(res.data);
+          if (Object.keys(res.data).length > 0) {
+            this.maintenance_array = this.structureMaintenanceNext(res.data);
+          }
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {
