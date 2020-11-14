@@ -10,7 +10,7 @@ class MaintenanceModel(db.Model):
 
     maintenance_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
 
-    bike_id = db.Column(UUID(as_uuid=True), db.ForeignKey('bike.bike_id'), nullable=True)
+    bike_id = db.Column(UUID(as_uuid=True), db.ForeignKey('bike.bike_id'), nullable=False)
 
     category = db.Column(db.String(20), nullable=False)
     name = db.Column(db.String(100), unique=True, nullable=False)
