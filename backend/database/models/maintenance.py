@@ -1,5 +1,6 @@
 from datetime import datetime
 from backend.database import db, ma
+from backend.database.models.bike import BikeModel
 from sqlalchemy.dialects.postgresql import UUID, JSON
 import uuid
 
@@ -8,6 +9,8 @@ class MaintenanceModel(db.Model):
     __tablename__ = 'maintenance'
 
     maintenance_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+
+    bike_id = db.Column(UUID(as_uuid=True), db.ForeignKey('bike.bike_id'), nullable=True)
 
     category = db.Column(db.String(20), nullable=False)
     name = db.Column(db.String(100), unique=True, nullable=False)
