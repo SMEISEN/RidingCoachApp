@@ -100,6 +100,11 @@ export default {
     loading_trainings: false,
     picked_date: new Date().toISOString().substr(0, 7),
   }),
+  computed: {
+    current_bike_id() {
+      return this.$store.getters.getCurrentBikeId;
+    },
+  },
   watch: {
     timeline_buttons() {
       this.loading_trainings = true;
@@ -128,11 +133,16 @@ export default {
     this.window_height = window.innerHeight;
   },
   created() {
+    this.query.bike_id = this.current_bike_id;
     this.getTrainings();
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'setTrainingDialogState'
         && this.$store.getters.getTrainingDialogState === false) {
         this.getTrainings();
+      }
+      if (mutation.type === 'selectBike') {
+        this.query.bike_id = this.current_bike_id;
+        this.queryTrainings();
       }
     });
   },
