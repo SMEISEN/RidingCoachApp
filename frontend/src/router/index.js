@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import VueMeta from 'vue-meta';
 import Dashboard from '../pages/DashboardPage/index.vue';
 import Maintenance from '../pages/MaintenancePage/index.vue';
+import Spareparts from '../pages/SparepartsPage/index.vue';
 import Training from '../pages/TrainingPage/index.vue';
 import History from '../pages/HistoryPage/index.vue';
 import Login from '../pages/LoginPage/index.vue';
@@ -50,6 +51,12 @@ export default new VueRouter({
       path: '/maintenance',
       name: 'Maintenance',
       component: Maintenance,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/spareparts',
+      name: 'Spare Parts',
+      component: Spareparts,
       beforeEnter: ifAuthenticated,
     },
     {
