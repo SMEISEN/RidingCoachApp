@@ -8,7 +8,6 @@
       v-model="timeline_buttons"
       mandatory
       dense
-      background-color="accent"
       style="width:100%"
       active-class="v-btn--active-toolbar"
     >

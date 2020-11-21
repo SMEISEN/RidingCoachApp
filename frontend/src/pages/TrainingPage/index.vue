@@ -10,7 +10,7 @@
           :picked-date.sync="picked_date"
         />
       </v-card-title>
-      <v-container>
+      <v-card-text>
         <v-timeline
           dense
           clipped
@@ -51,7 +51,7 @@
             </div>
           </div>
         </v-timeline>
-      </v-container>
+      </v-card-text>
       <v-row>
         <v-col
           cols="12"
@@ -133,6 +133,7 @@ export default {
     this.window_height = window.innerHeight;
   },
   created() {
+    this.window_height = window.innerHeight;
     this.query.bike_id = this.current_bike_id;
     this.getTrainings();
     this.$store.subscribe((mutation) => {
