@@ -19,6 +19,8 @@ class SparepartModel(db.Model):
     )
     min_stock = db.Column(db.Integer, nullable=True)
 
+    sparepart_item = db.relationship('SparepartitemModel', backref=db.backref('sparepart'))
+
     datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
