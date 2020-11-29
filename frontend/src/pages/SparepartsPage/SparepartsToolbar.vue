@@ -37,6 +37,7 @@
           Carburetor
         </v-btn>
         <v-btn
+          color="white"
           class="primary--text ma-1"
           style="min-width:16%"
           x-small
@@ -44,6 +45,7 @@
           Engine
         </v-btn>
         <v-btn
+          color="white"
           class="primary--text ma-1"
           style="min-width:16%"
           x-small
@@ -51,6 +53,7 @@
           Suspension
         </v-btn>
         <v-btn
+          color="white"
           class="primary--text ma-1"
           style="min-width:16%"
           x-small
