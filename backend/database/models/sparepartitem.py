@@ -18,12 +18,12 @@ class SparepartitemModel(db.Model):
     datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self):
-            return f"Sparepartitem[" \
-                   f"'{self.sparepartitem_id}': (" \
-                   f"'{self.condition}', " \
-                   f"'{self.description}', " \
-                   f"'{self.datetime_display}'" \
-                   f")]"
+        return f"Sparepartitem[" \
+               f"'{self.sparepartitem_id}': (" \
+               f"'{self.condition}', " \
+               f"'{self.description}', " \
+               f"'{self.datetime_display}'" \
+               f")]"
 
 
 class SparepartitemSchema(ma.SQLAlchemyAutoSchema):
