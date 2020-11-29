@@ -11,11 +11,12 @@ class SparepartModel(db.Model):
 
     sparepart_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
 
+    name = db.Column(db.String, nullable=False)
+    items = db.relationship('SparepartitemModel', backref=db.backref('sparepart'))
+
     module = db.Column(db.String, nullable=False)
     min_stock = db.Column(db.Integer, nullable=True)
-
-    items = db.relationship('SparepartitemModel', backref=db.backref('sparepart'))
-    stock = db.column_property(
+    current_stock = db.column_property(
         db.select([func.count(SparepartitemModel.sparepartitem_id)])
             .where(SparepartitemModel.sparepart_id == sparepart_id)
             .correlate_except(SparepartitemModel)

@@ -32,7 +32,7 @@ class SparepartCollection(Resource):
         for sparepart_entry in sparepart_all_entries:
             sparepartitem_data = sparepartitem_schema.dump(sparepart_entry.items, many=True)
             sparepart_data = sparepart_schema.dump(sparepart_entry)
-            sparepart_data['stock'] = sparepart_entry.stock
+            sparepart_data['current_stock'] = sparepart_entry.current_stock
             sparepart_data['items'] = sparepartitem_data
             sparepart_entry_list.append(sparepart_data)
 
