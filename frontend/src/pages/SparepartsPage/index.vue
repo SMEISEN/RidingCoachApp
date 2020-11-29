@@ -21,7 +21,10 @@
         </v-container>
         <v-container>
           <SparepartsTable
+            :sparepart-items="sparepart_array"
             :spareparts-search.sync="spareparts_search"
+            @editButtonClicked="getSpareparts()"
+            @deletionConfirmed="getSpareparts()"
           />
         </v-container>
       </v-card-text>
@@ -30,6 +33,7 @@
 </template>
 
 <script>
+import { apiQuerySpareparts } from '../../components/api/SparepartApi';
 import SparepartsToolbar from './SparepartsToolbar.vue';
 import SparepartsTable from './SparepartsTable.vue';
 
@@ -44,14 +48,57 @@ export default {
   },
   data: () => ({
     spareparts_search: '',
-    spareparts_buttons: 0,
+    spareparts_buttons: null,
     window_height: 800,
+    sparepart_array: [],
   }),
+  computed: {
+    current_module() {
+      switch (this.spareparts_buttons) {
+        case 0:
+          return 'Attachments';
+        case 1:
+          return 'Brakes';
+        case 2:
+          return 'Carburetor';
+        case 3:
+          return 'Engine';
+        case 4:
+          return 'Suspension';
+        case 5:
+          return 'Wheels';
+        default:
+          return null;
+      }
+    },
+  },
+  watch: {
+    spareparts_buttons() {
+      this.getSpareparts();
+    },
+  },
   updated() {
     this.window_height = window.innerHeight;
   },
   created() {
     this.window_height = window.innerHeight;
+    this.getSpareparts();
+  },
+  methods: {
+    getSpareparts() {
+      const payload = { module: this.current_module };
+      apiQuerySpareparts(payload)
+        .then((res) => {
+          this.sparepart_array = res.data;
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
+    },
   },
 };
 </script>
