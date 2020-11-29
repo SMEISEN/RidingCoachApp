@@ -28,19 +28,19 @@ maintenance_input_parameters = api.model('MaintenanceInputParameters', {
 })
 maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "bike_id":
-        fields.String(description="", required=False),
+        fields.String(description="id of the bike where this maintenance belongs to", required=False),
     "category":
-        fields.String(description="", required=False),
+        fields.String(description="maintenance work category according to bike module", required=False),
     "name":
-        fields.String(description="", required=False),
+        fields.String(description="maintenance work name", required=False),
     "interval_amount":
-        fields.Float(description="", required=False),
+        fields.Float(description="interval of maintenance work", required=False),
     "interval_unit":
-        fields.String(description="", required=False),
+        fields.String(description="unit of maintenance interval", required=False),
     "interval_type":
-        fields.String(description="", required=False),
+        fields.String(description="type of maintenance interval", required=False),
     "tags_default":
-        fields.Raw(description="", required=False),
+        fields.Raw(description="default tags of maintenance work", required=False),
 })
 
 

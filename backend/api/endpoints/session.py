@@ -18,7 +18,7 @@ session_input_parameters = api.model('SessionInputParameters', {
     "bike_id":
         fields.String(description="corresponding bike ID", required=True),
     "setup_id":
-        fields.Float(description="corresponding setup ID", required=True),
+        fields.String(description="corresponding setup ID", required=True),
     "datetime_display":
         fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
