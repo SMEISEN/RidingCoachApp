@@ -70,8 +70,9 @@ export default {
   name: 'SparepartsToolbar',
   props: {
     sparepartsButtons: {
-      type: Number,
-      required: true,
+      type: [Number, null],
+      required: false,
+      default: null,
     },
   },
   computed: {
