@@ -6,6 +6,7 @@
       :search="spareparts_search"
       :expanded.sync="expanded"
       item-key="name"
+      :footer-props="{ itemsPerPageText: '' }"
       @click:row="expandRow"
     >
       <template v-slot:expanded-item="props">
@@ -40,6 +41,23 @@
         </td>
       </template>
     </v-data-table>
+    <v-card-text style="height: 5px; position: relative">
+      <v-btn
+        class="mt-n7"
+        absolute
+        x-small
+        fab
+        top
+        left
+        color="primary"
+        @click.prevent="sparepart_dialog = true"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-card-text>
+    <SparepartsDialogForm
+      :spareparts-dialog.sync="sparepart_dialog"
+    />
     <ConfirmDeleteDialog
       :flagged-for-deletion="'spare part entry'"
       :confirm-delete-dialog.sync="confirm_delete_dialog"
@@ -50,11 +68,15 @@
 
 <script>
 import { apiDeleteSparepartitemItem } from '../../components/api/SparepartitemApi';
+import SparepartsDialogForm from './SparepartsDialogForm.vue';
 import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog.vue';
 
 export default {
   name: 'SparepartsTable',
-  components: { ConfirmDeleteDialog },
+  components: {
+    ConfirmDeleteDialog,
+    SparepartsDialogForm,
+  },
   props: {
     sparepartItems: {
       type: Array,
@@ -88,6 +110,7 @@ export default {
     ],
     expanded: [],
     sparepartitem_id: null,
+    sparepart_dialog: false,
     confirm_delete_dialog: false,
   }),
   computed: {
