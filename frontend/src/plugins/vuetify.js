@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import de from 'vuetify/es5/locale/de';
+import en from 'vuetify/es5/locale/en';
 import 'vuetify/dist/vuetify.min.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'roboto-fontface/css/roboto/roboto-fontface.css';
@@ -26,8 +26,8 @@ export default new Vuetify({
     },
   },
   lang: {
-    locales: { de },
-    current: 'de',
+    locales: { en },
+    current: 'en',
   },
   icons: {
     iconfont: 'mdi',
