@@ -6,6 +6,9 @@
       :search="spareparts_search"
       :expanded.sync="expanded"
       :footer-props="{ itemsPerPageText: '' }"
+      item-key="name"
+      show-expand
+      single-expand
       @click:row="expandRow"
     >
       <template v-slot:expanded-item="props">
@@ -111,6 +114,10 @@ export default {
         align: 'start',
         sortable: false,
         value: 'min_stock',
+      },
+      {
+        text: '',
+        value: 'data-table-expand',
       },
     ],
     expanded: [],
