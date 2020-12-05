@@ -37,8 +37,10 @@
               single-line
               prepend-icon="mdi-minus"
               append-outer-icon="mdi-plus"
-              @click:prepend="props.item.min_stock = decreaseStock(props.item.min_stock)"
-              @click:append-outer="props.item.min_stock = increaseStock(props.item.min_stock)"
+              @click:prepend.prevent="
+                props.item.min_stock = decreaseStock(props.item.min_stock)"
+              @click:append-outer.prevent="
+                props.item.min_stock = increaseStock(props.item.min_stock)"
             />
           </template>
         </v-edit-dialog>
@@ -50,19 +52,34 @@
             :key="item.sparepartitem_id"
           >
             <td style="min-width: 115px; width: 7000px">
-              {{ item.description }}
+              <v-edit-dialog
+                :return-value.sync="item.description"
+                @save="changeSparepartItemDescription(item.sparepartitem_id, item.description)"
+              >
+                {{ item.description }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="item.description"
+                    single-line
+                  />
+                </template>
+              </v-edit-dialog>
             </td>
             <td style="min-width: 95px; width: 3000px">
-              {{ item.condition }}
-            </td>
-            <td style="min-width: 75px">
-              <v-btn
-                color="warning"
-                icon
-                @click.prevent="onEditButton(item.sparepartitem_id)"
+              <v-edit-dialog
+                :return-value.sync="item.condition"
+                @save="changeSparepartItemCondition(item.sparepartitem_id, item.condition)"
               >
-                <v-icon>mdi-square-edit-outline</v-icon>
-              </v-btn>
+                {{ item.condition }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="item.condition"
+                    single-line
+                  />
+                </template>
+              </v-edit-dialog>
+            </td>
+            <td>
               <v-btn
                 color="error"
                 icon
@@ -103,7 +120,10 @@
 </template>
 
 <script>
-import { apiDeleteSparepartitemItem } from '../../components/api/SparepartitemApi';
+import {
+  apiDeleteSparepartitemItem,
+  apiPutSparepartitemItem,
+} from '../../components/api/SparepartitemApi';
 import { apiPutSparepartItem } from '../../components/api/SparepartApi';
 import {
   incrementNumber,
@@ -237,7 +257,7 @@ export default {
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
-            message: 'Spare part entry edited!',
+            message: 'Spare part edited!',
           });
         })
         .catch((error) => {
@@ -253,6 +273,44 @@ export default {
     },
     decreaseStock(minStock) {
       return decrementNumber(minStock, 1);
+    },
+    changeSparepartItemDescription(sparepartitemId, newDescription) {
+      const payload = { description: newDescription };
+      apiPutSparepartitemItem(payload, sparepartitemId)
+        .then(() => {
+          this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Spare part item edited!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
+    },
+    changeSparepartItemCondition(sparepartitemId, newCondition) {
+      const payload = { condition: newCondition };
+      apiPutSparepartitemItem(payload, sparepartitemId)
+        .then(() => {
+          this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Spare part item edited!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
     },
   },
 };
