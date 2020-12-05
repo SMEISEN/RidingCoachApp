@@ -25,7 +25,7 @@
             :sparepart-items="sparepart_array"
             :spareparts-search.sync="spareparts_search"
             :bike-modules="bike_modules"
-            @refreshSpareParts="getSpareparts()"
+            @refreshSpareParts="getSpareparts"
           />
         </v-container>
       </v-card-text>

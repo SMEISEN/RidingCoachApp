@@ -91,9 +91,6 @@
 </template>
 
 <script>
-import { apiPostSparepart } from '../../components/api/SparepartApi';
-import { apiPostSparepartitem } from '../../components/api/SparepartitemApi';
-import { initObject } from '../../components/utils/FromUtils';
 import SparepartsItemTable from './SparepartsItemTable.vue';
 
 export default {
@@ -110,18 +107,20 @@ export default {
       type: Array,
       required: true,
     },
+    sparepartParent: {
+      type: Object,
+      required: true,
+    },
+    sparepartChild: {
+      type: Array,
+      required: true,
+    },
+    sparepartChildTemplate: {
+      type: Object,
+      required: true,
+    },
   },
   data: () => ({
-    sparepart_parent: {
-      name: null,
-      module: null,
-      min_stock: null,
-    },
-    sparepart_child: [],
-    sparepart_child_template: {
-      description: 'original',
-      condition: 'new',
-    },
     valid: true,
   }),
   computed: {
@@ -133,61 +132,37 @@ export default {
         this.$emit('update:sparepartsDialog', value);
       },
     },
-  },
-  created() {
-    this.sparepart_child.push(this._.cloneDeep(this.sparepart_child_template));
+    sparepart_parent: {
+      get() {
+        return this.sparepartParent;
+      },
+      set(value) {
+        this.$emit('update:sparepartParent', value);
+      },
+    },
+    sparepart_child: {
+      get() {
+        return this.sparepartChild;
+      },
+      set(value) {
+        this.$emit('update:sparepartChild', value);
+      },
+    },
+    sparepart_child_template() {
+      return this.sparepartChildTemplate;
+    },
   },
   methods: {
     onSave() {
-      apiPostSparepart(this.sparepart_parent)
-        .then((res) => {
-          const payload = this.sparepart_child.map((o) => ({ ...o, sparepart_id: res.data }));
-          for (let i = 0; i < this.sparepart_child.length; i += 1) {
-            apiPostSparepartitem(payload[i])
-              .then(() => {
-                if (i === this.sparepart_child.length - 1) {
-                  this.$emit('saveButtonClicked');
-                  this.spareparts_dialog = false;
-                  this.initForm();
-                  this.$store.commit('setInfoSnackbar', {
-                    state: true,
-                    color: 'success',
-                    message: 'Spare part(s) added!',
-                  });
-                }
-              })
-              .catch((error) => {
-                this.$emit('saveButtonClicked');
-                this.spareparts_dialog = false;
-                this.$store.commit('setInfoSnackbar', {
-                  state: true,
-                  color: 'error',
-                  message: `${error}!`,
-                });
-              });
-          }
-        })
-        .catch((error) => {
-          this.$emit('saveButtonClicked');
-          this.spareparts_dialog = false;
-          this.$store.commit('setInfoSnackbar', {
-            state: true,
-            color: 'error',
-            message: `${error}!`,
-          });
-        });
-    },
-    onCancel() {
-      this.$emit('cancelButtonClicked');
-      this.initForm();
+      this.$emit('addSparepart');
       this.spareparts_dialog = false;
     },
-    initForm() {
-      initObject(this.sparepart_parent, null);
-      this.sparepart_child = [this._.cloneDeep(this.sparepart_child_template)];
+    onCancel() {
+      this.$emit('initForm');
       if (typeof this.$refs.validation_form !== 'undefined') {
         this.$refs.validation_form.resetValidation();
       }
+      this.spareparts_dialog = false;
     },
   },
 };

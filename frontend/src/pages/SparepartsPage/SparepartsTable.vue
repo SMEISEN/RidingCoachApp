@@ -24,6 +24,15 @@
           </template>
         </v-edit-dialog>
       </template>
+      <template v-slot:item.current_stock="props">
+        <SparepartsItemDialogForm
+          :sparepart-item="props.item"
+          :sparepart-child.sync="sparepart_child"
+          :sparepart-child-template="sparepart_child_template"
+          @initForm="initForm"
+          @addSparepartItems="addSparepartItems"
+        />
+      </template>
       <template v-slot:item.min_stock="props">
         <v-edit-dialog
           :return-value.sync="props.item.min_stock"
@@ -109,7 +118,11 @@
     <SparepartsDialogForm
       :bike-modules="bikeModules"
       :spareparts-dialog.sync="sparepart_dialog"
-      @saveButtonClicked="$emit('refreshSpareParts')"
+      :sparepart-parent.sync="sparepart_parent"
+      :sparepart-child.sync="sparepart_child"
+      :sparepart-child-template="sparepart_child_template"
+      @initForm="initForm"
+      @addSparepart="addSparepart"
     />
     <ConfirmDeleteDialog
       :flagged-for-deletion="'spare part entry'"
@@ -122,20 +135,27 @@
 <script>
 import {
   apiDeleteSparepartitemItem,
+  apiPostSparepartitem,
   apiPutSparepartitemItem,
 } from '../../components/api/SparepartitemApi';
-import { apiPutSparepartItem } from '../../components/api/SparepartApi';
+import {
+  apiPostSparepart,
+  apiPutSparepartItem,
+} from '../../components/api/SparepartApi';
 import {
   incrementNumber,
   decrementNumber,
+  initObject,
 } from '../../components/utils/FromUtils';
 import SparepartsDialogForm from './SparepartsDialogForm.vue';
+import SparepartsItemDialogForm from './SparepartsItemDialogForm.vue';
 import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog.vue';
 
 export default {
   name: 'SparepartsTable',
   components: {
     ConfirmDeleteDialog,
+    SparepartsItemDialogForm,
     SparepartsDialogForm,
   },
   props: {
@@ -181,6 +201,16 @@ export default {
     sparepartitem_id: null,
     sparepart_dialog: false,
     confirm_delete_dialog: false,
+    sparepart_parent: {
+      name: null,
+      module: null,
+      min_stock: null,
+    },
+    sparepart_child: [],
+    sparepart_child_template: {
+      description: 'original',
+      condition: 'new',
+    },
   }),
   computed: {
     sparepart_items() {
@@ -200,11 +230,9 @@ export default {
   },
   created() {
     this.window_width = window.innerWidth;
+    this.sparepart_child.push(this._.cloneDeep(this.sparepart_child_template));
   },
   methods: {
-    expandRow(item) {
-      this.expanded = item === this.expanded[0] ? [] : [item];
-    },
     onEditButton(sparepartitemId) {
       this.$emit('editButtonClicked', sparepartitemId);
     },
@@ -215,7 +243,7 @@ export default {
     deletionConfirmed() {
       apiDeleteSparepartitemItem(this.sparepartitem_id)
         .then(() => {
-          this.$emit('refreshSpareParts', this.sparepartitem_id);
+          this.$emit('refreshSpareParts');
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -234,7 +262,7 @@ export default {
       const payload = { name: newName };
       apiPutSparepartItem(payload, sparepartId)
         .then(() => {
-          this.$emit('refreshSpareParts', this.sparepartitem_id);
+          this.$emit('refreshSpareParts');
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -311,6 +339,52 @@ export default {
             message: `${error}!`,
           });
         });
+    },
+    addSparepart() {
+      apiPostSparepart(this.sparepart_parent)
+        .then((res) => {
+          this.addSparepartItems(res.data);
+        })
+        .catch((error) => {
+          this.$emit('saveButtonClicked');
+          this.spareparts_dialog = false;
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
+    },
+    addSparepartItems(sparepartId) {
+      const payload = this.sparepart_child.map((o) => ({ ...o, sparepart_id: sparepartId }));
+      for (let i = 0; i < this.sparepart_child.length; i += 1) {
+        apiPostSparepartitem(payload[i])
+          .then(() => {
+            if (i === this.sparepart_child.length - 1) {
+              this.$emit('refreshSpareParts');
+              this.spareparts_dialog = false;
+              this.initForm();
+              this.$store.commit('setInfoSnackbar', {
+                state: true,
+                color: 'success',
+                message: 'Spare part(s) added!',
+              });
+            }
+          })
+          .catch((error) => {
+            this.$emit('refreshSpareParts');
+            this.spareparts_dialog = false;
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error}!`,
+            });
+          });
+      }
+    },
+    initForm() {
+      initObject(this.sparepart_parent, null);
+      this.sparepart_child = [this._.cloneDeep(this.sparepart_child_template)];
     },
   },
 };
