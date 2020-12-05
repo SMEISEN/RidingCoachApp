@@ -6,11 +6,43 @@
       :search="spareparts_search"
       :expanded.sync="expanded"
       :footer-props="{ itemsPerPageText: '' }"
-      item-key="name"
+      item-key="sparepart_id"
       show-expand
       single-expand
-      @click:row="expandRow"
     >
+      <template v-slot:item.name="props">
+        <v-edit-dialog
+          :return-value.sync="props.item.name"
+          @save="changeSparepartName(props.item.sparepart_id, props.item.name)"
+        >
+          {{ props.item.name }}
+          <template v-slot:input>
+            <v-text-field
+              v-model="props.item.name"
+              single-line
+            />
+          </template>
+        </v-edit-dialog>
+      </template>
+      <template v-slot:item.min_stock="props">
+        <v-edit-dialog
+          :return-value.sync="props.item.min_stock"
+          @save="changeSparepartMinStock(props.item.sparepart_id, props.item.min_stock)"
+        >
+          {{ props.item.min_stock }}
+          <template v-slot:input>
+            <v-text-field
+              v-model.number="props.item.min_stock"
+              style="max-width: 85px"
+              single-line
+              prepend-icon="mdi-minus"
+              append-outer-icon="mdi-plus"
+              @click:prepend="props.item.min_stock = decreaseStock(props.item.min_stock)"
+              @click:append-outer="props.item.min_stock = increaseStock(props.item.min_stock)"
+            />
+          </template>
+        </v-edit-dialog>
+      </template>
       <template v-slot:expanded-item="props">
         <td :colspan="window_width">
           <tr
@@ -72,6 +104,11 @@
 
 <script>
 import { apiDeleteSparepartitemItem } from '../../components/api/SparepartitemApi';
+import { apiPutSparepartItem } from '../../components/api/SparepartApi';
+import {
+  incrementNumber,
+  decrementNumber,
+} from '../../components/utils/FromUtils';
 import SparepartsDialogForm from './SparepartsDialogForm.vue';
 import ConfirmDeleteDialog from '../../components/common/ConfirmDeleteDialog.vue';
 
@@ -161,7 +198,7 @@ export default {
           this.$emit('deletionConfirmed', this.sparepartitem_id);
           this.$store.commit('setInfoSnackbar', {
             state: true,
-            color: 'error',
+            color: 'success',
             message: 'Spare part entry deleted!',
           });
         })
@@ -172,6 +209,50 @@ export default {
             message: `${error}!`,
           });
         });
+    },
+    changeSparepartName(sparepartId, newName) {
+      const payload = { name: newName };
+      apiPutSparepartItem(payload, sparepartId)
+        .then(() => {
+          this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Spare part entry edited!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
+    },
+    changeSparepartMinStock(sparepartId, newMinStock) {
+      const payload = { min_stock: newMinStock };
+      apiPutSparepartItem(payload, sparepartId)
+        .then(() => {
+          this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'Spare part entry edited!',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
+    },
+    increaseStock(minStock) {
+      return incrementNumber(minStock, 1);
+    },
+    decreaseStock(minStock) {
+      return decrementNumber(minStock, 1);
     },
   },
 };
