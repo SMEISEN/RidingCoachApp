@@ -215,7 +215,7 @@ export default {
     deletionConfirmed() {
       apiDeleteSparepartitemItem(this.sparepartitem_id)
         .then(() => {
-          this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$emit('refreshSpareParts', this.sparepartitem_id);
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -234,7 +234,7 @@ export default {
       const payload = { name: newName };
       apiPutSparepartItem(payload, sparepartId)
         .then(() => {
-          this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$emit('refreshSpareParts', this.sparepartitem_id);
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
