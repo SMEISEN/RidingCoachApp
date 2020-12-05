@@ -69,6 +69,7 @@
                 >
                   <v-text-field
                     v-model="entry.category"
+                    class="mb-n2"
                     style="font-size: 14px"
                     dense
                     height="20px"
@@ -82,6 +83,7 @@
                 >
                   <v-text-field
                     v-model="entry.group"
+                    class="mb-n2"
                     style="font-size: 14px"
                     dense
                     height="20px"
@@ -95,6 +97,7 @@
                 >
                   <v-btn
                     icon
+                    small
                     @click="deleteChildRow(index)"
                   >
                     <v-icon>
