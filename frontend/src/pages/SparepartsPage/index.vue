@@ -6,6 +6,7 @@
     >
       <v-card-title class="pa-0">
         <SparepartsToolbar
+          :bike-modules="bike_modules"
           :spareparts-buttons.sync="spareparts_buttons"
         />
       </v-card-title>
@@ -23,8 +24,8 @@
           <SparepartsTable
             :sparepart-items="sparepart_array"
             :spareparts-search.sync="spareparts_search"
-            @editButtonClicked="getSpareparts()"
-            @deletionConfirmed="getSpareparts()"
+            :bike-modules="bike_modules"
+            @refreshSpareParts="getSpareparts()"
           />
         </v-container>
       </v-card-text>
@@ -51,6 +52,14 @@ export default {
     spareparts_buttons: null,
     window_height: 800,
     sparepart_array: [],
+    bike_modules: [
+      'Attachments',
+      'Brakes',
+      'Carburetor',
+      'Engine',
+      'Suspension',
+      'Wheels',
+    ],
   }),
   computed: {
     current_module() {

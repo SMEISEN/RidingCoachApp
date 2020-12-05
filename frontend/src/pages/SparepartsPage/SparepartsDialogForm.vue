@@ -6,6 +6,7 @@
   >
     <v-form
       v-if="spareparts_dialog"
+      ref="validation_form"
       v-model="valid"
     >
       <v-card>
@@ -35,11 +36,25 @@
               sm="12"
               md="12"
             >
-              <v-text-field
+              <v-select
                 v-model.number="sparepart_parent.module"
+                :items="bikeModules"
                 :rules="[v => !!v]"
                 label="Module*"
                 required
+              />
+            </v-col>
+          </v-row>
+          <v-row no-gutters>
+            <v-col
+              cols="12"
+              xs="12"
+              sm="12"
+              md="12"
+            >
+              <v-text-field
+                v-model.number="sparepart_parent.min_stock"
+                label="Warn at stock"
               />
             </v-col>
           </v-row>
@@ -68,12 +83,11 @@
                   style="border-bottom: none"
                 >
                   <v-text-field
-                    v-model="entry.category"
+                    v-model="entry.description"
                     class="mb-n2"
                     style="font-size: 14px"
                     dense
                     height="20px"
-                    placeholder="original"
                     single-line
                   />
                 </td>
@@ -82,12 +96,11 @@
                   style="border-bottom: none"
                 >
                   <v-text-field
-                    v-model="entry.group"
+                    v-model="entry.condition"
                     class="mb-n2"
                     style="font-size: 14px"
                     dense
                     height="20px"
-                    placeholder="new"
                     single-line
                   />
                 </td>
@@ -151,6 +164,10 @@
 </template>
 
 <script>
+import { apiPostSparepart } from '../../components/api/SparepartApi';
+import { apiPostSparepartitem } from '../../components/api/SparepartitemApi';
+import { initObject } from '../../components/utils/FromUtils';
+
 export default {
   name: 'SparepartsDialogForm',
   props: {
@@ -158,16 +175,21 @@ export default {
       type: Boolean,
       required: true,
     },
+    bikeModules: {
+      type: Array,
+      required: true,
+    },
   },
   data: () => ({
     sparepart_parent: {
       name: null,
       module: null,
+      min_stock: null,
     },
     sparepart_child: [],
     sparepart_child_template: {
-      description: null,
-      condition: null,
+      description: 'original',
+      condition: 'new',
     },
     valid: true,
   }),
@@ -186,9 +208,47 @@ export default {
   },
   methods: {
     onSave() {
-      this.spareparts_dialog = false;
+      apiPostSparepart(this.sparepart_parent)
+        .then((res) => {
+          const payload = this.sparepart_child.map((o) => ({ ...o, sparepart_id: res.data }));
+          for (let i = 0; i < this.sparepart_child.length; i += 1) {
+            apiPostSparepartitem(payload[i])
+              .then(() => {
+                if (i === this.sparepart_child.length - 1) {
+                  this.$emit('saveButtonClicked');
+                  this.spareparts_dialog = false;
+                  this.initForm();
+                  this.$store.commit('setInfoSnackbar', {
+                    state: true,
+                    color: 'success',
+                    message: 'Spare part(s) added!',
+                  });
+                }
+              })
+              .catch((error) => {
+                this.$emit('saveButtonClicked');
+                this.spareparts_dialog = false;
+                this.$store.commit('setInfoSnackbar', {
+                  state: true,
+                  color: 'error',
+                  message: `${error}!`,
+                });
+              });
+          }
+        })
+        .catch((error) => {
+          this.$emit('saveButtonClicked');
+          this.spareparts_dialog = false;
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
     },
     onCancel() {
+      this.$emit('cancelButtonClicked');
+      this.initForm();
       this.spareparts_dialog = false;
     },
     addChildRow() {
@@ -196,6 +256,13 @@ export default {
     },
     deleteChildRow(index) {
       this.sparepart_child.splice(index, 1);
+    },
+    initForm() {
+      initObject(this.sparepart_parent, null);
+      this.sparepart_child = [this._.cloneDeep(this.sparepart_child_template)];
+      if (typeof this.$refs.validation_form !== 'undefined') {
+        this.$refs.validation_form.resetValidation();
+      }
     },
   },
 };

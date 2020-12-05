@@ -13,52 +13,14 @@
     >
       <v-row justify="center">
         <v-btn
+          v-for="(module, i) in bikeModules"
+          :key="i"
           color="white"
           class="primary--text ma-1"
           style="min-width:16%"
           x-small
         >
-          Attachments
-        </v-btn>
-        <v-btn
-          color="white"
-          class="primary--text ma-1"
-          style="min-width:16%"
-          x-small
-        >
-          Brakes
-        </v-btn>
-        <v-btn
-          color="white"
-          class="primary--text ma-1"
-          style="min-width:16%"
-          x-small
-        >
-          Carburetor
-        </v-btn>
-        <v-btn
-          color="white"
-          class="primary--text ma-1"
-          style="min-width:16%"
-          x-small
-        >
-          Engine
-        </v-btn>
-        <v-btn
-          color="white"
-          class="primary--text ma-1"
-          style="min-width:16%"
-          x-small
-        >
-          Suspension
-        </v-btn>
-        <v-btn
-          color="white"
-          class="primary--text ma-1"
-          style="min-width:16%"
-          x-small
-        >
-          Wheels
+          {{ module }}
         </v-btn>
       </v-row>
     </v-btn-toggle>
@@ -69,6 +31,10 @@
 export default {
   name: 'SparepartsToolbar',
   props: {
+    bikeModules: {
+      type: Array,
+      required: true,
+    },
     sparepartsButtons: {
       type: [Number, null],
       required: false,

@@ -5,7 +5,6 @@
       :items="sparepart_items"
       :search="spareparts_search"
       :expanded.sync="expanded"
-      item-key="name"
       :footer-props="{ itemsPerPageText: '' }"
       @click:row="expandRow"
     >
@@ -56,7 +55,9 @@
       </v-btn>
     </v-card-text>
     <SparepartsDialogForm
+      :bike-modules="bikeModules"
       :spareparts-dialog.sync="sparepart_dialog"
+      @saveButtonClicked="$emit('refreshSpareParts')"
     />
     <ConfirmDeleteDialog
       :flagged-for-deletion="'spare part entry'"
@@ -84,6 +85,10 @@ export default {
     },
     sparepartsSearch: {
       type: String,
+      required: true,
+    },
+    bikeModules: {
+      type: Array,
       required: true,
     },
   },
