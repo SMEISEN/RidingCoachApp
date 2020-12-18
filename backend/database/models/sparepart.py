@@ -17,7 +17,7 @@ class SparepartModel(db.Model):
     module = db.Column(db.String, nullable=False)
     min_stock = db.Column(db.Integer, nullable=True)
     current_stock = db.column_property(
-        db.select([func.count(SparepartitemModel.sparepartitem_id)])
+        db.select([func.sum(SparepartitemModel.stock)])
             .where(SparepartitemModel.sparepart_id == sparepart_id)
             .correlate_except(SparepartitemModel)
     )
