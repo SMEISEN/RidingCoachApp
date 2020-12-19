@@ -66,6 +66,7 @@ class SparepartitemCollection(Resource):
             sparepart_id=inserted_data.get('sparepart_id'),
             condition=inserted_data.get('condition'),
             description=inserted_data.get('description'),
+            stock=inserted_data.get('stock'),
         )
         db.session.add(new_sparepartitem)
         db.session.commit()
@@ -118,6 +119,8 @@ class SparepartitemItem(Resource):
             sparepart_item.condition = inserted_data.get('condition')
         if inserted_data.get('description') is not None:
             sparepart_item.description = inserted_data.get('description')
+        if inserted_data.get('stock') is not None:
+            sparepart_item.stock = inserted_data.get('stock')
         if bool(inserted_data) is True:
             sparepart_item.datetime_last_modified = datetime.utcnow()
 
