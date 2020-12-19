@@ -43,6 +43,8 @@
             <v-text-field
               v-model.number="props.item.min_stock"
               style="max-width: 85px"
+              required
+              :rules="[v => (v) >= 0]"
               single-line
               prepend-icon="mdi-minus"
               append-outer-icon="mdi-plus"
@@ -60,10 +62,10 @@
             v-for="(item) in props.item.items"
             :key="item.sparepartitem_id"
           >
-            <td style="min-width: 115px; width: 7000px">
+            <td style="min-width: 115px; width: 6000px">
               <v-edit-dialog
                 :return-value.sync="item.description"
-                @save="changeSparepartItemDescription(item.sparepartitem_id, item.description)"
+                @save="changeSparepartItem(item.sparepartitem_id, item)"
               >
                 {{ item.description }}
                 <template v-slot:input>
@@ -74,16 +76,35 @@
                 </template>
               </v-edit-dialog>
             </td>
-            <td style="min-width: 95px; width: 3000px">
+            <td style="min-width: 95px; width: 4200px">
               <v-edit-dialog
                 :return-value.sync="item.condition"
-                @save="changeSparepartItemCondition(item.sparepartitem_id, item.condition)"
+                @save="changeSparepartItem(item.sparepartitem_id, item)"
               >
                 {{ item.condition }}
                 <template v-slot:input>
                   <v-text-field
                     v-model="item.condition"
                     single-line
+                  />
+                </template>
+              </v-edit-dialog>
+            </td>
+            <td style="min-width: 5px; width: 4550px">
+              <v-edit-dialog
+                :return-value.sync="item.stock"
+                @save="changeSparepartItem(item.sparepartitem_id, item)"
+              >
+                {{ item.stock }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="item.stock"
+                    single-line
+                    :rules="[v => (v) >= 0]"
+                    prepend-icon="mdi-minus"
+                    append-outer-icon="mdi-plus"
+                    @click:prepend.prevent="item.stock = decreaseStock(item.stock)"
+                    @click:append-outer.prevent="item.stock = increaseStock(item.stock)"
                   />
                 </template>
               </v-edit-dialog>
@@ -181,16 +202,16 @@ export default {
         value: 'name',
       },
       {
-        text: 'Stock',
-        align: 'start',
-        sortable: false,
-        value: 'current_stock',
-      },
-      {
         text: 'Warn at',
         align: 'start',
         sortable: false,
         value: 'min_stock',
+      },
+      {
+        text: 'Stock',
+        align: 'start',
+        sortable: false,
+        value: 'current_stock',
       },
       {
         text: '',
@@ -210,6 +231,7 @@ export default {
     sparepart_child_template: {
       description: 'original',
       condition: 'new',
+      stock: 1,
     },
   }),
   computed: {
@@ -233,9 +255,6 @@ export default {
     this.sparepart_child.push(this._.cloneDeep(this.sparepart_child_template));
   },
   methods: {
-    onEditButton(sparepartitemId) {
-      this.$emit('editButtonClicked', sparepartitemId);
-    },
     onDeleteButton(sparepartitemId) {
       this.sparepartitem_id = sparepartitemId;
       this.confirm_delete_dialog = true;
@@ -302,30 +321,10 @@ export default {
     decreaseStock(minStock) {
       return decrementNumber(minStock, 1);
     },
-    changeSparepartItemDescription(sparepartitemId, newDescription) {
-      const payload = { description: newDescription };
+    changeSparepartItem(sparepartitemId, payload) {
       apiPutSparepartitemItem(payload, sparepartitemId)
         .then(() => {
-          this.$emit('deletionConfirmed', this.sparepartitem_id);
-          this.$store.commit('setInfoSnackbar', {
-            state: true,
-            color: 'success',
-            message: 'Spare part item edited!',
-          });
-        })
-        .catch((error) => {
-          this.$store.commit('setInfoSnackbar', {
-            state: true,
-            color: 'error',
-            message: `${error}!`,
-          });
-        });
-    },
-    changeSparepartItemCondition(sparepartitemId, newCondition) {
-      const payload = { condition: newCondition };
-      apiPutSparepartitemItem(payload, sparepartitemId)
-        .then(() => {
-          this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$emit('refreshSpareParts');
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -344,9 +343,9 @@ export default {
       apiPostSparepart(this.sparepart_parent)
         .then((res) => {
           this.addSparepartItems(res.data);
+          this.$emit('refreshSpareParts');
         })
         .catch((error) => {
-          this.$emit('saveButtonClicked');
           this.spareparts_dialog = false;
           this.$store.commit('setInfoSnackbar', {
             state: true,
