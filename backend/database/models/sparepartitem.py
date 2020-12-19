@@ -12,7 +12,7 @@ class SparepartitemModel(db.Model):
 
     condition = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    stock = db.Column(db.Integer, nullable=True)
+    stock = db.Column(db.Integer, nullable=False)
 
     datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
