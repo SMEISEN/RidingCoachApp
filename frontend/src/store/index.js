@@ -7,6 +7,7 @@ import authentication from './modules/authentication';
 import history from './modules/history';
 import navigation from './modules/navigation';
 import info from './modules/info';
+import spareparts from './modules/spareparts';
 
 Cookies.defaults = {
   sameSite: 'None',
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     history,
     navigation,
     info,
+    spareparts,
   },
   plugins: [
     createPersistedState({

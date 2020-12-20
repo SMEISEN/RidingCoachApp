@@ -95,6 +95,11 @@ export default {
   created() {
     this.current_page = this.$route.name;
     this.getSparepartWarnings();
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'setSparepartId' || mutation.type === 'selectBike') {
+        this.getSparepartWarnings();
+      }
+    });
   },
   updated() {
   },

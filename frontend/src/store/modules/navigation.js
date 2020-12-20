@@ -37,8 +37,8 @@ const mutations = {
   setBikeEditFlag(state, editFlag) {
     state.bike_edit_flag = editFlag;
   },
-  setTrainingEditId(state, editFlag) {
-    state.training_edit_id = editFlag;
+  setTrainingEditId(state, trainingId) {
+    state.training_edit_id = trainingId;
   },
   setTrainingDialogState(state, dialogState) {
     state.training_dialog = dialogState;

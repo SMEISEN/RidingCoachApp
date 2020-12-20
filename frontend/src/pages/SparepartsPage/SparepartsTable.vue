@@ -263,6 +263,7 @@ export default {
       apiDeleteSparepartitemItem(this.sparepartitem_id)
         .then(() => {
           this.$emit('refreshSpareParts');
+          this.$store.commit('setSparepartId', this.sparepartitem_id);
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -280,8 +281,9 @@ export default {
     changeSparepartName(sparepartId, newName) {
       const payload = { name: newName };
       apiPutSparepartItem(payload, sparepartId)
-        .then(() => {
+        .then((res) => {
           this.$emit('refreshSpareParts');
+          this.$store.commit('setSparepartId', res.data);
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -299,8 +301,9 @@ export default {
     changeSparepartMinStock(sparepartId, newMinStock) {
       const payload = { min_stock: newMinStock };
       apiPutSparepartItem(payload, sparepartId)
-        .then(() => {
+        .then((res) => {
           this.$emit('deletionConfirmed', this.sparepartitem_id);
+          this.$store.commit('setSparepartId', res.data);
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -323,8 +326,9 @@ export default {
     },
     changeSparepartItem(sparepartitemId, payload) {
       apiPutSparepartitemItem(payload, sparepartitemId)
-        .then(() => {
+        .then((res) => {
           this.$emit('refreshSpareParts');
+          this.$store.commit('setSparepartId', res.data);
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -344,6 +348,7 @@ export default {
         .then((res) => {
           this.addSparepartItems(res.data);
           this.$emit('refreshSpareParts');
+          this.$store.commit('setSparepartId', res.data);
         })
         .catch((error) => {
           this.spareparts_dialog = false;
