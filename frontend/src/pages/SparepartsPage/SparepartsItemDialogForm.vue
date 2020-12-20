@@ -6,7 +6,16 @@
     @save="onSave(sparepartItem.sparepart_id)"
     @cancel="onCancel"
   >
-    {{ sparepartItem.current_stock }}
+    <v-badge
+      v-if="sparepartItem.current_stock < sparepartItem.min_stock"
+      color="red"
+      dot
+    >
+      {{ sparepartItem.current_stock }}
+    </v-badge>
+    <span v-else>
+      {{ sparepartItem.current_stock }}
+    </span>
     <template v-slot:input>
       <SparepartsItemTable
         :sparepart-child.sync="spareparts_child"
