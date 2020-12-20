@@ -5,6 +5,7 @@ from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.sparepart import SparepartModel, SparepartSchema
 from backend.database.models.sparepartitem import SparepartitemModel, SparepartitemSchema
+from backend.database.models.bike import BikeModel
 from flask_restplus import Resource, fields
 
 ns = api.namespace('sparepart', description='Operations related to spareparts.')
@@ -224,6 +225,33 @@ class SparepartQuery(Resource):
 
 
         response = jsonify(sparepart_entry_list)
+        response.status_code = 200
+
+        return response
+
+
+@ns.route('/warnings')
+class SparepartWarning(Resource):
+
+    @api.doc(security='apikey')
+    @api.response(200, f"Spare part warnings successfully fetched.")
+    def get(self):
+        """
+        Returns the number of spoare part warnings.
+        """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
+
+        sparepart_all_entries = SparepartModel.query.order_by(SparepartModel.datetime_display.desc()).all()
+
+        warning_count = {'warnings': 0}
+        for sparepart_entry in sparepart_all_entries:
+            if sparepart_entry.current_stock < sparepart_entry.min_stock:
+                warning_count['warnings'] += 1
+
+        response = jsonify(warning_count)
         response.status_code = 200
 
         return response

@@ -55,3 +55,12 @@ export const apiDeleteSparepartItem = (sparepartId) => new Promise((resolve, rej
       reject(error);
     });
 });
+export const apiGetSparepartWarnings = () => new Promise((resolve, reject) => {
+  const ApiPath = '/api/sparepart/warnings';
+  axios.get(ApiPath, { headers: { apikey: process.env.VUE_APP_RESTPLUS_API_KEY } })
+    .then((res) => resolve(res))
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
+});

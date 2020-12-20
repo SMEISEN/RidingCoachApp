@@ -22,13 +22,11 @@
     >
       <span>Maintenance</span>
       <v-badge
-        v-if="maintenance_message === true"
+        v-if="maintenance_warnings > 0"
         color="red"
+        :content="maintenance_warnings"
         overlap
       >
-        <template v-slot:badge>
-          1
-        </template>
         <v-icon>
           mdi-wrench
         </v-icon>
@@ -43,13 +41,11 @@
     >
       <span>Spare Parts</span>
       <v-badge
-        v-if="spareparts_message === true"
+        v-if="sparepart_warnings > 0"
         color="red"
+        :content="sparepart_warnings"
         overlap
       >
-        <template v-slot:badge>
-          1
-        </template>
         <v-icon>
           mdi-medical-bag
         </v-icon>
@@ -80,12 +76,16 @@
 </template>
 
 <script>
+import {
+  apiGetSparepartWarnings,
+} from '../api/SparepartApi';
+
 export default {
   name: 'TheBottomNavigation',
   data: () => ({
     current_page: null,
-    maintenance_message: false,
-    spareparts_message: false,
+    maintenance_warnings: 0,
+    sparepart_warnings: 0,
   }),
   watch: {
     current_page() {
@@ -94,8 +94,16 @@ export default {
   },
   created() {
     this.current_page = this.$route.name;
+    this.getSparepartWarnings();
   },
   updated() {
+  },
+  methods: {
+    getSparepartWarnings() {
+      apiGetSparepartWarnings().then((res) => {
+        this.sparepart_warnings = res.data.warnings;
+      });
+    },
   },
 };
 </script>
