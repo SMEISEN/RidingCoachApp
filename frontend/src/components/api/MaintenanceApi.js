@@ -55,3 +55,12 @@ export const apiDeleteMaintenanceItem = (mtnId) => new Promise((resolve, reject)
       reject(error);
     });
 });
+export const apiGetMaintenanceWarnings = (bikeId) => new Promise((resolve, reject) => {
+  const ApiPath = `/api/maintenance/warnings/${bikeId}`;
+  axios.get(ApiPath, { headers: { apikey: process.env.VUE_APP_RESTPLUS_API_KEY } })
+    .then((res) => resolve(res))
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
+});

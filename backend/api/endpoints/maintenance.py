@@ -1,16 +1,18 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.maintenance import MaintenanceModel, MaintenanceSchema
 from backend.database.models.history import HistoryModel, HistorySchema
+from backend.database.models.bike import BikeModel, BikeSchema
 from flask_restplus import Resource, fields
 from collections import defaultdict
 
 ns = api.namespace('maintenance', description='Operations related to maintenance entries.')
 history_schema = HistorySchema()
 maintenance_schema = MaintenanceSchema()
+bike_schema = BikeSchema()
 
 maintenance_input_parameters = api.model('MaintenanceInputParameters', {
     "category":
@@ -42,6 +44,36 @@ maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "tags_default":
         fields.Raw(description="default tags of maintenance work", required=False),
 })
+
+
+def maintenance_state(maintenance_data, history_data, bike_operating_hours):
+
+    interval_left = 0.0
+
+    if maintenance_data['interval_unit'] == 'h':
+        interval_left = bike_operating_hours - history_data[0]['operating_hours'] + maintenance_data['interval_amount']
+
+    elif maintenance_data['interval_unit'] == 'a':
+        interval_left = (
+            datetime.fromisoformat(history_data[0]['datetime_display']) -
+            datetime.utcnow() +
+            timedelta(days=365 * maintenance_data['interval_amount'])
+        ).total_seconds()
+
+    # interval "every x trainings" is omitted, could be integrated later
+    # elif maintenance_data['interval_unit'] == 't':
+    #     interval_left = (
+    #         datetime.fromisoformat(history_data[0]['datetime_display']) -
+    #         datetime.utcnow() +
+    #         timedelta(days=1)
+    #     ).total_seconds()
+
+    state_left = interval_left / maintenance_data['interval_amount']
+
+    return {
+        'interval_left': interval_left,
+        'state_left': state_left,
+    }
 
 
 def query_to_dict(maintenance_query: list, bike_id: str = None):
@@ -276,6 +308,42 @@ class MaintenanceQuery(Resource):
         maintenance_categories_dict = query_to_dict(maintenance_query, requested.get('bike_id'))
 
         response = jsonify(maintenance_categories_dict)
+        response.status_code = 200
+
+        return response
+
+
+@ns.route('/warnings/<string:id_>')
+class MaintenanceWarning(Resource):
+
+    @api.doc(security='apikey')
+    @api.response(200, f"Maintenance warnings successfully fetched.")
+    def get(self, id_: str):
+        """
+        Returns the number of maintenance warnings.
+        """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
+
+        maintenance_query = MaintenanceModel.query.filter_by(**{'bike_id': id_}).all()
+        bike_query = BikeModel.query.filter_by(**{'bike_id': id_}).all()
+
+        bike_operating_hours = bike_schema.dump(bike_query, many=True)[0]['operating_hours']
+
+        warning_count = {'warnings': 0}
+        for maintenance_entry in maintenance_query:
+            maintenance_data = maintenance_schema.dump(maintenance_entry)
+            history_data = history_schema.dump(maintenance_entry.history, many=True)
+
+            if len(history_data) > 0:
+                state = maintenance_state(maintenance_data, history_data, bike_operating_hours)
+
+                if state['interval_left'] < 0:
+                    warning_count['warnings'] += 1
+
+        response = jsonify(warning_count)
         response.status_code = 200
 
         return response
