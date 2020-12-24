@@ -104,8 +104,13 @@ export default {
     },
   }),
   computed: {
-    selected_bike() {
-      return this.$store.getters.getCurrentBikeId;
+    selected_bike: {
+      get() {
+        return this.$store.getters.getCurrentBikeId;
+      },
+      set(value) {
+        this.selectBike(value);
+      },
     },
     bike_array: {
       get() {

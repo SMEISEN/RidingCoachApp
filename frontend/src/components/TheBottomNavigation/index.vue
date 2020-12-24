@@ -79,6 +79,9 @@
 import {
   apiGetSparepartWarnings,
 } from '../api/SparepartApi';
+import {
+  apiGetMaintenanceWarnings,
+} from '../api/MaintenanceApi';
 
 export default {
   name: 'TheBottomNavigation',
@@ -87,6 +90,11 @@ export default {
     maintenance_warnings: 0,
     sparepart_warnings: 0,
   }),
+  computed: {
+    currentBikeId() {
+      return this.$store.getters.getCurrentBikeId;
+    },
+  },
   watch: {
     current_page() {
       this.$emit('currentPage', this.current_page);
@@ -95,9 +103,18 @@ export default {
   created() {
     this.current_page = this.$route.name;
     this.getSparepartWarnings();
+    this.getMaintenanceWarnings();
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'setSparepartId' || mutation.type === 'selectBike') {
         this.getSparepartWarnings();
+      }
+    });
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'getCurrentBikeOperatingHours'
+        || mutation.type === 'selectBike'
+        || mutation.type === 'setHistoryId'
+      ) {
+        this.getMaintenanceWarnings();
       }
     });
   },
@@ -107,6 +124,11 @@ export default {
     getSparepartWarnings() {
       apiGetSparepartWarnings().then((res) => {
         this.sparepart_warnings = res.data.warnings;
+      });
+    },
+    getMaintenanceWarnings() {
+      apiGetMaintenanceWarnings(this.currentBikeId).then((res) => {
+        this.maintenance_warnings = res.data.warnings;
       });
     },
   },

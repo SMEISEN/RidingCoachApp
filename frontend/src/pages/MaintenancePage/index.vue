@@ -60,7 +60,6 @@ export default {
       maintenance_object: {},
       interval_types: [],
       snackbar_state: false,
-      last_history_id: null,
     };
   },
   computed: {
@@ -69,6 +68,14 @@ export default {
     },
     currentBikeHours() {
       return this.$store.getters.getCurrentBikeOperatingHours;
+    },
+    lastHistoryId: {
+      get() {
+        return this.$store.getters.getHistoryId();
+      },
+      set(value) {
+        this.$store.commit('setHistoryId', value);
+      },
     },
   },
   created() {
@@ -96,7 +103,7 @@ export default {
         });
     },
     undoMaintenance() {
-      apiDeleteHistoryItem(this.last_history_id)
+      apiDeleteHistoryItem(this.lastHistoryId)
         .then(() => {
           this.getMaintenance();
           this.$store.commit('setInfoSnackbar', {
@@ -125,7 +132,7 @@ export default {
       apiPostHistory(payload)
         .then((res) => {
           this.getMaintenance();
-          this.last_history_id = res.data;
+          this.lastHistoryId = res.data;
           this.snackbar_state = true;
           this.$store.commit('setInfoSnackbar', {
             state: true,
