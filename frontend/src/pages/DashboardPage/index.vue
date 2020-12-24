@@ -21,6 +21,10 @@
                   <span class="headerline">
                     {{ bikeString }}
                   </span>
+                  <v-spacer />
+                  <span class="headerline">
+                    {{ bikeHours + ' h' }}
+                  </span>
                 </v-card-title>
                 <DashboardWearState
                   :wear-object="wear_object"
@@ -174,6 +178,9 @@ export default {
         .getCurrentBikeManufacturer} ${this.$store.getters
         .getCurrentBikeModel} ${this.$store.getters
         .getCurrentBikeYear}`;
+    },
+    bikeHours() {
+      return `${this.$store.getters.getCurrentBikeOperatingHours}`;
     },
     bikeId() {
       return this.$store.getters.getCurrentBikeId;
