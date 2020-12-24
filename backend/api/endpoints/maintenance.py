@@ -48,7 +48,8 @@ maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
 
 def maintenance_state(maintenance_data, history_data, bike_operating_hours):
 
-    interval_left = 0.0
+    state_left = None
+    interval_left = None
 
     if maintenance_data['interval_unit'] == 'h':
         interval_left = history_data[0]['operating_hours'] - bike_operating_hours + maintenance_data['interval_amount']
@@ -68,7 +69,8 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     #         timedelta(days=1)
     #     ).total_seconds()
 
-    state_left = interval_left / maintenance_data['interval_amount']
+    if interval_left is not None:
+        state_left = interval_left / maintenance_data['interval_amount']
 
     return {
         'interval_left': interval_left,
@@ -340,7 +342,7 @@ class MaintenanceWarning(Resource):
             if len(history_data) > 0:
                 state = maintenance_state(maintenance_data, history_data, bike_operating_hours)
 
-                if state['interval_left'] <= 0:
+                if state['interval_left'] and state['interval_left'] <= 0:
                     warning_count['warnings'] += 1
 
         response = jsonify(warning_count)
