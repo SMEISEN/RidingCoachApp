@@ -52,7 +52,6 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
 
     if maintenance_data['interval_unit'] == 'h':
         interval_left = history_data[0]['operating_hours'] - bike_operating_hours + maintenance_data['interval_amount']
-        print(interval_left)
 
     elif maintenance_data['interval_unit'] == 'a':
         interval_left = (
