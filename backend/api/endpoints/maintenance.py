@@ -51,7 +51,8 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     interval_left = 0.0
 
     if maintenance_data['interval_unit'] == 'h':
-        interval_left = bike_operating_hours - history_data[0]['operating_hours'] + maintenance_data['interval_amount']
+        interval_left = history_data[0]['operating_hours'] - bike_operating_hours + maintenance_data['interval_amount']
+        print(interval_left)
 
     elif maintenance_data['interval_unit'] == 'a':
         interval_left = (
@@ -340,7 +341,7 @@ class MaintenanceWarning(Resource):
             if len(history_data) > 0:
                 state = maintenance_state(maintenance_data, history_data, bike_operating_hours)
 
-                if state['interval_left'] < 0:
+                if state['interval_left'] <= 0:
                     warning_count['warnings'] += 1
 
         response = jsonify(warning_count)
