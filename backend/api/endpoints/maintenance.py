@@ -334,7 +334,10 @@ class MaintenanceWarning(Resource):
 
         bike_operating_hours = bike_schema.dump(bike_query, many=True)[0]['operating_hours']
 
-        warning_count = {'warnings': 0}
+        warnings = {
+            'warnings': 0,
+            'overdue_maintenance': [],
+        }
         for maintenance_entry in maintenance_query:
             maintenance_data = maintenance_schema.dump(maintenance_entry)
             history_data = history_schema.dump(maintenance_entry.history, many=True)
@@ -343,9 +346,10 @@ class MaintenanceWarning(Resource):
                 state = maintenance_state(maintenance_data, history_data, bike_operating_hours)
 
                 if state['interval_left'] and state['interval_left'] <= 0:
-                    warning_count['warnings'] += 1
+                    warnings['warnings'] += 1
+                    warnings['overdue_maintenance'].append({**maintenance_data, **history_data[0]})
 
-        response = jsonify(warning_count)
+        response = jsonify(warnings)
         response.status_code = 200
 
         return response
