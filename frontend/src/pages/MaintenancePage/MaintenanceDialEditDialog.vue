@@ -1,106 +1,25 @@
 <template>
-  <v-dialog
-    v-model="editMaintenanceDialog"
-    persistent
-    max-width="500px"
-  >
-    <v-form
-      ref="validation_form"
-      v-model="valid"
-    >
-      <v-card>
-        <v-card-title>
-          <span class="headline">Edit maintenance interval: {{ categoryName }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-row dense>
-            <v-col
-              cols="12"
-              xs="12"
-              sm="12"
-              md="12"
-            >
-              <v-select
-                v-model="selected_name"
-                :items="Object.keys(categoryObject)"
-                :rules="[v => !!v]"
-                label="Maintenance name"
-                required
-              />
-            </v-col>
-          </v-row>
-          <v-row dense>
-            <v-col
-              cols="12"
-              xs="12"
-              sm="4"
-              md="4"
-            >
-              <v-select
-                v-model="categoryObject[selected_name].interval_type"
-                :items="interval_types"
-                :rules="[v => !!v]"
-                label="Interval type"
-                required
-              />
-            </v-col>
-            <v-col
-              cols="12"
-              xs="12"
-              sm="4"
-              md="4"
-            >
-              <v-text-field
-                v-model.number="categoryObject[selected_name].interval_amount"
-                :rules="[v => !!v]"
-                label="Interval amount"
-                required
-              />
-            </v-col>
-            <v-col
-              cols="12"
-              xs="12"
-              sm="4"
-              md="4"
-            >
-              <v-select
-                v-model="categoryObject[selected_name].interval_unit"
-                :items="interval_units"
-                :rules="[v => !!v]"
-                label="Interval unit"
-                required
-              />
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="secondary"
-            text
-            @click.prevent="onCancel"
-          >
-            Close
-          </v-btn>
-          <v-btn
-            color="secondary"
-            :disabled="!valid"
-            text
-            @click.prevent="onSave"
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-form>
-  </v-dialog>
+  <MaintenanceDialog
+    :task="'Edit'"
+    :maintenance-dialog.sync="edit_maintenance_dialog"
+    :category-name.sync="category_name"
+    :maintenance-name.sync="maintenance_name"
+    :maintenance-object="maintenance_object"
+    :category-list="category_list"
+    :maintenance-list="maintenance_list"
+    @saveClicked="putMaintenanceItem"
+  />
 </template>
 
 <script>
 import { apiPutMaintenanceItem } from '../../components/api/MaintenanceApi';
+import MaintenanceDialog from './MaintenanceDialog.vue';
 
 export default {
   name: 'MaintenanceDialEditDialog',
+  components: {
+    MaintenanceDialog,
+  },
   props: {
     editMaintenanceDialog: {
       type: Boolean,
@@ -116,45 +35,65 @@ export default {
     },
   },
   data: () => ({
-    valid: true,
-    selected_name: null,
-    interval_types: [
-      'planned cycle',
-      'estimated wear',
-    ],
-    interval_units: [
-      'h',
-      'a',
-      't',
-    ],
+    maintenance_name: null,
   }),
+  computed: {
+    edit_maintenance_dialog: {
+      get() {
+        return this.editMaintenanceDialog;
+      },
+      set(value) {
+        this.$emit('update:editMaintenanceDialog', value);
+      },
+    },
+    category_name: {
+      get() {
+        return this.categoryName;
+      },
+      set(value) {
+        this.$emit('update:categoryName', value);
+      },
+    },
+    maintenance_object: {
+      get() {
+        return this.categoryObject[this.maintenance_name];
+      },
+      set(value) {
+        this.$emit('update:categoryName', value);
+      },
+    },
+    maintenance_list() {
+      return Object.keys(this.categoryObject);
+    },
+    category_list() {
+      return Object.keys(this.categoryObject);
+    },
+  },
   created() {
-    [this.selected_name] = Object.keys(this.categoryObject);
+    [this.maintenance_name] = this.category_list;
   },
   updated() {
   },
   methods: {
-    onSave() {
-      const mtnId = this.categoryObject[this.selected_name].maintenance_id;
+    putMaintenanceItem() {
+      const mtnId = this.maintenance_object.maintenance_id;
       const payload = {
-        interval_amount: this.categoryObject[this.selected_name].interval_amount,
-        interval_unit: this.categoryObject[this.selected_name].interval_unit,
-        interval_type: this.categoryObject[this.selected_name].interval_type,
+        interval_amount: this.maintenance_object.interval_amount,
+        interval_unit: this.maintenance_object.interval_unit,
+        interval_type: this.maintenance_object.interval_type,
       };
       apiPutMaintenanceItem(payload, mtnId)
         .then(() => {
-          this.$emit('update:editMaintenanceDialog', false);
+          this.edit_maintenance_dialog = false;
         })
         .catch((error) => {
+          this.edit_maintenance_dialog = false;
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
             message: `${error}!`,
           });
         });
-    },
-    onCancel() {
-      this.$emit('update:editMaintenanceDialog', false);
     },
   },
 };
