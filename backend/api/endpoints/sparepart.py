@@ -246,12 +246,21 @@ class SparepartWarning(Resource):
 
         sparepart_all_entries = SparepartModel.query.order_by(SparepartModel.datetime_display.desc()).all()
 
-        warning_count = {'warnings': 0}
+        warnings = {
+            'warnings': 0,
+            'missing_spareparts': [],
+        }
         for sparepart_entry in sparepart_all_entries:
             if sparepart_entry.current_stock < sparepart_entry.min_stock:
-                warning_count['warnings'] += 1
+                sparepartitem_data = sparepartitem_schema.dump(sparepart_entry.items, many=True)
+                sparepart_data = sparepart_schema.dump(sparepart_entry)
+                sparepart_data['current_stock'] = sparepart_entry.current_stock
+                sparepart_data['items'] = sparepartitem_data
 
-        response = jsonify(warning_count)
+                warnings['warnings'] += 1
+                warnings['missing_spareparts'].append(sparepart_data)
+
+        response = jsonify(warnings)
         response.status_code = 200
 
         return response
