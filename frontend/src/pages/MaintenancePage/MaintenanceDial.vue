@@ -53,18 +53,21 @@
       :add-maintenance-dialog.sync="add_maintenance_dialog"
       :category-object="categoryObject"
       :category-name="categoryName"
-      @newMaintenanceAdded="newMaintenanceAdded()"
+      :category-array="categoryArray"
+      @newMaintenanceAdded="$emit('refreshTable')"
     />
     <MaintenanceDialEditDialog
       :edit-maintenance-dialog.sync="edit_maintenance_dialog"
       :category-object="categoryObject"
       :category-name="categoryName"
+      :category-array="categoryArray"
+      @maintenanceEdited="$emit('refreshTable')"
     />
     <MaintenanceDialDeleteDialog
       :delete-maintenance-dialog.sync="delete_maintenance_dialog"
       :category-object="categoryObject"
       :category-name="categoryName"
-      @maintenanceDeleted="maintenanceDeleted()"
+      @maintenanceDeleted="$emit('refreshTable')"
     />
   </div>
 </template>
@@ -90,6 +93,10 @@ export default {
       type: String,
       required: true,
     },
+    categoryArray: {
+      type: Array,
+      required: true,
+    },
   },
   data: () => ({
     add_maintenance_dialog: false,
@@ -105,12 +112,6 @@ export default {
     },
     deleteMaintenance() {
       this.delete_maintenance_dialog = true;
-    },
-    newMaintenanceAdded() {
-      this.$emit('newMaintenanceAdded');
-    },
-    maintenanceDeleted() {
-      this.$emit('maintenanceDeleted');
     },
   },
 };
