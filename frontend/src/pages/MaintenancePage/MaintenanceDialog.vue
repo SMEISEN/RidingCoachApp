@@ -96,6 +96,47 @@
               />
             </v-col>
           </v-row>
+          <v-row no-gutters>
+            <v-select
+              v-model="maintenance_object.tags_default"
+              :items="maintenance_tags_array"
+              label="Default tags"
+              chips
+              multiple
+            >
+              <template v-slot:selection="{ attrs, item, select, selected }">
+                <v-chip
+                  v-bind="attrs"
+                  :input-value="selected"
+                  :color="chipColor(item)"
+                  close
+                  outlined
+                  @click="select"
+                  @click:close="removeTagChips(item)"
+                >
+                  <v-icon
+                    v-if="item === 'checked'"
+                    left
+                  >
+                    mdi-check-circle-outline
+                  </v-icon>
+                  <v-icon
+                    v-if="item === 'fixed'"
+                    left
+                  >
+                    mdi-progress-wrench
+                  </v-icon>
+                  <v-icon
+                    v-if="item === 'replaced'"
+                    left
+                  >
+                    mdi-refresh
+                  </v-icon>
+                  <span>{{ item }}</span>
+                </v-chip>
+              </template>
+            </v-select>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -164,6 +205,7 @@ export default {
       'a',
       't',
     ],
+    maintenance_tags_array: ['checked', 'fixed', 'replaced'],
   }),
   computed: {
     maintenance_object: {
@@ -202,9 +244,34 @@ export default {
   methods: {
     onSave() {
       this.$emit('saveClicked');
+      this.resetValidation();
     },
     onCancel() {
+      this.$emit('cancelClicked');
+      this.resetValidation();
       this.maintenance_dialog = false;
+    },
+    resetValidation() {
+      if (typeof this.$refs.validation_form !== 'undefined') {
+        this.$refs.validation_form.resetValidation();
+      }
+    },
+    chipColor(item) {
+      if (item === 'checked') {
+        return 'success';
+      }
+      if (item === 'fixed') {
+        return 'warning';
+      }
+      if (item === 'replaced') {
+        return 'error';
+      }
+      return 'grey';
+    },
+    removeTagChips(item) {
+      this.maintenance_object.tags_default.splice(this.maintenance_object.tags_default
+        .indexOf(item), 1);
+      this.maintenance_object.tags_default = [...this.maintenance_object.tags_default];
     },
   },
 };
