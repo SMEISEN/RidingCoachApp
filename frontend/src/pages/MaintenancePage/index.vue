@@ -26,7 +26,10 @@
             />
           </v-card>
         </v-col>
-        <MaintenanceAddCategoryDialog />
+        <MaintenanceAddCategoryDialog
+          :category-array="category_array"
+          @refreshTable="getMaintenance"
+        />
       </v-row>
     </v-container>
     <MaintenanceUndoSnackbar
