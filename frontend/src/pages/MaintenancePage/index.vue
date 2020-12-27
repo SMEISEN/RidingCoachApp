@@ -21,16 +21,20 @@
             <MaintenanceDial
               :category-object="category_object"
               :category-name="category_name"
-              @newMaintenanceAdded="$forceUpdate()"
-              @maintenanceDeleted="$forceUpdate()"
+              :category-array="category_array"
+              @refreshTable="getMaintenance"
             />
           </v-card>
         </v-col>
+        <MaintenanceAddCategoryDialog
+          :category-array="category_array"
+          @refreshTable="getMaintenance"
+        />
       </v-row>
     </v-container>
     <MaintenanceUndoSnackbar
       :snackbar-state.sync="snackbar_state"
-      @undoButtonClicked="undoMaintenance()"
+      @undoButtonClicked="undoMaintenance"
     />
   </v-app>
 </template>
@@ -44,6 +48,7 @@ import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
 import MaintenanceTable from './MaintenanceTable.vue';
 import MaintenanceUndoSnackbar from './MaintenanceUndoSnackbar.vue';
 import MaintenanceDial from './MaintenanceDial.vue';
+import MaintenanceAddCategoryDialog from './MaintenanceAddCategoryDialog.vue';
 
 export default {
   name: 'Maintenance',
@@ -54,6 +59,7 @@ export default {
     MaintenanceDial,
     MaintenanceUndoSnackbar,
     MaintenanceTable,
+    MaintenanceAddCategoryDialog,
   },
   data() {
     return {
@@ -76,6 +82,9 @@ export default {
       set(value) {
         this.$store.commit('setHistoryId', value);
       },
+    },
+    category_array() {
+      return Object.keys(this.maintenance_object);
     },
   },
   created() {

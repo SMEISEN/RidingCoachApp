@@ -149,6 +149,7 @@ class MaintenanceCollection(Resource):
         inserted_data = request.get_json()
 
         new_maintenance = MaintenanceModel(
+            bike_id=inserted_data.get('bike_id'),
             category=inserted_data.get('category'),
             name=inserted_data.get('name'),
             interval_amount=inserted_data.get('interval_amount'),
@@ -203,6 +204,8 @@ class MaintenanceItem(Resource):
 
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
+        if inserted_data.get('bike_id') is not None:
+            maintenance_work.bike_id = inserted_data.get('bike_id')
         if inserted_data.get('category') is not None:
             maintenance_work.category = inserted_data.get('category')
         if inserted_data.get('name') is not None:
@@ -214,7 +217,7 @@ class MaintenanceItem(Resource):
         if inserted_data.get('interval_type') is not None:
             maintenance_work.interval_type = inserted_data.get('interval_type')
         if inserted_data.get('tags_default') is not None:
-            maintenance_work.interval_type = inserted_data.get('tags_default')
+            maintenance_work.tags_default = inserted_data.get('tags_default')
         if bool(inserted_data) is True:
             maintenance_work.datetime_last_modified = datetime.utcnow()
 
