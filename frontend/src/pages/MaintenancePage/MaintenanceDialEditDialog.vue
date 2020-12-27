@@ -8,6 +8,7 @@
     :category-array="category_array"
     :maintenance-array="maintenance_array"
     @saveClicked="putMaintenanceItem"
+    @cancelClicked="initMaintenanceObject"
   />
 </template>
 
@@ -41,6 +42,7 @@ export default {
   data: () => ({
     category_name: null,
     maintenance_name: null,
+    maintenance_object: null,
   }),
   computed: {
     edit_maintenance_dialog: {
@@ -51,9 +53,6 @@ export default {
         this.$emit('update:editMaintenanceDialog', value);
       },
     },
-    maintenance_object() {
-      return this.categoryObject[this.maintenance_name];
-    },
     maintenance_array() {
       return Object.keys(this.categoryObject);
     },
@@ -61,9 +60,15 @@ export default {
       return this.categoryArray;
     },
   },
+  watch: {
+    maintenance_name() {
+      this.maintenance_object = this.categoryObject[this.maintenance_name];
+    },
+  },
   created() {
     this.category_name = this.categoryName;
     [this.maintenance_name] = this.maintenance_array;
+    this.initMaintenanceObject();
   },
   methods: {
     putMaintenanceItem() {
@@ -74,6 +79,7 @@ export default {
       apiPutMaintenanceItem(payload, mtnId)
         .then(() => {
           this.edit_maintenance_dialog = false;
+          this.initMaintenanceObject();
           this.$emit('maintenanceEdited');
           this.$store.commit('setInfoSnackbar', {
             state: true,
@@ -83,12 +89,16 @@ export default {
         })
         .catch((error) => {
           this.edit_maintenance_dialog = false;
+          this.initMaintenanceObject();
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
             message: `${error}!`,
           });
         });
+    },
+    initMaintenanceObject() {
+      this.maintenance_object = this.categoryObject[this.maintenance_name];
     },
   },
 };

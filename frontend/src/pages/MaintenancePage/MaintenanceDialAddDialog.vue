@@ -8,6 +8,7 @@
     :category-array="category_array"
     :maintenance-array="maintenance_array"
     @saveClicked="postMaintenanceItem"
+    @cancelClicked="initMaintenanceObject"
   />
 </template>
 
@@ -81,7 +82,7 @@ export default {
   },
   created() {
     this.category_name = this.categoryName;
-    [this.maintenance_name] = this.maintenance_array;
+    this.maintenance_name = '';
   },
   methods: {
     postMaintenanceItem() {
@@ -89,7 +90,6 @@ export default {
       this.maintenance_object.name = this.maintenance_name;
       this.maintenance_object.bike_id = this.current_bike_id;
       const payload = this.maintenance_object;
-      console.log(payload);
       apiPostMaintenance(payload)
         .then((res) => {
           this.categoryObject[this.maintenance_name] = {
@@ -101,7 +101,7 @@ export default {
           };
           this.categoryObject[this.maintenance_name].maintenance_id = res.data;
           this.add_maintenance_dialog = false;
-          this.resetMaintenanceObject();
+          this.initMaintenanceObject();
           this.$emit('newMaintenanceAdded');
           this.$store.commit('setInfoSnackbar', {
             state: true,
@@ -111,6 +111,7 @@ export default {
         })
         .catch((error) => {
           this.add_maintenance_dialog = false;
+          this.initMaintenanceObject();
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
@@ -118,7 +119,7 @@ export default {
           });
         });
     },
-    resetMaintenanceObject() {
+    initMaintenanceObject() {
       this.maintenance_object.maintenance_id = null;
       this.maintenance_object.bike_id = null;
       this.maintenance_object.category = '';
