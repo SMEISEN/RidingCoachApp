@@ -134,6 +134,7 @@ export default {
           const newBike = payload;
           newBike.bike_id = res.data;
           this.$store.commit('selectBike', newBike);
+          this.$emit('clearBikeDialog');
           this.$forceUpdate();
           this.$store.commit('setInfoSnackbar', {
             state: true,
@@ -142,6 +143,7 @@ export default {
           });
         })
         .catch((error) => {
+          this.$emit('clearBikeDialog');
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
@@ -155,6 +157,7 @@ export default {
           const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);
           this.bike_array[bikeIndex] = payload;
           this.$store.commit('selectBike', payload);
+          this.$emit('clearBikeDialog');
           this.$forceUpdate();
           this.$store.commit('setInfoSnackbar', {
             state: true,
@@ -163,6 +166,7 @@ export default {
           });
         })
         .catch((error) => {
+          this.$emit('clearBikeDialog');
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
@@ -176,6 +180,7 @@ export default {
         .then(() => {
           this.bike_array = this.bike_array.filter((x) => x.bike_id !== bikeId);
           this.$store.commit('selectBike', this.bike_array[0]);
+          this.$emit('clearBikeDialog');
           this.$forceUpdate();
           this.$store.commit('setInfoSnackbar', {
             state: true,
@@ -184,13 +189,13 @@ export default {
           });
         })
         .catch((error) => {
+          this.$emit('clearBikeDialog');
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'error',
             message: `${error}`,
           });
         });
-      this.$emit('clearBikeDialog');
       this.$store.commit('setBikeDialogState', false);
       this.$store.commit('setNavigationDrawerState', false);
     },
