@@ -17,6 +17,13 @@
     </template>
     <v-card>
       <v-card-text>
+        <LineChart
+          v-if="tire_pressure_dialog_array.length > 0"
+          :chart-data="data_collection"
+          :options="data_options"
+          :height="null"
+          :width="null"
+        />
         <v-simple-table>
           <thead>
             <tr>
@@ -38,7 +45,7 @@
           <tbody>
             <tr
               v-for="(entry, index) in tire_pressure_dialog_array"
-              :key="index"
+              :key="entry.temperature + entry.pressure"
             >
               <td style="border-bottom: none">
                 <v-text-field
@@ -126,9 +133,13 @@ import {
   decrementNumber,
   incrementNumber,
 } from '../../utils/FromUtils';
+import LineChart from '../../common/LineChart.vue';
 
 export default {
   name: 'BikeDialogTires',
+  components: {
+    LineChart,
+  },
   props: {
     tirePressureArray: {
       type: Array,
@@ -144,6 +155,52 @@ export default {
     },
     row_to_be_deleted: null,
     confirm_delete_dialog: false,
+    data_collection: {
+      datasets: [],
+    },
+    data_sets: [
+      {
+        data: [],
+        lineTension: 0,
+        backgroundColor: 'transparent',
+        borderColor: '',
+        pointBackgroundColor: '',
+      },
+    ],
+    data_options: {
+      responsive: true,
+      aspectRatio: 2,
+      maintainAspectRatio: true,
+      animation: false,
+      title: {
+        display: false,
+        text: 'Weather Data',
+      },
+      legend: {
+        display: false,
+      },
+      scales: {
+        xAxes: [
+          {
+            type: 'linear',
+            ticks: {
+              source: 'labels',
+              fontSize: 10,
+            },
+            gridLines: {
+              color: [],
+            },
+          },
+        ],
+        yAxes: [
+          {
+            ticks: {
+              fontSize: 10,
+            },
+          },
+        ],
+      },
+    },
   }),
   computed: {
     tire_pressure_array: {
@@ -165,6 +222,23 @@ export default {
         displayString = `${tirePressureMean} ± ${tirePressureHalfRange}`;
       }
       return displayString;
+    },
+  },
+  watch: {
+    tire_pressure_dialog_array: {
+      deep: true,
+      handler() {
+        this.data_sets[0].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
+        this.data_sets[0].borderColor = this.$vuetify.theme.themes.light.accent;
+        this.data_sets[0].data = [];
+        for (let i = 0; i < this.tire_pressure_dialog_array.length; i += 1) {
+          this.data_sets[0].data.push({
+            x: this.tire_pressure_dialog_array[i].temperature,
+            y: this.tire_pressure_dialog_array[i].pressure,
+          });
+        }
+        this.$set(this.data_collection, 'datasets', this._.cloneDeep(this.data_sets));
+      },
     },
   },
   created() {
