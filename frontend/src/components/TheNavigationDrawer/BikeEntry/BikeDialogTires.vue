@@ -125,6 +125,11 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <ConfirmDeleteDialog
+      :flagged-for-deletion="'pressure entry'"
+      :confirm-delete-dialog.sync="confirm_delete_dialog"
+      @deleteConfirmationButtonClicked="deletionConfirmed"
+    />
   </v-menu>
 </template>
 
@@ -134,11 +139,13 @@ import {
   incrementNumber,
 } from '../../utils/FromUtils';
 import LineChart from '../../common/LineChart.vue';
+import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
 
 export default {
   name: 'BikeDialogTires',
   components: {
     LineChart,
+    ConfirmDeleteDialog,
   },
   props: {
     tirePressureArray: {
