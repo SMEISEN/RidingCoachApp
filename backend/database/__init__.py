@@ -4,4 +4,4 @@ from flask_migrate import Migrate
 
 db = SQLAlchemy()
 ma = Marshmallow()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
