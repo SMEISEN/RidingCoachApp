@@ -103,30 +103,32 @@ export default {
     },
     getTrainingsAndHistory() {
       apiQueryHistory({ bike_id: this.current_bike_id }).then((resHistory) => {
-        let lastDay = resHistory.data[0].datetime_display;
-        let historyData = {
-          categories: [],
-          names: [],
-          datetime_display: null,
-        };
-        this.history_array = [];
-        for (let i = 0; i < resHistory.data.length; i += 1) {
-          const currentDay = resHistory.data[i].datetime_display;
-          const { category } = resHistory.data[i];
-          const { name } = resHistory.data[i];
-          historyData.categories.push(category);
-          historyData.names.push(name);
-          if (lastDay.substr(0, 10) !== currentDay.substr(0, 10)) {
-            historyData.categories = this._.uniq(historyData.categories).sort().join(', ');
-            historyData.names = this._.uniq(historyData.names).sort().join('\n');
-            historyData.datetime_display = lastDay;
-            this.history_array.push(historyData);
-            historyData = {
-              categories: [],
-              names: [],
-              datetime_display: null,
-            };
-            lastDay = currentDay;
+        if (resHistory.data.length > 0) {
+          let lastDay = resHistory.data[0].datetime_display;
+          let historyData = {
+            categories: [],
+            names: [],
+            datetime_display: null,
+          };
+          this.history_array = [];
+          for (let i = 0; i < resHistory.data.length; i += 1) {
+            const currentDay = resHistory.data[i].datetime_display;
+            const { category } = resHistory.data[i];
+            const { name } = resHistory.data[i];
+            historyData.categories.push(category);
+            historyData.names.push(name);
+            if (lastDay.substr(0, 10) !== currentDay.substr(0, 10)) {
+              historyData.categories = this._.uniq(historyData.categories).sort().join(', ');
+              historyData.names = this._.uniq(historyData.names).sort().join('\n');
+              historyData.datetime_display = lastDay;
+              this.history_array.push(historyData);
+              historyData = {
+                categories: [],
+                names: [],
+                datetime_display: null,
+              };
+              lastDay = currentDay;
+            }
           }
         }
         apiQueryTrainings({ bike_id: this.current_bike_id }).then((resTraining) => {
