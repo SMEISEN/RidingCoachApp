@@ -76,6 +76,9 @@ import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
 import BikeDialogSetup from './BikeDialogSetup.vue';
 import BikeDialogOptional from './BikeDialogOptional.vue';
 import BikeDialogRequired from './BikeDialogRequired.vue';
+import {
+  indexOfObjectValueInArray,
+} from '../../utils/FromUtils';
 
 export default {
   name: 'TheNavigationDrawerBikeDialog',
@@ -127,7 +130,11 @@ export default {
   methods: {
     postBike(payload) {
       apiPostBike(payload)
-        .then(() => {
+        .then((res) => {
+          const newBike = payload;
+          newBike.bike_id = res.data;
+          this.$store.commit('selectBike', newBike);
+          this.$forceUpdate();
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -145,6 +152,10 @@ export default {
     putBike(BikeId, payload) {
       apiPutBike(BikeId, payload)
         .then(() => {
+          const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);
+          this.bike_array[bikeIndex] = payload;
+          this.$store.commit('selectBike', payload);
+          this.$forceUpdate();
           this.$store.commit('setInfoSnackbar', {
             state: true,
             color: 'success',
@@ -164,7 +175,7 @@ export default {
       apiDeleteBike(bikeId)
         .then(() => {
           this.bike_array = this.bike_array.filter((x) => x.bike_id !== bikeId);
-          this.$store.commit('selectBike', 0);
+          this.$store.commit('selectBike', this.bike_array[0]);
           this.$forceUpdate();
           this.$store.commit('setInfoSnackbar', {
             state: true,
@@ -210,13 +221,10 @@ export default {
       if (this.$store.getters.getBikeEditFlag === false) {
         this.postBike(payload);
       } else {
+        payload.bike_id = BikeId;
         this.putBike(BikeId, payload);
-        if (this.$store.getters.getCurrentBikeId === BikeId) {
-          payload.bike_id = BikeId;
-          this.$forceUpdate();
-        }
       }
-      this.$store.commit('selectBike', payload);
+      this.$store.commit('setBikeEditFlag', false);
       this.$store.commit('setBikeDialogState', false);
       this.$store.commit('setNavigationDrawerState', false);
     },

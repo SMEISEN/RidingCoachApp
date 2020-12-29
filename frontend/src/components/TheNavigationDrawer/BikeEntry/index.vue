@@ -14,7 +14,7 @@
       <v-radio-group v-model="selected_bike">
         <v-list-item
           v-for="(bike, index) in bike_array"
-          :key="index"
+          :key="bike.bike_id"
           v-touch="{ right: () => editBike(bike.bike_id) }"
           @click="selectBike(index)"
         >
@@ -44,7 +44,7 @@
     <TheNavigationDrawerBikeDialog
       :bike-form-object="bike_form_object"
       :setup-individual-template="setup_individual_template"
-      @clearBikeDialog="initBikeForm()"
+      @clearBikeDialog="initBikeForm"
     />
   </div>
 </template>
@@ -73,16 +73,16 @@ export default {
       piston: null,
       slick_front_name: null,
       slick_front_notes: null,
-      slick_front_pressure: null,
+      slick_front_pressure: [],
       slick_rear_name: null,
       slick_rear_notes: null,
-      slick_rear_pressure: null,
+      slick_rear_pressure: [],
       rain_front_name: null,
       rain_front_notes: null,
-      rain_front_pressure: null,
+      rain_front_pressure: [],
       rain_rear_name: null,
       rain_rear_notes: null,
-      rain_rear_pressure: null,
+      rain_rear_pressure: [],
       setup_individual: [
         {
           category: null,
@@ -120,10 +120,6 @@ export default {
         this.$store.commit('setAllBikes', value);
       },
     },
-  },
-  updated() {
-  },
-  created() {
   },
   methods: {
     selectBike(index) {
@@ -173,6 +169,10 @@ export default {
     },
     initBikeForm() {
       initObject(this.bike_form_object, null);
+      this.bike_form_object.slick_front_pressure = [];
+      this.bike_form_object.slick_rear_pressure = [];
+      this.bike_form_object.rain_front_pressure = [];
+      this.bike_form_object.rain_rear_pressure = [];
       this.bike_form_object.setup_individual = [this._.cloneDeep(this.setup_individual_template)];
       this.$store.commit('setBikeEditFlag', false);
     },
