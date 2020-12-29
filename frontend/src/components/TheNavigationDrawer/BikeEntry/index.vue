@@ -120,22 +120,53 @@ export default {
         this.$store.commit('setAllBikes', value);
       },
     },
+    current_bike_id: {
+      get() {
+        return this.$store.getters.getCurrentBikeId;
+      },
+      set(value) {
+        this.$store.commit('setCurrentBikeId', value);
+      },
+    },
+    bike_edit_flag: {
+      get() {
+        return this.$store.getters.getBikeEditFlag;
+      },
+      set(value) {
+        this.$store.commit('setBikeEditFlag', value);
+      },
+    },
+    bike_dialog: {
+      get() {
+        return this.$store.getters.getBikeDialogState;
+      },
+      set(value) {
+        this.$store.commit('setBikeDialogState', value);
+      },
+    },
+    navigation_drawer: {
+      get() {
+        return this.$store.getters.getNavigationDrawerState;
+      },
+      set(value) {
+        this.$store.commit('setNavigationDrawerState', value);
+      },
+    },
   },
   methods: {
     selectBike(index) {
       const selectedBike = this.bike_array[index];
       this.$nextTick(() => {
-        if (this.$store.getters.getCurrentBikeId !== selectedBike.bike_id
-          && this.$store.getters.getBikeDialogState === false) {
+        if (this.current_bike_id !== selectedBike.bike_id && this.bike_dialog === false) {
           this.$store.commit('selectBike', selectedBike);
-          this.$store.commit('setNavigationDrawerState', false);
+          this.navigation_drawer = false;
           this.$forceUpdate();
         }
       });
     },
     editBike(BikeId) {
-      this.$store.commit('setBikeEditFlag', true);
-      this.$store.commit('setBikeDialogState', true);
+      this.bike_edit_flag = true;
+      this.bike_dialog = true;
       const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);
       this.bike_form_object.bike_id = this.bike_array[bikeIndex].bike_id;
       this.bike_form_object.manufacturer = this.bike_array[bikeIndex].manufacturer;
@@ -164,8 +195,8 @@ export default {
       }
     },
     createBike() {
-      this.$store.commit('setBikeDialogState', true);
-      this.$store.commit('setNavigationDrawerState', false);
+      this.bike_dialog = true;
+      this.navigation_drawer = false;
     },
     initBikeForm() {
       initObject(this.bike_form_object, null);
@@ -174,7 +205,7 @@ export default {
       this.bike_form_object.rain_front_pressure = [];
       this.bike_form_object.rain_rear_pressure = [];
       this.bike_form_object.setup_individual = [this._.cloneDeep(this.setup_individual_template)];
-      this.$store.commit('setBikeEditFlag', false);
+      this.bike_edit_flag = false;
     },
   },
 };
