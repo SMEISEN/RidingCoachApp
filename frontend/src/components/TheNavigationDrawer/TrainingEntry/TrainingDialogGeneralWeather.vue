@@ -15,9 +15,13 @@
 
 <script>
 import moment from 'moment-timezone';
-import { apiGetWeatherForecast, apiGetWeatherHistoric } from '../../api/WeatherApi';
 import { apiGetLocation } from '../../api/LocationApi';
+import {
+  apiGetWeatherForecast,
+  apiGetWeatherHistoric,
+} from '../../api/WeatherApi';
 import LineChart from '../../common/LineChart.vue';
+import { calculateTrackSurfaceTemperatureDegC } from '../../common/TrackSufraceTemperatureModel';
 
 export default {
   name: 'TrainingDialogGeneralWeather',
@@ -196,24 +200,26 @@ export default {
       this.data_sets[1].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[1].borderColor = this.$vuetify.theme.themes.light.error;
       for (let i = 0; i < this.weather_array.length; i += 1) {
-        const airDegrees = this.weather_array[i].temp.value;
-        this.data_sets[0].data.push(airDegrees);
-        if (airDegrees !== null) {
-          const windSpeed = this.weather_array[i].wind_speed.value;
-          const humidity = this.weather_array[i].humidity.value;
-          const solarRadiation = this.weather_array[i].surface_shortwave_radiation.value;
-          const asphaltFahrenheit = 41.51
-            + 0.102 * windSpeed
-            + 1.71 * airDegrees
-            + 0.032 * humidity
-            - 0.029 * solarRadiation
-            + 0.002 * airDegrees * humidity
-            + 5.7 * (10 ** -4) * windSpeed * solarRadiation
-            + 0.0014 * solarRadiation
-            + 4.09 * (10 ** -5) * (solarRadiation ** 2)
-            - 1.15 * (10 ** -6) * airDegrees * (solarRadiation ** 2);
-          const asphaltDegrees = (asphaltFahrenheit - 32) / 1.8;
-          this.data_sets[1].data.push(asphaltDegrees);
+        const airDegC = this.weather_array[i].temp.value;
+        this.data_sets[0].data.push(airDegC);
+        if (airDegC !== null) {
+          const windSpeedMetersSeconds = this.weather_array[i]
+            .wind_speed.value;
+          const humidityPercent = this.weather_array[i]
+            .humidity.value;
+          const solarRadiationWattPerMetersSquared = this.weather_array[i]
+            .surface_shortwave_radiation.value;
+          const asphaltDegC = calculateTrackSurfaceTemperatureDegC(
+            airDegC,
+            windSpeedMetersSeconds,
+            humidityPercent,
+            solarRadiationWattPerMetersSquared,
+          );
+          this.data_sets[1].data.push(asphaltDegC);
+          if (i === currentTick) {
+            this.$store.commit('setCurrentTemperatureAirDegC', airDegC);
+            this.$store.commit('setCurrentTemperatureTrackDegC', asphaltDegC);
+          }
         } else {
           this.data_sets[1].data.push(null);
         }
