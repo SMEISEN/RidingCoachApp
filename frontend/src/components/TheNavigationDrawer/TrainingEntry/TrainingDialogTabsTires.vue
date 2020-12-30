@@ -119,6 +119,10 @@ import {
   incrementNumber,
   decrementNumber,
 } from '../../utils/FromUtils';
+import { interpolateLinearly1D } from '../../utils/DataProcessingUtils';
+import { apiGetLocation } from '../../api/LocationApi';
+import { apiGetWeatherCurrent } from '../../api/WeatherApi';
+import { calculateTrackSurfaceTemperatureDegC } from '../../common/TrackSufraceTemperatureModel';
 
 export default {
   name: 'TrainingDialogTabsTires',
@@ -140,7 +144,74 @@ export default {
       rain_front: null,
       rain_rear: null,
     },
+    location_object: null,
   }),
+  computed: {
+    current_temperature_track_deg_c: {
+      get() {
+        return this.$store.getters.getCurrentTemperatureTrackDegC;
+      },
+      set(value) {
+        this.$store.commit('setCurrentTemperatureTrackDegC', value);
+      },
+    },
+    current_temperature_air_deg_c: {
+      get() {
+        return this.$store.getters.getCurrentTemperatureAirDegC;
+      },
+      set(value) {
+        this.$store.commit('setCurrentTemperatureAirDegC', value);
+      },
+    },
+    slick_front_pressure() {
+      const slickTemperaturePressure = this.$store.getters.getCurrentBikeSlickFrontPressure;
+      if (slickTemperaturePressure && slickTemperaturePressure.length > 0) {
+        const arrayTemperaturePressure = slickTemperaturePressure.map(
+          (x) => [x.temperature, x.pressure],
+        );
+        return interpolateLinearly1D(
+          this.current_temperature_track_deg_c, arrayTemperaturePressure,
+        );
+      }
+      return null;
+    },
+    slick_rear_pressure() {
+      const slickTemperaturePressure = this.$store.getters.getCurrentBikeSlickRearPressure;
+      if (slickTemperaturePressure && slickTemperaturePressure.length > 0) {
+        const arrayTemperaturePressure = slickTemperaturePressure.map(
+          (x) => [x.temperature, x.pressure],
+        );
+        return interpolateLinearly1D(
+          this.current_temperature_track_deg_c, arrayTemperaturePressure,
+        );
+      }
+      return null;
+    },
+    rain_front_pressure() {
+      const slickTemperaturePressure = this.$store.getters.getCurrentBikeRainFrontPressure;
+      if (slickTemperaturePressure && slickTemperaturePressure.length > 0) {
+        const arrayTemperaturePressure = slickTemperaturePressure.map(
+          (x) => [x.temperature, x.pressure],
+        );
+        return interpolateLinearly1D(
+          this.current_temperature_track_deg_c, arrayTemperaturePressure,
+        );
+      }
+      return null;
+    },
+    rain_rear_pressure() {
+      const slickTemperaturePressure = this.$store.getters.getCurrentBikeRainRearPressure;
+      if (slickTemperaturePressure && slickTemperaturePressure.length > 0) {
+        const arrayTemperaturePressure = slickTemperaturePressure.map(
+          (x) => [x.temperature, x.pressure],
+        );
+        return interpolateLinearly1D(
+          this.current_temperature_track_deg_c, arrayTemperaturePressure,
+        );
+      }
+      return null;
+    },
+  },
   watch: {
     rain_tires() {
       if (this.rain_tires === 0) {
@@ -152,34 +223,89 @@ export default {
       }
     },
   },
-  updated() {
-  },
   created() {
-    this.getRecommendedTirePressure();
+    this.getLocation().then(() => {
+      this.getCurrentWeather().then(() => {
+        this.getRecommendedTirePressure();
+      });
+    });
   },
   methods: {
+    getLocation() {
+      return new Promise((resolve, reject) => {
+        apiGetLocation()
+          .then((res) => {
+            this.location_object = res;
+            resolve(res);
+          })
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error}!`,
+            });
+            reject(error);
+          });
+      });
+    },
+    getCurrentWeather() {
+      return new Promise((resolve, reject) => {
+        apiGetWeatherCurrent(this.location_object)
+          .then((res) => {
+            this.calculateTrackSurfaceTemperature(res);
+            resolve(res);
+          })
+          .catch((error) => {
+            this.$store.commit('setInfoSnackbar', {
+              state: true,
+              color: 'error',
+              message: `${error}!`,
+            });
+            reject(error);
+          });
+      });
+    },
+    calculateTrackSurfaceTemperature(weatherObject) {
+      const airDegC = weatherObject.temp.value;
+      if (airDegC !== null) {
+        const windSpeedMetersSeconds = weatherObject.wind_speed.value;
+        const humidityPercent = weatherObject.humidity.value;
+        const solarRadiationWattPerMetersSquared = weatherObject.surface_shortwave_radiation.value;
+        const asphaltDegC = calculateTrackSurfaceTemperatureDegC(
+          airDegC,
+          windSpeedMetersSeconds,
+          humidityPercent,
+          solarRadiationWattPerMetersSquared,
+        );
+        this.current_temperature_air_deg_c = airDegC;
+        this.current_temperature_track_deg_c = asphaltDegC;
+      } else {
+        this.current_temperature_air_deg_c = null;
+        this.current_temperature_track_deg_c = null;
+      }
+    },
     getRecommendedTirePressure() {
-      const slickFrontPressure = this.$store.getters.getCurrentBikeSlickFrontPressure;
-      const slickRearPressure = this.$store.getters.getCurrentBikeSlickRearPressure;
-      const rainFrontPressure = this.$store.getters.getCurrentBikeRainFrontPressure;
-      const rainRearPressure = this.$store.getters.getCurrentBikeRainRearPressure;
-      if (slickFrontPressure !== null) {
-        this.tire_pressure_recommendation.slick_front = `recommended: ${slickFrontPressure} bar`;
+      if (this.slick_front_pressure !== null) {
+        this.tire_pressure_recommendation
+          .slick_front = `recommended: ${this.slick_front_pressure.toFixed(2)} bar`;
       } else {
         this.tire_pressure_recommendation.slick_front = '';
       }
-      if (slickRearPressure !== null) {
-        this.tire_pressure_recommendation.slick_rear = `recommended: ${slickRearPressure} bar`;
+      if (this.slick_rear_pressure !== null) {
+        this.tire_pressure_recommendation
+          .slick_rear = `recommended: ${this.slick_rear_pressure.toFixed(2)} bar`;
       } else {
         this.tire_pressure_recommendation.slick_rear = '';
       }
-      if (rainFrontPressure !== null) {
-        this.tire_pressure_recommendation.rain_front = `recommended: ${rainFrontPressure} bar`;
+      if (this.rain_front_pressure !== null) {
+        this.tire_pressure_recommendation
+          .rain_front = `recommended: ${this.rain_front_pressure.toFixed(2)} bar`;
       } else {
         this.tire_pressure_recommendation.rain_front = '';
       }
-      if (rainRearPressure !== null) {
-        this.tire_pressure_recommendation.rain_rear = `recommended: ${rainRearPressure} bar`;
+      if (this.rain_rear_pressure !== null) {
+        this.tire_pressure_recommendation
+          .rain_rear = `recommended: ${this.rain_rear_pressure.toFixed(2)} bar`;
       } else {
         this.tire_pressure_recommendation.rain_rear = '';
       }
