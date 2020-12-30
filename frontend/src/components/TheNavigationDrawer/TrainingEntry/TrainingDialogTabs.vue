@@ -54,12 +54,10 @@
                 class="px-6"
               >
                 <v-menu
-                  ref="time_menu"
-                  z-index="9999"
-                  :v-model="time_menu"
+                  v-model="time_menu"
                   :close-on-content-click="false"
                   :nudge-right="40"
-                  :return-value.sync="trainingFormObject.setup_fixed[training_setup_tab].time"
+                  scrollable
                   transition="scale-transition"
                   offset-y
                   max-width="290px"
@@ -83,8 +81,7 @@
                     format="24hr"
                     scrollable
                     full-width
-                    @click:minute="$refs.time_menu
-                      .save(trainingFormObject.setup_fixed[training_setup_tab].time)"
+                    @click:minute="time_menu = false"
                   />
                 </v-menu>
               </v-col>
