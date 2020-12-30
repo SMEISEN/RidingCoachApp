@@ -64,3 +64,31 @@ export const apiGetWeatherHistoric = (pos) => new Promise((resolve, reject) => {
       reject(error);
     });
 });
+export const apiGetWeatherCurrent = (pos) => new Promise((resolve, reject) => {
+  const ApiPath = 'https://api.climacell.co/v3/weather/realtime?'
+    + `lat=${pos.coords.latitude}&`
+    + `lon=${pos.coords.longitude}&`
+    + 'unit_system=si&'
+    + 'fields='
+    + 'temp'
+    + '%2C'
+    + 'wind_speed'
+    + '%2C'
+    + 'surface_shortwave_radiation'
+    + '%2C'
+    + 'humidity'
+    + '%2C'
+    + 'precipitation'
+    + '%2C'
+    + 'weather_code'
+    + '%2C'
+    + 'cloud_cover'
+    + '&'
+    + `apikey=${process.env.VUE_APP_CLIMACELL_API_KEY}`;
+  axios.get(ApiPath)
+    .then((res) => resolve(res.data))
+    .catch((error) => {
+      console.error(error);
+      reject(error);
+    });
+});
