@@ -8,6 +8,7 @@ import history from './modules/history';
 import navigation from './modules/navigation';
 import info from './modules/info';
 import spareparts from './modules/spareparts';
+import weather from './modules/weather';
 
 Cookies.defaults = {
   sameSite: 'None',
@@ -24,6 +25,7 @@ export default new Vuex.Store({
     navigation,
     info,
     spareparts,
+    weather,
   },
   plugins: [
     createPersistedState({

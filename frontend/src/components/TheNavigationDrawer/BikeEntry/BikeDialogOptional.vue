@@ -53,9 +53,8 @@
           sm="1"
           md="1"
         >
-          <v-text-field
-            v-model.number="bikeFormObject.slick_front_pressure"
-            label="Pressure"
+          <BikeDialogTires
+            :tire-pressure-array.sync="bikeFormObject.slick_front_pressure"
           />
         </v-col>
         <v-col
@@ -75,9 +74,8 @@
           sm="1"
           md="1"
         >
-          <v-text-field
-            v-model.number="bikeFormObject.slick_rear_pressure"
-            label="Pressure"
+          <BikeDialogTires
+            :tire-pressure-array.sync="bikeFormObject.slick_rear_pressure"
           />
         </v-col>
         <v-col
@@ -123,9 +121,8 @@
           sm="1"
           md="1"
         >
-          <v-text-field
-            v-model.number="bikeFormObject.rain_front_pressure"
-            label="Pressure"
+          <BikeDialogTires
+            :tire-pressure-array.sync="bikeFormObject.rain_front_pressure"
           />
         </v-col>
         <v-col
@@ -145,9 +142,8 @@
           sm="1"
           md="1"
         >
-          <v-text-field
-            v-model.number="bikeFormObject.rain_rear_pressure"
-            label="Pressure"
+          <BikeDialogTires
+            :tire-pressure-array.sync="bikeFormObject.rain_rear_pressure"
           />
         </v-col>
         <v-col
@@ -182,14 +178,23 @@
 </template>
 
 <script>
+import BikeDialogTires from './BikeDialogTires.vue';
+
 export default {
   name: 'BikeDialogOptional',
+  components: {
+    BikeDialogTires,
+  },
   props: {
     bikeFormObject: {
       type: Object,
       required: true,
     },
   },
+  data: () => ({
+    dialog: false,
+    menu: false,
+  }),
 };
 </script>
 

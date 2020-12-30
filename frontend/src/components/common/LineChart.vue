@@ -1,12 +1,9 @@
 <script>
-import { Line, mixins } from 'vue-chartjs';
+import { Line } from 'vue-chartjs';
 
 export default {
   name: 'LineChart',
   extends: Line,
-  mixins: [
-    mixins.reactiveProp,
-  ],
   props: {
     options: {
       type: Object,
@@ -15,6 +12,15 @@ export default {
     chartData: {
       type: Object,
       required: true,
+    },
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler() {
+        // eslint-disable-next-line
+        this.$data._chart.update();
+      },
     },
   },
   mounted() {

@@ -8,6 +8,7 @@ import orderBy from 'lodash/orderBy';
 import flatten from 'lodash/flatten';
 import mean from 'lodash/mean';
 import min from 'lodash/min';
+import max from 'lodash/max';
 
 Vue.use(VueLodash, {
   lodash: {
@@ -19,6 +20,7 @@ Vue.use(VueLodash, {
     flatten,
     mean,
     min,
+    max,
   },
 });
 
