@@ -98,7 +98,7 @@
                 {{ item.stock }}
                 <template v-slot:input>
                   <v-text-field
-                    v-model="item.stock"
+                    v-model.number="item.stock"
                     single-line
                     :rules="[v => (v) >= 0]"
                     prepend-icon="mdi-minus"
@@ -299,7 +299,7 @@ export default {
         });
     },
     changeSparepartMinStock(sparepartId, newMinStock) {
-      const payload = { min_stock: newMinStock };
+      const payload = { min_stock: newMinStock === '' ? null : newMinStock };
       apiPutSparepartItem(payload, sparepartId)
         .then((res) => {
           this.$emit('deletionConfirmed', this.sparepartitem_id);
