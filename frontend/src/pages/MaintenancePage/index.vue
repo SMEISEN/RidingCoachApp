@@ -77,7 +77,7 @@ export default {
     },
     lastHistoryId: {
       get() {
-        return this.$store.getters.getHistoryId();
+        return this.$store.getters.getHistoryId;
       },
       set(value) {
         this.$store.commit('setHistoryId', value);
