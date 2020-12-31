@@ -131,7 +131,7 @@ class SparepartItem(Resource):
             sparepart.name = inserted_data.get('name')
         if inserted_data.get('module') is not None:
             sparepart.module = inserted_data.get('module')
-        if inserted_data.get('min_stock') is not None:
+        if inserted_data.get('min_stock', 'keyDoesNotExist') != 'keyDoesNotExist':
             sparepart.min_stock = inserted_data.get('min_stock')
         if bool(inserted_data) is True:
             sparepart.datetime_last_modified = datetime.utcnow()
@@ -251,6 +251,8 @@ class SparepartWarning(Resource):
             'missing_spareparts': [],
         }
         for sparepart_entry in sparepart_all_entries:
+            if sparepart_entry.current_stock is None or sparepart_entry.min_stock is None:
+                continue
             if sparepart_entry.current_stock < sparepart_entry.min_stock:
                 sparepartitem_data = sparepartitem_schema.dump(sparepart_entry.items, many=True)
                 sparepart_data = sparepart_schema.dump(sparepart_entry)
