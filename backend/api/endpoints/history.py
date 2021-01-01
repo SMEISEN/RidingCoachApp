@@ -13,33 +13,45 @@ maintenance_schema = MaintenanceSchema()
 
 history_input_parameters = api.model('HistoryInputParameters', {
     "maintenance_id":
-        fields.String(description="corresponding maintenance ID", required=True),
+        fields.String(description="corresponding maintenance ID", required=True, example="UUID4"),
     "bike_id":
-        fields.String(description="corresponding bike ID", required=True),
+        fields.String(description="corresponding bike ID", required=True, example="UUID4"),
     "operating_hours":
-        fields.Float(description="operating hours", required=True),
+        fields.Float(description="operating hours of the bike when the maintenance work was done",
+                     required=True, example=66.1),
     "comment":
-        fields.String(description="comment", required=False),
+        fields.String(description="comment on the maintenance entry",
+                      required=False, example="comment on the maintenance entry"),
     "tags":
-        fields.Raw(description="tags", required=False),
+        fields.Raw(description="tags", required=False, example=[
+            "checked",
+            "fixed",
+            "replaced",
+        ]),
     "datetime_display":
         fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
 history_query_parameters = api.model('HistoryQueryParameters', {
     "bike_id":
-        fields.String(description="", required=False),
+        fields.String(description="corresponding bike ID", required=False, example="UUID4"),
     "operating_hours":
-        fields.Float(description="", required=False),
+        fields.Float(description="operating hours of the bike when the maintenance work was done"
+                     , required=False, example=66.1),
     "comment":
-        fields.String(description="", required=False),
+        fields.String(description="comment on the maintenance entry",
+                      required=False, example="comment on the maintenance entry"),
     "tags":
-        fields.Raw(description="", required=False),
+        fields.Raw(description="tags", required=False, example=[
+            "checked",
+            "fixed",
+            "replaced",
+        ]),
     "datetime_created":
-        fields.DateTime(description="", required=False),
+        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
     "datetime_last_modified":
-        fields.DateTime(description="", required=False),
+        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
     "datetime_display":
-        fields.DateTime(description="", required=False)
+        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
 })
 
 
@@ -142,15 +154,15 @@ class HistoryItem(Resource):
 
         history_entry = HistoryModel.query.filter(HistoryModel.history_id == id_).one()
 
-        if inserted_data.get('maintenance_id') is not None:
+        if inserted_data.get('maintenance_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.maintenance_id = inserted_data.get('maintenance_id')
-        if inserted_data.get('operating_hours') is not None:
+        if inserted_data.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.operating_hours = inserted_data.get('operating_hours')
-        if inserted_data.get('comment') is not None:
+        if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.comment = inserted_data.get('comment')
-        if inserted_data.get('tags') is not None:
+        if inserted_data.get('tags', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.tags = inserted_data.get('tags')
-        if inserted_data.get('datetime_display') is not None:
+        if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
         if bool(inserted_data) is True:
             history_entry.datetime_last_modified = datetime.utcnow()
@@ -204,27 +216,27 @@ class HistoryQuery(Resource):
         history_query = HistoryModel.query.filter_by(**filter_by_data)
 
         filter_data = {}
-        if requested.get('datetime_created') is not None:
+        if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_created'] = {
                 'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created')['values']],
                 'operators': requested.get('datetime_created')['operators'],
             }
-        elif requested.get('datetime_last_modified') is not None:
+        elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_last_modified'] = {
                 'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified')['values']],
                 'operators': requested.get('datetime_last_modified')['operators'],
             }
-        elif requested.get('datetime_display') is not None:
+        elif requested.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_display'] = {
                 'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_display')['values']],
                 'operators': requested.get('datetime_display')['operators'],
             }
-        elif requested.get('operating_hours') is not None:
+        elif requested.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['operating_hours'] = {
                 'values': requested.get('operating_hours')['values'],
                 'operators': requested.get('datetime_display')['operators'],
             }
-        elif requested.get('tags') is not None:
+        elif requested.get('tags', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['tags'] = {
                 'values': requested.get('tags')['values'],
                 'operators': requested.get('tags')['operators'],
