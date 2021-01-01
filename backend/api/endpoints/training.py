@@ -56,11 +56,20 @@ training_query_parameters = api.model('TrainingQueryParameters', {
     "operating_hours":
         fields.Float(description="operating hours to be queried", required=False, example=66.1),
     "datetime_created":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        }),
     "datetime_last_modified":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        }),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        })
 })
 
 
