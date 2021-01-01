@@ -6,6 +6,8 @@ from backend.database import db
 from backend.database.models.history import HistoryModel, HistorySchema
 from backend.database.models.maintenance import MaintenanceSchema
 from flask_restplus import Resource, fields
+from sqlalchemy import cast
+from sqlalchemy.dialects.postgresql import ARRAY
 
 ns = api.namespace('history', description='Operations related to history entries.')
 history_schema = HistorySchema()
@@ -35,8 +37,12 @@ history_query_parameters = api.model('HistoryQueryParameters', {
     "bike_id":
         fields.String(description="corresponding bike ID", required=False, example="UUID4"),
     "operating_hours":
-        fields.Float(description="operating hours of the bike when the maintenance work was done"
-                     , required=False, example=66.1),
+        fields.Raw(description="operating hours of the bike when the maintenance work was done",
+                     required=False, example=
+                     {
+                         "values": [66.0, 99.6],
+                         "operators": ['>=', '<='],
+                     }),
     "comment":
         fields.String(description="comment on the maintenance entry",
                       required=False, example="comment on the maintenance entry"),
@@ -47,11 +53,20 @@ history_query_parameters = api.model('HistoryQueryParameters', {
             "replaced",
         ]),
     "datetime_created":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        }),
     "datetime_last_modified":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        }),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp()),
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        }),
 })
 
 
@@ -236,11 +251,6 @@ class HistoryQuery(Resource):
                 'values': requested.get('operating_hours')['values'],
                 'operators': requested.get('datetime_display')['operators'],
             }
-        elif requested.get('tags', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['tags'] = {
-                'values': requested.get('tags')['values'],
-                'operators': requested.get('tags')['operators'],
-            }
 
         for attr, item in filter_data.items():
             for operator, value in zip(item['operators'], item['values']):
@@ -259,8 +269,12 @@ class HistoryQuery(Resource):
                 else:
                     raise ValueError('Given operator does not match available operators!')
 
-        history_query = history_query\
-            .order_by(HistoryModel.datetime_display.desc())\
+        if requested.get('tags', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            history_query = history_query \
+                .filter(HistoryModel.tags.contains(cast(requested.get('tags'), ARRAY(db.String))))
+
+        history_query = history_query \
+            .order_by(HistoryModel.datetime_display.desc()) \
             .all()
 
         history_entry_list = []
