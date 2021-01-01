@@ -44,7 +44,7 @@ maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "name":
         fields.String(description="maintenance work name", required=False, example="maintenance name"),
     "interval_amount":
-        fields.Float(description="interval of maintenance work", required=False, example={
+        fields.Raw(description="interval of maintenance work", required=False, example={
             "values": [5, 10],
             "operators": ['>=', '<='],
         }),

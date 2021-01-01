@@ -53,20 +53,18 @@ training_query_parameters = api.model('TrainingQueryParameters', {
         fields.String(description="location to be queried", required=False, example="track name"),
     "bike_id":
         fields.String(description="bike_id to be queried", required=False, example="UUID4"),
-    "operating_hours":
-        fields.Float(description="operating hours to be queried", required=False, example=66.1),
     "datetime_created":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example={
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
             "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
             "operators": ['>=', '<='],
         }),
     "datetime_last_modified":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example={
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
             "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
             "operators": ['>=', '<='],
         }),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example={
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
             "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
             "operators": ['>=', '<='],
         })

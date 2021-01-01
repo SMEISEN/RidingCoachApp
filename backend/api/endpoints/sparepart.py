@@ -27,7 +27,7 @@ sparepart_query_parameters = api.model('SparepartQueryParameters', {
     "module":
         fields.String(description="bike module where the spare part belongs to", required=False, example="Engine"),
     "min_stock":
-        fields.Integer(description="minimal stock of the spare part", required=False, example={
+        fields.Raw(description="minimal stock of the spare part", required=False, example={
             "values": [0, 2],
             "operators": ['>=', '<='],
         }),
