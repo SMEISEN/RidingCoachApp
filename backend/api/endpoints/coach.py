@@ -11,15 +11,36 @@ coach_schema = CoachSchema()
 
 coach_input_parameters = api.model('CoachInputParameters', {
     "category":
-        fields.String(description="bike suspension end", required=True),
+        fields.String(description="bike suspension end", required=True, example="category name"),
     "symptom":
-        fields.Raw(description="suspension symptom", required=True),
+        fields.Raw(description="suspension symptom", required=True, example={
+            "id": "example ID",
+            "name": "example name",
+        }),
     "notes":
-        fields.String(description="notes", required=False),
+        fields.String(description="notes", required=False, example="notes on the symptom"),
     "questions":
-        fields.Raw(description="array of questions in terms of troubleshouting", required=False),
+        fields.Raw(description="array of questions in terms of troubleshouting", required=False, example=[
+            "example question 1",
+            "example question 2",
+        ]),
     "advice":
-        fields.Raw(description="object of possible problems and solutions", required=True),
+        fields.Raw(description="object of possible problems and solutions", required=True, example={
+            "A": {
+                "problem": "problem A description",
+                "solution": [
+                    "solution approach 1 of the problem",
+                    "solution approach 2 of the problem",
+                ],
+            },
+            "B": {
+                "problem": "problem B description",
+                "solution": [
+                    "solution approach 1 of the problem",
+                    "solution approach 2 of the problem",
+                ],
+            },
+        }),
 })
 
 
@@ -119,16 +140,16 @@ class CoachItem(Resource):
 
         coach_entry = CoachModel.query.filter(CoachModel.coach_id == id_).one()
 
-        if inserted_data.get('category') is not None:
-            coach_entry.operating_hours = inserted_data.get('category')
-        if inserted_data.get('symptom') is not None:
-            coach_entry.manufacturer = inserted_data.get('symptom')
-        if inserted_data.get('notes') is not None:
-            coach_entry.model = inserted_data.get('notes')
-        if inserted_data.get('questions') is not None:
-            coach_entry.year = inserted_data.get('questions')
-        if inserted_data.get('advice') is not None:
-            coach_entry.ccm = inserted_data.get('advice')
+        if inserted_data.get('category', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            coach_entry.category = inserted_data.get('category')
+        if inserted_data.get('symptom', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            coach_entry.symptom = inserted_data.get('symptom')
+        if inserted_data.get('notes', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            coach_entry.notes = inserted_data.get('notes')
+        if inserted_data.get('questions', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            coach_entry.questions = inserted_data.get('questions')
+        if inserted_data.get('advice', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            coach_entry.advice = inserted_data.get('advice')
         if bool(inserted_data) is True:
             coach_entry.datetime_last_modified = datetime.utcnow()
 
