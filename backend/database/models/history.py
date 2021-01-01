@@ -2,7 +2,7 @@ from datetime import datetime
 from backend.database import db, ma
 from backend.database.models.bike import BikeModel
 from backend.database.models.maintenance import MaintenanceModel
-from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
 import uuid
 
 
@@ -16,7 +16,7 @@ class HistoryModel(db.Model):
 
     operating_hours = db.Column(db.Float, nullable=False)
     comment = db.Column(db.Text, nullable=True)
-    tags = db.Column(JSON, nullable=True)
+    tags = db.Column(ARRAY(db.String), nullable=True)
 
     datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
