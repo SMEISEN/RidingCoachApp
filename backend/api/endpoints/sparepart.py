@@ -4,8 +4,7 @@ from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.sparepart import SparepartModel, SparepartSchema
-from backend.database.models.sparepartitem import SparepartitemModel, SparepartitemSchema
-from backend.database.models.bike import BikeModel
+from backend.database.models.sparepartitem import SparepartitemSchema
 from flask_restplus import Resource, fields
 
 ns = api.namespace('sparepart', description='Operations related to spareparts.')
@@ -14,21 +13,21 @@ sparepartitem_schema = SparepartitemSchema()
 
 sparepart_input_parameters = api.model('SparepartInputParameters', {
     "name":
-        fields.String(description="name of the spare part", required=True),
+        fields.String(description="name of the spare part", required=True, example="spare part name"),
     "module":
-        fields.String(description="bike module where the spare part belongs to", required=True),
+        fields.String(description="bike module where the spare part belongs to", required=True, example="Engine"),
     "min_stock":
-        fields.Integer(description="minimal stock of the spare part", required=True),
+        fields.Integer(description="minimal stock of the spare part", required=True, example=2),
 })
 sparepart_query_parameters = api.model('SparepartQueryParameters', {
     "bike_id":
-        fields.String(description="id of the bike where the spare part belongs to", required=False),
+        fields.String(description="id of the bike where the spare part belongs to", required=False, example="UUID4"),
     "name":
-        fields.String(description="name of the spare part", required=False),
+        fields.String(description="name of the spare part", required=False, example="brake lever"),
     "module":
-        fields.String(description="bike module where the spare part belongs to", required=False),
+        fields.String(description="bike module where the spare part belongs to", required=False, example="Engine"),
     "min_stock":
-        fields.Integer(description="minimal stock of the spare part", required=False),
+        fields.Integer(description="minimal stock of the spare part", required=False, example=2),
 })
 
 
@@ -127,13 +126,13 @@ class SparepartItem(Resource):
 
         sparepart = SparepartModel.query.filter(SparepartModel.sparepart_id == id_).one()
 
-        if inserted_data.get('name') is not None:
+        if inserted_data.get('name', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart.name = inserted_data.get('name')
-        if inserted_data.get('module') is not None:
+        if inserted_data.get('module', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart.module = inserted_data.get('module')
-        if inserted_data.get('min_stock', 'keyDoesNotExist') != 'keyDoesNotExist':
+        if inserted_data.get('min_stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart.min_stock = inserted_data.get('min_stock')
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             sparepart.datetime_last_modified = datetime.utcnow()
 
         db.session.add(sparepart)
@@ -186,7 +185,7 @@ class SparepartQuery(Resource):
         sparepart_query = SparepartModel.query.filter_by(**filter_by_data)
 
         filter_data = {}
-        if requested.get('min_stock') is not None:
+        if requested.get('min_stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['min_stock'] = {
                 'values': requested.get('min_stock')['values'],
                 'operators': requested.get('min_stock')['operators'],
