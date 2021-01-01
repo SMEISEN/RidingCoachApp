@@ -4,7 +4,7 @@ from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.maintenance import MaintenanceModel, MaintenanceSchema
-from backend.database.models.history import HistoryModel, HistorySchema
+from backend.database.models.history import HistorySchema
 from backend.database.models.bike import BikeModel, BikeSchema
 from flask_restplus import Resource, fields
 from collections import defaultdict
@@ -16,33 +16,43 @@ bike_schema = BikeSchema()
 
 maintenance_input_parameters = api.model('MaintenanceInputParameters', {
     "category":
-        fields.String(description="maintenance work category according to bike module", required=True),
+        fields.String(description="maintenance work category according to bike module",
+                      required=True, example="maintenance category"),
     "name":
-        fields.String(description="maintenance work name", required=True),
+        fields.String(description="maintenance work name", required=True, example="maintenance name"),
     "interval_amount":
-        fields.Float(description="interval of maintenance work", required=True),
+        fields.Float(description="interval of maintenance work", required=True, example=10.0),
     "interval_unit":
-        fields.String(description="unit of maintenance interval", required=False),
+        fields.String(description="unit of maintenance interval", required=False, example="h"),
     "interval_type":
-        fields.String(description="type of maintenance interval", required=False),
+        fields.String(description="type of maintenance interval", required=False, example="planned maintenance"),
     "tags_default":
-        fields.Raw(description="default tags of maintenance work", required=False),
+        fields.Raw(description="default tags of maintenance work", required=False, example=[
+            "checked",
+            "fixed",
+            "replaced",
+        ]),
 })
 maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "bike_id":
-        fields.String(description="id of the bike where this maintenance belongs to", required=False),
+        fields.String(description="id of the bike where this maintenance belongs to", required=False, example="UUID4"),
     "category":
-        fields.String(description="maintenance work category according to bike module", required=False),
+        fields.String(description="maintenance work category according to bike module",
+                      required=False, example="maintenance category"),
     "name":
-        fields.String(description="maintenance work name", required=False),
+        fields.String(description="maintenance work name", required=False, example="maintenance name"),
     "interval_amount":
-        fields.Float(description="interval of maintenance work", required=False),
+        fields.Float(description="interval of maintenance work", required=False, example=10.0),
     "interval_unit":
-        fields.String(description="unit of maintenance interval", required=False),
+        fields.String(description="unit of maintenance interval", required=False, example="h"),
     "interval_type":
-        fields.String(description="type of maintenance interval", required=False),
+        fields.String(description="type of maintenance interval", required=False, example="planned maintenance"),
     "tags_default":
-        fields.Raw(description="default tags of maintenance work", required=False),
+        fields.Raw(description="default tags of maintenance work", required=False, example=[
+            "checked",
+            "fixed",
+            "replaced",
+        ]),
 })
 
 
@@ -204,19 +214,19 @@ class MaintenanceItem(Resource):
 
         maintenance_work = MaintenanceModel.query.filter(MaintenanceModel.maintenance_id == id_).one()
 
-        if inserted_data.get('bike_id') is not None:
+        if inserted_data.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.bike_id = inserted_data.get('bike_id')
-        if inserted_data.get('category') is not None:
+        if inserted_data.get('category', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.category = inserted_data.get('category')
-        if inserted_data.get('name') is not None:
+        if inserted_data.get('name', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.name = inserted_data.get('name')
-        if inserted_data.get('interval_amount') is not None:
+        if inserted_data.get('interval_amount', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.interval_amount = inserted_data.get('interval_amount')
-        if inserted_data.get('interval_unit') is not None:
+        if inserted_data.get('interval_unit', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.interval_unit = inserted_data.get('interval_unit')
-        if inserted_data.get('interval_type') is not None:
+        if inserted_data.get('interval_type', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.interval_type = inserted_data.get('interval_type')
-        if inserted_data.get('tags_default') is not None:
+        if inserted_data.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.tags_default = inserted_data.get('tags_default')
         if bool(inserted_data) is True:
             maintenance_work.datetime_last_modified = datetime.utcnow()
@@ -274,12 +284,12 @@ class MaintenanceQuery(Resource):
         maintenance_query = MaintenanceModel.query.filter_by(**filter_by_data)
 
         filter_data = {}
-        if requested.get('interval_amount') is not None:
+        if requested.get('interval_amount', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['interval_amount'] = {
                 'values': requested.get('interval_amount')['values'],
                 'operators': requested.get('interval_amount')['operators'],
             }
-        elif requested.get('tags_default') is not None:
+        elif requested.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['tags_default'] = {
                 'values': requested.get('tags_default')['values'],
                 'operators': requested.get('tags_default')['operators'],
