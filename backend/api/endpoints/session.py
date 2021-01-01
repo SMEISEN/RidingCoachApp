@@ -135,7 +135,7 @@ class SessionItem(Resource):
             session_entry.application = inserted_data.get('application')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             session_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(session_entry)

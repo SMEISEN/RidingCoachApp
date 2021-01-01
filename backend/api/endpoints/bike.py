@@ -29,25 +29,25 @@ bike_input_parameters = api.model('BikeInputParameters', {
     "slick_front_notes":
         fields.String(description="front slick tire application notes", required=False),
     "slick_front_pressure":
-        fields.Float(description="recommended pressure of front slick tire", required=False),
+        fields.Raw(description="recommended pressure of front slick tire", required=False),
     "slick_rear_name":
         fields.String(description="name of rear slick tire", required=False),
     "slick_rear_notes":
         fields.String(description="rear slick tire application notes", required=False),
     "slick_rear_pressure":
-        fields.Float(description="recommended pressure of rear slick tire", required=False),
+        fields.Raw(description="recommended pressure of rear slick tire", required=False),
     "rain_front_name":
         fields.String(description="name of front rain tire", required=False),
     "rain_front_notes":
         fields.String(description="front rain tire application notes", required=False),
     "rain_front_pressure":
-        fields.Float(description="recommended pressure of front rain tire", required=False),
+        fields.Raw(description="recommended pressure of front rain tire", required=False),
     "rain_rear_name":
         fields.String(description="name of rear rain tire", required=False),
     "rain_rear_notes":
         fields.String(description="rear rain tire application notes", required=False),
     "rain_rear_pressure":
-        fields.Float(description="recommended pressure of rear rain tire", required=False),
+        fields.Raw(description="recommended pressure of rear rain tire", required=False),
     "setup":
         fields.Raw(description="bike suspension and engine setup", required=False),
 })
@@ -164,47 +164,47 @@ class BikeItem(Resource):
 
         bike_entry = BikeModel.query.filter(BikeModel.bike_id == id_).one()
 
-        if inserted_data.get('operating_hours') is not None:
+        if inserted_data.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.operating_hours = inserted_data.get('operating_hours')
-        if inserted_data.get('manufacturer') is not None:
+        if inserted_data.get('manufacturer', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.manufacturer = inserted_data.get('manufacturer')
-        if inserted_data.get('model') is not None:
+        if inserted_data.get('model', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.model = inserted_data.get('model')
-        if inserted_data.get('year') is not None:
+        if inserted_data.get('year', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.year = inserted_data.get('year')
-        if inserted_data.get('ccm') is not None:
+        if inserted_data.get('ccm', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.ccm = inserted_data.get('ccm')
-        if inserted_data.get('stroke') is not None:
+        if inserted_data.get('stroke', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.stroke = inserted_data.get('stroke')
-        if inserted_data.get('piston') is not None:
+        if inserted_data.get('piston', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.piston = inserted_data.get('piston')
-        if inserted_data.get('slick_front_name') is not None:
+        if inserted_data.get('slick_front_name', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.slick_front_name = inserted_data.get('slick_front_name')
-        if inserted_data.get('slick_front_notes') is not None:
+        if inserted_data.get('slick_front_notes', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.slick_front_notes = inserted_data.get('slick_front_notes')
-        if inserted_data.get('slick_front_pressure') is not None:
+        if inserted_data.get('slick_front_pressure', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.slick_front_pressure = inserted_data.get('slick_front_pressure')
-        if inserted_data.get('slick_rear_name') is not None:
+        if inserted_data.get('slick_rear_name', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.slick_rear_name = inserted_data.get('slick_rear_name')
-        if inserted_data.get('slick_rear_notes') is not None:
+        if inserted_data.get('slick_rear_notes', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.slick_rear_notes = inserted_data.get('slick_rear_notes')
-        if inserted_data.get('slick_rear_pressure') is not None:
+        if inserted_data.get('slick_rear_pressure', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.slick_rear_pressure = inserted_data.get('slick_rear_pressure')
-        if inserted_data.get('rain_front_name') is not None:
+        if inserted_data.get('rain_front_name', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.rain_front_name = inserted_data.get('rain_front_name')
-        if inserted_data.get('rain_front_notes') is not None:
+        if inserted_data.get('rain_front_notes', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.rain_front_notes = inserted_data.get('rain_front_notes')
-        if inserted_data.get('rain_front_pressure') is not None:
+        if inserted_data.get('rain_front_pressure', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.rain_front_pressure = inserted_data.get('rain_front_pressure')
-        if inserted_data.get('rain_rear_name') is not None:
+        if inserted_data.get('rain_rear_name', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.rain_rear_name = inserted_data.get('rain_rear_name')
-        if inserted_data.get('rain_rear_notes') is not None:
+        if inserted_data.get('rain_rear_notes', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.rain_rear_notes = inserted_data.get('rain_rear_notes')
-        if inserted_data.get('rain_rear_pressure') is not None:
+        if inserted_data.get('rain_rear_pressure', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.rain_rear_pressure = inserted_data.get('rain_rear_pressure')
-        if inserted_data.get('setup') is not None:
+        if inserted_data.get('setup', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.setup = inserted_data.get('setup')
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             bike_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(bike_entry)

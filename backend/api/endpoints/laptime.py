@@ -136,7 +136,7 @@ class LaptimeItem(Resource):
             laptime_entry.sectors = inserted_data.get('sectors')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             laptime_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(laptime_entry)

@@ -121,7 +121,7 @@ class SparepartitemItem(Resource):
             sparepart_item.description = inserted_data.get('description')
         if inserted_data.get('stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart_item.stock = inserted_data.get('stock')
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             sparepart_item.datetime_last_modified = datetime.utcnow()
 
         db.session.add(sparepart_item)

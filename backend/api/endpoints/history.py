@@ -164,7 +164,7 @@ class HistoryItem(Resource):
             history_entry.tags = inserted_data.get('tags')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             history_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(history_entry)

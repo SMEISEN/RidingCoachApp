@@ -184,7 +184,7 @@ class SetupItem(Resource):
             setup_entry.comment = inserted_data.get('comment')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             setup_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(setup_entry)
