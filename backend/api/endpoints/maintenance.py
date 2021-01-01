@@ -7,6 +7,8 @@ from backend.database.models.maintenance import MaintenanceModel, MaintenanceSch
 from backend.database.models.history import HistorySchema
 from backend.database.models.bike import BikeModel, BikeSchema
 from flask_restplus import Resource, fields
+from sqlalchemy import cast
+from sqlalchemy.dialects.postgresql import ARRAY
 from collections import defaultdict
 
 ns = api.namespace('maintenance', description='Operations related to maintenance entries.')
@@ -42,17 +44,16 @@ maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
     "name":
         fields.String(description="maintenance work name", required=False, example="maintenance name"),
     "interval_amount":
-        fields.Float(description="interval of maintenance work", required=False, example=10.0),
+        fields.Float(description="interval of maintenance work", required=False, example={
+            "values": [5, 10],
+            "operators": ['>=', '<='],
+        }),
     "interval_unit":
         fields.String(description="unit of maintenance interval", required=False, example="h"),
     "interval_type":
         fields.String(description="type of maintenance interval", required=False, example="planned maintenance"),
     "tags_default":
-        fields.Raw(description="default tags of maintenance work", required=False, example=[
-            "checked",
-            "fixed",
-            "replaced",
-        ]),
+        fields.Raw(description="default tags of maintenance work", required=False, example=["checked", "fixed"]),
 })
 
 
@@ -277,7 +278,6 @@ class MaintenanceQuery(Resource):
             'name': requested.get('name'),
             'interval_unit': requested.get('interval_unit'),
             'interval_type': requested.get('interval_type'),
-            'tags_default': requested.get('tags_default'),
         }
         filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
 
@@ -288,11 +288,6 @@ class MaintenanceQuery(Resource):
             filter_data['interval_amount'] = {
                 'values': requested.get('interval_amount')['values'],
                 'operators': requested.get('interval_amount')['operators'],
-            }
-        elif requested.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['tags_default'] = {
-                'values': requested.get('tags_default')['values'],
-                'operators': requested.get('tags_default')['operators'],
             }
 
         for attr, item in filter_data.items():
@@ -311,6 +306,10 @@ class MaintenanceQuery(Resource):
                     maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) != value)
                 else:
                     raise ValueError('Given operator does not match available operators!')
+
+        if requested.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            maintenance_query = maintenance_query\
+                .filter(MaintenanceModel.tags_default.contains(cast(requested.get('tags_default'), ARRAY(db.String))))
 
         maintenance_query = maintenance_query\
             .order_by(MaintenanceModel.category.asc()) \
