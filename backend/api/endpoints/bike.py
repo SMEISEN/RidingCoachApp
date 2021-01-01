@@ -11,45 +11,97 @@ bike_schema = BikeSchema()
 
 bike_input_parameters = api.model('BikeInputParameters', {
     "operating_hours":
-        fields.Float(description="operating hours", required=True),
+        fields.Float(description="operating hours", required=True, example=66.1),
     "manufacturer":
-        fields.String(description="bike manufacturer", required=True),
+        fields.String(description="bike manufacturer", required=True, example="bike manufacturer"),
     "model":
-        fields.String(description="bike model", required=True),
+        fields.String(description="bike model", required=True, example="bike model"),
     "year":
-        fields.Integer(description="bike year", required=True),
+        fields.Integer(description="bike year", required=True, example=2020),
     "ccm":
-        fields.Float(description="engine size", required=False),
+        fields.Float(description="engine size", required=False, example=449.7),
     "stroke":
-        fields.Float(description="engine stroke", required=False),
+        fields.Float(description="engine stroke", required=False, example=63.0),
     "piston":
-        fields.Float(description="engine piston", required=False),
+        fields.Float(description="engine piston", required=False, example=97.0),
     "slick_front_name":
-        fields.String(description="name of front slick tire", required=False),
+        fields.String(description="name of front slick tire", required=False, example="front slick name"),
     "slick_front_notes":
-        fields.String(description="front slick tire application notes", required=False),
+        fields.String(description="front slick tire application notes", required=False, example="front slick notes"),
     "slick_front_pressure":
-        fields.Raw(description="recommended pressure of front slick tire", required=False),
+        fields.Raw(description="recommended pressure of front slick tire", required=False, example=[
+            {
+                "temperature": 40,
+                "pressure": 1.7
+            },
+            {
+                "temperature": 25,
+                "pressure": 1.8
+            },
+        ]),
     "slick_rear_name":
-        fields.String(description="name of rear slick tire", required=False),
+        fields.String(description="name of rear slick tire", required=False, example="rear slick name"),
     "slick_rear_notes":
-        fields.String(description="rear slick tire application notes", required=False),
+        fields.String(description="rear slick tire application notes", required=False, example="rear slick notes"),
     "slick_rear_pressure":
-        fields.Raw(description="recommended pressure of rear slick tire", required=False),
+        fields.Raw(description="recommended pressure of rear slick tire", required=False, example=[
+            {
+                "temperature": 40,
+                "pressure": 1.7
+            },
+            {
+                "temperature": 25,
+                "pressure": 1.8
+            },
+        ]),
     "rain_front_name":
-        fields.String(description="name of front rain tire", required=False),
+        fields.String(description="name of front rain tire", required=False, example="front rain tire name"),
     "rain_front_notes":
-        fields.String(description="front rain tire application notes", required=False),
+        fields.String(description="front rain tire application notes", required=False, example="front rain tire notes"),
     "rain_front_pressure":
-        fields.Raw(description="recommended pressure of front rain tire", required=False),
+        fields.Raw(description="recommended pressure of front rain tire", required=False, example=[
+            {
+                "temperature": 40,
+                "pressure": 1.7
+            },
+            {
+                "temperature": 25,
+                "pressure": 1.8
+            },
+        ]),
     "rain_rear_name":
-        fields.String(description="name of rear rain tire", required=False),
+        fields.String(description="name of rear rain tire", required=False, example="rear rain tire name"),
     "rain_rear_notes":
-        fields.String(description="rear rain tire application notes", required=False),
+        fields.String(description="rear rain tire application notes", required=False, example="rear rain tire notes"),
     "rain_rear_pressure":
-        fields.Raw(description="recommended pressure of rear rain tire", required=False),
+        fields.Raw(description="recommended pressure of rear rain tire", required=False, example=[
+            {
+                "temperature": 40,
+                "pressure": 1.7
+            },
+            {
+                "temperature": 25,
+                "pressure": 1.8
+            },
+        ]),
     "setup":
-        fields.Raw(description="bike suspension and engine setup", required=False),
+        fields.Raw(description="bike suspension and engine setup", required=False, example=[
+            {
+                "category": "Engine",
+                "group": None,
+                "name": "Power Mode",
+                "ticks_available": 1,
+                "ticks_current": 1,
+                "ticks_standard": 1,
+            },  {
+                "category": "Suspension",
+                "group": "Fork",
+                "name": "Compression",
+                "ticks_available": 37,
+                "ticks_current": 14,
+                "ticks_standard": 15,
+            },
+        ]),
 })
 
 
