@@ -1,6 +1,6 @@
 from datetime import datetime
 from backend.database import db, ma
-from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy.dialects.postgresql import UUID, JSON, ARRAY
 import uuid
 
 
@@ -12,7 +12,7 @@ class CoachModel(db.Model):
     category = db.Column(db.String(6), nullable=False)
     symptom = db.Column(db.JSON, nullable=False)
     notes = db.Column(db.Text, nullable=True)
-    questions = db.Column(JSON, nullable=True)
+    questions = db.Column(ARRAY(db.String), nullable=True, default=[])
     advice = db.Column(JSON, nullable=False)
 
     datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
