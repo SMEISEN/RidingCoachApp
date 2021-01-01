@@ -4,7 +4,7 @@ from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.sparepartitem import SparepartitemModel, SparepartitemSchema
-from backend.database.models.sparepart import SparepartModel, SparepartSchema
+from backend.database.models.sparepart import SparepartSchema
 from flask_restplus import Resource, fields
 
 ns = api.namespace('sparepartitem', description='Operations related to spare part items.')
@@ -13,11 +13,11 @@ sparepart_schema = SparepartSchema()
 
 sparepartitem_input_parameters = api.model('SparepartitemInputParameters', {
     "sparepart_id":
-        fields.String(description="id of the parent spare part item", required=True),
+        fields.String(description="id of the parent spare part item", required=True, example="UUID4"),
     "condition":
-        fields.String(description="condition of the spare part item child", required=True),
+        fields.String(description="condition of the spare part item child", required=True, example="good"),
     "description":
-        fields.Float(description="description of the spare part item child", required=True),
+        fields.Float(description="description of the spare part item child", required=True, example="new"),
 })
 
 
@@ -115,11 +115,11 @@ class SparepartitemItem(Resource):
 
         sparepart_item = SparepartitemModel.query.filter(SparepartitemModel.sparepartitem_id == id_).one()
 
-        if inserted_data.get('condition') is not None:
+        if inserted_data.get('condition', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart_item.condition = inserted_data.get('condition')
-        if inserted_data.get('description') is not None:
+        if inserted_data.get('description', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart_item.description = inserted_data.get('description')
-        if inserted_data.get('stock') is not None:
+        if inserted_data.get('stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart_item.stock = inserted_data.get('stock')
         if bool(inserted_data) is True:
             sparepart_item.datetime_last_modified = datetime.utcnow()
