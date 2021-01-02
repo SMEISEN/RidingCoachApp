@@ -4,11 +4,10 @@ from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.training import TrainingModel, TrainingSchema
-from backend.database.models.setup import SetupModel, SetupSchema
+from backend.database.models.setup import SetupSchema
 from backend.database.models.session import SessionModel, SessionSchema
-from backend.database.models.laptime import LaptimeModel, LaptimeSchema
+from backend.database.models.laptime import LaptimeSchema
 from flask_restplus import Resource, fields
-from collections import defaultdict
 
 ns = api.namespace('training', description='Operations related to training entries.')
 training_schema = TrainingSchema()
@@ -18,25 +17,57 @@ laptime_schema = LaptimeSchema()
 
 training_input_parameters = api.model('TrainingInputParameters', {
     "location":
-        fields.String(description="location of the training", required=True),
+        fields.String(description="location of the training", required=True, example="track name"),
     "weather_hourly":
-        fields.Raw(description="hourly track weather data", required=False),
+        fields.Raw(description="hourly track weather data", required=False, example=[
+            {
+                "lat": 47.4325306,
+                "lon": 6.7046713,
+                "temp": {
+                    "value": 17.5,
+                    "units": "C"
+                },
+                "observation_time": {
+                    "value": "2020-08-22T07:00:00.000Z"
+                },
+                "type": "measurement"
+            },
+            {
+                "lat": 47.4325306,
+                "lon": 6.7046713,
+                "temp": {
+                    "value": 23.49,
+                    "units": "C"
+                },
+                "observation_time": {
+                    "value": "2020-08-22T16:00:00.000Z"
+                },
+                "type": "forecast"
+            }
+        ]),
     "datetime_display":
         fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
 training_query_parameters = api.model('TrainingQueryParameters', {
     "location":
-        fields.String(description="location to be queried", required=False),
+        fields.String(description="location to be queried", required=False, example="track name"),
     "bike_id":
-        fields.String(description="bike_id to be queried", required=False),
-    "operating_hours":
-        fields.Float(description="operating hours to be queried", required=False),
+        fields.String(description="bike_id to be queried", required=False, example="UUID4"),
     "datetime_created":
-        fields.DateTime(description="datetime of creation to be queried", required=False),
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        }),
     "datetime_last_modified":
-        fields.DateTime(description="datetime of last modification to be queried", required=False),
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        }),
     "datetime_display":
-        fields.DateTime(description="displayed datetime to be queried", required=False)
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "operators": ['>=', '<='],
+        })
 })
 
 
@@ -159,13 +190,13 @@ class TrainingItem(Resource):
 
         training_entry = TrainingModel.query.filter(TrainingModel.training_id == id_).one()
 
-        if inserted_data.get('location') is not None:
+        if inserted_data.get('location', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             training_entry.location = inserted_data.get('location')
-        if inserted_data.get('weather_hourly') is not None:
+        if inserted_data.get('weather_hourly', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             training_entry.weather_hourly = inserted_data.get('weather_hourly')
-        if inserted_data.get('datetime_display') is not None:
+        if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             training_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             training_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(training_entry)
@@ -216,17 +247,17 @@ class TrainingQuery(Resource):
         training_query = TrainingModel.query.filter_by(**filter_by_data)
 
         filter_data = {}
-        if requested.get('datetime_created') is not None:
+        if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_created'] = {
                 'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created')['values']],
                 'operators': requested.get('datetime_created')['operators'],
             }
-        elif requested.get('datetime_last_modified') is not None:
+        elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_last_modified'] = {
                 'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified')['values']],
                 'operators': requested.get('datetime_last_modified')['operators'],
             }
-        elif requested.get('datetime_display') is not None:
+        elif requested.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_display'] = {
                 'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_display')['values']],
                 'operators': requested.get('datetime_display')['operators'],

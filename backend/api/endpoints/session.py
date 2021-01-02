@@ -4,9 +4,8 @@ from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.session import SessionModel, SessionSchema
-from backend.database.models.laptime import LaptimeModel, LaptimeSchema
+from backend.database.models.laptime import LaptimeSchema
 from flask_restplus import Resource, fields
-from collections import defaultdict
 
 ns = api.namespace('session', description='Operations related to training sessions.')
 session_schema = SessionSchema()
@@ -14,11 +13,11 @@ laptime_schema = LaptimeSchema()
 
 session_input_parameters = api.model('SessionInputParameters', {
     "training_id":
-        fields.String(description="corresponding training ID", required=True),
+        fields.String(description="corresponding training ID", required=True, example="UUID4"),
     "bike_id":
-        fields.String(description="corresponding bike ID", required=True),
+        fields.String(description="corresponding bike ID", required=True, example="UUID4"),
     "setup_id":
-        fields.String(description="corresponding setup ID", required=True),
+        fields.String(description="corresponding setup ID", required=True, example="UUID4"),
     "datetime_display":
         fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
@@ -126,17 +125,17 @@ class SessionItem(Resource):
 
         session_entry = SessionModel.query.filter(SessionModel.session_id == id_).one()
 
-        if inserted_data.get('training_id') is not None:
+        if inserted_data.get('training_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.training_id = inserted_data.get('training_id')
-        if inserted_data.get('bike_id') is not None:
+        if inserted_data.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.bike_id = inserted_data.get('bike_id')
-        if inserted_data.get('setup_id') is not None:
+        if inserted_data.get('setup_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.setup_id = inserted_data.get('setup_id')
-        if inserted_data.get('application') is not None:
+        if inserted_data.get('application', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.application = inserted_data.get('application')
-        if inserted_data.get('datetime_display') is not None:
+        if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             session_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(session_entry)

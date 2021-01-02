@@ -5,24 +5,26 @@ from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.laptime import LaptimeModel, LaptimeSchema
 from flask_restplus import Resource, fields
-from collections import defaultdict
 
 ns = api.namespace('laptime', description='Operations related to lap time entries.')
 laptime_schema = LaptimeSchema()
 
 laptime_input_parameters = api.model('LaptimeInputParameters', {
     "session_id":
-        fields.String(description="corresponding session ID", required=True),
+        fields.String(description="corresponding session ID", required=True, example="UUID4"),
     "lap_no":
-        fields.Integer(description="Lap number of session", required=True),
+        fields.Integer(description="lap number of session", required=True, example=1),
     "valid":
-        fields.Boolean(description="Validity of lap", required=False),
+        fields.Boolean(description="validity of lap", required=False, example=True),
     "laptime_seconds":
-        fields.Float(description="Lap time in seconds", required=False),
+        fields.Float(description="lap time in seconds", required=False, example=66.61),
     "sectors":
-        fields.Raw(description="Sector times", required=False),
+        fields.Raw(description="sector times", required=False, example={
+            "Sector 1": 39.9,
+            "Sector 2": 36.57
+        }),
     "datetime_display":
-        fields.DateTime(description="", required=False)
+        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp())
 })
 
 
@@ -122,19 +124,19 @@ class LaptimeItem(Resource):
 
         laptime_entry = LaptimeModel.query.filter(LaptimeModel.lap_id == id_).one()
 
-        if inserted_data.get('session_id') is not None:
+        if inserted_data.get('session_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.session_id = inserted_data.get('session_id')
-        if inserted_data.get('lap_no') is not None:
+        if inserted_data.get('lap_no', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.lap_no = inserted_data.get('lap_no')
-        if inserted_data.get('valid') is not None:
+        if inserted_data.get('valid', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.valid = inserted_data.get('valid')
-        if inserted_data.get('laptime_seconds') is not None:
+        if inserted_data.get('laptime_seconds', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.laptime_seconds = inserted_data.get('laptime_seconds')
-        if inserted_data.get('sectors') is not None:
+        if inserted_data.get('sectors', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.sectors = inserted_data.get('sectors')
-        if inserted_data.get('datetime_display') is not None:
+        if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             laptime_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(laptime_entry)

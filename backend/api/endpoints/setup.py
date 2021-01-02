@@ -5,32 +5,56 @@ from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.setup import SetupModel, SetupSchema
 from flask_restplus import Resource, fields
-from collections import defaultdict
 
 ns = api.namespace('setup', description='Operations related to bike setup entries.')
 setup_schema = SetupSchema()
 
 setup_input_parameters = api.model('SetupInputParameters', {
     "training_id":
-        fields.String(description="corresponding training ID", required=True),
+        fields.String(description="corresponding training ID", required=True, example="UUID4"),
     "bike_id":
-        fields.String(description="corresponding bike ID", required=True),
+        fields.String(description="corresponding bike ID", required=True, example="UUID4"),
     "operating_hours":
-        fields.Float(description="operating hours", required=True),
+        fields.Float(description="operating hours", required=True, example=66.1),
     "weather_current":
-        fields.Raw(description="current track weather data", required=False),
+        fields.Raw(description="current track weather data", required=False, example={
+            "lat": 49.2966279,
+            "lon": 8.601037,
+            "temp": {
+                "value": 30.04,
+                "units": "C"
+            },
+            "type": "measurement"
+        }),
     "slick_pressure_front":
-        fields.Float(description="pressure of front slick tire", required=False),
+        fields.Float(description="pressure of front slick tire", required=False, example=2.0),
     "slick_pressure_rear":
-        fields.Float(description="pressure of rear slick tire", required=False),
+        fields.Float(description="pressure of rear slick tire", required=False, example=2.0),
     "rain_pressure_front":
-        fields.Float(description="pressure of front rain tire", required=False),
+        fields.Float(description="pressure of front rain tire", required=False, example=2.0),
     "rain_pressure_rear":
-        fields.Float(description="pressure of front rear tire", required=False),
+        fields.Float(description="pressure of front rear tire", required=False, example=2.0),
     "setup":
-        fields.Raw(description="bike suspension and engine setup", required=False),
+        fields.Raw(description="bike suspension and engine setup", required=False, example=[
+            {
+                "category": "Engine",
+                "group": None,
+                "name": "Power Mode",
+                "ticks_available": 1,
+                "ticks_current": 1,
+                "ticks_standard": 1
+            },
+            {
+                "category": "Suspension",
+                "group": "Fork",
+                "name": "Compression",
+                "ticks_available": 37,
+                "ticks_current": 14,
+                "ticks_standard": 15
+            },
+        ]),
     "comment":
-        fields.String(description="comment", required=False),
+        fields.String(description="comment", required=False, example="comment"),
     "datetime_display":
         fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
 })
@@ -138,29 +162,29 @@ class SetupItem(Resource):
 
         setup_entry = SetupModel.query.filter(SetupModel.setup_id == id_).one()
 
-        if inserted_data.get('training_id') is not None:
+        if inserted_data.get('training_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.training_id = inserted_data.get('training_id')
-        if inserted_data.get('bike_id') is not None:
+        if inserted_data.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.bike_id = inserted_data.get('bike_id')
-        if inserted_data.get('operating_hours') is not None:
+        if inserted_data.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.operating_hours = inserted_data.get('operating_hours')
-        if inserted_data.get('weather_current') is not None:
+        if inserted_data.get('weather_current', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.weather_current = inserted_data.get('weather_current')
-        if inserted_data.get('slick_pressure_front') is not None:
+        if inserted_data.get('slick_pressure_front', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.slick_pressure_front = inserted_data.get('slick_pressure_front')
-        if inserted_data.get('slick_pressure_rear') is not None:
+        if inserted_data.get('slick_pressure_rear', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.slick_pressure_rear = inserted_data.get('slick_pressure_rear')
-        if inserted_data.get('rain_pressure_front') is not None:
+        if inserted_data.get('rain_pressure_front', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.rain_pressure_front = inserted_data.get('rain_pressure_front')
-        if inserted_data.get('rain_pressure_rear') is not None:
+        if inserted_data.get('rain_pressure_rear', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.rain_pressure_rear = inserted_data.get('rain_pressure_rear')
-        if inserted_data.get('setup') is not None:
+        if inserted_data.get('setup', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.setup = inserted_data.get('setup')
-        if inserted_data.get('comment') is not None:
+        if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.comment = inserted_data.get('comment')
-        if inserted_data.get('datetime_display') is not None:
+        if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data) is True:
+        if bool(inserted_data):
             setup_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(setup_entry)
