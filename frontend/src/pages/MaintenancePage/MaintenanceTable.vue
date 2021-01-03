@@ -48,17 +48,17 @@
         <td v-else-if="maintenance_object.interval_unit === 'a'">
           <LinearProgressMaintenanceInterval
             :intervalState="maintenance_object.interval_state"
-            :intervalUnit="maintenance_object.interval_unit"
-            :absoluteDigits="0"
-            :relativeDigits="0"
+            :intervalUnit="'d'"
+            :absoluteDigitstoPrecision="3"
+            :relativeDigitsToFixed="0"
           />
         </td>
         <td v-else>
           <LinearProgressMaintenanceInterval
             :intervalState="maintenance_object.interval_state"
             :intervalUnit="maintenance_object.interval_unit"
-            :absoluteDigits="1"
-            :relativeDigits="0"
+            :absoluteDigitstoPrecision="2"
+            :relativeDigitsToFixed="0"
           />
         </td>
         <td>
