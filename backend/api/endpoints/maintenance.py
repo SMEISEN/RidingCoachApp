@@ -64,13 +64,16 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
 
     if maintenance_data['interval_unit'] == 'h':
         interval_left = history_data[0]['operating_hours'] - bike_operating_hours + maintenance_data['interval_amount']
+        state_left = interval_left / maintenance_data['interval_amount']
 
     elif maintenance_data['interval_unit'] == 'a':
         interval_left = (
             datetime.fromisoformat(history_data[0]['datetime_display']) -
             datetime.utcnow() +
             timedelta(days=365 * maintenance_data['interval_amount'])
-        ).total_seconds()
+        )
+        state_left = interval_left / timedelta(days=365 * maintenance_data['interval_amount'])
+        interval_left = interval_left.days
 
     # interval "every x trainings" is omitted, could be integrated later
     # elif maintenance_data['interval_unit'] == 't':
@@ -80,16 +83,13 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     #         timedelta(days=1)
     #     ).total_seconds()
 
-    if interval_left is not None:
-        state_left = interval_left / maintenance_data['interval_amount']
-
     return {
-        'interval_left': interval_left,
-        'state_left': state_left,
+        'absolute': interval_left,
+        'relative': state_left,
     }
 
 
-def query_to_dict(maintenance_query: list, bike_id: str = None):
+def query_to_dict(maintenance_query: list, bike_operating_hours: float = None, bike_id: str = None):
     """
     Re-formats the query to a structured dictionary, which can be json serialized.
     """
@@ -98,8 +98,13 @@ def query_to_dict(maintenance_query: list, bike_id: str = None):
     for maintenance_entry in maintenance_query:
 
         maintenance_data = maintenance_schema.dump(maintenance_entry)
+        interval_state = {
+            'absolute': None,
+            'relative': None,
+            }
 
         if bike_id is None:
+            maintenance_data['interval_state'] = interval_state
             maintenance_list.append(maintenance_data)
 
         else:
@@ -107,8 +112,15 @@ def query_to_dict(maintenance_query: list, bike_id: str = None):
             history_data = list(filter(lambda d: d['bike_id'] in [bike_id], history_data))
 
             if len(history_data) > 0:
+                if bike_operating_hours is not None:
+                    interval_state = maintenance_state(
+                        maintenance_data=maintenance_data,
+                        history_data=history_data,
+                        bike_operating_hours=bike_operating_hours)
+                maintenance_data['interval_state'] = interval_state
                 maintenance_list.append({**maintenance_data, **history_data[0]})
             else:
+                maintenance_data['interval_state'] = interval_state
                 maintenance_list.append(maintenance_data)
 
     maintenance_categories_dict = defaultdict(lambda: defaultdict(dict))
@@ -138,7 +150,7 @@ class MaintenanceCollection(Resource):
 
         maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.category.asc()).all()
 
-        maintenance_categories_dict = query_to_dict(maintenance_all)
+        maintenance_categories_dict = query_to_dict(maintenance_query=maintenance_all)
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200
@@ -283,6 +295,11 @@ class MaintenanceQuery(Resource):
 
         maintenance_query = MaintenanceModel.query.filter_by(**filter_by_data)
 
+        bike_operating_hours = None
+        if requested.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            bike_query = BikeModel.query.filter_by(**{'bike_id': requested.get('bike_id')}).all()
+            bike_operating_hours = bike_schema.dump(bike_query, many=True)[0]['operating_hours']
+
         filter_data = {}
         if requested.get('interval_amount', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['interval_amount'] = {
@@ -319,7 +336,8 @@ class MaintenanceQuery(Resource):
             .order_by(MaintenanceModel.interval_amount.asc())\
             .all()
 
-        maintenance_categories_dict = query_to_dict(maintenance_query, requested.get('bike_id'))
+        maintenance_categories_dict = query_to_dict(
+            maintenance_query=maintenance_query, bike_operating_hours=bike_operating_hours, bike_id=requested.get('bike_id'))
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200
@@ -357,7 +375,7 @@ class MaintenanceWarning(Resource):
             if len(history_data) > 0:
                 state = maintenance_state(maintenance_data, history_data, bike_operating_hours)
 
-                if state['interval_left'] and state['interval_left'] <= 0:
+                if state['absolute'] and state['absolute'] <= 0:
                     warnings['warnings'] += 1
                     warnings['overdue_maintenance'].append({**maintenance_data, **history_data[0]})
 

@@ -14,10 +14,11 @@
           {{ maintenance_object.name }}
         </td>
         <td style="min-width: 120px;width: 120px;max-width: 120px">
-          <LinearProgressIntervalHours
-            :hours-latest="maintenance_object.operating_hours"
-            :hours-interval="maintenance_object.interval_amount"
-            :hours-current="$store.getters.getCurrentBikeOperatingHours"
+          <LinearProgressMaintenanceInterval
+            :intervalState="maintenance_object.interval_state"
+            :intervalUnit="maintenance_object.interval_unit"
+            :absoluteDigits="1"
+            :relativeDigits="0"
           />
         </td>
       </tr>
@@ -26,12 +27,12 @@
 </template>
 
 <script>
-import LinearProgressIntervalHours from '../../components/common/LinearProgressIntervalHours.vue';
+import LinearProgressMaintenanceInterval from '../../components/common/LinearProgressMaintenanceInterval.vue';
 
 export default {
   name: 'DashboardMaintenanceState',
   components: {
-    LinearProgressIntervalHours,
+    LinearProgressMaintenanceInterval,
   },
   props: {
     maintenanceNext: {
@@ -41,7 +42,7 @@ export default {
   },
   computed: {
     orderedMaintenance() {
-      return this._.orderBy(this.maintenanceNext, 'hours_left', 'asc');
+      return this._.orderBy(this.maintenanceNext, item => item.interval_state.absolute, 'asc');
     },
     tableHeight() {
       switch (this.$vuetify.breakpoint.name) {
