@@ -64,13 +64,16 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
 
     if maintenance_data['interval_unit'] == 'h':
         interval_left = history_data[0]['operating_hours'] - bike_operating_hours + maintenance_data['interval_amount']
+        state_left = interval_left / maintenance_data['interval_amount']
 
     elif maintenance_data['interval_unit'] == 'a':
         interval_left = (
             datetime.fromisoformat(history_data[0]['datetime_display']) -
             datetime.utcnow() +
             timedelta(days=365 * maintenance_data['interval_amount'])
-        ).total_seconds()
+        )
+        state_left = interval_left / timedelta(days=365 * maintenance_data['interval_amount'])
+        interval_left = interval_left.days
 
     # interval "every x trainings" is omitted, could be integrated later
     # elif maintenance_data['interval_unit'] == 't':
@@ -79,9 +82,6 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     #         datetime.utcnow() +
     #         timedelta(days=1)
     #     ).total_seconds()
-
-    if interval_left is not None:
-        state_left = interval_left / maintenance_data['interval_amount']
 
     return {
         'absolute': interval_left,
