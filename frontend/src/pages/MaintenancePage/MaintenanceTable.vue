@@ -46,15 +46,19 @@
         </td>
         <td v-if="!Object.keys(maintenance_object).includes('operating_hours')" />
         <td v-else-if="maintenance_object.interval_unit === 'a'">
-          <LinearProgressIntervalYears
-            :date-latest="maintenance_object.datetime_display"
+          <LinearProgressMaintenanceInterval
+            :intervalState="maintenance_object.interval_state"
+            :intervalUnit="maintenance_object.interval_unit"
+            :absoluteDigits="0"
+            :relativeDigits="0"
           />
         </td>
         <td v-else>
-          <LinearProgressIntervalHours
-            :hours-latest="maintenance_object.operating_hours"
-            :hours-interval="maintenance_object.interval_amount"
-            :hours-current="$store.getters.getCurrentBikeOperatingHours"
+          <LinearProgressMaintenanceInterval
+            :intervalState="maintenance_object.interval_state"
+            :intervalUnit="maintenance_object.interval_unit"
+            :absoluteDigits="1"
+            :relativeDigits="0"
           />
         </td>
         <td>
@@ -76,23 +80,15 @@
 </template>
 
 <script>
-import {
-  flattenNestedObjects,
-  processStateOfIntervalHours,
-  processLeftIntervalHours,
-  processStateOfIntervalYears,
-  processLeftIntervalYears,
-} from '../../components/utils/DataProcessingUtils';
+import { flattenNestedObjects } from '../../components/utils/DataProcessingUtils';
 import MaintenanceTableDropdown from './MaintenanceTableDropdown.vue';
-import LinearProgressIntervalHours from '../../components/common/LinearProgressIntervalHours.vue';
-import LinearProgressIntervalYears from '../../components/common/LinearProgressIntervalYears.vue';
+import LinearProgressMaintenanceInterval from '../../components/common/LinearProgressMaintenanceInterval.vue';
 
 export default {
   name: 'MaintenanceTable',
   components: {
     MaintenanceTableDropdown,
-    LinearProgressIntervalHours,
-    LinearProgressIntervalYears,
+    LinearProgressMaintenanceInterval,
   },
   props: {
     maintenanceEntries: {
@@ -111,18 +107,6 @@ export default {
         .filter((i) => i.interval_type === 'planned cycle' || i.interval_type === 'estimated wear')
         .filter((i) => i.interval_unit !== 't');
       return this._.orderBy(filteredEntries, ['interval_unit', 'interval_amount'], ['desc', 'asc']);
-    },
-    currentStateIntervalHours(HoursLatest, HoursInterval, BikeHours) {
-      return processStateOfIntervalHours(HoursLatest, HoursInterval, BikeHours, 2);
-    },
-    leftIntervalHours(HoursLatest, HoursInterval, BikeHours) {
-      return processLeftIntervalHours(HoursLatest, HoursInterval, BikeHours, 2);
-    },
-    currentStateIntervalYears(DateLatest) {
-      return processStateOfIntervalYears(DateLatest, 2);
-    },
-    leftIntervalYears(DateLatest) {
-      return processLeftIntervalYears(DateLatest, 2);
     },
     doneButtonClicked(mtnId, selectedChips) {
       this.$emit('doneButtonClicked', mtnId, selectedChips);

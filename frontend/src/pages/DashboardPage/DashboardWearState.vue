@@ -15,10 +15,11 @@
           v-else
           style="min-width: 120px;width: 120px;max-width: 120px"
         >
-          <LinearProgressIntervalHours
-            :hours-latest="wear_object.operating_hours"
-            :hours-interval="wear_object.interval_amount"
-            :hours-current="$store.getters.getCurrentBikeOperatingHours"
+          <LinearProgressMaintenanceInterval
+            :intervalState="wear_object.interval_state"
+            :intervalUnit="wear_object.interval_unit"
+            :absoluteDigits="1"
+            :relativeDigits="0"
           />
         </td>
       </tr>
@@ -27,12 +28,12 @@
 </template>
 
 <script>
-import LinearProgressIntervalHours from '../../components/common/LinearProgressIntervalHours.vue';
+import LinearProgressMaintenanceInterval from '../../components/common/LinearProgressMaintenanceInterval.vue';
 
 export default {
   name: 'DashboardWearState',
   components: {
-    LinearProgressIntervalHours,
+    LinearProgressMaintenanceInterval,
   },
   props: {
     wearObject: {
