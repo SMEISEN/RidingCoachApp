@@ -18,8 +18,8 @@
           <LinearProgressMaintenanceInterval
             :intervalState="wear_object.interval_state"
             :intervalUnit="wear_object.interval_unit"
-            :absoluteDigits="1"
-            :relativeDigits="0"
+            :absoluteDigitstoPrecision="2"
+            :relativeDigitsToFixed="0"
           />
         </td>
       </tr>

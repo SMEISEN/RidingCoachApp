@@ -27,12 +27,12 @@ export default {
       type: String,
       required: true,
     },
-    absoluteDigits: {
+    absoluteDigitstoPrecision: {
       type: Number,
       required: false,
-      default: 1,
+      default: 2,
     },
-    relativeDigits: {
+    relativeDigitsToFixed: {
       type: Number,
       required: false,
       default: 0,
@@ -40,10 +40,10 @@ export default {
   },
   computed: {
     interval_absolute() {
-      return this.intervalState.absolute.toFixed(this.absoluteDigits);
+      return this.intervalState.absolute.toPrecision(this.absoluteDigitstoPrecision);
     },
     interval_relative() {
-      return (this.intervalState.relative * 100).toFixed(this.relativeDigits);
+      return (this.intervalState.relative * 100).toFixed(this.relativeDigitsToFixed);
     },
     interval_unit() {
       return this.intervalUnit;
