@@ -140,10 +140,6 @@
 </template>
 
 <script>
-import {
-  processStateOfIntervalHours,
-  processLeftIntervalHours,
-} from '../../components/utils/DataProcessingUtils';
 import { apiQueryMaintenance } from '../../components/api/MaintenanceApi';
 import { initObject } from '../../components/utils/FromUtils';
 import DashboardWearState from './DashboardWearState.vue';
@@ -212,25 +208,11 @@ export default {
       const helperList2 = [];
       for (let i = 0; i < Object.values(helperList1).length; i += 1) {
         if (Object.values(helperList1)[i].operating_hours !== undefined) {
-          if (Object.values(helperList1)[i].interval_unit === 'h') {
-            const name = { name: Object.keys(helperList1)[i] };
-            const entry = Object.values(helperList1)[i];
-            const HoursLeft = {
-              hours_left: processLeftIntervalHours(
-                Object.values(helperList1)[i].operating_hours,
-                Object.values(helperList1)[i].interval_amount,
-                this.$store.getters.getCurrentBikeOperatingHours,
-              ),
-            };
-            const state = {
-              state: processStateOfIntervalHours(
-                Object.values(helperList1)[i].operating_hours,
-                Object.values(helperList1)[i].interval_amount,
-                this.$store.getters.getCurrentBikeOperatingHours,
-              ),
-            };
-            helperList2.push(Object.assign(entry, name, HoursLeft, state));
-          }
+          const name = { name: Object.keys(helperList1)[i] };
+          helperList2.push(Object.assign(
+            name,
+            Object.values(helperList1)[i],
+          ));
         }
       }
       return helperList2;
@@ -247,6 +229,7 @@ export default {
       apiQueryMaintenance({
         bike_id: this.bikeId,
         interval_type: 'estimated wear',
+        interval_unit: 'h',
       })
         .then((res) => {
           if (Object.keys(res.data).length > 0) {
@@ -272,6 +255,7 @@ export default {
       apiQueryMaintenance({
         bike_id: this.bikeId,
         interval_type: 'planned cycle',
+        interval_unit: 'h',
       })
         .then((res) => {
           if (Object.keys(res.data).length > 0) {
