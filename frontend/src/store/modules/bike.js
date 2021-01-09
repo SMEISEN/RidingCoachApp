@@ -43,8 +43,47 @@ const mutations = {
     state.current_bike_rain_rear_pressure = selectedBike.rain_rear_pressure;
     state.current_bike_setup = selectedBike.setup;
   },
-  setOperatingHours(state, operatingHours) {
+  updateCurrentBike(state, selectedBike) {
+    state.current_bike_id = selectedBike.bike_id;
+    state.current_bike_manufacturer = selectedBike.manufacturer;
+    state.current_bike_model = selectedBike.model;
+    state.current_bike_operating_hours = selectedBike.operating_hours;
+    state.current_bike_year = selectedBike.year;
+    state.current_bike_slick_front_pressure = selectedBike.slick_front_pressure;
+    state.current_bike_slick_rear_pressure = selectedBike.slick_rear_pressure;
+    state.current_bike_rain_front_pressure = selectedBike.rain_front_pressure;
+    state.current_bike_rain_rear_pressure = selectedBike.rain_rear_pressure;
+    state.current_bike_setup = selectedBike.setup;
+  },
+  setCurrentBikeId: (state, bikeId) => {
+    state.current_bike_id = bikeId;
+  },
+  setCurrentBikeManufacturer: (state, bikeManufacturer) => {
+    state.current_bike_manufacturer = bikeManufacturer;
+  },
+  setCurrentBikeModel: (state, bikeModel) => {
+    state.current_bike_model = bikeModel;
+  },
+  setCurrentOperatingHours(state, operatingHours) {
     state.current_bike_operating_hours = operatingHours;
+  },
+  setCurrentBikeYear: (state, bikeYear) => {
+    state.current_bike_year = bikeYear;
+  },
+  setCurrentBikeSlickFrontPressure: (state, slickFrontPressure) => {
+    state.current_bike_slick_front_pressure = slickFrontPressure;
+  },
+  setCurrentBikeSlickRearPressure: (state, slickRearPressure) => {
+    state.current_bike_slick_rear_pressure = slickRearPressure;
+  },
+  setCurrentBikeRainFrontPressure: (state, rainFrontPressure) => {
+    state.current_bike_rain_front_pressure = rainFrontPressure;
+  },
+  setCurrentBikeRainRearPressure: (state, rainRearPressure) => {
+    state.current_bike_rain_rear_pressure = rainRearPressure;
+  },
+  setCurrentBikeSetup: (state, bikeSetup) => {
+    state.current_bike_setup = bikeSetup;
   },
   resetBikeState(state) {
     Object.assign(state, getDefaultState());

@@ -110,7 +110,7 @@ export default {
       }
     });
     this.$store.subscribe((mutation) => {
-      if (mutation.type === 'getCurrentBikeOperatingHours'
+      if (mutation.type === 'setCurrentOperatingHours'
         || mutation.type === 'selectBike'
         || mutation.type === 'setHistoryId'
       ) {

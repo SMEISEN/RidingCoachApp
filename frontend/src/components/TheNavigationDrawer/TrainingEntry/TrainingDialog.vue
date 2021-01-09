@@ -141,7 +141,7 @@ export default {
       };
       apiPutBike(bikeId, payloadBike)
         .then(() => {
-          this.$store.commit('setOperatingHours', payloadBike.operating_hours);
+          this.$store.commit('setCurrentOperatingHours', payloadBike.operating_hours);
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {
