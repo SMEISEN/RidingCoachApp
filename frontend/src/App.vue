@@ -82,6 +82,9 @@ export default {
     isAuthenticated() {
       return this.$store.getters.isAuthenticated;
     },
+    current_bike_id() {
+      return this.$store.getters.getCurrentBikeId;
+    },
   },
   created() {
     this.getBike();
@@ -104,8 +107,12 @@ export default {
       apiGetAllBikes()
         .then((res) => {
           this.$store.commit('setAllBikes', res.data);
-          if (this.$store.getters.getCurrentBikeId === null) {
-            this.$store.commit('selectBike', res.data[0]);
+          if (this.current_bike_id === null) {
+            const currentBikeData = res.data[0];
+            this.$store.commit('updateCurrentBike', currentBikeData);
+          } else {
+            const currentBikeData = res.data.find((o) => o.bike_id === this.current_bike_id);
+            this.$store.commit('updateCurrentBike', currentBikeData);
           }
         })
         .catch((error) => {
