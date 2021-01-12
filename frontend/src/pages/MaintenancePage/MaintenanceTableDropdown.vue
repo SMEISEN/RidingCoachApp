@@ -4,6 +4,7 @@
     bottom
     offset-x
     open-on-hover
+    :open-on-click="false"
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ on }">
@@ -87,6 +88,9 @@ export default {
     doneButtonClicked(mtnId) {
       const selectedChips = this.chipNumberToString();
       this.$emit('doneButtonClicked', mtnId, selectedChips);
+      setTimeout(() => {
+        this.dropdown = false;
+      }, 1);
     },
     chipNumberToString() {
       const selectedChipsArray = [];
