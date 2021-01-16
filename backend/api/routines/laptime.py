@@ -96,3 +96,33 @@ def read_laptimesheet(spreadsheet):
     laptime_data = pd.DataFrame(np.transpose(np.array(data)), index=lap_numbers, columns=columns)
 
     return session_start_dt, location_str, application_str, laptime_data
+
+
+def validate_laptimes(laptime_data):
+
+    def detect_outliers(laptimes, divider):
+        rng = max(laptimes) - min(laptimes)
+        outlier_detection = DBSCAN(min_samples = 2, eps = rng/divider)
+        
+        return outlier_detection.fit_predict(np.array(laptimes).reshape(-1, 1))
+
+    laptime_data['valid'] = detect_outliers(laptimes=laptime_data['laptime_seconds'], divider=4)
+
+    # 2 clusters - onroad AND offroad
+    if 0 in laptime_data['valid'].to_list() and 1 in laptime_data['valid'].to_list():  
+        onroad = laptime_data.loc[laptime_data['valid'] == 0].copy()
+        onroad_clusters = detect_outliers(laptimes=onroad['laptime_seconds'], divider=8)
+        onroad['valid'] = [x!=-1 for x in onroad_clusters]
+
+        offroad = laptime_data.loc[laptime_data['valid'] == 1].copy()
+        onroad_clusters = detect_outliers(laptimes=offroad['laptime_seconds'], divider=8)
+        offroad['valid'] = [x!=-1 for x in onroad_clusters]
+
+        laptime_data = pd.concat([onroad, offroad])
+
+    # 1 cluster - onroad OR offroad
+    else:
+        laptime_data['valid'] = detect_outliers(laptimes=laptime_data['laptime_seconds'], divider=8)
+        laptime_data['valid'] = [x!=-1 for x in laptime_data['valid']]
+
+    return laptime_data
