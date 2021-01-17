@@ -24,7 +24,8 @@ class LaptimeModel(db.Model):
     datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     session = db.relationship(
-        'SessionModel', backref=db.backref('laptimes', order_by='LaptimeModel.datetime_display.asc()'))
+        'SessionModel',
+        backref=db.backref('laptimes', order_by='LaptimeModel.datetime_display.asc()'))
 
     def __repr__(self):
         return f"Lap time[" \
