@@ -89,8 +89,8 @@ class EmailCollection(Resource):
 
         if len(current_training) > 0:
             current_training_id = current_training[0]['training_id']
-            current_bike_id = current_training.setups[-1]['bike_id']
-            current_setup_id = current_training.setups[-1]['setup_id']
+            current_bike_id = current_training[0]['setups'][-1]['bike_id']
+            current_setup_id = current_training[0]['setups'][-1]['setup_id']
         else:
             training_payload = {
                 'location': location_str,
@@ -143,7 +143,7 @@ class EmailCollection(Resource):
             enumerate(zip(
                 laptime_data.index.to_list(),
                 laptime_data['laptime_seconds'].to_list(),
-                laptime_data['datetimes_display'].to_list())):
+                laptime_data['datetime_display'].to_list())):
 
             sectors = {}
             for key in laptime_data.iloc[:,4:].columns.to_list():
