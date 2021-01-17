@@ -139,19 +139,23 @@ class EmailCollection(Resource):
     def post_laptimes(laptime_data, current_session_id):
 
         laptime_ids = []
-        for i, (lap_no, laptime_second, datetime_display) in\
+        for i, (lap_no, valid, track_layout, laptime_second, datetime_display) in\
             enumerate(zip(
                 laptime_data.index.to_list(),
+                laptime_data['valid'].to_list(),
+                laptime_data['track_layout'].to_list(),
                 laptime_data['laptime_seconds'].to_list(),
                 laptime_data['datetime_display'].to_list())):
 
             sectors = {}
-            for key in laptime_data.iloc[:,4:].columns.to_list():
-                sectors[key] = laptime_data.iloc[i,4:].to_list()
+            for j, key in enumerate(laptime_data.iloc[:,5:].columns.to_list()):
+                sectors[key] = laptime_data.iloc[i,5+j]
 
             laptime_payload = {
                 'session_id': current_session_id,
                 'lap_no': lap_no,
+                'valid': valid,
+                'track_layout': track_layout,
                 'laptime_seconds': laptime_second,
                 'sectors': sectors,
                 'datetime_display': datetime_display.timestamp(),
