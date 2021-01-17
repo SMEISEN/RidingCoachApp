@@ -91,9 +91,15 @@ def read_laptimesheet(spreadsheet):
         laptime_seconds,
         datetimes_display,
         [None for x in range(len(laptime_seconds))],
+        [None for x in range(len(laptime_seconds))],
         [None for x in range(len(laptime_seconds))]
         ] + sector_seconds
-    columns = ['laptime_seconds', 'datetime_display', 'offroad', 'valid'] + sector_names
+    columns = [
+        'laptime_seconds',
+        'datetime_display',
+        'offroad',
+        'valid',
+        'track_layout'] + sector_names
 
     laptime_data = pd.DataFrame(np.transpose(np.array(data)), index=lap_numbers, columns=columns)
 
@@ -115,10 +121,12 @@ def validate_laptimes(laptime_data):
         onroad = laptime_data.loc[laptime_data['valid'] == 0].copy()
         onroad_clusters = detect_outliers(laptimes=onroad['laptime_seconds'], divider=8)
         onroad['valid'] = [x!=-1 for x in onroad_clusters]
+        onroad['track_layout'] = ["A" for i in range(len(onroad_clusters))]
 
         offroad = laptime_data.loc[laptime_data['valid'] == 1].copy()
         onroad_clusters = detect_outliers(laptimes=offroad['laptime_seconds'], divider=8)
         offroad['valid'] = [x!=-1 for x in onroad_clusters]
+        offroad['track_layout'] = ["B" for i in range(len(onroad_clusters))]
 
         laptime_data = pd.concat([onroad, offroad])
 
@@ -126,5 +134,6 @@ def validate_laptimes(laptime_data):
     else:
         laptime_data['valid'] = detect_outliers(laptimes=laptime_data['laptime_seconds'], divider=8)
         laptime_data['valid'] = [x!=-1 for x in laptime_data['valid']]
+        laptime_data['track_layout'] = ["A" for i in range(len(laptime_data))]
 
     return laptime_data
