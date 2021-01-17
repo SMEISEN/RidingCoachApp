@@ -15,7 +15,7 @@ class LaptimeModel(db.Model):
 
     lap_no = db.Column(db.Integer, nullable=False)
     valid = db.Column(db.Boolean, nullable=False, default=True)
-    track_layout = db.Column(db.String, nullable=True, default="A")
+    track_layout = db.Column(db.String, nullable=False, default="A")
     laptime_seconds = db.Column(db.Float, nullable=False)
     sectors = db.Column(JSON, nullable=False)
 
