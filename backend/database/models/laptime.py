@@ -8,12 +8,14 @@ import uuid
 class LaptimeModel(db.Model):
     __tablename__ = 'laptime'
 
-    lap_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    lap_id = db.Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
 
     session_id = db.Column(UUID(as_uuid=True), db.ForeignKey('session.session_id'), nullable=False)
 
     lap_no = db.Column(db.Integer, nullable=False)
     valid = db.Column(db.Boolean, nullable=False, default=True)
+    track_layout = db.Column(db.String, nullable=True, default="A")
     laptime_seconds = db.Column(db.Float, nullable=False)
     sectors = db.Column(JSON, nullable=False)
 
