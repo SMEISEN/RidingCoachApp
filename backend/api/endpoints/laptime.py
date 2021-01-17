@@ -70,6 +70,8 @@ class LaptimeCollection(Resource):
         new_laptime = LaptimeModel(
             session_id=inserted_data.get('session_id'),
             lap_no=inserted_data.get('lap_no'),
+            valid=inserted_data.get('valid'),
+            track_layout=inserted_data.get('track_layout'),
             laptime_seconds=inserted_data.get('laptime_seconds'),
             sectors=inserted_data.get('sectors'),
             datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display')),
@@ -130,6 +132,8 @@ class LaptimeItem(Resource):
             laptime_entry.lap_no = inserted_data.get('lap_no')
         if inserted_data.get('valid', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.valid = inserted_data.get('valid')
+        if inserted_data.get('track_layout', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            laptime_entry.track_layout = inserted_data.get('track_layout')
         if inserted_data.get('laptime_seconds', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.laptime_seconds = inserted_data.get('laptime_seconds')
         if inserted_data.get('sectors', 'ParameterNotInPayload') != 'ParameterNotInPayload':
