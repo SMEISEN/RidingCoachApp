@@ -20,7 +20,9 @@ def read_laptimesheet(spreadsheet):
     location_str = 'undefined'
     application_str = 'undefined'
 
-    for i, (row_sectors, row_channels) in enumerate(zip(sheet_sectors.rows(), sheet_channels.rows())):
+    for i, (row_sectors, row_channels) in enumerate(
+        zip(sheet_sectors.rows(), sheet_channels.rows())):
+
         if i == 2:
             location_str = row_sectors[1].value
             continue
@@ -103,7 +105,7 @@ def validate_laptimes(laptime_data):
     def detect_outliers(laptimes, divider):
         rng = max(laptimes) - min(laptimes)
         outlier_detection = DBSCAN(min_samples = 2, eps = rng/divider)
-        
+
         return outlier_detection.fit_predict(np.array(laptimes).reshape(-1, 1))
 
     laptime_data['valid'] = detect_outliers(laptimes=laptime_data['laptime_seconds'], divider=4)
