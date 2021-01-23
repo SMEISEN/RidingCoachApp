@@ -147,22 +147,32 @@
       v-model="layout_dialog"
       max-width="290"
     >
+      <v-form v-model="valid">
       <v-card>
         <v-card-title class="headline">
           Add new layout name
         </v-card-title>
-        <v-card-text>
+          <v-card-text class="pb-0">
           <v-text-field
             v-model="new_layout"
-          >
-          </v-text-field>
+              :rules="name_rules"
+              label="Track layout"
+              required
+            />
         </v-card-text>
+          <v-card-actions class="py-0 my-n3 pr-5">
+            <v-spacer />
+            <v-switch
+              v-model="apply_to_all"
+              label="apply to all"
+            />
+          </v-card-actions>
         <v-card-actions>
-          <v-spacer></v-spacer>
+            <v-spacer />
           <v-btn
             color="secondary"
             text
-            @click="closeClicked()"
+              @click="closeDialog()"
           >
             Close
           </v-btn>
@@ -170,12 +180,14 @@
           <v-btn
             color="secondary"
             text
-            @click="saveClicked()"
+              :disabled="!valid"
+              @click="saveLayout()"
           >
             Save
           </v-btn>
         </v-card-actions>
       </v-card>
+      </v-form>
     </v-dialog>
   </div>
 </template>
