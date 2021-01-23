@@ -130,8 +130,10 @@
           </td>
           <td style="font-size: 12px">
             <v-btn
+              v-long-press="500"
               min-width="100"
               text
+              @long-press-start="longPress(laptime_item.lap_id, laptime_item.track_layout)"
               @click.prevent="changeLapTrackLayout(
                 laptime_item.lap_id, lapIndex, laptime_item.track_layout)"
             >
@@ -141,14 +143,52 @@
         </tr>
       </tbody>
     </v-simple-table>
+    <v-dialog
+      v-model="layout_dialog"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Add new layout name
+        </v-card-title>
+        <v-card-text>
+          <v-text-field
+            v-model="new_layout"
+          >
+          </v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="secondary"
+            text
+            @click="closeClicked()"
+          >
+            Close
+          </v-btn>
+
+          <v-btn
+            color="secondary"
+            text
+            @click="saveClicked()"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
+import LongPress from 'vue-directive-long-press';
 import { apiPutLaptimeItem } from '../../api/LaptimeApi';
 
 export default {
   name: 'TrainingDialogTabsLaptimes',
+  directives: {
+    'long-press': LongPress,
+  },
   props: {
     sessionObject: {
       type: Object,
@@ -157,7 +197,9 @@ export default {
   },
   data: () => ({
     session_index: 0,
-    new_track_layout: '',
+    layout_dialog: false,
+    new_layout: '',
+    lap_id: null,
   }),
   computed: {
     laptimes() {
@@ -209,6 +251,21 @@ export default {
       const nextIndex = (currentIndex === this.track_layouts.length - 1)
         ? (this.track_layouts[0]) : (this.track_layouts[currentIndex + 1]);
       this.laptimes[lapIndex].track_layout = nextIndex;
+    },
+    longPress(lapId, trackLayout) {
+      this.new_layout = trackLayout;
+      this.lap_id = lapId;
+      this.layout_dialog = true;
+    },
+    closeClicked() {
+      this.new_layout = '';
+      this.lap_id = null;
+      this.layout_dialog = false;
+    },
+    saveClicked() {
+      this.new_layout = '';
+      this.lap_id = null;
+      this.layout_dialog = false;
     },
   },
 };
