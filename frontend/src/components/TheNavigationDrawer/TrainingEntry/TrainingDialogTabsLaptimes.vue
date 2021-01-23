@@ -61,8 +61,8 @@
             Sector 5
           </th>
           <th
-          class="text-left pl-8"
-          style="width: 115px"
+            class="text-left pl-8"
+            style="width: 115px"
           >
             Valid
           </th>
@@ -133,7 +133,8 @@
               v-long-press="500"
               min-width="100"
               text
-              @long-press-start="longPress(laptime_item.lap_id, laptime_item.track_layout)"
+              @long-press-start="longPress(
+                laptime_item.lap_id, lapIndex, laptime_item.track_layout)"
               @click.prevent="changeLapTrackLayout(
                 laptime_item.lap_id, lapIndex, laptime_item.track_layout)"
             >
@@ -148,18 +149,18 @@
       max-width="290"
     >
       <v-form v-model="valid">
-      <v-card>
-        <v-card-title class="headline">
-          Add new layout name
-        </v-card-title>
+        <v-card>
+          <v-card-title class="headline">
+            Add new layout name
+          </v-card-title>
           <v-card-text class="pb-0">
-          <v-text-field
-            v-model="new_layout"
+            <v-text-field
+              v-model="new_layout"
               :rules="name_rules"
               label="Track layout"
               required
             />
-        </v-card-text>
+          </v-card-text>
           <v-card-actions class="py-0 my-n3 pr-5">
             <v-spacer />
             <v-switch
@@ -167,26 +168,25 @@
               label="apply to all"
             />
           </v-card-actions>
-        <v-card-actions>
+          <v-card-actions>
             <v-spacer />
-          <v-btn
-            color="secondary"
-            text
+            <v-btn
+              color="secondary"
+              text
               @click="closeDialog()"
-          >
-            Close
-          </v-btn>
-
-          <v-btn
-            color="secondary"
-            text
+            >
+              Close
+            </v-btn>
+            <v-btn
+              color="secondary"
+              text
               :disabled="!valid"
               @click="saveLayout()"
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
       </v-form>
     </v-dialog>
   </div>
@@ -212,6 +212,9 @@ export default {
     layout_dialog: false,
     new_layout: '',
     lap_id: null,
+    lap_index: null,
+    valid: false,
+    apply_to_all: false,
   }),
   computed: {
     laptimes() {
@@ -225,6 +228,12 @@ export default {
     },
     track_layouts() {
       return this._.uniq(this._.map(this.laptimes, 'track_layout')).sort();
+    },
+    name_rules() {
+      return [
+        (v) => !!v || 'Please define a name',
+        (v) => !this.track_layouts.includes(v) || 'Name does already exist',
+      ];
     },
   },
   updated() {
@@ -259,25 +268,63 @@ export default {
         });
     },
     changeLapTrackLayout(lapId, lapIndex, trackLayout) {
-      const currentIndex = this.track_layouts.indexOf(trackLayout);
-      const nextIndex = (currentIndex === this.track_layouts.length - 1)
-        ? (this.track_layouts[0]) : (this.track_layouts[currentIndex + 1]);
-      this.laptimes[lapIndex].track_layout = nextIndex;
+      if (this.track_layouts.length > 1) {
+        const currentIndex = this.track_layouts.indexOf(trackLayout);
+        const nextLayout = (currentIndex === this.track_layouts.length - 1)
+          ? (this.track_layouts[0]) : (this.track_layouts[currentIndex + 1]);
+        this.laptimes[lapIndex].track_layout = nextLayout;
+        const payload = { track_layout: nextLayout };
+        this.putLaptimeItem(payload, lapId);
+      }
+      this.closeDialog();
     },
-    longPress(lapId, trackLayout) {
-      this.new_layout = trackLayout;
+    longPress(lapId, lapIndex, trackLayout) {
+      this.old_layout = trackLayout;
+      this.new_layout = String.fromCharCode(
+        this.track_layouts[this.track_layouts.length - 1].charCodeAt(0) + 1,
+      );
       this.lap_id = lapId;
+      this.lap_index = lapIndex;
       this.layout_dialog = true;
     },
-    closeClicked() {
+    saveLayout() {
+      const lapId = this.lap_id;
+      if (this.apply_to_all === true) {
+        for (let i = 0; i < this.laptimes.length; i += 1) {
+          if (this.laptimes[i].track_layout === this.old_layout) {
+            const payload = { track_layout: this.new_layout };
+            this.laptimes[i].track_layout = this.new_layout;
+            this.putLaptimeItem(payload, lapId);
+          }
+        }
+      } else {
+        const payload = { track_layout: this.new_layout };
+        this.laptimes[this.lap_index].track_layout = this.new_layout;
+        this.putLaptimeItem(payload, lapId);
+      }
+      this.closeDialog();
+    },
+    closeDialog() {
       this.new_layout = '';
       this.lap_id = null;
       this.layout_dialog = false;
     },
-    saveClicked() {
-      this.new_layout = '';
-      this.lap_id = null;
-      this.layout_dialog = false;
+    putLaptimeItem(payload, lapId) {
+      apiPutLaptimeItem(payload, lapId)
+        .then(() => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'success',
+            message: 'New track layout defined',
+          });
+        })
+        .catch((error) => {
+          this.$store.commit('setInfoSnackbar', {
+            state: true,
+            color: 'error',
+            message: `${error}!`,
+          });
+        });
     },
   },
 };
