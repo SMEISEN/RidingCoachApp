@@ -1,130 +1,147 @@
 <template>
-  <v-simple-table
-    v-if="laptimes.length > 0"
-    light
-    dense
-  >
-    <thead>
-      <tr>
-        <th
-          class="text-left"
-          style="width: 24px"
-        >
-          Lap
-        </th>
-        <th
-          class="text-left"
-          style="width: 24px"
-        >
-          Full
-        </th>
-        <th
-          class="text-left"
-          style="width: 24px"
-        >
-          Delta
-        </th>
-        <th
-          v-if="Object.keys(laptimes[0].sectors).length >= 1"
-          class="text-left"
-          style="width: 24px"
-        >
-          Sector 1
-        </th>
-        <th
-          v-if="Object.keys(laptimes[0].sectors).length >= 2"
-          class="text-left"
-          style="width: 24px"
-        >
-          Sector 2
-        </th>
-        <th
-          v-if="Object.keys(laptimes[0].sectors).length >= 3"
-          class="text-left"
-          style="width: 24px"
-        >
-          Sector 3
-        </th>
-        <th
-          v-if="Object.keys(laptimes[0].sectors).length >= 4"
-          class="text-left"
-          style="width: 24px"
-        >
-          Sector 4
-        </th>
-        <th
-          v-if="Object.keys(laptimes[0].sectors).length >= 5"
-          class="text-left"
-          style="width: 24px"
-        >
-          Sector 5
-        </th>
-        <th
+  <div>
+    <v-simple-table
+      v-if="laptimes.length > 0"
+      light
+      dense
+    >
+      <thead>
+        <tr>
+          <th
+            class="text-left"
+            style="width: 24px"
+          >
+            Lap
+          </th>
+          <th
+            class="text-left"
+            style="width: 24px"
+          >
+            Full
+          </th>
+          <th
+            class="text-left"
+            style="width: 24px"
+          >
+            Delta
+          </th>
+          <th
+            v-if="Object.keys(laptimes[0].sectors).length >= 1"
+            class="text-left"
+            style="width: 24px"
+          >
+            Sector 1
+          </th>
+          <th
+            v-if="Object.keys(laptimes[0].sectors).length >= 2"
+            class="text-left"
+            style="width: 24px"
+          >
+            Sector 2
+          </th>
+          <th
+            v-if="Object.keys(laptimes[0].sectors).length >= 3"
+            class="text-left"
+            style="width: 24px"
+          >
+            Sector 3
+          </th>
+          <th
+            v-if="Object.keys(laptimes[0].sectors).length >= 4"
+            class="text-left"
+            style="width: 24px"
+          >
+            Sector 4
+          </th>
+          <th
+            v-if="Object.keys(laptimes[0].sectors).length >= 5"
+            class="text-left"
+            style="width: 24px"
+          >
+            Sector 5
+          </th>
+          <th
           class="text-left pl-8"
           style="width: 115px"
-        >
-          Valid
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="(laptime_item) in laptimes"
-        :key="'laptime/' + laptime_item.lap_id"
-      >
-        <td style="font-size: 12px">
-          {{ laptime_item.lap_no }}
-        </td>
-        <td style="font-size: 12px">
-          {{ laptime_item.laptime_seconds }}
-        </td>
-        <td style="font-size: 12px">
-          {{ calculate_delta(laptime_item.laptime_seconds) }}
-        </td>
-        <td
-          v-if="Object.keys(laptime_item.sectors).length >= 1"
-          style="font-size: 12px"
-        >
-          {{ laptime_item.sectors['Sector 1'] }}
-        </td>
-        <td
-          v-if="Object.keys(laptime_item.sectors).length >= 2"
-          style="font-size: 12px"
-        >
-          {{ laptime_item.sectors['Sector 2'] }}
-        </td>
-        <td
-          v-if="Object.keys(laptime_item.sectors).length >= 3"
-          style="font-size: 12px"
-        >
-          {{ laptime_item.sectors['Sector 3'] }}
-        </td>
-        <td
-          v-if="Object.keys(laptime_item.sectors).length >= 4"
-          style="font-size: 12px"
-        >
-          {{ laptime_item.sectors['Sector 4'] }}
-        </td>
-        <td
-          v-if="Object.keys(laptime_item.sectors).length >= 5"
-          style="font-size: 12px"
-        >
-          {{ laptime_item.sectors['Sector 5'] }}
-        </td>
-        <td style="font-size: 12px">
-          <v-btn
-            :color="laptime_item.valid === true ? 'success' : 'error'"
-            text
-            @click.prevent="
-              changeLapValidity(laptime_item.lap_id, laptime_item.valid);
-              laptime_item.valid === true ? laptime_item.valid = false : laptime_item.valid = true"
           >
-            {{ laptime_item.valid }}
-          </v-btn>
-        </td>
-      </tr>
-    </tbody>
-  </v-simple-table>
+            Valid
+          </th>
+          <th
+            class="text-left pl-11"
+            style="width: 115px"
+          >
+            Layout
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(laptime_item, lapIndex) in laptimes"
+          :key="'laptime/' + laptime_item.lap_id"
+        >
+          <td style="font-size: 12px">
+            {{ laptime_item.lap_no }}
+          </td>
+          <td style="font-size: 12px">
+            {{ laptime_item.laptime_seconds }}
+          </td>
+          <td style="font-size: 12px">
+            {{ calculate_delta(laptime_item.laptime_seconds) }}
+          </td>
+          <td
+            v-if="Object.keys(laptime_item.sectors).length >= 1"
+            style="font-size: 12px"
+          >
+            {{ laptime_item.sectors['Sector 1'] }}
+          </td>
+          <td
+            v-if="Object.keys(laptime_item.sectors).length >= 2"
+            style="font-size: 12px"
+          >
+            {{ laptime_item.sectors['Sector 2'] }}
+          </td>
+          <td
+            v-if="Object.keys(laptime_item.sectors).length >= 3"
+            style="font-size: 12px"
+          >
+            {{ laptime_item.sectors['Sector 3'] }}
+          </td>
+          <td
+            v-if="Object.keys(laptime_item.sectors).length >= 4"
+            style="font-size: 12px"
+          >
+            {{ laptime_item.sectors['Sector 4'] }}
+          </td>
+          <td
+            v-if="Object.keys(laptime_item.sectors).length >= 5"
+            style="font-size: 12px"
+          >
+            {{ laptime_item.sectors['Sector 5'] }}
+          </td>
+          <td style="font-size: 12px">
+            <v-btn
+              :color="laptime_item.valid === true ? 'success' : 'error'"
+              text
+              @click.prevent="changeLapValidity(
+                laptime_item.lap_id, lapIndex, laptime_item.valid)"
+            >
+              {{ laptime_item.valid }}
+            </v-btn>
+          </td>
+          <td style="font-size: 12px">
+            <v-btn
+              min-width="100"
+              text
+              @click.prevent="changeLapTrackLayout(
+                laptime_item.lap_id, lapIndex, laptime_item.track_layout)"
+            >
+              {{ laptime_item.track_layout }}
+            </v-btn>
+          </td>
+        </tr>
+      </tbody>
+    </v-simple-table>
+  </div>
 </template>
 
 <script>
@@ -140,6 +157,7 @@ export default {
   },
   data: () => ({
     session_index: 0,
+    new_track_layout: '',
   }),
   computed: {
     laptimes() {
@@ -151,6 +169,9 @@ export default {
         this.laptimes[0].laptime_seconds,
       );
     },
+    track_layouts() {
+      return this._.uniq(this._.map(this.laptimes, 'track_layout')).sort();
+    },
   },
   updated() {
   },
@@ -160,7 +181,8 @@ export default {
     calculate_delta(thisLap) {
       return (thisLap - this.fastest_lap).toFixed(2);
     },
-    changeLapValidity(lapId, valid) {
+    changeLapValidity(lapId, lapIndex, valid) {
+      this.laptimes[lapIndex].valid = !valid;
       let payload = { valid: !valid };
       apiPutLaptimeItem(payload, lapId)
         .then(() => {
@@ -181,6 +203,12 @@ export default {
             message: `${error}!`,
           });
         });
+    },
+    changeLapTrackLayout(lapId, lapIndex, trackLayout) {
+      const currentIndex = this.track_layouts.indexOf(trackLayout);
+      const nextIndex = (currentIndex === this.track_layouts.length - 1)
+        ? (this.track_layouts[0]) : (this.track_layouts[currentIndex + 1]);
+      this.laptimes[lapIndex].track_layout = nextIndex;
     },
   },
 };
