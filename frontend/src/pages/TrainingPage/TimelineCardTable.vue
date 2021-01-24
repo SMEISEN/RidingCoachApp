@@ -261,54 +261,62 @@
           v-if="valid_laptimes(0).length > 0"
           style="font-size: 12px"
         >
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-chip
-                color="info"
-                text-color="white"
-                small
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon
-                  class="pr-1 ml-n1"
+          <div
+            v-for="(object, layout_no) in valid_laptimes(index)"
+            :key="'setup/laptimes/' + object.track_layout"
+          >
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-chip
+                  color="info"
+                  text-color="white"
                   small
+                  v-bind="attrs"
+                  v-on="on"
                 >
-                  mdi-diameter-variant
-                </v-icon>
-                <span class="white--text">
-                  {{ average_laptime(index) }}
-                </span>
-              </v-chip>
-            </template>
-            <span>
-              {{ 'Average laptime' }}
-            </span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-chip
-                color="error darken-1"
-                text-color="white"
-                small
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon
-                  class="pr-1 ml-n1"
+                  <v-icon
+                    class="pr-1 ml-n1"
+                    small
+                  >
+                    mdi-diameter-variant
+                  </v-icon>
+                  <span class="white--text">
+                    {{
+                      `${average_laptime(index, object.track_layout)} -
+                      ${String.fromCharCode(65 + layout_no)}` }}
+                  </span>
+                </v-chip>
+              </template>
+              <span>
+                {{ `Average laptime on layout "${object.track_layout}"` }}
+              </span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-chip
+                  color="error darken-1"
+                  text-color="white"
                   small
+                  v-bind="attrs"
+                  v-on="on"
                 >
-                  mdi-fire
-                </v-icon>
-                <span class="white--text">
-                  {{ min_laptime(index) }}
-                </span>
-              </v-chip>
-            </template>
-            <span>
-              {{ 'Fastet laptime' }}
-            </span>
-          </v-tooltip>
+                  <v-icon
+                    class="pr-1 ml-n1"
+                    small
+                  >
+                    mdi-fire
+                  </v-icon>
+                  <span class="white--text">
+                    {{ `${min_laptime(index, object.track_layout)} -
+                      ${String.fromCharCode(65 + layout_no)}` }}
+                  </span>
+                </v-chip>
+              </template>
+              <span>
+                {{ `Fastet laptime on layout "${object.track_layout}"` }}
+              </span>
+            </v-tooltip>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -412,10 +420,22 @@ export default {
           if (this.trainingItem.setups[index].sessions.length > 0) {
             const sessions = [];
             for (let i = 0; i < this.trainingItem.setups[index].sessions.length; i += 1) {
-              const validLaptimes = this.trainingItem.setups[index].sessions[i]
-                .laptimes.filter((o) => o.valid === true);
-              if (validLaptimes.length > 0) {
-                sessions.push(...validLaptimes.map((a) => a.laptime_seconds));
+              const trackLayouts = this._.uniq(
+                this._.map(
+                  this.trainingItem.setups[index].sessions[i].laptimes, 'track_layout',
+                ),
+              ).sort();
+              for (let j = 0; j < trackLayouts.length; j += 1) {
+                const validLaptimes = this.trainingItem.setups[index].sessions[i]
+                  .laptimes.filter((o) => o.valid === true && o.track_layout === trackLayouts[j]);
+                if (validLaptimes.length > 0) {
+                  sessions.push(
+                    {
+                      laptimes: validLaptimes.map((a) => a.laptime_seconds),
+                      track_layout: trackLayouts[j],
+                    },
+                  );
+                }
               }
             }
             return sessions;
@@ -424,17 +444,19 @@ export default {
       }
       return [];
     },
-    average_laptime(index) {
+    average_laptime(index, layout) {
       const validLaptimes = this.valid_laptimes(index);
       if (validLaptimes.length > 0) {
-        return this._.mean(validLaptimes).toFixed(2);
+        const [layoutLaptimes] = validLaptimes.filter((o) => o.track_layout === layout);
+        return this._.mean(layoutLaptimes.laptimes).toFixed(2);
       }
       return NaN;
     },
-    min_laptime(index) {
+    min_laptime(index, layout) {
       const validLaptimes = this.valid_laptimes(index);
       if (validLaptimes.length > 0) {
-        return this._.min(validLaptimes).toFixed(2);
+        const [layoutLaptimes] = validLaptimes.filter((o) => o.track_layout === layout);
+        return this._.min(layoutLaptimes.laptimes).toFixed(2);
       }
       return NaN;
     },
