@@ -412,10 +412,22 @@ export default {
           if (this.trainingItem.setups[index].sessions.length > 0) {
             const sessions = [];
             for (let i = 0; i < this.trainingItem.setups[index].sessions.length; i += 1) {
+              const trackLayouts = this._.uniq(
+                this._.map(
+                  this.trainingItem.setups[index].sessions[i].laptimes, 'track_layout',
+                ),
+              ).sort();
+              for (let j = 0; j < trackLayouts.length; j += 1) {
               const validLaptimes = this.trainingItem.setups[index].sessions[i]
-                .laptimes.filter((o) => o.valid === true);
+                  .laptimes.filter((o) => o.valid === true && o.track_layout === trackLayouts[j]);
               if (validLaptimes.length > 0) {
-                sessions.push(...validLaptimes.map((a) => a.laptime_seconds));
+                  sessions.push(
+                    {
+                      laptimes: validLaptimes.map((a) => a.laptime_seconds),
+                      track_layout: trackLayouts[j],
+                    },
+                  );
+                }
               }
             }
             return sessions;
