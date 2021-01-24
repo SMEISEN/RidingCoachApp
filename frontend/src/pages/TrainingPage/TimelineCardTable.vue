@@ -283,7 +283,7 @@
                   <span class="white--text">
                     {{
                       `${average_laptime(index, object.track_layout)} -
-                      ${String.fromCharCode(65 + layout_no)}`}}
+                      ${String.fromCharCode(65 + layout_no)}` }}
                   </span>
                 </v-chip>
               </template>
@@ -308,7 +308,7 @@
                   </v-icon>
                   <span class="white--text">
                     {{ `${min_laptime(index, object.track_layout)} -
-                      ${String.fromCharCode(65 + layout_no)}`}}
+                      ${String.fromCharCode(65 + layout_no)}` }}
                   </span>
                 </v-chip>
               </template>
