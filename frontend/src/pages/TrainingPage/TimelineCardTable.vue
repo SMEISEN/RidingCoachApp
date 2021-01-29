@@ -262,7 +262,7 @@
           style="font-size: 12px"
         >
           <div
-            v-for="(object, layout_no) in valid_laptimes(index)"
+            v-for="(object) in valid_laptimes(index)"
             :key="'setup/laptimes/' + object.track_layout"
           >
             <v-tooltip bottom>
@@ -282,8 +282,8 @@
                   </v-icon>
                   <span class="white--text">
                     {{
-                      `${average_laptime(index, object.track_layout)} -
-                      ${String.fromCharCode(65 + layout_no)}` }}
+                      `${average_laptime(index, object.laptimes)} -
+                      ${object.track_layout}` }}
                   </span>
                 </v-chip>
               </template>
@@ -307,8 +307,8 @@
                     mdi-fire
                   </v-icon>
                   <span class="white--text">
-                    {{ `${min_laptime(index, object.track_layout)} -
-                      ${String.fromCharCode(65 + layout_no)}` }}
+                    {{ `${min_laptime(index, object.laptimes)} -
+                      ${object.track_layout}` }}
                   </span>
                 </v-chip>
               </template>
@@ -418,47 +418,45 @@ export default {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
           if (this.trainingItem.setups[index].sessions.length > 0) {
-            const sessions = [];
+            const trackLayouts = {};
             for (let i = 0; i < this.trainingItem.setups[index].sessions.length; i += 1) {
-              const trackLayouts = this._.uniq(
+              const layoutNames = this._.uniq(
                 this._.map(
                   this.trainingItem.setups[index].sessions[i].laptimes, 'track_layout',
                 ),
               ).sort();
-              for (let j = 0; j < trackLayouts.length; j += 1) {
+              for (let j = 0; j < layoutNames.length; j += 1) {
+                const layoutName = layoutNames[j];
                 const validLaptimes = this.trainingItem.setups[index].sessions[i]
-                  .laptimes.filter((o) => o.valid === true && o.track_layout === trackLayouts[j]);
+                  .laptimes.filter((o) => o.valid === true && o.track_layout === layoutName);
                 if (validLaptimes.length > 0) {
-                  sessions.push(
-                    {
-                      laptimes: validLaptimes.map((a) => a.laptime_seconds),
-                      track_layout: trackLayouts[j],
-                    },
-                  );
+                  const laptimeSeconds = validLaptimes.map((a) => a.laptime_seconds);
+                  if (Object.keys(trackLayouts).includes(layoutName)) {
+                    trackLayouts[layoutName] = [...trackLayouts[layoutName], ...laptimeSeconds];
+                  } else {
+                    trackLayouts[layoutName] = laptimeSeconds;
+                  }
                 }
               }
             }
-            return sessions;
+            const result = [];
+            for (let i = 0; i < Object.keys(trackLayouts).length; i += 1) {
+              result.push({
+                track_layout: Object.keys(trackLayouts)[i],
+                laptimes: Object.values(trackLayouts)[i],
+              });
+            }
+            return result;
           }
         }
       }
       return [];
     },
-    average_laptime(index, layout) {
-      const validLaptimes = this.valid_laptimes(index);
-      if (validLaptimes.length > 0) {
-        const [layoutLaptimes] = validLaptimes.filter((o) => o.track_layout === layout);
-        return this._.mean(layoutLaptimes.laptimes).toFixed(2);
-      }
-      return NaN;
+    average_laptime(index, laptimes) {
+      return this._.mean(laptimes).toFixed(2);
     },
-    min_laptime(index, layout) {
-      const validLaptimes = this.valid_laptimes(index);
-      if (validLaptimes.length > 0) {
-        const [layoutLaptimes] = validLaptimes.filter((o) => o.track_layout === layout);
-        return this._.min(layoutLaptimes.laptimes).toFixed(2);
-      }
-      return NaN;
+    min_laptime(index, laptimes) {
+      return this._.min(laptimes).toFixed(2);
     },
   },
 };
