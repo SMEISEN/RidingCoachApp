@@ -282,13 +282,36 @@
                   </v-icon>
                   <span class="white--text">
                     {{
-                      `${average_laptime(index, object.laptimes)} -
-                      ${object.track_layout}` }}
+                      `${average_laptime(object.laptimes)}` }}
                   </span>
                 </v-chip>
               </template>
               <span>
                 {{ `Average laptime on layout "${object.track_layout}"` }}
+              </span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-chip
+                  color="secondary darken-1"
+                  text-color="white"
+                  small
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon
+                    class="pr-1 ml-n1"
+                    small
+                  >
+                    mdi-sigma-lower
+                  </v-icon>
+                  <span class="white--text">
+                    {{ `${std_laptime(object.laptimes)}` }}
+                  </span>
+                </v-chip>
+              </template>
+              <span>
+                {{ `Standard deviation of lap times on layout "${object.track_layout}"` }}
               </span>
             </v-tooltip>
             <v-tooltip bottom>
@@ -307,8 +330,7 @@
                     mdi-fire
                   </v-icon>
                   <span class="white--text">
-                    {{ `${min_laptime(index, object.laptimes)} -
-                      ${object.track_layout}` }}
+                    {{ `${min_laptime(object.laptimes)}` }}
                   </span>
                 </v-chip>
               </template>
@@ -464,6 +486,8 @@ export default {
     min_laptime(laptimes) {
       return min(laptimes).toFixed(2);
     },
+    std_laptime(laptimes) {
+      return std(laptimes).toFixed(2);
     },
   },
 };
