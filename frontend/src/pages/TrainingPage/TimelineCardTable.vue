@@ -282,13 +282,36 @@
                   </v-icon>
                   <span class="white--text">
                     {{
-                      `${average_laptime(index, object.laptimes)} -
-                      ${object.track_layout}` }}
+                      `${average_laptime(object.laptimes)}` }}
                   </span>
                 </v-chip>
               </template>
               <span>
                 {{ `Average laptime on layout "${object.track_layout}"` }}
+              </span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-chip
+                  color="secondary darken-1"
+                  text-color="white"
+                  small
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon
+                    class="pr-1 ml-n1"
+                    small
+                  >
+                    mdi-sigma-lower
+                  </v-icon>
+                  <span class="white--text">
+                    {{ `${std_laptime(object.laptimes)}` }}
+                  </span>
+                </v-chip>
+              </template>
+              <span>
+                {{ `Standard deviation of lap times on layout "${object.track_layout}"` }}
               </span>
             </v-tooltip>
             <v-tooltip bottom>
@@ -307,8 +330,7 @@
                     mdi-fire
                   </v-icon>
                   <span class="white--text">
-                    {{ `${min_laptime(index, object.laptimes)} -
-                      ${object.track_layout}` }}
+                    {{ `${min_laptime(object.laptimes)}` }}
                   </span>
                 </v-chip>
               </template>
@@ -324,6 +346,12 @@
 </template>
 
 <script>
+import {
+  min,
+  mean,
+  std,
+} from 'mathjs';
+
 export default {
   name: 'TimelineCardTable',
   props: {
@@ -337,17 +365,17 @@ export default {
   created() {
   },
   methods: {
-    getColor(value, min, max, baseline) {
+    getColor(value, minimum, maximum, baseline) {
       const diff = value - baseline;
       if (diff < 0) {
-        return this.linearGradient('#0D47A1', '#B3B5C6', value, min, baseline);
+        return this.linearGradient('#0D47A1', '#B3B5C6', value, minimum, baseline);
       }
-      return this.linearGradient('#B3B5C6', '#B71C1C', value, baseline, max);
+      return this.linearGradient('#B3B5C6', '#B71C1C', value, baseline, maximum);
     },
-    linearGradient(startColour, endColour, value, min, max) {
+    linearGradient(startColour, endColour, value, minimum, maximum) {
       const startRGB = this.hexToRgb(startColour);
       const endRGB = this.hexToRgb(endColour);
-      const percentFade = this.mapColor(value, min, max, 0, 1);
+      const percentFade = this.mapColor(value, minimum, maximum, 0, 1);
       let diffRed = endRGB.r - startRGB.r;
       let diffGreen = endRGB.g - startRGB.g;
       let diffBlue = endRGB.b - startRGB.b;
@@ -452,11 +480,14 @@ export default {
       }
       return [];
     },
-    average_laptime(index, laptimes) {
-      return this._.mean(laptimes).toFixed(2);
+    average_laptime(laptimes) {
+      return mean(laptimes).toFixed(2);
     },
-    min_laptime(index, laptimes) {
-      return this._.min(laptimes).toFixed(2);
+    min_laptime(laptimes) {
+      return min(laptimes).toFixed(2);
+    },
+    std_laptime(laptimes) {
+      return std(laptimes).toFixed(2);
     },
   },
 };

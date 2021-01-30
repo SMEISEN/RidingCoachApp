@@ -135,6 +135,11 @@
 
 <script>
 import {
+  mean,
+  min,
+  max,
+} from 'mathjs';
+import {
   decrementNumber,
   incrementNumber,
 } from '../../utils/FromUtils';
@@ -222,9 +227,9 @@ export default {
       let displayString = '';
       if (this.tire_pressure_array.length > 0) {
         const tirePressure = this.tire_pressure_array.map((value) => value.pressure);
-        const tirePressureMean = this._.mean(tirePressure).toFixed(2);
+        const tirePressureMean = mean(tirePressure).toFixed(2);
         const tirePressureHalfRange = (
-          (this._.max(tirePressure) - this._.min(tirePressure)) / 2.0
+          (max(tirePressure) - min(tirePressure)) / 2.0
         ).toFixed(2);
         displayString = `${tirePressureMean} ± ${tirePressureHalfRange}`;
       }
