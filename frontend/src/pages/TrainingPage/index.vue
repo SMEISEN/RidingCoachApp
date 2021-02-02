@@ -149,17 +149,21 @@ export default {
   },
   methods: {
     getTrainings() {
-      if (this.timeline_buttons === 4) {
+      switch (this.timeline_buttons) {
+        case 4:
         this.getDateNow();
-      }
-      if (this.timeline_buttons === 3) {
+          break;
+        case 3:
         this.getDateThisMonth();
-      }
-      if (this.timeline_buttons === 2) {
+          break;
+        case 2:
         this.getDateLastMonth();
-      }
-      if (this.timeline_buttons === 1) {
+          break;
+        case 1:
         this.getDateThisYear();
+          break;
+        default:
+          this.queryTrainings();
       }
     },
     queryTrainings() {
