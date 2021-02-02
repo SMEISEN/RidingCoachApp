@@ -151,16 +151,16 @@ export default {
     getTrainings() {
       switch (this.timeline_buttons) {
         case 4:
-        this.getDateNow();
+          this.getDateNow();
           break;
         case 3:
-        this.getDateThisMonth();
+          this.getDateThisMonth();
           break;
         case 2:
-        this.getDateLastMonth();
+          this.getDateLastMonth();
           break;
         case 1:
-        this.getDateThisYear();
+          this.getDateThisYear();
           break;
         default:
           this.queryTrainings();
@@ -182,8 +182,13 @@ export default {
       this.training_array.splice(trainingIndex, 1);
     },
     appendTraining() {
+      this.timeline_buttons = 0;
       this.loading_trainings = true;
-      this.query.datetime_display.values[0] -= 30 * 24 * 60 * 60;
+      const previousDate = this.query.datetime_display.values[0];
+      this.query.datetime_display.values = [previousDate - 30 * 24 * 60 * 60];
+      this.query.datetime_display.operators = ['>='];
+      this.picked_date = new Date(this.query.datetime_display.values[0] * 1000)
+        .toISOString().substr(0, 7);
       this.queryTrainings();
     },
     getDateNow() {
