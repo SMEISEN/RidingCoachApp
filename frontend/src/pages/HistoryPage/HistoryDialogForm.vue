@@ -360,6 +360,7 @@ export default {
           this.pushHistory(histPayload);
         } else {
           const mtnPayload = {
+            bike_id: this.$store.getters.getCurrentBikeId,
             category: this.historyFormInput.category,
             name: this.historyFormInput.name,
             interval_type: 'unplanned cycle',
