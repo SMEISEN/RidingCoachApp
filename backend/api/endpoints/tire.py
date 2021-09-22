@@ -57,7 +57,7 @@ class TireCollection(Resource):
         if validate_api_key(api_key).status_code != 200:
             return validate_api_key(api_key)
 
-        tire_all_entries = TireModel.query.order_by(TireModel.datetime_display.desc()).all()
+        tire_all_entries = TireModel.query.order_by(TireModel.datetime_last_modified.desc()).all()
 
         tire_entry_list = []
         for tire_entry in tire_all_entries:
