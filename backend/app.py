@@ -16,6 +16,7 @@ from backend.api.endpoints.session import ns as session_namespace
 from backend.api.endpoints.laptime import ns as laptime_namespace
 from backend.api.endpoints.sparepart import ns as sparepart_namespace
 from backend.api.endpoints.sparepartitem import ns as sparepartitem_namespace
+from backend.api.endpoints.tire import ns as tire_namespace
 from backend.api.endpoints.maintenance import MaintenanceModel
 from backend.api.endpoints.coach import CoachModel
 from backend.config import Config
@@ -38,6 +39,7 @@ api.add_namespace(session_namespace)
 api.add_namespace(laptime_namespace)
 api.add_namespace(sparepart_namespace)
 api.add_namespace(sparepartitem_namespace)
+api.add_namespace(tire_namespace)
 
 app.register_blueprint(blueprint)
 
