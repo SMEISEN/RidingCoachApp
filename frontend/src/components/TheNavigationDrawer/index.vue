@@ -12,7 +12,7 @@
     <v-list>
       <TheNavigationDrawerBike />
       <TheNavigationDrawerTraining />
-      <TheNavigationDrawerSpareParts />
+      <TheNavigationDrawerTires />
       <TheNavigationDrawerSettings />
       <TheNavigationDrawerLogout />
     </v-list>
@@ -22,7 +22,7 @@
 <script>
 import TheNavigationDrawerBike from './BikeEntry/index.vue';
 import TheNavigationDrawerTraining from './TrainingEntry/index.vue';
-import TheNavigationDrawerSpareParts from './SparePartsEntry/index.vue';
+import TheNavigationDrawerTires from './TiresEntry/index.vue';
 import TheNavigationDrawerSettings from './SettingsEntry/index.vue';
 import TheNavigationDrawerLogout from './LogoutEntry/index.vue';
 
@@ -31,7 +31,7 @@ export default {
   components: {
     TheNavigationDrawerBike,
     TheNavigationDrawerTraining,
-    TheNavigationDrawerSpareParts,
+    TheNavigationDrawerTires,
     TheNavigationDrawerSettings,
     TheNavigationDrawerLogout,
   },
