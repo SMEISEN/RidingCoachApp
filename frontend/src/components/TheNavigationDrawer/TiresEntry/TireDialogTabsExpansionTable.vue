@@ -4,7 +4,7 @@
     <tr>
         <th />
         <th />
-        <th />
+        <th style="min-width: 145px;width: 145px;max-width: 145px"/>
         <th />
     </tr>
     </thead>
@@ -32,7 +32,22 @@
           {{ item.dot }}
         </td>
         <td>
-          {{ item.operating_hours + ' h' }}
+          <v-text-field
+            v-model="item.operating_hours"
+            @change="updateTire(item.tire_id, item.operating_hours, 'entry')"
+            suffix="h"
+            append-outer-icon="mdi-plus"
+            prepend-icon="mdi-minus"
+            :rules="[v => v >= 0]"
+            dense
+            single-line
+            style="font-size: 14px"
+            class="mt-4 my-0"
+            @click:append-outer.prevent="item.operating_hours = increment(
+              item.operating_hours, item.tire_id)"
+            @click:prepend.prevent="item.operating_hours = decrement(
+              item.operating_hours, item.tire_id)"
+          />
         </td>
         <td>
           <v-tooltip bottom>
@@ -59,6 +74,8 @@
 </template>
 
 <script>
+import { apiPutTireItem } from '../../api/TireApi'
+import { decrementNumber, incrementNumber } from '../../utils/FromUtils';
 
 export default {
   name: 'TireDialogTabsExpansionTable',
@@ -72,7 +89,43 @@ export default {
   },
   data: () => ({
     tire_panel: [0,1],
+    operating_hours_last_updated: null,
+    tire_id_last_updated: null,
+    timeout: null,
   }),
+  methods: {
+    increment(inputNumber, tireId) {
+      const operating_hours = incrementNumber(inputNumber, 0.1, 1);
+      this.updateTire(tireId, operating_hours);
+      this.operating_hours_last_updated = operating_hours;
+      this.tire_id_last_updated = tireId;
+      return operating_hours;
+    },
+    decrement(inputNumber, tireId) {
+      const operating_hours = decrementNumber(inputNumber, 0.1, 1);
+      this.updateTire(tireId, operating_hours);
+      this.operating_hours_last_updated = operating_hours;
+      this.tire_id_last_updated = tireId;
+      return operating_hours;
+    },
+    updateTire(tireId, operatingHours, type) {
+      if (type == 'entry') {
+        const payload = { operating_hours: operatingHours };
+        apiPutTireItem(payload, tireId);
+      } {
+        if (tireId != this.tire_id_last_updated && this.timeout != null) {
+          const payload = { operating_hours: this.operating_hours_last_updated };
+          apiPutTireItem(payload, this.tire_id_last_updated);
+        } {
+          window.clearTimeout(this.timeout);
+          this.timeout = window.setTimeout(() => {
+            const payload = { operating_hours: operatingHours };
+            apiPutTireItem(payload, tireId);
+          }, 5000);
+        }
+      }
+    },
+  },
 };
 </script>
 
