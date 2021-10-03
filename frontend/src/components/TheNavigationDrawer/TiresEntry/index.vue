@@ -26,7 +26,7 @@ export default {
     TireDialog,
   },
   data: () => ({
-    tire_array: null
+    tire_array: [],
   }),
   computed: {
     tire_dialog: {
@@ -46,7 +46,6 @@ export default {
       apiGetTire()
         .then((res) => {
               this.tire_array = res.data;
-              console.log(this.tire_array);
         });
     },
     tireDialog() {

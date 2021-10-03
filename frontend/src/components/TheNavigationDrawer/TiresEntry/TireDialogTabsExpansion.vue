@@ -7,13 +7,19 @@
       <v-expansion-panel-header>Front</v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-container>
+            <TireDialogTabsExpansionTable
+                :tireArray="tires_front"
+            />
           </v-container>
         </v-expansion-panel-content>
     </v-expansion-panel>
-      <v-expansion-panel>
-        <v-expansion-panel-header>Rear</v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-container>
+    <v-expansion-panel>
+      <v-expansion-panel-header>Rear</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-container>
+            <TireDialogTabsExpansionTable
+                :tireArray="tires_rear"
+            />
             </v-container>
           </v-expansion-panel-content>
       </v-expansion-panel>
@@ -21,16 +27,26 @@
 </template>
 
 <script>
+import TireDialogTabsExpansionTable from './TireDialogTabsExpansionTable.vue';
 
 export default {
   name: 'TireDialogTabsExpansion',
   components: {
+      TireDialogTabsExpansionTable,
   },
   props: {
     tireArray: {
       type: Array,
       required: true,
     },
+  },
+  computed: {
+      tires_front() {
+        return this.tireArray.filter((i) => i.axis === 'Front');
+      },
+      tires_rear() {
+        return this.tireArray.filter((i) => i.axis === 'Rear');
+      },
   },
   data: () => ({
     tire_panel: [0,1],
