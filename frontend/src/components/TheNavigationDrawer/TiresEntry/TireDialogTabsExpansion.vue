@@ -26,6 +26,12 @@ export default {
   name: 'TireDialogTabsExpansion',
   components: {
   },
+  props: {
+    tireArray: {
+      type: Array,
+      required: true,
+    },
+  },
   data: () => ({
     tire_panel: [0,1],
   }),

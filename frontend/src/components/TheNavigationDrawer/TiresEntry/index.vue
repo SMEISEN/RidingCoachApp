@@ -10,18 +10,24 @@
         Tires
       </v-list-item-title>
     </v-list-item>
-    <TireDialog/>
+    <TireDialog
+      :tireArray="tire_array"
+    />
   </div>
 </template>
 
 <script>
 import TireDialog from './TireDialog.vue';
+import { apiGetTire } from '../../api/TireApi';
 
 export default {
   name: 'TheNavigationDrawerTires',
   components: {
     TireDialog,
   },
+  data: () => ({
+    tire_array: null
+  }),
   computed: {
     tire_dialog: {
       get() {
@@ -32,7 +38,17 @@ export default {
       },
     },
   },
+  created() {
+    this.getTire();
+  },
   methods: {
+    getTire() {
+      apiGetTire()
+        .then((res) => {
+              this.tire_array = res.data;
+              console.log(this.tire_array);
+        });
+    },
     tireDialog() {
       this.tire_dialog = true;
     },

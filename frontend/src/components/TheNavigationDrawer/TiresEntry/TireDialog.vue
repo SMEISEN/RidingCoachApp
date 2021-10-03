@@ -20,7 +20,9 @@
         <v-toolbar-title>Tires</v-toolbar-title>
         <v-spacer />
         </v-toolbar>
-        <TireDialogTabs />
+        <TireDialogTabs
+          :tireArray="tireArray"
+        />
     </v-card>
     </v-dialog>
   </div>
@@ -31,6 +33,12 @@ import TireDialogTabs from './TireDialogTabs.vue';
 
 export default {
   name: 'TireDialog',
+  props: {
+    tireArray: {
+      type: Array,
+      required: true,
+    },
+  },
   components: {
       TireDialogTabs
   },
@@ -53,7 +61,6 @@ export default {
   methods: {
       onTireCancel() {
       this.tire_dialog = false;
-      this.$refs.validation_tire_form.resetValidation();
     },
   },
 };
