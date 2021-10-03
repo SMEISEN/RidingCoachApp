@@ -12,9 +12,23 @@
         v-for="item in tireArray"
         :key="item.tire_id"
     >
-        <td>{{ item.compound }}</td>
+        <td>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{ item.compound }}
+              </span>
+            </template>
+            <span>
+              {{ item.manufacturer + ' ' + item.name  + ' ' + item.dimension }}
+            </span>
+          </v-tooltip>
+        </td>
         <td>{{ item.dot }}</td>
-        <td>{{ item.operating_hours }}</td>
+        <td>{{ item.operating_hours + ' h' }}</td>
     </tr>
     </tbody>
   </v-simple-table>
