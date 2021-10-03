@@ -4,8 +4,8 @@
     <tr>
         <th />
         <th />
-        <th style="min-width: 145px;width: 145px;max-width: 145px"/>
         <th />
+        <th style="min-width: 145px;width: 145px;max-width: 145px"/>
     </tr>
     </thead>
     <tbody>
@@ -13,6 +13,26 @@
         v-for="item in tireArray"
         :key="item.tire_id"
     >
+        <td>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-progress-circular
+                v-bind="attrs"
+                v-on="on"
+                :value=Math.min(...Object.values(item.condition))*100
+                size=26
+                class="mt-n1 my-0"
+              />
+            </template>
+            <span>
+              {{ 'left outer: ' + item.condition.left_outer * 100 + ' %' }} <br/>
+              {{ 'left middle: ' + item.condition.left_middle * 100 + ' %' }} <br/>
+              {{ 'center: ' + item.condition.center * 100 + ' %' }} <br/>
+              {{ 'right middle: ' + item.condition.right_middle * 100 + ' %' }} <br/>
+              {{ 'right outer: ' + item.condition.right_outer * 100 + ' %' }}
+            </span>
+          </v-tooltip>
+        </td>
         <td>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -48,25 +68,6 @@
             @click:prepend.prevent="item.operating_hours = decrement(
               item.operating_hours, item.tire_id)"
           />
-        </td>
-        <td>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-progress-circular
-                v-bind="attrs"
-                v-on="on"
-                :value=Math.min(...Object.values(item.condition))*100
-                size=26
-              />
-            </template>
-            <span>
-              {{ 'left outer: ' + item.condition.left_outer * 100 + ' %' }} <br/>
-              {{ 'left middle: ' + item.condition.left_middle * 100 + ' %' }} <br/>
-              {{ 'center: ' + item.condition.center * 100 + ' %' }} <br/>
-              {{ 'right middle: ' + item.condition.right_middle * 100 + ' %' }} <br/>
-              {{ 'right outer: ' + item.condition.right_outer * 100 + ' %' }}
-            </span>
-          </v-tooltip>
         </td>
     </tr>
     </tbody>
