@@ -5,6 +5,7 @@
         <th />
         <th />
         <th />
+        <th />
     </tr>
     </thead>
     <tbody>
@@ -27,8 +28,31 @@
             </span>
           </v-tooltip>
         </td>
-        <td>{{ item.dot }}</td>
-        <td>{{ item.operating_hours + ' h' }}</td>
+        <td>
+          {{ item.dot }}
+        </td>
+        <td>
+          {{ item.operating_hours + ' h' }}
+        </td>
+        <td>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-progress-circular
+                v-bind="attrs"
+                v-on="on"
+                :value=Math.min(...Object.values(item.condition))*100
+                size=26
+              />
+            </template>
+            <span>
+              {{ 'left outer: ' + item.condition.left_outer * 100 + ' %' }} <br/>
+              {{ 'left middle: ' + item.condition.left_middle * 100 + ' %' }} <br/>
+              {{ 'center: ' + item.condition.center * 100 + ' %' }} <br/>
+              {{ 'right middle: ' + item.condition.right_middle * 100 + ' %' }} <br/>
+              {{ 'right outer: ' + item.condition.right_outer * 100 + ' %' }}
+            </span>
+          </v-tooltip>
+        </td>
     </tr>
     </tbody>
   </v-simple-table>
