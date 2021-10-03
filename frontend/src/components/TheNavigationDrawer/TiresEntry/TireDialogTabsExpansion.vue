@@ -6,21 +6,17 @@
     <v-expansion-panel>
       <v-expansion-panel-header>Front</v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-container>
-            <TireDialogTabsExpansionTable
-                :tireArray="tires_front"
-            />
-          </v-container>
+          <TireDialogTabsExpansionTable
+            :tireArray="tires_front"
+          />
         </v-expansion-panel-content>
     </v-expansion-panel>
     <v-expansion-panel>
       <v-expansion-panel-header>Rear</v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-container>
-            <TireDialogTabsExpansionTable
-                :tireArray="tires_rear"
-            />
-            </v-container>
+          <TireDialogTabsExpansionTable
+            :tireArray="tires_rear"
+          />
           </v-expansion-panel-content>
       </v-expansion-panel>
   </v-expansion-panels>

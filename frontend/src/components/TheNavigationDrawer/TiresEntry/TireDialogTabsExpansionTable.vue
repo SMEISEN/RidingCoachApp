@@ -1,11 +1,12 @@
 <template>
-  <v-simple-table>
+  <v-simple-table dense>
     <thead>
     <tr>
         <th />
         <th />
         <th />
         <th style="min-width: 145px;width: 145px;max-width: 145px"/>
+        <th />
     </tr>
     </thead>
     <tbody>
@@ -68,6 +69,24 @@
             @click:prepend.prevent="item.operating_hours = decrement(
               item.operating_hours, item.tire_id)"
           />
+        </td>
+        <td>
+          <v-btn
+            icon
+            color="warning"
+          >
+            <v-icon>
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+          <v-btn
+            icon
+            color="error"
+          >
+            <v-icon>
+              mdi-delete
+            </v-icon>
+          </v-btn>
         </td>
     </tr>
     </tbody>
