@@ -21,7 +21,8 @@
         <v-spacer />
         </v-toolbar>
         <TireDialogTabs
-          :tireArray="tireArray"
+          :tire-array="tire_array"
+          @saveButtonClicked="$emit('saveButtonClicked')"
         />
     </v-card>
     </v-dialog>
@@ -46,13 +47,16 @@ export default {
     window_height: 0,
   }),
   computed: {
+    tire_array() {
+      return this.tireArray;
+    },
     tire_dialog: {
-        get() {
+      get() {
         return this.$store.getters.getTireDialogState;
-        },
-        set(value) {
+      },
+      set(value) {
         this.$store.commit('setTireDialogState', value);
-        },
+      },
     },
   },
   updated() {

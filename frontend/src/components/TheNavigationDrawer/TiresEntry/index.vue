@@ -11,7 +11,8 @@
       </v-list-item-title>
     </v-list-item>
     <TireDialog
-      :tireArray="tire_array"
+      :tire-array="tire_array"
+      @saveButtonClicked="getTires()"
     />
   </div>
 </template>
@@ -39,10 +40,10 @@ export default {
     },
   },
   created() {
-    this.getTire();
+    this.getTires();
   },
   methods: {
-    getTire() {
+    getTires() {
       apiGetTire()
         .then((res) => {
               this.tire_array = res.data;

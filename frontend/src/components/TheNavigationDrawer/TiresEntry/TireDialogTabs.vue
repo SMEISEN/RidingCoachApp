@@ -9,7 +9,9 @@
     </v-tab>
     <v-tab-item>
       <TireDialogTabsExpansion
-        :tireArray="tires_slick"
+        :tire-array="tires_slick"
+        :tire-category="'slick'"
+        @saveButtonClicked="$emit('saveButtonClicked')"
       />
     </v-tab-item>
     <v-tab>
@@ -17,7 +19,9 @@
     </v-tab>
     <v-tab-item>
       <TireDialogTabsExpansion
-        :tireArray="tires_rain"
+        :tire-array="tires_rain"
+        :tire-category="'rain'"
+        @saveButtonClicked="$emit('saveButtonClicked')"
       />
     </v-tab-item>
   </v-tabs>
@@ -38,12 +42,12 @@ export default {
     TireDialogTabsExpansion
   },
   computed: {
-      tires_slick() {
-        return this.tireArray.filter((i) => i.category === 'Slick');
-      },
-      tires_rain() {
-        return this.tireArray.filter((i) => i.category === 'Rain');
-      },
+    tires_slick() {
+      return this.tireArray.filter((i) => i.category === 'Slick');
+    },
+    tires_rain() {
+      return this.tireArray.filter((i) => i.category === 'Rain');
+    },
   },
   data: () => ({
   }),
