@@ -22,7 +22,7 @@
         </v-toolbar>
         <TireDialogTabs
           :tire-array="tire_array"
-          @saveButtonClicked="$emit('saveButtonClicked')"
+          @refreshTires="$emit('refreshTires')"
         />
     </v-card>
     </v-dialog>

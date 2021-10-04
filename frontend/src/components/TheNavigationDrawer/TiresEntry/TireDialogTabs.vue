@@ -11,7 +11,7 @@
       <TireDialogTabsExpansion
         :tire-array="tires_slick"
         :tire-category="'slick'"
-        @saveButtonClicked="$emit('saveButtonClicked')"
+        @refreshTires="$emit('refreshTires')"
       />
     </v-tab-item>
     <v-tab>
@@ -21,7 +21,7 @@
       <TireDialogTabsExpansion
         :tire-array="tires_rain"
         :tire-category="'rain'"
-        @saveButtonClicked="$emit('saveButtonClicked')"
+        @refreshTires="$emit('refreshTires')"
       />
     </v-tab-item>
   </v-tabs>

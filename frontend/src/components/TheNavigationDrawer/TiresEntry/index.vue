@@ -12,7 +12,7 @@
     </v-list-item>
     <TireDialog
       :tire-array="tire_array"
-      @saveButtonClicked="getTires()"
+      @refreshTires="getTires()"
     />
   </div>
 </template>

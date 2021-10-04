@@ -86,6 +86,7 @@
             <v-btn
               icon
               color="error"
+              @click="deleteTire(item.tire_id)"
             >
               <v-icon>
                 mdi-delete
@@ -117,20 +118,30 @@
       :task="tire_dialog_task"
       :tire-data-object="tire_data_object"
       :tire-array="tire_array"
-      @saveButtonClicked="$emit('saveButtonClicked')"
+      @refreshTires="$emit('refreshTires')"
+    />
+    <ConfirmDeleteDialog
+      :flagged-for-deletion="'tire entry'"
+      :confirm-delete-dialog.sync="confirm_delete_dialog"
+      @deleteConfirmationButtonClicked="deletionConfirmed()"
     />
   </div>
 </template>
 
 <script>
-import { apiPutTireItem } from '../../api/TireApi'
+import {
+  apiPutTireItem,
+  apiDeleteTireItem,
+} from '../../api/TireApi'
 import { decrementNumber, incrementNumber } from '../../utils/FromUtils';
 import TireDialogTabsExpansionDialog from './TireDialogTabsExpansionDialog.vue';
+import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
 
 export default {
   name: 'TireDialogTabsExpansionTable',
   components: {
     TireDialogTabsExpansionDialog,
+    ConfirmDeleteDialog,
   },
   props: {
     tireArray: {
@@ -151,6 +162,8 @@ export default {
     tire_dialog: false,
     tire_data_object: {},
     tire_dialog_task: '',
+    tire_to_be_deleted: null,
+    confirm_delete_dialog: false,
   }),
   methods: {
     increment(inputNumber, tireId) {
@@ -204,6 +217,16 @@ export default {
       this.tire_data_object.comment = null;
       this.tire_dialog_task = 'Add'
       this.tire_dialog = true;
+    },
+    deleteTire(TireId) {
+      this.confirm_delete_dialog = true;
+      this.tire_to_be_deleted = TireId;
+    },
+    deletionConfirmed() {
+      apiDeleteTireItem(this.tire_to_be_deleted).then((res) => {
+        this.$emit('refreshTires');
+      });
+      this.tire_to_be_deleted = null;
     },
   },
 };

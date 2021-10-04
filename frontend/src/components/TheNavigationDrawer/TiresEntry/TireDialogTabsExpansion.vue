@@ -9,7 +9,7 @@
             <TireDialogTabsExpansionTable
                 :tire-array="tires_front"
                 :tire-dialog.sync="tire_dialog"
-                @saveButtonClicked="$emit('saveButtonClicked')"
+                @refreshTires="$emit('refreshTires')"
             />
             </v-expansion-panel-content>
         </v-expansion-panel>
@@ -19,7 +19,7 @@
             <TireDialogTabsExpansionTable
                 :tire-array="tires_rear"
                 :tire-dialog.sync="tire_dialog"
-                @saveButtonClicked="$emit('saveButtonClicked')"
+                @refreshTires="$emit('refreshTires')"
             />
             </v-expansion-panel-content>
         </v-expansion-panel>

@@ -230,13 +230,12 @@ export default {
       }
     },
     onSave() {
-      this.$emit('saveButtonClicked');
       const payload = this.tire_data_object;
       const tire_id = this.tire_data_object.tire_id;
       if (this.task == 'Add') {
         apiPostTire(payload).then((res) => {
           this.tire_data_object.tire_id = res.data;
-          this.$emit('saveButtonClicked');
+          this.$emit('refreshTires');
         });
       } {
         apiPutTireItem(payload, tire_id);
