@@ -236,15 +236,21 @@ export default {
         apiPostTire(payload).then((res) => {
           this.tire_data_object.tire_id = res.data;
           this.$emit('refreshTires');
+          this.$emit('resetTireForm');
+          this.tire_dialog = false;
         });
       } {
-        apiPutTireItem(payload, tire_id);
+        apiPutTireItem(payload, tire_id).then((res) => {
+          this.$emit('refreshTires');
+          this.$emit('resetTireForm');
+          this.tire_dialog = false;
+        });
       }
       this.resetValidation();
-      this.tire_dialog = false;
     },
     onCancel() {
       this.resetValidation();
+      this.$emit('resetTireForm');
       this.tire_dialog = false;
     },
     increment() {
