@@ -168,6 +168,9 @@ export default {
     tire_axis() {
       return this.tireAxis;
     },
+    bike_id() {
+      return this.$store.getters.getCurrentBikeId;
+    },
   },
   data: () => ({
     tire_panel: [0,1],
@@ -220,11 +223,11 @@ export default {
       if (type == 'entry') {
         const payload = { operating_hours: operatingHours };
         apiPutTireItem(payload, tireId);
-      } {
+      } else {
         if (tireId != this.tire_id_last_updated && this.timeout != null) {
           const payload = { operating_hours: this.operating_hours_last_updated };
           apiPutTireItem(payload, this.tire_id_last_updated);
-        } {
+        } else {
           window.clearTimeout(this.timeout);
           this.timeout = window.setTimeout(() => {
             const payload = { operating_hours: operatingHours };
@@ -241,7 +244,7 @@ export default {
     addTire() {
       if (this.tire_array.length > 0) {
         this.tire_data_object = this._.cloneDeep(this.tire_array[this.tire_array.length -1]);
-        this.rim = null;
+        this.tire_data_object.rim = null;
         this.tire_data_object.dot = null;
         this.tire_data_object.condition = {
           left_outer: 1,
@@ -252,8 +255,9 @@ export default {
         };
         this.tire_data_object.operating_hours = 0.0;
         this.tire_data_object.comment = null;
-      } {
+      } else {
         this.tire_data_object = this._.cloneDeep(this.tire_data_object_template);
+        this.tire_data_object.bike_id = this.bike_id;
         this.tire_data_object.category = this.tire_category;
         this.tire_data_object.axis = this.tire_axis;
       }

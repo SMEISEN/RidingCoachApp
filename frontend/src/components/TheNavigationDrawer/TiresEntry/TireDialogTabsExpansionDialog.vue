@@ -24,7 +24,7 @@
                 v-model="tire_data_object.category"
                 :items="category_array"
                 :rules="[v => !!v]"
-                label="Category"
+                label="Category*"
                 required
               />
             </v-col>
@@ -38,7 +38,7 @@
                 v-model="tire_data_object.axis"
                 :items="axis_array"
                 :rules="[v => !!v]"
-                label="Axis"
+                label="Axis*"
                 required
               />
             </v-col>
@@ -52,7 +52,9 @@
             >
               <v-text-field
                 v-model="tire_data_object.manufacturer"
-                label="Manufacturer"
+                :rules="[v => !!v]"
+                label="Manufacturer*"
+                required
               />
             </v-col>
           </v-row>
@@ -102,7 +104,8 @@
             >
               <v-text-field
                 v-model="tire_data_object.dot"
-                label="DOT"
+                :rules="[v => !!v]"
+                label="DOT*"
                 required
               />
             </v-col>
@@ -119,7 +122,7 @@
                 :rules="[v => !!v]"
                 required
                 hint="of engine operation"
-                suffix="h"
+                suffix="h*"
                 @click:append-outer.prevent="increment"
                 @click:prepend.prevent="decrement"
               />
@@ -133,6 +136,10 @@
               />
             </v-col>
           </v-row>
+          <v-spacer />
+          <p class="text--secondary text-sm-right">
+            *indicates required field
+          </p>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -239,7 +246,7 @@ export default {
           this.$emit('resetTireForm');
           this.tire_dialog = false;
         });
-      } {
+      } else {
         apiPutTireItem(payload, tire_id).then((res) => {
           this.$emit('refreshTires');
           this.$emit('resetTireForm');
