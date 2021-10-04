@@ -10,7 +10,7 @@
     <v-tab-item>
       <TireDialogTabsExpansion
         :tire-array="tires_slick"
-        :tire-category="'slick'"
+        :tire-category="'Slick'"
         @refreshTires="$emit('refreshTires')"
       />
     </v-tab-item>
@@ -20,7 +20,7 @@
     <v-tab-item>
       <TireDialogTabsExpansion
         :tire-array="tires_rain"
-        :tire-category="'rain'"
+        :tire-category="'Rain'"
         @refreshTires="$emit('refreshTires')"
       />
     </v-tab-item>

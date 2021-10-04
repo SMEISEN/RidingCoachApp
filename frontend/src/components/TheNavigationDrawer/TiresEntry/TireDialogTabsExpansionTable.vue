@@ -119,6 +119,7 @@
       :tire-data-object="tire_data_object"
       :tire-array="tire_array"
       @refreshTires="$emit('refreshTires')"
+      @resetTireForm="resetTireForm()"
     />
     <ConfirmDeleteDialog
       :flagged-for-deletion="'tire entry'"
@@ -148,10 +149,24 @@ export default {
       type: Array,
       required: true,
     },
+    tireCategory: {
+      type: String,
+      required: true,
+    },
+    tireAxis: {
+      type: String,
+      required: true,
+    },
   },
   computed: {
     tire_array() {
       return this.tireArray;
+    },
+    tire_category() {
+      return this.tireCategory;
+    },
+    tire_axis() {
+      return this.tireAxis;
     },
   },
   data: () => ({
@@ -160,6 +175,27 @@ export default {
     tire_id_last_updated: null,
     timeout: null,
     tire_dialog: false,
+    tire_data_object_template: {
+      tire_id: null,
+      bike_id: null,
+      rim: null,
+      category: null,
+      manufacturer: null,
+      name: null,
+      compound: null,
+      axis: null,
+      dimension: null,
+      dot: null,
+      condition: {
+        left_outer: 1,
+        left_middle: 1,
+        center: 1,
+        right_middle: 1,
+        right_outer: 1
+      },
+      operating_hours: 0.0,
+      comment: null,
+    },
     tire_data_object: {},
     tire_dialog_task: '',
     tire_to_be_deleted: null,
@@ -198,23 +234,29 @@ export default {
       }
     },
     editTire(tireId) {
-      [this.tire_data_object] = this.tireArray.filter((i) => i.tire_id === tireId);
+      [this.tire_data_object] = this.tire_array.filter((i) => i.tire_id === tireId);
       this.tire_dialog_task = 'Edit'
       this.tire_dialog = true;
     },
     addTire() {
-      this.tire_data_object = this._.cloneDeep(this.tireArray[this.tireArray.length -1]);
-      this.rim = null;
-      this.tire_data_object.dot = null;
-      this.tire_data_object.condition = {
-        left_outer: 1,
-        left_middle: 1,
-        center: 1,
-        right_middle: 1,
-        right_outer: 1
-      };
-      this.tire_data_object.operating_hours = 0.0;
-      this.tire_data_object.comment = null;
+      if (this.tire_array.length > 0) {
+        this.tire_data_object = this._.cloneDeep(this.tire_array[this.tire_array.length -1]);
+        this.rim = null;
+        this.tire_data_object.dot = null;
+        this.tire_data_object.condition = {
+          left_outer: 1,
+          left_middle: 1,
+          center: 1,
+          right_middle: 1,
+          right_outer: 1
+        };
+        this.tire_data_object.operating_hours = 0.0;
+        this.tire_data_object.comment = null;
+      } {
+        this.tire_data_object = this._.cloneDeep(this.tire_data_object_template);
+        this.tire_data_object.category = this.tire_category;
+        this.tire_data_object.axis = this.tire_axis;
+      }
       this.tire_dialog_task = 'Add'
       this.tire_dialog = true;
     },
@@ -227,6 +269,9 @@ export default {
         this.$emit('refreshTires');
       });
       this.tire_to_be_deleted = null;
+    },
+    resetTireForm() {
+      this.tire_data_object = this._.cloneDeep(this.tire_data_object_template);
     },
   },
 };

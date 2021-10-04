@@ -9,6 +9,8 @@
             <TireDialogTabsExpansionTable
                 :tire-array="tires_front"
                 :tire-dialog.sync="tire_dialog"
+                :tire-axis="'Front'"
+                :tire-category="tire_category"
                 @refreshTires="$emit('refreshTires')"
             />
             </v-expansion-panel-content>
@@ -19,6 +21,8 @@
             <TireDialogTabsExpansionTable
                 :tire-array="tires_rear"
                 :tire-dialog.sync="tire_dialog"
+                :tire-axis="'Rear'"
+                :tire-category="tire_category"
                 @refreshTires="$emit('refreshTires')"
             />
             </v-expansion-panel-content>
@@ -50,6 +54,9 @@ export default {
     },
     tires_rear() {
         return this.tireArray.filter((i) => i.axis === 'Rear');
+    },
+    tire_category() {
+        return this.tireCategory;
     },
   },
   data: () => ({
