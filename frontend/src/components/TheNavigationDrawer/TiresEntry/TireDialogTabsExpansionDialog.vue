@@ -137,6 +137,128 @@
             </v-col>
           </v-row>
           <v-spacer />
+          <v-row>
+            <v-col cols="12">
+              <span>Tire condition</span>
+            </v-col>
+          </v-row>
+          <v-spacer />
+          <v-row>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-slider
+                  v-model.number="tire_data_object.condition.left_outer"
+                  vertical
+                  hide-details
+                  thumb-label
+                  v-bind="attrs"
+                  v-on="on"
+                  max="1"
+                  min="0"
+                  step="0.01"
+                  color="black"
+                  track-color="neutral"
+                  prepend-icon="mdi-arrow-left-drop-circle"
+                >
+                  <template v-slot:thumb-label="{ value }">
+                    {{ parseInt(value * 100) }}
+                  </template>
+                </v-slider>
+              </template>
+              <span>Outer left</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-slider
+                  v-model="tire_data_object.condition.left_middle"
+                  vertical
+                  hide-details
+                  thumb-label
+                  v-bind="attrs"
+                  v-on="on"
+                  max="1"
+                  min="0"
+                  step="0.01"
+                  color="black"
+                  track-color="neutral"
+                >
+                  <template v-slot:thumb-label="{ value }">
+                    {{ parseInt(value * 100) }}
+                  </template>
+                </v-slider>
+              </template>
+              <span>Middle left</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-slider
+                  v-model="tire_data_object.condition.center"
+                  vertical
+                  hide-details
+                  thumb-label
+                  v-bind="attrs"
+                  v-on="on"
+                  max="1"
+                  min="0"
+                  step="0.01"
+                  color="black"
+                  track-color="neutral"
+                  prepend-icon="mdi-record-circle"
+                >
+                  <template v-slot:thumb-label="{ value }">
+                    {{ parseInt(value * 100) }}
+                  </template>
+                </v-slider>
+              </template>
+              <span>Center</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-slider
+                  v-model="tire_data_object.condition.right_middle"
+                  vertical
+                  hide-details
+                  thumb-label
+                  v-bind="attrs"
+                  v-on="on"
+                  max="1"
+                  min="0"
+                  step="0.01"
+                  color="black"
+                  track-color="neutral"
+                >
+                  <template v-slot:thumb-label="{ value }">
+                    {{ parseInt(value * 100) }}
+                  </template>
+                </v-slider>
+              </template>
+              <span>Middle right</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-slider
+                  v-model="tire_data_object.condition.right_outer"
+                  vertical
+                  hide-details
+                  thumb-label
+                  v-bind="attrs"
+                  v-on="on"
+                  max="1"
+                  min="0"
+                  step="0.01"
+                  color="black"
+                  track-color="neutral"
+                  prepend-icon="mdi-arrow-right-drop-circle"
+                >
+                  <template v-slot:thumb-label="{ value }">
+                    {{ parseInt(value * 100) }}
+                  </template>
+                </v-slider>
+              </template>
+              <span>Outer right</span>
+            </v-tooltip>
+          </v-row>
+          <v-spacer />
           <p class="text--secondary text-sm-right">
             *indicates required field
           </p>
