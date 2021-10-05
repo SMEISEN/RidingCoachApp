@@ -25,6 +25,7 @@
                   v-on="on"
                   :value=Math.min(...Object.values(item.condition))*100
                   size=26
+                  rotate="-90"
                   class="mt-n1 my-0"
                 />
               </template>
