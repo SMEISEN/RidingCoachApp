@@ -6,6 +6,9 @@
       <thead>
       <tr>
         <th>
+          Active
+        </th>
+        <th>
           Condition
         </th>
         <th>
@@ -25,6 +28,12 @@
           v-for="item in tire_array"
           :key="item.tire_id"
       >
+        <td>
+          <v-checkbox
+            v-model="item.active"
+            @click="deactivateTire(item.tire_id)"
+          />
+        </td>
         <td>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -67,7 +76,7 @@
         <td>
           <v-text-field
             v-model="item.operating_hours"
-            @change="updateTire(item.tire_id, item.operating_hours, 'entry')"
+            @change="updateTireOperatingHours(item.tire_id, item.operating_hours, 'entry')"
             suffix="h"
             append-outer-icon="mdi-plus"
             prepend-icon="mdi-minus"
@@ -216,19 +225,19 @@ export default {
   methods: {
     increment(inputNumber, tireId) {
       const operating_hours = incrementNumber(inputNumber, 0.1, 1);
-      this.updateTire(tireId, operating_hours);
+      this.updateTireOperatingHours(tireId, operating_hours);
       this.operating_hours_last_updated = operating_hours;
       this.tire_id_last_updated = tireId;
       return operating_hours;
     },
     decrement(inputNumber, tireId) {
       const operating_hours = decrementNumber(inputNumber, 0.1, 1);
-      this.updateTire(tireId, operating_hours);
+      this.updateTireOperatingHours(tireId, operating_hours);
       this.operating_hours_last_updated = operating_hours;
       this.tire_id_last_updated = tireId;
       return operating_hours;
     },
-    updateTire(tireId, operatingHours, type) {
+    updateTireOperatingHours(tireId, operatingHours, type) {
       if (type == 'entry') {
         const payload = { operating_hours: operatingHours };
         apiPutTireItem(payload, tireId);
@@ -244,6 +253,10 @@ export default {
           }, 5000);
         }
       }
+    },
+    updateTireActivation(tireId, active) {
+      const payload = { active: active };
+      apiPutTireItem(payload, tireId);
     },
     editTire(tireId) {
       [this.tire_data_object] = this.tire_array.filter((i) => i.tire_id === tireId);
@@ -285,6 +298,16 @@ export default {
     },
     resetTireForm() {
       this.tire_data_object = this._.cloneDeep(this.tire_data_object_template);
+    },
+    deactivateTire(tireId) {
+      this.updateTireActivation(tireId, true);
+      // deactivate other tires
+      const inactive_tires_same_category = this.tire_array.filter((i) => i.tire_id !== tireId);
+      for (let i = 0; i < inactive_tires_same_category.length; i++) {
+        const tire_id = inactive_tires_same_category[i].tire_id;
+        inactive_tires_same_category[i].active = false;
+        this.updateTireActivation(tire_id, false);
+      };
     },
   },
 };
