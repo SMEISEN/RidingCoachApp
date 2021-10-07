@@ -12,6 +12,8 @@ tire_schema = TireSchema()
 tire_input_parameters = api.model('TireInputParameters', {
     "bike_id":
         fields.String(description="corresponding bike ID", required=True, example="UUID4"),
+    "active":
+        fields.Boolean(description="mounted on the bike or not", required=False, example="false"),
     "rim":
         fields.String(description="rim on which the tire is mounted", required=False, example="Alpina black"),
     "category":
@@ -84,6 +86,7 @@ class TireCollection(Resource):
         inserted_data = request.get_json()
         new_tire = TireModel(
             bike_id=inserted_data.get('bike_id'),
+            active=inserted_data.get('active'),
             rim=inserted_data.get('rim'),
             category=inserted_data.get('category'),
             manufacturer=inserted_data.get('manufacturer'),
@@ -148,6 +151,8 @@ class TireItem(Resource):
 
         if inserted_data.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.bike_id = inserted_data.get('bike_id')
+        if inserted_data.get('active', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            tire_entry.active = inserted_data.get('active')
         if inserted_data.get('rim', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.rim = inserted_data.get('rim')
         if inserted_data.get('category', 'ParameterNotInPayload') != 'ParameterNotInPayload':
