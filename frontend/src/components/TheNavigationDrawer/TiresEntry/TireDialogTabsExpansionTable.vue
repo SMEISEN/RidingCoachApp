@@ -5,11 +5,19 @@
     >
       <thead>
       <tr>
-          <th />
-          <th />
-          <th />
-          <th style="min-width: 145px;width: 145px;max-width: 145px"/>
-          <th />
+        <th>
+          Condition
+        </th>
+        <th>
+          Compound
+        </th>
+        <th>
+          DOT
+        </th>
+        <th style="min-width: 145px;width: 145px;max-width: 145px">
+          Operating hours
+        </th>
+        <th />
       </tr>
       </thead>
       <tbody>
@@ -17,83 +25,83 @@
           v-for="item in tire_array"
           :key="item.tire_id"
       >
-          <td>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-progress-circular
-                  v-bind="attrs"
-                  v-on="on"
-                  :value=Math.min(...Object.values(item.condition))*100
-                  size=26
-                  rotate="-90"
-                  class="mt-n1 my-0"
-                />
-              </template>
-              <span>
-                {{ 'left outer: ' + item.condition.left_outer * 100 + ' %' }} <br/>
-                {{ 'left middle: ' + item.condition.left_middle * 100 + ' %' }} <br/>
-                {{ 'center: ' + item.condition.center * 100 + ' %' }} <br/>
-                {{ 'right middle: ' + item.condition.right_middle * 100 + ' %' }} <br/>
-                {{ 'right outer: ' + item.condition.right_outer * 100 + ' %' }}
+        <td>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-progress-circular
+                v-bind="attrs"
+                v-on="on"
+                :value=Math.min(...Object.values(item.condition))*100
+                size=26
+                rotate="-90"
+                class="mt-n1 my-0"
+              />
+            </template>
+            <span>
+              {{ 'left outer: ' + item.condition.left_outer * 100 + ' %' }} <br/>
+              {{ 'left middle: ' + item.condition.left_middle * 100 + ' %' }} <br/>
+              {{ 'center: ' + item.condition.center * 100 + ' %' }} <br/>
+              {{ 'right middle: ' + item.condition.right_middle * 100 + ' %' }} <br/>
+              {{ 'right outer: ' + item.condition.right_outer * 100 + ' %' }}
+            </span>
+          </v-tooltip>
+        </td>
+        <td>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{ item.compound }}
               </span>
-            </v-tooltip>
-          </td>
-          <td>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <span
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ item.compound }}
-                </span>
-              </template>
-              <span>
-                {{ item.manufacturer + ' ' + item.name  + ' ' + item.dimension }}
-              </span>
-            </v-tooltip>
-          </td>
-          <td>
-            {{ item.dot }}
-          </td>
-          <td>
-            <v-text-field
-              v-model="item.operating_hours"
-              @change="updateTire(item.tire_id, item.operating_hours, 'entry')"
-              suffix="h"
-              append-outer-icon="mdi-plus"
-              prepend-icon="mdi-minus"
-              :rules="[v => v >= 0]"
-              dense
-              single-line
-              style="font-size: 14px"
-              class="mt-4 my-0"
-              @click:append-outer.prevent="item.operating_hours = increment(
-                item.operating_hours, item.tire_id)"
-              @click:prepend.prevent="item.operating_hours = decrement(
-                item.operating_hours, item.tire_id)"
-            />
-          </td>
-          <td>
-            <v-btn
-              icon
-              color="warning"
-              @click="editTire(item.tire_id)"
-            >
-              <v-icon>
-                mdi-pencil
-              </v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              color="error"
-              @click="deleteTire(item.tire_id)"
-            >
-              <v-icon>
-                mdi-delete
-              </v-icon>
-            </v-btn>
-          </td>
+            </template>
+            <span>
+              {{ item.manufacturer + ' ' + item.name  + ' ' + item.dimension }}
+            </span>
+          </v-tooltip>
+        </td>
+        <td>
+          {{ item.dot }}
+        </td>
+        <td>
+          <v-text-field
+            v-model="item.operating_hours"
+            @change="updateTire(item.tire_id, item.operating_hours, 'entry')"
+            suffix="h"
+            append-outer-icon="mdi-plus"
+            prepend-icon="mdi-minus"
+            :rules="[v => v >= 0]"
+            dense
+            single-line
+            style="font-size: 14px"
+            class="mt-4 my-0"
+            @click:append-outer.prevent="item.operating_hours = increment(
+              item.operating_hours, item.tire_id)"
+            @click:prepend.prevent="item.operating_hours = decrement(
+              item.operating_hours, item.tire_id)"
+          />
+        </td>
+        <td>
+          <v-btn
+            icon
+            color="warning"
+            @click="editTire(item.tire_id)"
+          >
+            <v-icon>
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+          <v-btn
+            icon
+            color="error"
+            @click="deleteTire(item.tire_id)"
+          >
+            <v-icon>
+              mdi-delete
+            </v-icon>
+          </v-btn>
+        </td>
       </tr>
       </tbody>
     </v-simple-table>
