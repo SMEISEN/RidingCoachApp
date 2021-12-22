@@ -44,6 +44,7 @@
     <TheNavigationDrawerBikeDialog
       :bike-form-object="bike_form_object"
       :setup-individual-template="setup_individual_template"
+      :operating-hours-initial="operating_hours_initial"
       @clearBikeDialog="initBikeForm"
     />
   </div>
@@ -102,6 +103,7 @@ export default {
       ticks_standard: null,
       ticks_available: null,
     },
+    operating_hours_initial: 0,
   }),
   computed: {
     selected_bike: {
@@ -168,6 +170,7 @@ export default {
       this.bike_edit_flag = true;
       this.bike_dialog = true;
       const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);
+      this.operating_hours_initial = this.bike_array[bikeIndex].operating_hours;
       this.bike_form_object.bike_id = this.bike_array[bikeIndex].bike_id;
       this.bike_form_object.manufacturer = this.bike_array[bikeIndex].manufacturer;
       this.bike_form_object.model = this.bike_array[bikeIndex].model;

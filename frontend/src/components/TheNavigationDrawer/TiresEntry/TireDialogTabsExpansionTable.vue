@@ -238,11 +238,11 @@ export default {
       return operating_hours;
     },
     updateTireOperatingHours(tireId, operatingHours, type) {
-      if (type == 'entry') {
+      if (type === 'entry') {
         const payload = { operating_hours: operatingHours };
         apiPutTireItem(payload, tireId);
       } else {
-        if (tireId != this.tire_id_last_updated && this.timeout != null) {
+        if (tireId !== this.tire_id_last_updated && this.timeout != null) {
           const payload = { operating_hours: this.operating_hours_last_updated };
           apiPutTireItem(payload, this.tire_id_last_updated);
         } else {
@@ -291,7 +291,7 @@ export default {
       this.tire_to_be_deleted = TireId;
     },
     deletionConfirmed() {
-      apiDeleteTireItem(this.tire_to_be_deleted).then((res) => {
+      apiDeleteTireItem(this.tire_to_be_deleted).then(() => {
         this.$emit('refreshTires');
       });
       this.tire_to_be_deleted = null;
@@ -307,7 +307,7 @@ export default {
         const tire_id = inactive_tires_same_category[i].tire_id;
         inactive_tires_same_category[i].active = false;
         this.updateTireActivation(tire_id, false);
-      };
+      }
     },
   },
 };
