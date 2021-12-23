@@ -119,7 +119,11 @@ class BikeCollection(Resource):
         if validate_api_key(api_key).status_code != 200:
             return validate_api_key(api_key)
 
-        bike_all_entries = BikeModel.query.all()
+        bike_all_entries = BikeModel.query \
+            .order_by(BikeModel.manufacturer.asc()) \
+            .order_by(BikeModel.model.asc()) \
+            .order_by(BikeModel.year.asc()) \
+            .all()
 
         bike_list = []
         for bike_entry in bike_all_entries:
