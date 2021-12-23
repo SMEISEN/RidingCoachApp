@@ -9,9 +9,9 @@ export const apiGetWeather = (pos) => new Promise((resolve, reject) => {
   let location = [pos.coords.latitude, pos.coords.longitude];
   const fields = [
     "precipitationIntensity",
+    "humidity",
     "windSpeed",
     "temperature",
-    "solarGHI",
     "cloudCover",
     "weatherCode",
   ];
