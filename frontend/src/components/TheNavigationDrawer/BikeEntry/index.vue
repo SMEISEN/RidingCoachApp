@@ -14,13 +14,13 @@
       <v-radio-group v-model="selected_bike">
         <v-list-item
           v-for="(bike, index) in bike_array"
-          :key="bike.bike_id"
+          :key="bike.bike_id + '_list'"
           v-touch="{ right: () => editBike(bike.bike_id) }"
           @click="selectBike(index)"
         >
           <v-list-item-action>
             <v-radio
-              :key="bike.bike_id"
+              :key="bike.bike_id + '_radio'"
               :value="bike.bike_id"
             />
           </v-list-item-action>
@@ -158,13 +158,15 @@ export default {
   methods: {
     selectBike(index) {
       const selectedBike = this.bike_array[index];
-      this.$nextTick(() => {
-        if (this.current_bike_id !== selectedBike.bike_id && this.bike_dialog === false) {
-          this.$store.commit('selectBike', selectedBike);
-          this.navigation_drawer = false;
-          this.$forceUpdate();
-        }
-      });
+      if (typeof index === 'number') {
+        this.$nextTick(() => {
+          if (this.current_bike_id !== selectedBike.bike_id && this.bike_dialog === false) {
+            this.$store.commit('selectBike', selectedBike);
+            this.navigation_drawer = false;
+            this.$forceUpdate();
+          }
+        });
+      }
     },
     editBike(BikeId) {
       this.bike_edit_flag = true;
