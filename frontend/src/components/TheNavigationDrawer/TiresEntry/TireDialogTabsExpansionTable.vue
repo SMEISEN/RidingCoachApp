@@ -31,7 +31,7 @@
         <td>
           <v-checkbox
             v-model="item.active"
-            @click="deactivateTire(item.tire_id)"
+            @click="activateTire(item.tire_id)"
           />
         </td>
         <td>
@@ -150,7 +150,7 @@
 <script>
 import {
   apiPutTireItem,
-  apiDeleteTireItem,
+  apiDeleteTireItem, apiQueryTire,
 } from '../../api/TireApi'
 import { decrementNumber, incrementNumber } from '../../utils/FromUtils';
 import TireDialogTabsExpansionDialog from './TireDialogTabsExpansionDialog.vue';
@@ -256,7 +256,14 @@ export default {
     },
     updateTireActivation(tireId, active) {
       const payload = { active: active };
-      apiPutTireItem(payload, tireId);
+      apiPutTireItem(payload, tireId).then(() => {
+        if (this.tire_axis === "Front" && active === true) {
+          this.$store.commit('selectFrontTire', tireId);
+        } else if (this.tire_axis === "Rear" && active === true) {
+          this.$store.commit('selectRearTire', tireId);
+        }
+        this.$store.commit('lastTireUpdatedId', tireId);
+      })
     },
     editTire(tireId) {
       [this.tire_data_object] = this.tire_array.filter((i) => i.tire_id === tireId);
@@ -299,15 +306,33 @@ export default {
     resetTireForm() {
       this.tire_data_object = this._.cloneDeep(this.tire_data_object_template);
     },
-    deactivateTire(tireId) {
+    activateTire(tireId) {
       this.updateTireActivation(tireId, true);
-      // deactivate other tires
-      const inactive_tires_same_category = this.tire_array.filter((i) => i.tire_id !== tireId);
-      for (let i = 0; i < inactive_tires_same_category.length; i++) {
-        const tire_id = inactive_tires_same_category[i].tire_id;
-        inactive_tires_same_category[i].active = false;
-        this.updateTireActivation(tire_id, false);
+      // deactivate other tires of the same category and same axis
+      const [tires_same_category_same_axis] = this.tire_array.filter((i) =>
+        i.tire_id !== tireId && i.active === true);  // there should be one item or none
+      if (tires_same_category_same_axis != null) {  // not !== because null == undefined
+        this.updateTireActivation(tires_same_category_same_axis.tire_id, false);
       }
+      // deactivate other tires of the different category and same axis
+      let tire_category = null;
+      if (this.tire_category === "Slick") {
+        tire_category = "Rain"
+      } else if (this.tire_category === "Rain") {
+        tire_category = "Slick"
+      }
+      const query = {
+        bike_id: this.bike_id,
+        active: true,
+        axis: this.tire_axis,
+        category: tire_category,
+      };
+      apiQueryTire(query).then((res) => {
+        const [tires_different_category_same_axis] = res.data;  // there should be one item or none
+        if (tires_different_category_same_axis != null) {  // not !== because null == undefined
+          this.updateTireActivation(tires_different_category_same_axis.tire_id, false);
+        }
+      })
     },
   },
 };

@@ -161,6 +161,7 @@ export default {
             } else if (active_tires[i].axis === "Rear") {
               this.$store.commit('updateCurrentRearTireOperatingHours', payload.operating_hours);
             }
+            this.$store.commit('lastTireUpdatedId', tire_id);
           })
         }
       });

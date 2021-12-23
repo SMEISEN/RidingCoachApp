@@ -42,8 +42,7 @@ export default {
   created() {
     this.getTires();
     this.$store.subscribe((mutation) => {
-      if (mutation.type === 'updateCurrentFrontTireOperatingHours' ||
-        mutation.type === 'updateCurrentRearTireOperatingHours') {
+      if (mutation.type === 'lastTireUpdatedId') {
         this.getTires();
       }
     });

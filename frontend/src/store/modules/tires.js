@@ -9,6 +9,7 @@ const getDefaultState = () => ({
   current_tire_rear_category: null,
   current_tire_rear_pressure: null,
   current_tire_rear_operating_hours: null,
+  last_tire_updated_id: null
 });
 const state = getDefaultState();
 const getters = {
@@ -20,8 +21,12 @@ const getters = {
   getCurrentTireRearCategory: (state) => state.current_tire_rear_category,
   getCurrentTireRearPressure: (state) => state.current_tire_rear_pressure,
   getCurrentTireRearOperatingHours: (state) => state.current_tire_rear_operating_hours,
+  getLastTireUpdated: (state) => state.last_tire_updated_id,
 };
 const mutations = {
+  lastTireUpdatedId(state, updatedId) {
+    state.last_tire_updated_id = updatedId;
+  },
   selectFrontTire(state, selectedFrontId) {
     state.current_tire_front_id = selectedFrontId;
   },
