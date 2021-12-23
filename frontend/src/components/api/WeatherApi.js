@@ -1,90 +1,34 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
+import querystring from 'query-string';
+import moment from 'moment'
 
-export const apiGetWeatherForecast = (pos) => new Promise((resolve, reject) => {
-  const ApiPath = 'https://api.climacell.co/v3/weather/forecast/hourly?'
-    + `lat=${pos.coords.latitude}&`
-    + `lon=${pos.coords.longitude}&`
-    + 'unit_system=si&'
-    + 'start_time=now&'
-    + `end_time=${new Date(new Date().setUTCHours(24, 0, 0, 0)).toISOString()}&`
-    + '&fields='
-      + 'temp'
-    + '%2C'
-      + 'wind_speed'
-    + '%2C'
-      + 'surface_shortwave_radiation'
-    + '%2C'
-      + 'humidity'
-    + '%2C'
-      + 'precipitation_probability'
-    + '%2C'
-      + 'precipitation'
-    + '%2C'
-      + 'weather_code'
-    + '%2C'
-      + 'cloud_cover'
-    + '&'
-    + `apikey=${process.env.VUE_APP_CLIMACELL_API_KEY}`;
-  axios.get(ApiPath)
-    .then((res) => resolve(res.data))
-    .catch((error) => {
-      console.error(error);
-      reject(error);
-    });
-});
-export const apiGetWeatherHistoric = (pos) => new Promise((resolve, reject) => {
-  const ApiPath = 'https://api.climacell.co/v3/weather/historical/climacell?'
-    + `lat=${pos.coords.latitude}&`
-    + `lon=${pos.coords.longitude}&`
-    + 'timestep=60&'
-    + 'unit_system=si&'
-    + `start_time=${new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString()}&`
-    + 'end_time=now&'
-    + 'fields='
-      + 'temp'
-    + '%2C'
-      + 'wind_speed'
-    + '%2C'
-      + 'surface_shortwave_radiation'
-    + '%2C'
-      + 'humidity'
-    + '%2C'
-      + 'precipitation'
-    + '%2C'
-      + 'weather_code'
-    + '%2C'
-      + 'cloud_cover'
-    + '&'
-    + `apikey=${process.env.VUE_APP_CLIMACELL_API_KEY}`;
-  axios.get(ApiPath)
-    .then((res) => resolve(res.data))
-    .catch((error) => {
-      console.error(error);
-      reject(error);
-    });
-});
-export const apiGetWeatherCurrent = (pos) => new Promise((resolve, reject) => {
-  const ApiPath = 'https://api.climacell.co/v3/weather/realtime?'
-    + `lat=${pos.coords.latitude}&`
-    + `lon=${pos.coords.longitude}&`
-    + 'unit_system=si&'
-    + 'fields='
-    + 'temp'
-    + '%2C'
-    + 'wind_speed'
-    + '%2C'
-    + 'surface_shortwave_radiation'
-    + '%2C'
-    + 'humidity'
-    + '%2C'
-    + 'precipitation'
-    + '%2C'
-    + 'weather_code'
-    + '%2C'
-    + 'cloud_cover'
-    + '&'
-    + `apikey=${process.env.VUE_APP_CLIMACELL_API_KEY}`;
+export const apiGetWeather = (pos) => new Promise((resolve, reject) => {
+  const getTimelineURL = "https://api.tomorrow.io/v4/timelines";
+  const apikey = process.env.VUE_APP_TOMORROWIO_API_KEY;
+  let location = [pos.coords.latitude, pos.coords.longitude];
+  const fields = [
+    "precipitationIntensity",
+    "windSpeed",
+    "temperature",
+    "solarGHI",
+    "cloudCover",
+    "weatherCode",
+  ];
+  const units = "metric";
+  const timesteps = ["current", "1h"];
+  const startTime =  moment.utc().subtract(6, "hours").toISOString();  // max 6 hours back
+  const endTime = moment.utc().add(1, "days").startOf("day").toISOString();
+  const getTimelineParameters =  querystring.stringify({
+    apikey,
+    location,
+    fields,
+    units,
+    timesteps,
+    startTime,
+    endTime,
+  }, {arrayFormat: "comma"});
+  const ApiPath = getTimelineURL + "?" + getTimelineParameters;
   axios.get(ApiPath)
     .then((res) => resolve(res.data))
     .catch((error) => {
