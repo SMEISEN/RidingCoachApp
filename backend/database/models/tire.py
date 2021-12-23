@@ -11,6 +11,7 @@ class TireModel(db.Model):
 
     bike_id = db.Column(UUID(as_uuid=True), db.ForeignKey('bike.bike_id'), nullable=False)
 
+    active = db.Column(db.Boolean, nullable=True, default=False)
     rim = db.Column(db.String(15), nullable=True)
 
     category = db.Column(db.String(5), nullable=False)

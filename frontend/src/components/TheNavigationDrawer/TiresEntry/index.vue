@@ -41,12 +41,17 @@ export default {
   },
   created() {
     this.getTires();
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'lastTireUpdatedId') {
+        this.getTires();
+      }
+    });
   },
   methods: {
     getTires() {
       apiGetTire()
         .then((res) => {
-              this.tire_array = res.data;
+          this.tire_array = res.data;
         });
     },
     tireDialog() {

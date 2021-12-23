@@ -5,11 +5,22 @@
     >
       <thead>
       <tr>
-          <th />
-          <th />
-          <th />
-          <th style="min-width: 145px;width: 145px;max-width: 145px"/>
-          <th />
+        <th>
+          Active
+        </th>
+        <th>
+          Condition
+        </th>
+        <th>
+          Compound
+        </th>
+        <th>
+          DOT
+        </th>
+        <th style="min-width: 145px;width: 145px;max-width: 145px">
+          Operating hours
+        </th>
+        <th />
       </tr>
       </thead>
       <tbody>
@@ -17,83 +28,89 @@
           v-for="item in tire_array"
           :key="item.tire_id"
       >
-          <td>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-progress-circular
-                  v-bind="attrs"
-                  v-on="on"
-                  :value=Math.min(...Object.values(item.condition))*100
-                  size=26
-                  rotate="-90"
-                  class="mt-n1 my-0"
-                />
-              </template>
-              <span>
-                {{ 'left outer: ' + item.condition.left_outer * 100 + ' %' }} <br/>
-                {{ 'left middle: ' + item.condition.left_middle * 100 + ' %' }} <br/>
-                {{ 'center: ' + item.condition.center * 100 + ' %' }} <br/>
-                {{ 'right middle: ' + item.condition.right_middle * 100 + ' %' }} <br/>
-                {{ 'right outer: ' + item.condition.right_outer * 100 + ' %' }}
+        <td>
+          <v-checkbox
+            v-model="item.active"
+            @click="activateTire(item.tire_id)"
+          />
+        </td>
+        <td>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-progress-circular
+                v-bind="attrs"
+                v-on="on"
+                :value=Math.min(...Object.values(item.condition))*100
+                size=26
+                rotate="-90"
+                class="mt-n1 my-0"
+              />
+            </template>
+            <span>
+              {{ 'left outer: ' + item.condition.left_outer * 100 + ' %' }} <br/>
+              {{ 'left middle: ' + item.condition.left_middle * 100 + ' %' }} <br/>
+              {{ 'center: ' + item.condition.center * 100 + ' %' }} <br/>
+              {{ 'right middle: ' + item.condition.right_middle * 100 + ' %' }} <br/>
+              {{ 'right outer: ' + item.condition.right_outer * 100 + ' %' }}
+            </span>
+          </v-tooltip>
+        </td>
+        <td>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                v-bind="attrs"
+                v-on="on"
+              >
+                {{ item.compound }}
               </span>
-            </v-tooltip>
-          </td>
-          <td>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <span
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  {{ item.compound }}
-                </span>
-              </template>
-              <span>
-                {{ item.manufacturer + ' ' + item.name  + ' ' + item.dimension }}
-              </span>
-            </v-tooltip>
-          </td>
-          <td>
-            {{ item.dot }}
-          </td>
-          <td>
-            <v-text-field
-              v-model="item.operating_hours"
-              @change="updateTire(item.tire_id, item.operating_hours, 'entry')"
-              suffix="h"
-              append-outer-icon="mdi-plus"
-              prepend-icon="mdi-minus"
-              :rules="[v => v >= 0]"
-              dense
-              single-line
-              style="font-size: 14px"
-              class="mt-4 my-0"
-              @click:append-outer.prevent="item.operating_hours = increment(
-                item.operating_hours, item.tire_id)"
-              @click:prepend.prevent="item.operating_hours = decrement(
-                item.operating_hours, item.tire_id)"
-            />
-          </td>
-          <td>
-            <v-btn
-              icon
-              color="warning"
-              @click="editTire(item.tire_id)"
-            >
-              <v-icon>
-                mdi-pencil
-              </v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              color="error"
-              @click="deleteTire(item.tire_id)"
-            >
-              <v-icon>
-                mdi-delete
-              </v-icon>
-            </v-btn>
-          </td>
+            </template>
+            <span>
+              {{ item.manufacturer + ' ' + item.name  + ' ' + item.dimension }}
+            </span>
+          </v-tooltip>
+        </td>
+        <td>
+          {{ item.dot }}
+        </td>
+        <td>
+          <v-text-field
+            v-model="item.operating_hours"
+            @change="updateTireOperatingHours(item.tire_id, item.operating_hours, 'entry')"
+            suffix="h"
+            append-outer-icon="mdi-plus"
+            prepend-icon="mdi-minus"
+            :rules="[v => v >= 0]"
+            dense
+            single-line
+            style="font-size: 14px"
+            class="mt-4 my-0"
+            @click:append-outer.prevent="item.operating_hours = increment(
+              item.operating_hours, item.tire_id)"
+            @click:prepend.prevent="item.operating_hours = decrement(
+              item.operating_hours, item.tire_id)"
+          />
+        </td>
+        <td>
+          <v-btn
+            icon
+            color="warning"
+            @click="editTire(item.tire_id)"
+          >
+            <v-icon>
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+          <v-btn
+            icon
+            color="error"
+            @click="deleteTire(item.tire_id)"
+          >
+            <v-icon>
+              mdi-delete
+            </v-icon>
+          </v-btn>
+        </td>
       </tr>
       </tbody>
     </v-simple-table>
@@ -133,7 +150,7 @@
 <script>
 import {
   apiPutTireItem,
-  apiDeleteTireItem,
+  apiDeleteTireItem, apiQueryTire,
 } from '../../api/TireApi'
 import { decrementNumber, incrementNumber } from '../../utils/FromUtils';
 import TireDialogTabsExpansionDialog from './TireDialogTabsExpansionDialog.vue';
@@ -208,24 +225,24 @@ export default {
   methods: {
     increment(inputNumber, tireId) {
       const operating_hours = incrementNumber(inputNumber, 0.1, 1);
-      this.updateTire(tireId, operating_hours);
+      this.updateTireOperatingHours(tireId, operating_hours);
       this.operating_hours_last_updated = operating_hours;
       this.tire_id_last_updated = tireId;
       return operating_hours;
     },
     decrement(inputNumber, tireId) {
       const operating_hours = decrementNumber(inputNumber, 0.1, 1);
-      this.updateTire(tireId, operating_hours);
+      this.updateTireOperatingHours(tireId, operating_hours);
       this.operating_hours_last_updated = operating_hours;
       this.tire_id_last_updated = tireId;
       return operating_hours;
     },
-    updateTire(tireId, operatingHours, type) {
-      if (type == 'entry') {
+    updateTireOperatingHours(tireId, operatingHours, type) {
+      if (type === 'entry') {
         const payload = { operating_hours: operatingHours };
         apiPutTireItem(payload, tireId);
       } else {
-        if (tireId != this.tire_id_last_updated && this.timeout != null) {
+        if (tireId !== this.tire_id_last_updated && this.timeout != null) {
           const payload = { operating_hours: this.operating_hours_last_updated };
           apiPutTireItem(payload, this.tire_id_last_updated);
         } else {
@@ -236,6 +253,17 @@ export default {
           }, 5000);
         }
       }
+    },
+    updateTireActivation(tireId, active) {
+      const payload = { active: active };
+      apiPutTireItem(payload, tireId).then(() => {
+        if (this.tire_axis === "Front" && active === true) {
+          this.$store.commit('selectFrontTire', tireId);
+        } else if (this.tire_axis === "Rear" && active === true) {
+          this.$store.commit('selectRearTire', tireId);
+        }
+        this.$store.commit('lastTireUpdatedId', tireId);
+      })
     },
     editTire(tireId) {
       [this.tire_data_object] = this.tire_array.filter((i) => i.tire_id === tireId);
@@ -270,13 +298,41 @@ export default {
       this.tire_to_be_deleted = TireId;
     },
     deletionConfirmed() {
-      apiDeleteTireItem(this.tire_to_be_deleted).then((res) => {
+      apiDeleteTireItem(this.tire_to_be_deleted).then(() => {
         this.$emit('refreshTires');
       });
       this.tire_to_be_deleted = null;
     },
     resetTireForm() {
       this.tire_data_object = this._.cloneDeep(this.tire_data_object_template);
+    },
+    activateTire(tireId) {
+      this.updateTireActivation(tireId, true);
+      // deactivate other tires of the same category and same axis
+      const [tires_same_category_same_axis] = this.tire_array.filter((i) =>
+        i.tire_id !== tireId && i.active === true);  // there should be one item or none
+      if (tires_same_category_same_axis != null) {  // not !== because null == undefined
+        this.updateTireActivation(tires_same_category_same_axis.tire_id, false);
+      }
+      // deactivate other tires of the different category and same axis
+      let tire_category = null;
+      if (this.tire_category === "Slick") {
+        tire_category = "Rain"
+      } else if (this.tire_category === "Rain") {
+        tire_category = "Slick"
+      }
+      const query = {
+        bike_id: this.bike_id,
+        active: true,
+        axis: this.tire_axis,
+        category: tire_category,
+      };
+      apiQueryTire(query).then((res) => {
+        const [tires_different_category_same_axis] = res.data;  // there should be one item or none
+        if (tires_different_category_same_axis != null) {  // not !== because null == undefined
+          this.updateTireActivation(tires_different_category_same_axis.tire_id, false);
+        }
+      })
     },
   },
 };
