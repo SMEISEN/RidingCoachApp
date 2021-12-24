@@ -16,10 +16,10 @@
           style="min-width: 120px;width: 120px;max-width: 120px"
         >
           <LinearProgressMaintenanceInterval
-            :intervalState="wear_object.interval_state"
-            :intervalUnit="wear_object.interval_unit"
-            :absoluteDigitstoPrecision="2"
-            :relativeDigitsToFixed="0"
+            :interval-state="wear_object.interval_state"
+            :interval-unit="wear_object.interval_unit"
+            :absolute-digitsto-precision="2"
+            :relative-digits-to-fixed="0"
           />
         </td>
       </tr>

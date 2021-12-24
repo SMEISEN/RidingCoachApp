@@ -47,18 +47,18 @@
         <td v-if="!Object.keys(maintenance_object).includes('operating_hours')" />
         <td v-else-if="maintenance_object.interval_unit === 'a'">
           <LinearProgressMaintenanceInterval
-            :intervalState="maintenance_object.interval_state"
-            :intervalUnit="'d'"
-            :absoluteDigitstoPrecision="3"
-            :relativeDigitsToFixed="0"
+            :interval-state="maintenance_object.interval_state"
+            :interval-unit="'d'"
+            :absolute-digitsto-precision="3"
+            :relative-digits-to-fixed="0"
           />
         </td>
         <td v-else>
           <LinearProgressMaintenanceInterval
-            :intervalState="maintenance_object.interval_state"
-            :intervalUnit="maintenance_object.interval_unit"
-            :absoluteDigitstoPrecision="2"
-            :relativeDigitsToFixed="0"
+            :interval-state="maintenance_object.interval_state"
+            :interval-unit="maintenance_object.interval_unit"
+            :absolute-digitsto-precision="2"
+            :relative-digits-to-fixed="0"
           />
         </td>
         <td>

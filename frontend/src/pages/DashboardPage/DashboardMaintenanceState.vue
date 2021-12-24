@@ -15,10 +15,10 @@
         </td>
         <td style="min-width: 120px;width: 120px;max-width: 120px">
           <LinearProgressMaintenanceInterval
-            :intervalState="maintenance_object.interval_state"
-            :intervalUnit="maintenance_object.interval_unit"
-            :absoluteDigitstoPrecision="2"
-            :relativeDigitsToFixed="0"
+            :interval-state="maintenance_object.interval_state"
+            :interval-unit="maintenance_object.interval_unit"
+            :absolute-digitsto-precision="2"
+            :relative-digits-to-fixed="0"
           />
         </td>
       </tr>
@@ -42,7 +42,9 @@ export default {
   },
   computed: {
     orderedMaintenance() {
-      return this._.orderBy(this.maintenanceNext, item => item.interval_state.absolute, 'asc');
+      return this._.orderBy(this.maintenanceNext,
+        (item) => item.interval_state.absolute,
+        'asc');
     },
     tableHeight() {
       switch (this.$vuetify.breakpoint.name) {
