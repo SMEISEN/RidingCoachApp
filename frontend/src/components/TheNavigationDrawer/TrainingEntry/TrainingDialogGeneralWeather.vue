@@ -14,14 +14,12 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
 import { apiGetLocation } from '../../api/LocationApi';
-import {
-  apiGetWeatherForecast,
-  apiGetWeatherHistoric,
-} from '../../api/WeatherApi';
+import { apiGetWeather } from '../../api/WeatherApi';
 import LineChart from '../../common/LineChart.vue';
-import { calculateTrackSurfaceTemperatureDegC } from '../../common/TrackSufraceTemperatureModel';
+import {
+  calculateTrackSurfaceTemperatureDegCHassan2004
+} from '../../common/TrackSufraceTemperatureModel';
 
 export default {
   name: 'TrainingDialogGeneralWeather',
@@ -35,8 +33,6 @@ export default {
     },
   },
   data: () => ({
-    weather_array: [],
-    time_array: [],
     data_collection: {
       labels: [],
       datasets: [],
@@ -50,7 +46,7 @@ export default {
         pointBackgroundColor: '',
       },
       {
-        label: 'Track surface temperature',
+        label: 'Track surface temperature [Hassan2004]',
         data: [],
         backgroundColor: 'transparent',
         borderColor: '',
@@ -142,49 +138,13 @@ export default {
       });
     },
     getWeather() {
-      apiGetWeatherHistoric(this.location_object)
-        .then((resMeasurement) => {
-          const timezone = moment.tz.guess();
-          const utcOffset = moment.tz.zone(timezone).utcOffset(new Date().getTime()) / 60;
-          const hourFrom = 8 + utcOffset;
-          const hourTo = 19 + utcOffset;
-          const weatherMeasurement = resMeasurement.slice(hourFrom, hourTo);
-          for (let i = 0; i < weatherMeasurement.length; i += 1) {
-            Object.assign(
-              weatherMeasurement[i],
-              { type: 'measurement' },
-            );
-          }
-          const weatherCurrent = weatherMeasurement.splice(-1);
-          [this.trainingFormObject.setup_fixed[this.training_setup_tab]
-            .weather_current] = weatherCurrent;
-          const currentUtcHour = resMeasurement.length + 1 + utcOffset;
-          if (hourTo - currentUtcHour > 0) {
-            apiGetWeatherForecast(this.location_object)
-              .then((resForecast) => {
-                const weatherForecast = resForecast.slice(1, hourTo - currentUtcHour + 1);
-                for (let i = 0; i < weatherForecast.length; i += 1) {
-                  Object.assign(weatherForecast[i], { type: 'forecast' });
-                }
-                this.weather_array = weatherMeasurement
-                  .concat(weatherCurrent)
-                  .concat(weatherForecast);
-                this.trainingFormObject.weather = weatherMeasurement
-                  .concat(weatherForecast);
-                this.extractTemperature(weatherMeasurement.length - 1);
-              })
-              .catch((error) => {
-                this.$store.commit('setInfoSnackbar', {
-                  state: true,
-                  color: 'error',
-                  message: `${error}!`,
-                });
-              });
-          } else {
-            this.weather_array = weatherMeasurement;
-            this.trainingFormObject.weather = weatherMeasurement;
-            this.extractTemperature(weatherMeasurement.length - 1);
-          }
+      apiGetWeather(this.location_object)
+        .then((res) => {
+          const weather_current = res.data.timelines[0].intervals;
+          const timestamp_current = res.data.timelines[0].startTime;
+          const weather_past_future = res.data.timelines[1].intervals;
+          this.extractTemperature(weather_past_future, weather_current, timestamp_current);
+          this.trainingFormObject.weather = weather_past_future;
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {
@@ -194,46 +154,39 @@ export default {
           });
         });
     },
-    extractTemperature(currentTick) {
+    extractTemperature(weatherPastFuture, weatherCurrent, timestampCurrent) {
       this.data_sets[0].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[0].borderColor = this.$vuetify.theme.themes.light.accent;
       this.data_sets[1].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[1].borderColor = this.$vuetify.theme.themes.light.error;
-      for (let i = 0; i < this.weather_array.length; i += 1) {
-        const airDegC = this.weather_array[i].temp.value;
+      let timestampPreviousIteration = weatherPastFuture[0].startTime;
+      let timeArray = []
+      for (let i = 0; i < weatherPastFuture.length; i += 1) {
+        const timestampCurrentIteration = weatherPastFuture[i].startTime;
+        const airDegC = weatherPastFuture[i].values.temperature;
+        const asphaltDegC = calculateTrackSurfaceTemperatureDegCHassan2004(airDegC);
+        if (  // insert current time stamp
+          timestampCurrent > timestampPreviousIteration &&
+          timestampCurrent < timestampCurrentIteration) {
+          const currentAirDegC = weatherCurrent[0].values.temperature;
+          const currentAsphaltDegC = calculateTrackSurfaceTemperatureDegCHassan2004(currentAirDegC);
+          this.$store.commit('setCurrentTemperatureAirDegC', currentAirDegC);
+          this.$store.commit('setCurrentTemperatureTrackDegC', currentAsphaltDegC);
+          timeArray.push(new Date(timestampCurrent));
+          this.data_sets[0].data.push(currentAirDegC);
+          this.data_sets[1].data.push(currentAsphaltDegC);
+          this.data_options.scales.xAxes[0].gridLines.color.push(
+            this.$vuetify.theme.themes.light.info);
+        }
+        timeArray.push(new Date(timestampCurrentIteration));
         this.data_sets[0].data.push(airDegC);
-        if (airDegC !== null) {
-          const windSpeedMetersSeconds = this.weather_array[i]
-            .wind_speed.value;
-          const humidityPercent = this.weather_array[i]
-            .humidity.value;
-          const solarRadiationWattPerMetersSquared = this.weather_array[i]
-            .surface_shortwave_radiation.value;
-          const asphaltDegC = calculateTrackSurfaceTemperatureDegC(
-            airDegC,
-            windSpeedMetersSeconds,
-            humidityPercent,
-            solarRadiationWattPerMetersSquared,
-          );
-          this.data_sets[1].data.push(asphaltDegC);
-          if (i === currentTick) {
-            this.$store.commit('setCurrentTemperatureAirDegC', airDegC);
-            this.$store.commit('setCurrentTemperatureTrackDegC', asphaltDegC);
-          }
-        } else {
-          this.data_sets[1].data.push(null);
-        }
-        if (i === currentTick) {
-          this.data_options.scales.xAxes[0].gridLines.color
-            .push(this.$vuetify.theme.themes.light.info);
-        } else {
-          this.data_options.scales.xAxes[0].gridLines.color
-            .push('rgba(0, 0, 0, 0.1)');
-        }
-        this.time_array.push(new Date(this.weather_array[i].observation_time.value));
+        this.data_sets[1].data.push(asphaltDegC);
+        this.data_options.scales.xAxes[0].gridLines.color.push(
+          'rgba(0, 0, 0, 0.1)');
+        timestampPreviousIteration = timestampCurrentIteration;
       }
       this.data_collection.datasets = this.data_sets;
-      this.data_collection.labels = this.time_array;
+      this.data_collection.labels = timeArray;
       this.data_processed = true;
     },
   },
