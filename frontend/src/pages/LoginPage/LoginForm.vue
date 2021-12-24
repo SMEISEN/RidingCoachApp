@@ -91,6 +91,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * Emits the username and password to the parent page and sets loading animation to true.
+     */
     onLoginButton() {
       this.$emit('update:loading', true);
       this.$emit('loginButtonClicked', this.username, this.password);
