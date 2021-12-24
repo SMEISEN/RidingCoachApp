@@ -94,13 +94,21 @@ export default {
     });
   },
   methods: {
-    routeToPage(object) {
-      if (Object.keys(object).includes('location')) {
+    /**
+     * Switches to page depending on the icon clicked.
+     * @param {object} activityItem maintenance or training item
+     */
+    routeToPage(activityItem) {
+      console.log(activityItem);
+      if (Object.keys(activityItem).includes('location')) {
         this.$router.push('/training');
       } else {
         this.$router.push('/history');
       }
     },
+    /**
+     * Gets training and history items of the current bike from the database.
+     */
     getTrainingsAndHistory() {
       apiQueryHistory({ bike_id: this.current_bike_id }).then((resHistory) => {
         if (resHistory.data.length > 0) {

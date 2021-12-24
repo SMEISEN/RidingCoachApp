@@ -1,4 +1,4 @@
-<template v-slot:default>
+<template>
   <v-app>
     <v-container fluid>
       <v-row dense>
@@ -188,6 +188,7 @@ export default {
     this.getSetup();
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'selectBike') {
+        // update page if a new bike is selected
         initObject(this.wear_object, '');
         this.maintenance_array = [];
         this.setup_array = [];
@@ -200,6 +201,34 @@ export default {
   updated() {
   },
   methods: {
+    /**
+     * Flattens the nested maintenance object fetched from the database to an array.
+     * @param {object} data nested object, e.g.
+     * {
+     *   "Attachments": {
+     *     "Check antifreeze and coolant level": {
+     *       bike_id: "...",
+     *       comment: "...",
+     *       datetime_created: "...",
+     *       ...
+     *     },
+     *     ...
+     *   },
+     *   ...
+     * }
+     * @returns {array} flattened array of objects, e.g.
+     * [
+     *  {
+     *    bike_id: "...",
+     *    comment: "...",
+     *    datetime_created: "...",
+     *    ...
+     *    name: "Check antifreeze and coolant level",
+     *    ...
+     *  },
+     *  ...
+     * ]
+     */
     structureMaintenanceNext(data) {
       const helperList1 = [];
       for (let i = 0; i < Object.values(data).length; i += 1) {
@@ -217,6 +246,9 @@ export default {
       }
       return helperList2;
     },
+    /**
+     * Gets the setup of the selected bike from the vuex store.
+     */
     getSetup() {
       const setupArray = this.$store.getters.getCurrentBikeSetup;
       if (setupArray !== null) {
@@ -225,6 +257,10 @@ export default {
         this.setup_array = [];
       }
     },
+    /**
+     * Gets the maintenance items of interval type "estimated wear" and interval unit "h" for the
+     * selected bike from the database and adds them to the wear object.
+     */
     getWear() {
       apiQueryMaintenance({
         bike_id: this.bikeId,
@@ -251,6 +287,10 @@ export default {
           });
         });
     },
+    /**
+     * Gets the maintenance items of interval type "planned cycle" and interval unit "h" for the
+     * selected bike from the database and adds them to the maintenance array.
+     */
     getMaintenance() {
       apiQueryMaintenance({
         bike_id: this.bikeId,
