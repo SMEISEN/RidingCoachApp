@@ -286,6 +286,11 @@ export default {
   updated() {
   },
   methods: {
+    /**
+     * Defines the maintenance tag chip color of item depending on name.
+     * @param {string} item chip name
+     * @returns {string} color name
+     */
     chipColor(item) {
       if (item === 'checked') {
         return 'success';
@@ -298,16 +303,33 @@ export default {
       }
       return 'grey';
     },
+    /**
+     * Removes a maintenance tag chip.
+     * @param {string} item chip name
+     */
     removeTagChips(item) {
       this.historyFormInput.tags.splice(this.historyFormInput.tags.indexOf(item), 1);
       this.historyFormInput.tags = [...this.historyFormInput.tags];
     },
+    /**
+     * Gets all maintenance names assigned to the category name given.
+     * @param {string} category category name
+     * @returns {array} array of maintenance names
+     */
     getMaintenanceNamesFromCategory(category) {
       if (this.maintenanceCategories.includes(category)) {
         return Object.keys(this.maintenanceNames[category]);
       } return [];
     },
+    /**
+     * Gets the default maintenance tags for a specific maintenance name.
+     * @param {string} category
+     * @param {string} name
+     * @returns {array} array of maintenance tag strings
+     */
     getDefaultTags(category, name) {
+      console.log(category);
+      console.log(name);
       if (this.maintenanceCategories.includes(category)) {
         if (Object.keys(this.maintenanceNames[category]).includes(name)) {
           return this.maintenanceNames[category][name].tags_default;
@@ -315,6 +337,9 @@ export default {
       }
       return [];
     },
+    /**
+     * Initializes the maintenance object and resets the edit flag.
+     */
     initForm() {
       initObject(this.historyFormInput, null);
       this.historyFormInput.date = new Date().toISOString().substr(0, 10);
@@ -326,21 +351,33 @@ export default {
       this.$store.commit('setHistoryEditFlag', false);
       this.changed = false;
     },
+    /**
+     * Gets current date and time string.
+     */
     refreshDateTime() {
       this.historyFormInput.date = new Date().toISOString().substr(0, 10);
       this.historyFormInput.time = new Date().toTimeString().substr(0, 5);
       this.$forceUpdate();
     },
+    /**
+     * Increment the operating hours.
+     */
     increment() {
       this.historyFormInput.operating_hours = incrementNumber(
         this.historyFormInput.operating_hours, 0.1, 1,
       );
     },
+    /**
+     * Decrement the operating hours.
+     */
     decrement() {
       this.historyFormInput.operating_hours = decrementNumber(
         this.historyFormInput.operating_hours, 0.1, 1,
       );
     },
+    /**
+     * Adds or edits a maintenance history entry after clicking the save button.
+     */
     onSave() {
       this.$refs.NameComboBox.blur();
       this.$nextTick(() => {
@@ -354,11 +391,13 @@ export default {
         };
         if (Object.keys(this.maintenanceNames[this.historyFormInput.category])
           .includes(this.historyFormInput.name)) {
+          // maintenance name already exists
           histPayload.maintenance_id = this.maintenanceNames[
             this.historyFormInput.category][
             this.historyFormInput.name].maintenance_id;
           this.pushHistory(histPayload);
         } else {
+          // maintenance name does not exist yet
           const mtnPayload = {
             bike_id: this.$store.getters.getCurrentBikeId,
             category: this.historyFormInput.category,
@@ -380,8 +419,13 @@ export default {
         }
       });
     },
+    /**
+     * Triggers API calls to post or put a maintenance history entry.
+     * @param {object} payload payload object for the post or put API command.
+     */
     pushHistory(payload) {
       if (this.$store.getters.getHistoryEditFlag === false) {
+        // add new maintenance history entry
         apiPostHistory(payload)
           .then(() => {
             this.$emit('saveButtonClicked');
@@ -401,6 +445,7 @@ export default {
             });
           });
       } else {
+        // edits an existing history entry
         const HistId = this.historyFormInput.history_id;
         apiPutHistoryItem(payload, HistId)
           .then(() => {
@@ -422,6 +467,10 @@ export default {
           });
       }
     },
+    /**
+     * Emits a message to parent that the cancel button was clicked, closes the maintenance dialog,
+     * and resets the form object.
+     */
     onCancel() {
       this.$emit('cancelButtonClicked');
       this.maintenance_dialog = false;

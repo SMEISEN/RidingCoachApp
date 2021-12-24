@@ -1,4 +1,4 @@
-<template v-slot:default>
+<template>
   <v-app>
     <v-container fluid>
       <v-card class="card-container">
@@ -82,11 +82,18 @@ export default {
   updated() {
   },
   methods: {
+    /**
+     * Gets current operating hours of the selected bike and opens the add history dialog.
+     */
     addHistory() {
       this.history_form_object.operating_hours = this.$store.getters.getCurrentBikeOperatingHours;
       this.$store.commit('setHistoryEditFlag', false);
       this.$store.commit('setHistoryAddOrEditDialog', true);
     },
+    /**
+     * Opens the edit history dialog for a specific history entry.
+     * @param {String} HistId history uuid4 string
+     */
     editHistory(HistId) {
       apiGetHistoryItem(HistId)
         .then((res) => {
@@ -106,6 +113,9 @@ export default {
           });
         });
     },
+    /**
+     * Reload the history entries of the selected bike.
+     */
     refreshHistory() {
       const query = { bike_id: this.$store.getters.getCurrentBikeId };
       apiQueryHistory(query)

@@ -36,7 +36,6 @@
         <tr
           v-for="(maintenance) in maintenanceHistory"
           :key="maintenance.history_id"
-          :MtnId="maintenance.history_id"
         >
           <td style="font-size: 12px">
             {{ maintenance.category }}
@@ -168,14 +167,25 @@ export default {
   updated() {
   },
   methods: {
+    /**
+     * Emits message to parent that the edit button of a specific history entry was clicked.
+     * @param {String} HistId history uuid4 string
+     */
     onEditButton(HistId) {
       this.history_id = HistId;
       this.$emit('editButtonClicked', this.history_id);
     },
+    /**
+     * Emits message to parent that the delete button of a specific history entry was clicked.
+     * @param {String} HistId history uuid4 string
+     */
     onDeleteButton(HistId) {
       this.history_id = HistId;
       this.confirm_delete_dialog = true;
     },
+    /**
+     * Emits message to parent that the confirm deletion dialog was confirmed.
+     */
     deletionConfirmed() {
       apiDeleteHistoryItem(this.history_id)
         .then(() => {
