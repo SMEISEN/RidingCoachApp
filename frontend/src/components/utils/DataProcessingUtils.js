@@ -26,8 +26,8 @@ export const interpolateLinearly1D = (targetX, arrayXY) => {
     if (target < arraySorted[0][0]) {
       return [arraySorted[0], arraySorted[1]];
     }
-    if (target > arraySorted[-1][0]) {
-      return [arraySorted[-2], arraySorted[-1]];
+    if (target > arraySorted[arraySorted.length - 1][0]) {
+      return [arraySorted[arraySorted.length - 2], arraySorted[arraySorted.length - 1]];
     }
     return arraySorted
       .sort((a, b) => Math.abs(a[0] - target) - Math.abs(b[0] - target)).slice(0, 2);
