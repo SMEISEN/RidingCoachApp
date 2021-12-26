@@ -1,4 +1,4 @@
-<template v-slot:default>
+<template>
   <v-app>
     <v-container fluid>
       <v-row dense>
@@ -98,6 +98,9 @@ export default {
   updated() {
   },
   methods: {
+    /**
+     * Gets the maintenance items for the selected bike.
+     */
     getMaintenance() {
       apiQueryMaintenance({ bike_id: this.currentBikeId })
         .then((res) => {
@@ -111,6 +114,9 @@ export default {
           });
         });
     },
+    /**
+     * Deletes the most recent maintenance history entry.
+     */
     undoMaintenance() {
       apiDeleteHistoryItem(this.lastHistoryId)
         .then(() => {
@@ -129,6 +135,11 @@ export default {
           });
         });
     },
+    /**
+     * Adds a new maintenance history entry.
+     * @param {string} mtnId maintenance id
+     * @param {array} selectedChips array of strings with the selected maintenance tags
+     */
     postHistoryEntry(mtnId, selectedChips) {
       const payload = {
         maintenance_id: mtnId,

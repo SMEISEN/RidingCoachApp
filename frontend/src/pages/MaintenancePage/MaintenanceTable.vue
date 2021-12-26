@@ -38,7 +38,7 @@
     </thead>
     <tbody>
       <tr
-        v-for="maintenance_object in sort_maintenance(maintenanceEntries)"
+        v-for="maintenance_object in maintenance_entries"
         :key="maintenance_object.maintenance_id"
       >
         <td style="font-size: 12px">
@@ -96,25 +96,43 @@ export default {
       required: true,
     },
   },
-  created() {
-  },
-  updated() {
-  },
-  methods: {
-    sort_maintenance(nestedEntries) {
-      const flattenedEntries = flattenNestedObjects(nestedEntries);
+  computed: {
+    /**
+     * Filters the nested object of maintenance items and flattens it to an array.
+     * Retain the interval types "planned cycle" and "estimated wear" and remove items with the
+     * interval unit "t".
+     * @returns {array} array of maintenance items, e.g.
+     * [
+     *    {
+     *      bike_id: "...",
+     *      comment: "...",
+     *      ...
+     *      name: "...",
+     *      ...
+     *    },
+     *    ...
+     * ]
+     */
+    maintenance_entries() {
+      const flattenedEntries = flattenNestedObjects(this.maintenanceEntries);
       const filteredEntries = flattenedEntries
         .filter((i) => i.interval_type === 'planned cycle' || i.interval_type === 'estimated wear')
         .filter((i) => i.interval_unit !== 't');
-      return this._.orderBy(filteredEntries, ['interval_unit', 'interval_amount'], ['desc', 'asc']);
+      return this._.orderBy(filteredEntries,
+        ['interval_unit', 'interval_amount'],
+        ['desc', 'asc']);
     },
+  },
+  methods: {
+    /**
+     * Emits a message to the parent that the done button was clicked and parses the maintenance id
+     * and the selected maintenance tags.
+     * @param {string} mtnId maintenance id
+     * @param {array} selectedChips array of selected maintenance tags
+     */
     doneButtonClicked(mtnId, selectedChips) {
       this.$emit('doneButtonClicked', mtnId, selectedChips);
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

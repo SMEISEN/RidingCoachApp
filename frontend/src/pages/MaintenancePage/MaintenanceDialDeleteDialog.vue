@@ -82,12 +82,21 @@ export default {
   updated() {
   },
   methods: {
+    /**
+     * Emits a message to the parent component that the maintenance deletion was canceled.
+     */
     onCancel() {
       this.$emit('update:deleteMaintenanceDialog', false);
     },
+    /**
+     * Closes the confirm deletion dialog.
+     */
     onDelete() {
       this.confirm_delete_dialog = true;
     },
+    /**
+     * Confirms the deletion of a maintenance item.
+     */
     deletionConfirmed() {
       const entries = Object.entries(this.delete_checkbox);
       for (let i = 0; i < entries.length; i += 1) {

@@ -60,6 +60,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * Opens the add maintenance dialog.
+     */
     addNewMaintenanceCategory() {
       this.add_maintenance_dialog = true;
     },

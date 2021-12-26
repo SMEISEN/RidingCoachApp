@@ -242,20 +242,36 @@ export default {
     },
   },
   methods: {
+    /**
+     * Emits a message to the parent component that the save button was clicked and resets the form
+     * validation.
+     */
     onSave() {
       this.$emit('saveClicked');
       this.resetValidation();
     },
+    /**
+     * Emits a message to the parent component that the cancel button was clicked and resets the
+     * form validation.
+     */
     onCancel() {
       this.$emit('cancelClicked');
       this.resetValidation();
       this.maintenance_dialog = false;
     },
+    /**
+     * Resets the validation of the maintenance dialog form.
+     */
     resetValidation() {
       if (typeof this.$refs.validation_form !== 'undefined') {
         this.$refs.validation_form.resetValidation();
       }
     },
+    /**
+     * Dynamically sets the chip color of the maintenance tags.
+     * @param {string} item maintenance tag
+     * @returns {string} color template code
+     */
     chipColor(item) {
       if (item === 'checked') {
         return 'success';
@@ -268,6 +284,10 @@ export default {
       }
       return 'grey';
     },
+    /**
+     * Removes the clicked maintenance tag chip.
+     * @param {string} item maintenance tag
+     */
     removeTagChips(item) {
       this.maintenance_object.tags_default.splice(this.maintenance_object.tags_default
         .indexOf(item), 1);

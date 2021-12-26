@@ -85,6 +85,9 @@ export default {
     this.maintenance_name = '';
   },
   methods: {
+    /**
+     * Posts a new maintenance item.
+     */
     postMaintenanceItem() {
       this.maintenance_object.category = this.category_name;
       this.maintenance_object.name = this.maintenance_name;
@@ -119,6 +122,9 @@ export default {
           });
         });
     },
+    /**
+     * Initializes the object for the add maintenance dialog form.
+     */
     initMaintenanceObject() {
       this.maintenance_object.maintenance_id = null;
       this.maintenance_object.bike_id = null;

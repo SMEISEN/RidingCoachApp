@@ -71,6 +71,9 @@ export default {
     this.initMaintenanceObject();
   },
   methods: {
+    /**
+     * Edits a maintenance item.
+     */
     putMaintenanceItem() {
       const mtnId = this.maintenance_object.maintenance_id;
       this.maintenance_object.category = this.category_name;
@@ -97,6 +100,9 @@ export default {
           });
         });
     },
+    /**
+     * Initializes the object for the edit maintenance dialog form.
+     */
     initMaintenanceObject() {
       this.maintenance_object = this.categoryObject[this.maintenance_name];
     },
