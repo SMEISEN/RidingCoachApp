@@ -94,6 +94,9 @@ export default {
     this.getSpareparts();
   },
   methods: {
+    /**
+     * Queries the spare part items for the selected module.
+     */
     getSpareparts() {
       const payload = { module: this.current_module };
       apiQuerySpareparts(payload)

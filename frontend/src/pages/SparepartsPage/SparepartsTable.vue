@@ -255,10 +255,18 @@ export default {
     this.sparepart_child.push(this._.cloneDeep(this.sparepart_child_template));
   },
   methods: {
+    /**
+     * Emits a message to the parent component that the delete button was clicked and parses the
+     * spare part id.
+     * @param {string} sparepartitemId id of the sparepart
+     */
     onDeleteButton(sparepartitemId) {
       this.sparepartitem_id = sparepartitemId;
       this.confirm_delete_dialog = true;
     },
+    /**
+     * Deletes a spare part item after the deletion was confirmed.
+     */
     deletionConfirmed() {
       apiDeleteSparepartitemItem(this.sparepartitem_id)
         .then(() => {
@@ -278,6 +286,11 @@ export default {
           });
         });
     },
+    /**
+     * Changes the name of a spare part
+     * @param {string} sparepartId id of the spare part
+     * @param {string} newName new name entered by the user
+     */
     changeSparepartName(sparepartId, newName) {
       const payload = { name: newName };
       apiPutSparepartItem(payload, sparepartId)
@@ -298,6 +311,11 @@ export default {
           });
         });
     },
+    /**
+     * Changes the minimal stock of a spare part where a warning is raised.
+     * @param {string} sparepartId id of the spare part
+     * @param {number} newMinStock new minimal stock entered by the user
+     */
     changeSparepartMinStock(sparepartId, newMinStock) {
       const payload = { min_stock: newMinStock === '' ? null : newMinStock };
       apiPutSparepartItem(payload, sparepartId)
@@ -318,12 +336,27 @@ export default {
           });
         });
     },
+    /**
+     * Increases the minimal stock of a spare part item.
+     * @param {number} minStock
+     * @returns {number} updated stock
+     */
     increaseStock(minStock) {
       return incrementNumber(minStock, 1);
     },
+    /**
+     * Decrease the minimal stock of a spare part item.
+     * @param {number} minStock
+     * @returns {number} updated stock
+     */
     decreaseStock(minStock) {
       return decrementNumber(minStock, 1);
     },
+    /**
+     * Changes a spare part item using the given payload.
+     * @param {string} sparepartitemId id of the spare part
+     * @param {object} payload object of the changed key-value pairs
+     */
     changeSparepartItem(sparepartitemId, payload) {
       apiPutSparepartitemItem(payload, sparepartitemId)
         .then((res) => {
@@ -343,6 +376,9 @@ export default {
           });
         });
     },
+    /**
+     * Adds a new spare part.
+     */
     addSparepart() {
       apiPostSparepart(this.sparepart_parent)
         .then((res) => {
@@ -359,6 +395,10 @@ export default {
           });
         });
     },
+    /**
+     * Adds new spare part items to the given parent spare part.
+     * @param {string} sparepartId id of the spare part
+     */
     addSparepartItems(sparepartId) {
       const payload = this.sparepart_child.map((o) => ({ ...o, sparepart_id: sparepartId }));
       for (let i = 0; i < this.sparepart_child.length; i += 1) {
@@ -386,6 +426,9 @@ export default {
           });
       }
     },
+    /**
+     * Initialized the add spare part dialog form.
+     */
     initForm() {
       initObject(this.sparepart_parent, null);
       this.sparepart_child = [this._.cloneDeep(this.sparepart_child_template)];
