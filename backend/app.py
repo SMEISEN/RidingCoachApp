@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 from flask import Flask, Blueprint, current_app, send_file
 from flask_cors import CORS
-from werkzeug.security import generate_password_hash, check_password_hash
 from backend.api import api
 from backend.api.endpoints.maintenance import ns as maintenance_namespace
 from backend.api.endpoints.history import ns as history_namespace
@@ -50,9 +49,8 @@ migrate.init_app(app, db)
 CORS(app)
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def index_client(path):
+@app.route('/')
+def index_client():
     dist_dir = current_app.config['DIST_DIR']
     entry = os.path.join(dist_dir, 'index.html')
     return send_file(entry)
@@ -67,6 +65,15 @@ def favicon_client():
 
 @app.route('/assets/<path:file>')
 def assets_client(file):
+    # remove slashes and backslashes
+    file = file.replace("/", "").replace("\\", "")
+
+    # remove multiple dots
+    dots = file.count(".")
+    dots = [f"{i*'.'}" for i in range(2, dots)]
+    for dot in dots:
+        file = file.replace(dot, "")
+
     dist_dir = current_app.config['DIST_DIR']
     entry = os.path.join(dist_dir, 'assets', file)
     return send_file(entry)
