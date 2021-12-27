@@ -249,7 +249,7 @@ class HistoryQuery(Resource):
         elif requested.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['operating_hours'] = {
                 'values': requested.get('operating_hours')['values'],
-                'operators': requested.get('datetime_display')['operators'],
+                'operators': requested.get('operating_hours')['operators'],
             }
 
         for attr, item in filter_data.items():

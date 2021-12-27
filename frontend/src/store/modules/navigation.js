@@ -12,6 +12,7 @@ const getDefaultState = () => ({
   training_session_tabs: 1,
   training_session_tab: 0,
   training_session_panel: 0,
+  tire_dialog: false,
 });
 const state = getDefaultState();
 const getters = {
@@ -26,6 +27,7 @@ const getters = {
   getTrainingDialogSessionTabs: (state) => state.training_session_tabs,
   getTrainingDialogSessionActiveTab: (state) => state.training_session_tab,
   getTrainingDialogSessionPanel: (state) => state.training_session_panel,
+  getTireDialogState: (state) => state.tire_dialog,
 };
 const mutations = {
   setNavigationDrawerState(state, drawerState) {
@@ -60,6 +62,9 @@ const mutations = {
   },
   setTrainingDialogSessionPanel(state, setupPanel) {
     state.training_session_panel = setupPanel;
+  },
+  setTireDialogState(state, tireState) {
+    state.tire_dialog = tireState;
   },
   resetNavigationState(state) {
     Object.assign(state, getDefaultState());

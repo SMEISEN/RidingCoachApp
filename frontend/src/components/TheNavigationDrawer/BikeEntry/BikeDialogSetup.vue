@@ -106,6 +106,7 @@
           <td style="border-bottom: none">
             <v-btn
               icon
+              color="error"
               @click="deleteSetupRow(index)"
             >
               <v-icon>

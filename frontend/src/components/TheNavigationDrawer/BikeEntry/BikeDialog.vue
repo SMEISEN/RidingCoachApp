@@ -72,6 +72,11 @@ import {
   apiPutBike,
   apiDeleteBike,
 } from '../../api/BikeApi';
+import {
+  apiQueryTire,
+  apiPutTireItem,
+} from '../../api/TireApi';
+
 import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
 import BikeDialogSetup from './BikeDialogSetup.vue';
 import BikeDialogOptional from './BikeDialogOptional.vue';
@@ -95,6 +100,10 @@ export default {
     },
     setupIndividualTemplate: {
       type: Object,
+      required: true,
+    },
+    operatingHoursInitial: {
+      type: Number,
       required: true,
     },
   },
@@ -121,11 +130,40 @@ export default {
         this.$store.commit('setAllBikes', value);
       },
     },
+    operating_hours_initial() {
+      return this.operatingHoursInitial;
+    },
   },
   updated() {
     this.window_height = window.innerHeight;
   },
   methods: {
+    updateTires(BikeId) {
+      const delta_operating_hours =
+        this.bikeFormObject.operating_hours - this.operating_hours_initial;
+      const query = {
+        bike_id: BikeId,
+        active: true,
+      };
+      apiQueryTire(query).then((res) => {
+        const active_tires = res.data;
+        for (let i = 0; i < active_tires.length; i++) {
+          const tire_id = active_tires[i].tire_id
+          const payload = {
+            operating_hours: Number.parseFloat(
+              active_tires[i].operating_hours + delta_operating_hours).toFixed(2),
+          };
+          apiPutTireItem(payload, tire_id).then(() => {
+            if (active_tires[i].axis === "Front") {
+              this.$store.commit('updateCurrentFrontTireOperatingHours', payload.operating_hours);
+            } else if (active_tires[i].axis === "Rear") {
+              this.$store.commit('updateCurrentRearTireOperatingHours', payload.operating_hours);
+            }
+            this.$store.commit('lastTireUpdatedId', tire_id);
+          })
+        }
+      });
+    },
     postBike(payload) {
       apiPostBike(payload)
         .then((res) => {
@@ -226,6 +264,7 @@ export default {
       } else {
         payload.bike_id = BikeId;
         this.putBike(BikeId, payload);
+        this.updateTires(BikeId);
       }
       this.$store.commit('setBikeEditFlag', false);
       this.$store.commit('setBikeDialogState', false);
