@@ -164,10 +164,6 @@ export default {
     confirm_delete_dialog: false,
     row_to_be_deleted: null,
   }),
-  updated() {
-  },
-  created() {
-  },
   methods: {
     addSetupRow() {
       this.bikeFormObject.setup_individual.push(this._.cloneDeep(this.setupIndividualTemplate));
@@ -189,7 +185,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

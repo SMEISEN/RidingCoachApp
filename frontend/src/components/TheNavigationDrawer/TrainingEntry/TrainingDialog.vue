@@ -130,8 +130,6 @@ export default {
   updated() {
     this.window_height = window.innerHeight;
   },
-  created() {
-  },
   methods: {
     onTrainingSave() {
       const bikeId = this.$store.getters.getCurrentBikeId;
@@ -281,7 +279,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -67,8 +67,6 @@ export default {
       return [];
     },
   },
-  updated() {
-  },
   created() {
     this.getSetupGroups();
   },
@@ -89,7 +87,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

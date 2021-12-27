@@ -79,8 +79,6 @@ export default {
       }
     });
   },
-  updated() {
-  },
   methods: {
     /**
      * Gets current operating hours of the selected bike and opens the add history dialog.

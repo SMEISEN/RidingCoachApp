@@ -95,8 +95,6 @@ export default {
       }
     });
   },
-  updated() {
-  },
   methods: {
     /**
      * Gets the maintenance items for the selected bike.

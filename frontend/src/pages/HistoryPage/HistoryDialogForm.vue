@@ -281,10 +281,6 @@ export default {
       }
     },
   },
-  created() {
-  },
-  updated() {
-  },
   methods: {
     /**
      * Defines the maintenance tag chip color of item depending on name.
@@ -479,7 +475,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

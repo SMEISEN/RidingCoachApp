@@ -360,10 +360,6 @@ export default {
       required: true,
     },
   },
-  updated() {
-  },
-  created() {
-  },
   methods: {
     /**
      * Dynamically defines the color of the setup avatars, showing the current click, depending on
@@ -579,7 +575,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

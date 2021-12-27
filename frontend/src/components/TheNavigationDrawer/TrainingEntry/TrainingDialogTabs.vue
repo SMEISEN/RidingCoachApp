@@ -274,10 +274,6 @@ export default {
       return this.$store.getters.getTrainingDialogState;
     },
   },
-  updated() {
-  },
-  created() {
-  },
   methods: {
     addSetupTab() {
       const numberOfTabs = this.trainingFormObject.setup_fixed.length - 1;
@@ -335,7 +331,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

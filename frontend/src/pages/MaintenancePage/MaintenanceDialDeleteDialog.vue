@@ -77,10 +77,6 @@ export default {
     delete_checkbox: {},
     confirm_delete_dialog: false,
   }),
-  created() {
-  },
-  updated() {
-  },
   methods: {
     /**
      * Emits a message to the parent component that the maintenance deletion was canceled.
@@ -123,7 +119,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

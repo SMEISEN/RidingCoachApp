@@ -18,10 +18,6 @@
 
 export default {
   name: 'TheFooter',
-  created() {
-  },
-  updated() {
-  },
   methods: {
     setPage(test) {
       this.$emit('currentPage', test);
@@ -29,7 +25,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

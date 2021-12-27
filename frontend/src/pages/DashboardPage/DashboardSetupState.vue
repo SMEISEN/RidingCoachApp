@@ -80,8 +80,6 @@ export default {
       this.processSetupData();
     },
   },
-  updated() {
-  },
   created() {
     this.processSetupData();
   },
@@ -103,7 +101,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

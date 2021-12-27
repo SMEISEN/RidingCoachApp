@@ -75,8 +75,6 @@ export default {
       },
     },
   },
-  updated() {
-  },
   created() {
     this.$store.subscribe((mutation) => {
       if (mutation.type === 'setTrainingEditId') {
@@ -197,7 +195,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

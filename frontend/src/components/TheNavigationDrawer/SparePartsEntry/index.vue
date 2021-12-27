@@ -14,7 +14,3 @@ export default {
   name: 'TheNavigationDrawerSpareParts',
 };
 </script>
-
-<style scoped>
-
-</style>

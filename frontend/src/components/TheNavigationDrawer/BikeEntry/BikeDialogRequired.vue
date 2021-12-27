@@ -90,10 +90,6 @@ export default {
       required: true,
     },
   },
-  updated() {
-  },
-  created() {
-  },
   methods: {
     incrementHour() {
       this.bikeFormObject.operating_hours = incrementNumber(
@@ -118,7 +114,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

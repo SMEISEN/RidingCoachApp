@@ -236,10 +236,6 @@ export default {
       ];
     },
   },
-  updated() {
-  },
-  created() {
-  },
   methods: {
     calculate_delta(thisLap) {
       return (thisLap - this.fastest_lap).toFixed(2);
@@ -329,7 +325,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -79,8 +79,6 @@ export default {
       return this.$store.getters.getCurrentBikeId;
     },
   },
-  updated() {
-  },
   created() {
     this.getTrainingsAndHistory();
     this.$store.subscribe((mutation) => {

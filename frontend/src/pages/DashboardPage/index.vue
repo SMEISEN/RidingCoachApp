@@ -198,8 +198,6 @@ export default {
       }
     });
   },
-  updated() {
-  },
   methods: {
     /**
      * Flattens the nested maintenance object fetched from the database to an array.

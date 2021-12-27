@@ -65,8 +65,6 @@ export default {
   created() {
     this.selected_chips_array = this.getDefaultTags();
   },
-  updated() {
-  },
   methods: {
     /**
      * Gets the default tags for a maintenance item.
@@ -125,7 +123,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

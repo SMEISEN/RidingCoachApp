@@ -33,10 +33,6 @@ export default {
       },
     },
   },
-  created() {
-  },
-  updated() {
-  },
   methods: {
     /**
      * Emits a message to the parent component that the undo button of the snackbar was clicked and
@@ -49,7 +45,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

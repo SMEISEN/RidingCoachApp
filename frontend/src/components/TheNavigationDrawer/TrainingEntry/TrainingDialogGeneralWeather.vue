@@ -113,8 +113,6 @@ export default {
       return this.$store.getters.getTrainingDialogSetupActiveTab;
     },
   },
-  updated() {
-  },
   created() {
     this.getGeneralProperties();
   },
@@ -239,7 +237,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

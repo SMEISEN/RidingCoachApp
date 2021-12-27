@@ -125,8 +125,6 @@ export default {
   updated() {
     this.window_height = window.innerHeight;
   },
-  created() {
-  },
   methods: {
     postBike(payload) {
       apiPostBike(payload)
@@ -243,7 +241,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

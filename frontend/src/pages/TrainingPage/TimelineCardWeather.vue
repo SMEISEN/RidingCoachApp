@@ -105,8 +105,6 @@ export default {
       },
     },
   },
-  updated() {
-  },
   created() {
     this.extractTemperature();
   },
@@ -151,7 +149,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

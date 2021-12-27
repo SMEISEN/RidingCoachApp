@@ -50,10 +50,6 @@ export default {
       required: true,
     },
   },
-  updated() {
-  },
-  created() {
-  },
   methods: {
     onCancel() {
       this.$emit('cancelButtonClicked');
@@ -66,7 +62,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

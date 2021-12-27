@@ -162,10 +162,6 @@ export default {
     history_id: null,
     confirm_delete_dialog: false,
   }),
-  created() {
-  },
-  updated() {
-  },
   methods: {
     /**
      * Emits message to parent that the edit button of a specific history entry was clicked.
@@ -207,7 +203,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

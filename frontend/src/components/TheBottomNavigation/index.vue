@@ -118,8 +118,6 @@ export default {
       }
     });
   },
-  updated() {
-  },
   methods: {
     getSparepartWarnings() {
       apiGetSparepartWarnings().then((res) => {
@@ -134,7 +132,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

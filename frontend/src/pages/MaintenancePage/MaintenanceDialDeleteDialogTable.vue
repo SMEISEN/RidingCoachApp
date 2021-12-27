@@ -118,13 +118,5 @@ export default {
         ['desc', 'asc']);
     },
   },
-  created() {
-  },
-  updated() {
-  },
 };
 </script>
-
-<style scoped>
-
-</style>

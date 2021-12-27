@@ -94,8 +94,6 @@ export default {
       }
     });
   },
-  updated() {
-  },
   methods: {
     /**
      * Highlights the current page in the bottom navigation.
