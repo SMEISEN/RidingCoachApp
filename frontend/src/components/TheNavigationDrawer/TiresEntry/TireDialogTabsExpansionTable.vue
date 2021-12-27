@@ -223,6 +223,12 @@ export default {
     confirm_delete_dialog: false,
   }),
   methods: {
+    /**
+     * Increases the operating hours of a tire by 0.1 h.
+     * @param {number} inputNumber current operating hours
+     * @param {string} tireId id of the tire
+     * @returns {number} increases operating hours
+     */
     increment(inputNumber, tireId) {
       const operating_hours = incrementNumber(inputNumber, 0.1, 1);
       this.updateTireOperatingHours(tireId, operating_hours);
@@ -230,6 +236,12 @@ export default {
       this.tire_id_last_updated = tireId;
       return operating_hours;
     },
+    /**
+     * Decreases the operating hours of a tire by 0.1 h.
+     * @param {number} inputNumber current operating hours
+     * @param {string} tireId id of the tire
+     * @returns {number} decreases operating hours
+     */
     decrement(inputNumber, tireId) {
       const operating_hours = decrementNumber(inputNumber, 0.1, 1);
       this.updateTireOperatingHours(tireId, operating_hours);
@@ -237,6 +249,13 @@ export default {
       this.tire_id_last_updated = tireId;
       return operating_hours;
     },
+    /**
+     * Updates the operating hours of a tire after a timeout of 5 s or if data of another tire is
+     * modified in the dialog.
+     * @param {string} tireId id of the tire
+     * @param {number} operatingHours operating hours of the tire
+     * @param {string} type
+     */
     updateTireOperatingHours(tireId, operatingHours, type) {
       if (type === 'entry') {
         const payload = { operating_hours: operatingHours };
@@ -254,6 +273,11 @@ export default {
         }
       }
     },
+    /**
+     * Changes the active state tire of the selected bike.
+     * @param {string} tireId id of the tire
+     * @param {boolean} active true if the tire is active, false otherwise
+     */
     updateTireActivation(tireId, active) {
       const payload = { active: active };
       apiPutTireItem(payload, tireId).then(() => {
@@ -265,11 +289,19 @@ export default {
         this.$store.commit('lastTireUpdatedId', tireId);
       })
     },
+    /**
+     * Opens the edit tire dialog and initializes the form input with the data of the tire to be
+     * edited.
+     * @param {string} tireId id of the tire to be edited
+     */
     editTire(tireId) {
       [this.tire_data_object] = this.tire_array.filter((i) => i.tire_id === tireId);
       this.tire_dialog_task = 'Edit'
       this.tire_dialog = true;
     },
+    /**
+     * Opens the add tire dialog and initializes the form input.
+     */
     addTire() {
       if (this.tire_array.length > 0) {
         this.tire_data_object = this._.cloneDeep(this.tire_array[this.tire_array.length -1]);
@@ -293,19 +325,35 @@ export default {
       this.tire_dialog_task = 'Add'
       this.tire_dialog = true;
     },
+    /**
+     * Opens the confirm delete dialog.
+     * @param {string} TireId id of the tire to be deleted
+     */
     deleteTire(TireId) {
       this.confirm_delete_dialog = true;
       this.tire_to_be_deleted = TireId;
     },
+    /**
+     * Deletes the tire after the deletion wa confirmed and emits a message to the parent component
+     * to refresh the table of tires.
+     */
     deletionConfirmed() {
       apiDeleteTireItem(this.tire_to_be_deleted).then(() => {
         this.$emit('refreshTires');
       });
       this.tire_to_be_deleted = null;
     },
+    /**
+     * Resets the tire form.
+     */
     resetTireForm() {
       this.tire_data_object = this._.cloneDeep(this.tire_data_object_template);
     },
+    /**
+     * Activate the selected tire and deactivate other tires. Ether deactivate the other tires from
+     * the same category and same axis or the tires from the different category and same axis.
+     * @param {string} tireId id of the tire
+     */
     activateTire(tireId) {
       this.updateTireActivation(tireId, true);
       // deactivate other tires of the same category and same axis
@@ -337,7 +385,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

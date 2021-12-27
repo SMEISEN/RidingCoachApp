@@ -85,6 +85,10 @@ export default {
     });
   },
   methods: {
+    /**
+     * Checks if a training is active in the vuex store and get the training entry from the
+     * database. Otherwise, query the database for a training of the current day
+     */
     editTraining() {
       const trainingId = this.$store.getters.getTrainingEditId;
       if (trainingId !== null) {
@@ -120,6 +124,9 @@ export default {
           });
       }
     },
+    /**
+     * Initializes the training dialog form.
+     */
     initTrainingForm() {
       initObject(this.training_form_object, null);
       this.training_form_object.date = new Date().toISOString().substr(0, 10);
@@ -128,6 +135,9 @@ export default {
       this.$store.commit('setTrainingDialogSetupTabs', 1);
       this.$store.commit('setTrainingDialogSetupActiveTab', 0);
     },
+    /**
+     * Initializes the setup data of a training.
+     */
     initTrainingFormSetup() {
       const bikeIndex = indexOfObjectValueInArray(
         this.bike_array, this.$store.getters.getCurrentBikeId,
@@ -147,6 +157,10 @@ export default {
       }
       this.training_form_object.sessions = [];
     },
+    /**
+     * Compile the training data collected from the database to the training dialog form.
+     * @param {object} data data of the database
+     */
     compileTrainingData(data) {
       this.training_form_object.training_id = data.training_id;
       this.training_form_object.race_track = data.location;

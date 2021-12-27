@@ -100,19 +100,35 @@ export default {
     this.getSetupGroups();
   },
   methods: {
+    /**
+     * Increases the operating hours by 0.1 h.
+     * @param {number} ind index of the corresponding tab
+     */
     incrementHour(ind) {
       this.trainingFormObject.setup_fixed[ind].operating_hours = incrementNumber(
         this.trainingFormObject.setup_fixed[ind].operating_hours, 0.1, 1,
       );
     },
+    /**
+     * Decreases the operating hours by 0.1 h.
+     * @param {number} ind index of the corresponding tab
+     */
     decrementHour(ind) {
       this.trainingFormObject.setup_fixed[ind].operating_hours = decrementNumber(
         this.trainingFormObject.setup_fixed[ind].operating_hours, 0.1, 1,
       );
     },
+    /**
+     * Filters the engine setup for the given setup group.
+     * @param {string} group setup group
+     * @returns {T[]}
+     */
     setupByGroup(group) {
       return this.engine_setup.filter((i) => i.group === group);
     },
+    /**
+     * Extracts the groups of the engine setup.
+     */
     getSetupGroups() {
       this.setup_groups = this._.uniq(
         Object.assign(this.setup_groups,

@@ -351,17 +351,21 @@ export default {
     ],
   }),
   methods: {
-    addTire() {
-    },
+    /**
+     * Resets the validation of the dialog form in the tire expander.
+     */
     resetValidation() {
       if (typeof this.$refs.validation_form !== 'undefined') {
         this.$refs.validation_form.resetValidation();
       }
     },
+    /**
+     * Depending on task, add a new tire to the database or modify an existing one.
+     */
     onSave() {
       const payload = this.tire_data_object;
       const tire_id = this.tire_data_object.tire_id;
-      if (this.task == 'Add') {
+      if (this.task === 'Add') {
         apiPostTire(payload).then((res) => {
           this.tire_data_object.tire_id = res.data;
           this.$emit('refreshTires');
@@ -369,7 +373,7 @@ export default {
           this.tire_dialog = false;
         });
       } else {
-        apiPutTireItem(payload, tire_id).then((res) => {
+        apiPutTireItem(payload, tire_id).then(() => {
           this.$emit('refreshTires');
           this.$emit('resetTireForm');
           this.tire_dialog = false;
@@ -377,16 +381,25 @@ export default {
       }
       this.resetValidation();
     },
+    /**
+     * Resets the validation of the dialog form in the tire expander and closes the tire dialog.
+     */
     onCancel() {
       this.resetValidation();
       this.$emit('resetTireForm');
       this.tire_dialog = false;
     },
+    /**
+     * Increases the operating hours of a tire by 0.1 h.
+     */
     increment() {
       this.tire_data_object.operating_hours = incrementNumber(
         this.tire_data_object.operating_hours, 0.1, 1,
       );
     },
+    /**
+     * Decreases the operating hours of a tire by 0.1 h.
+     */
     decrement() {
       this.tire_data_object.operating_hours = decrementNumber(
         this.tire_data_object.operating_hours, 0.1, 1,
@@ -395,7 +408,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

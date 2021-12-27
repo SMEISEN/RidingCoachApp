@@ -42,18 +42,20 @@ export default {
     TireDialogTabsExpansion
   },
   computed: {
+    /**
+     * Switches to the slick tires.
+     * @returns {array} array of slick tires of the selected bike
+     */
     tires_slick() {
       return this.tireArray.filter((i) => i.category === 'Slick');
     },
+    /**
+     * Switches to the rain tires.
+     * @returns {array} array of rain tires of the selected bike
+     */
     tires_rain() {
       return this.tireArray.filter((i) => i.category === 'Rain');
     },
   },
-  data: () => ({
-  }),
 };
 </script>
-
-<style scoped>
-
-</style>

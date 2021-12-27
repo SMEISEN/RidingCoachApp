@@ -237,9 +237,20 @@ export default {
     },
   },
   methods: {
+    /**
+     * Calculates the delta between this lap and the fastest lap.
+     * @param {number} thisLap the lap time
+     * @returns {string} time delta
+     */
     calculate_delta(thisLap) {
       return (thisLap - this.fastest_lap).toFixed(2);
     },
+    /**
+     * Changes the validity of the given tap.
+     * @param {string} lapId id of the lap
+     * @param {number} lapIndex index of the lap in the table
+     * @param {boolean} valid true if the lap is valid, false otherwise
+     */
     changeLapValidity(lapId, lapIndex, valid) {
       this.laptimes[lapIndex].valid = !valid;
       let payload = { valid: !valid };
@@ -263,6 +274,12 @@ export default {
           });
         });
     },
+    /**
+     * Changes the track layout of the given lap.
+     * @param {string} lapId id of the lap
+     * @param {number} lapIndex index of the lap in the table
+     * @param {string} trackLayout track layout
+     */
     changeLapTrackLayout(lapId, lapIndex, trackLayout) {
       if (this.track_layouts.length > 1) {
         const currentIndex = this.track_layouts.indexOf(trackLayout);
@@ -274,6 +291,13 @@ export default {
       }
       this.closeDialog();
     },
+    /**
+     * Adds a new track layout if long pressed on the layout field. Defaults to the next character
+     * in the alphabet.
+     * @param {string} lapId id of the lap
+     * @param {number} lapIndex index of the lap in the table
+     * @param {string} trackLayout track layout
+     */
     longPress(lapId, lapIndex, trackLayout) {
       this.old_layout = trackLayout;
       this.new_layout = String.fromCharCode(
@@ -283,6 +307,10 @@ export default {
       this.lap_index = lapIndex;
       this.layout_dialog = true;
     },
+    /**
+     * Saves the layout name, updates the lap time entries in the database, and closes the layout
+     * dialog.
+     */
     saveLayout() {
       const lapId = this.lap_id;
       if (this.apply_to_all === true) {
@@ -300,11 +328,19 @@ export default {
       }
       this.closeDialog();
     },
+    /**
+     * Closes the layout dialog without saving the changes.
+     */
     closeDialog() {
       this.new_layout = '';
       this.lap_id = null;
       this.layout_dialog = false;
     },
+    /**
+     * Modifies a lap time item in the database.
+     * @param {object} payload lap time object
+     * @param {string} lapId id of the lap time item
+     */
     putLaptimeItem(payload, lapId) {
       apiPutLaptimeItem(payload, lapId)
         .then(() => {

@@ -63,13 +63,12 @@ export default {
     this.window_height = window.innerHeight;
   },
   methods: {
+    /**
+     * Closes the tire dialog.
+     */
       onTireCancel() {
       this.tire_dialog = false;
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -233,6 +233,10 @@ export default {
     });
   },
   methods: {
+    /**
+     * Gets the location from the browser.
+     * @returns {promise} Promise with API answer
+     */
     getLocation() {
       return new Promise((resolve, reject) => {
         apiGetLocation()
@@ -250,6 +254,10 @@ export default {
           });
       });
     },
+    /**
+     * Gets the current weather information for the geolocation.
+     * @returns {promise} Promise with API answer
+     */
     getCurrentWeather() {
       return new Promise((resolve, reject) => {
         apiGetWeather(this.location_object)
@@ -270,6 +278,9 @@ export default {
           });
       });
     },
+    /**
+     * Depending on the temperature, recommend the optimal tire pressure.
+     */
     getRecommendedTirePressure() {
       if (this.slick_front_pressure !== null) {
         this.tire_pressure_recommendation
@@ -296,6 +307,10 @@ export default {
         this.tire_pressure_recommendation.rain_rear = '';
       }
     },
+    /**
+     * Increases the pressure of the front tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     incrementTirePressureFront(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_front = incrementNumber(
@@ -307,6 +322,10 @@ export default {
         );
       }
     },
+    /**
+     * Decreases the pressure of the front tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     decrementTirePressureFront(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_front = decrementNumber(
@@ -318,6 +337,10 @@ export default {
         );
       }
     },
+    /**
+     * Increases the pressure of the rear tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     incrementTirePressureRear(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_rear = incrementNumber(
@@ -329,6 +352,10 @@ export default {
         );
       }
     },
+    /**
+     * Decreases the pressure of the rear tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     decrementTirePressureRear(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_rear = decrementNumber(

@@ -113,11 +113,18 @@ export default {
     this.getGeneralProperties();
   },
   methods: {
+    /**
+     * Firstly, gets the location, then, gets the weather information for this location.
+     */
     getGeneralProperties() {
       this.getLocation().then(() => {
         this.getWeather();
       });
     },
+    /**
+     * Gets the geolocation information from the browser.
+     * @returns {promise} promise with API answer
+     */
     getLocation() {
       return new Promise((resolve, reject) => {
         apiGetLocation()
@@ -135,6 +142,9 @@ export default {
           });
       });
     },
+    /**
+     * Gets the weather information for a specific geolocation.
+     */
     getWeather() {
       apiGetWeather(this.location_object)
         .then((res) => {
@@ -152,6 +162,12 @@ export default {
           });
         });
     },
+    /**
+     * Extracts the temperature time series from the weather objects.
+     * @param {object} weatherPastFuture historic and forecast of weather data
+     * @param {object} weatherCurrent weather data for the current time stamp
+     * @param {string} timestampCurrent current time stamp
+     */
     extractTemperature(weatherPastFuture, weatherCurrent, timestampCurrent) {
       this.data_sets[0].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[0].borderColor = this.$vuetify.theme.themes.light.accent;

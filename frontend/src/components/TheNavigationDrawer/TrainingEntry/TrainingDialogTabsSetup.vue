@@ -71,9 +71,17 @@ export default {
     this.getSetupGroups();
   },
   methods: {
+    /**
+     * Filters the suspension setup for the given setup group.
+     * @param {string} group setup group
+     * @returns {T[]}
+     */
     setupByGroup(group) {
       return this.suspension_setup.filter((i) => i.group === group);
     },
+    /**
+     * Extracts the groups of the suspension setup.
+     */
     getSetupGroups() {
       this.setup_groups = this._.uniq(
         Object.assign(this.setup_groups,

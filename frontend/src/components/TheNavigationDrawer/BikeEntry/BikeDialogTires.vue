@@ -260,34 +260,70 @@ export default {
     }
   },
   methods: {
+    /**
+     * Adds a new pressure-temperature row to the tire setup table.
+     */
     addSetupRow() {
       this.tire_pressure_dialog_array = this.tire_pressure_dialog_array
         .concat(this._.cloneDeep(this.tire_pressure_template));
     },
+    /**
+     * Opens the confirm delete dialog for the indexed setup row from the tire setup table.
+     * @param {number} index index of the row to be deleted
+     */
     deleteSetupRow(index) {
       this.confirm_delete_dialog = true;
       this.row_to_be_deleted = index;
     },
+    /**
+     * Deletes the setup row from the tire setup table after the deletion was confirmed.
+     */
     deletionConfirmed() {
       this.tire_pressure_dialog_array.splice(this.row_to_be_deleted, 1);
       this.row_to_be_deleted = null;
     },
+    /**
+     * Increases the temperature of a tire setup entry.
+     * @param {number} inputNumber current temperature
+     * @returns {number}
+     */
     incrementTemperature(inputNumber) {
       return incrementNumber(inputNumber, 1, 0);
     },
+    /**
+     * Decreases the temperature of a tire setup entry.
+     * @param {number} inputNumber current temperature
+     * @returns {number}
+     */
     decrementTemperature(inputNumber) {
       return decrementNumber(inputNumber, 1, 0);
     },
+    /**
+     * Increases the pressure of a tire setup entry.
+     * @param {number} inputNumber current pressure
+     * @returns {number}
+     */
     incrementPressure(inputNumber) {
       return incrementNumber(inputNumber, 0.05, 2);
     },
+    /**
+     * Decreases the pressure of a tire setup entry.
+     * @param {number} inputNumber current pressure
+     * @returns {number}
+     */
     decrementPressure(inputNumber) {
       return decrementNumber(inputNumber, 0.05, 2);
     },
+    /**
+     * Saves the input and closes the tire menu.
+     */
     saveInput() {
       this.tire_pressure_array = this._.cloneDeep(this.tire_pressure_dialog_array);
       this.tire_menu = false;
     },
+    /**
+     * Ignores the input and closes the tire menu.
+     */
     cancelInput() {
       this.tire_pressure_dialog_array = this._.cloneDeep(this.tire_pressure_array);
       if (this.tire_pressure_dialog_array.length === 0) {

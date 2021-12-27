@@ -91,21 +91,33 @@ export default {
     },
   },
   methods: {
+    /**
+     * Increase the operating hours by 0.1 h.
+     */
     incrementHour() {
       this.bikeFormObject.operating_hours = incrementNumber(
         this.bikeFormObject.operating_hours, 0.1, 1,
       );
     },
+    /**
+     * Decreases the operating hours by 0.1 h.
+     */
     decrementHour() {
       this.bikeFormObject.operating_hours = decrementNumber(
         this.bikeFormObject.operating_hours, 0.1, 1,
       );
     },
+    /**
+     * Increase the years by 1 a.
+     */
     incrementYear() {
       this.bikeFormObject.year = incrementNumber(
         this.bikeFormObject.year, 1, 0,
       );
     },
+    /**
+     * Decreases the years by 1 a.
+     */
     decrementYear() {
       this.bikeFormObject.year = decrementNumber(
         this.bikeFormObject.year, 1, 0,
