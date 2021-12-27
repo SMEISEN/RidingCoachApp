@@ -10,11 +10,13 @@ import info from './modules/info';
 import spareparts from './modules/spareparts';
 import weather from './modules/weather';
 
+// use js-cookies to save credentials
 Cookies.defaults = {
   sameSite: 'None',
   Secure: true,
 };
 
+// use vuex store for saving values used by different components
 Vue.use(Vuex);
 
 export default new Vuex.Store({
