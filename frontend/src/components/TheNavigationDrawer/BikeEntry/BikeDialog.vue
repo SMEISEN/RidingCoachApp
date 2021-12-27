@@ -143,28 +143,29 @@ export default {
      * @param {string} BikeId id of the selected bike
      */
     updateTires(BikeId) {
-      const delta_operating_hours =
-        this.bikeFormObject.operating_hours - this.operating_hours_initial;
+      const deltaOperatingHours = this.bikeFormObject.operating_hours
+        - this.operating_hours_initial;
       const query = {
         bike_id: BikeId,
         active: true,
       };
       apiQueryTire(query).then((res) => {
-        const active_tires = res.data;
-        for (let i = 0; i < active_tires.length; i++) {
-          const tire_id = active_tires[i].tire_id
+        const activeTires = res.data;
+        for (let i = 0; i < activeTires.length; i += 1) {
+          const tireId = activeTires[i].tire_id;
           const payload = {
             operating_hours: Number.parseFloat(
-              active_tires[i].operating_hours + delta_operating_hours).toFixed(2),
+              activeTires[i].operating_hours + deltaOperatingHours,
+            ).toFixed(2),
           };
-          apiPutTireItem(payload, tire_id).then(() => {
-            if (active_tires[i].axis === "Front") {
+          apiPutTireItem(payload, tireId).then(() => {
+            if (activeTires[i].axis === 'Front') {
               this.$store.commit('updateCurrentFrontTireOperatingHours', payload.operating_hours);
-            } else if (active_tires[i].axis === "Rear") {
+            } else if (activeTires[i].axis === 'Rear') {
               this.$store.commit('updateCurrentRearTireOperatingHours', payload.operating_hours);
             }
-            this.$store.commit('lastTireUpdatedId', tire_id);
-          })
+            this.$store.commit('lastTireUpdatedId', tireId);
+          });
         }
       });
     },

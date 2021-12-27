@@ -110,11 +110,11 @@
               />
             </v-col>
             <v-col
-                cols="12"
-                xs="4"
-                sm="4"
-                md="4"
-              >
+              cols="12"
+              xs="4"
+              sm="4"
+              md="4"
+            >
               <v-text-field
                 v-model.number="tire_data_object.operating_hours"
                 append-outer-icon="mdi-plus"
@@ -152,13 +152,13 @@
                   hide-details
                   thumb-label
                   v-bind="attrs"
-                  v-on="on"
                   max="1"
                   min="0"
                   step="0.01"
                   color="black"
                   track-color="neutral"
                   prepend-icon="mdi-arrow-left-drop-circle"
+                  v-on="on"
                 >
                   <template v-slot:thumb-label="{ value }">
                     {{ parseInt(value * 100) }}
@@ -175,12 +175,12 @@
                   hide-details
                   thumb-label
                   v-bind="attrs"
-                  v-on="on"
                   max="1"
                   min="0"
                   step="0.01"
                   color="black"
                   track-color="neutral"
+                  v-on="on"
                 >
                   <template v-slot:thumb-label="{ value }">
                     {{ parseInt(value * 100) }}
@@ -197,13 +197,13 @@
                   hide-details
                   thumb-label
                   v-bind="attrs"
-                  v-on="on"
                   max="1"
                   min="0"
                   step="0.01"
                   color="black"
                   track-color="neutral"
                   prepend-icon="mdi-record-circle"
+                  v-on="on"
                 >
                   <template v-slot:thumb-label="{ value }">
                     {{ parseInt(value * 100) }}
@@ -220,12 +220,12 @@
                   hide-details
                   thumb-label
                   v-bind="attrs"
-                  v-on="on"
                   max="1"
                   min="0"
                   step="0.01"
                   color="black"
                   track-color="neutral"
+                  v-on="on"
                 >
                   <template v-slot:thumb-label="{ value }">
                     {{ parseInt(value * 100) }}
@@ -242,13 +242,13 @@
                   hide-details
                   thumb-label
                   v-bind="attrs"
-                  v-on="on"
                   max="1"
                   min="0"
                   step="0.01"
                   color="black"
                   track-color="neutral"
                   prepend-icon="mdi-arrow-right-drop-circle"
+                  v-on="on"
                 >
                   <template v-slot:thumb-label="{ value }">
                     {{ parseInt(value * 100) }}
@@ -289,7 +289,7 @@
 <script>
 import {
   apiPostTire,
-  apiPutTireItem
+  apiPutTireItem,
 } from '../../api/TireApi';
 import {
   incrementNumber,
@@ -318,6 +318,17 @@ export default {
       required: true,
     },
   },
+  data: () => ({
+    valid: true,
+    category_array: [
+      'Slick',
+      'Rain',
+    ],
+    axis_array: [
+      'Front',
+      'Rear',
+    ],
+  }),
   computed: {
     tire_data_object: {
       get() {
@@ -339,17 +350,6 @@ export default {
       return this.tireArray;
     },
   },
-  data: () => ({
-    valid: true,
-    category_array: [
-      'Slick',
-      'Rain'
-    ],
-    axis_array: [
-      'Front',
-      'Rear',
-    ],
-  }),
   methods: {
     /**
      * Resets the validation of the dialog form in the tire expander.
@@ -364,7 +364,7 @@ export default {
      */
     onSave() {
       const payload = this.tire_data_object;
-      const tire_id = this.tire_data_object.tire_id;
+      const tireId = this.tire_data_object.tire_id;
       if (this.task === 'Add') {
         apiPostTire(payload).then((res) => {
           this.tire_data_object.tire_id = res.data;
@@ -373,7 +373,7 @@ export default {
           this.tire_dialog = false;
         });
       } else {
-        apiPutTireItem(payload, tire_id).then(() => {
+        apiPutTireItem(payload, tireId).then(() => {
           this.$emit('refreshTires');
           this.$emit('resetTireForm');
           this.tire_dialog = false;

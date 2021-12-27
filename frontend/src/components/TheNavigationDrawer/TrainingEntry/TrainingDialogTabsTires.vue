@@ -123,7 +123,7 @@ import { interpolateLinearly1D } from '../../utils/DataProcessingUtils';
 import { apiGetLocation } from '../../api/LocationApi';
 import { apiGetWeather } from '../../api/WeatherApi';
 import {
-  calculateTrackSurfaceTemperatureDegCHassan2004
+  calculateTrackSurfaceTemperatureDegCHassan2004,
 } from '../../common/TrackSufraceTemperatureModel';
 
 export default {
@@ -262,10 +262,11 @@ export default {
       return new Promise((resolve, reject) => {
         apiGetWeather(this.location_object)
           .then((res) => {
-            this.current_temperature_air_deg_c = res.data.
-              timelines[0].intervals[0].values.temperature;
+            this.current_temperature_air_deg_c = res.data
+              .timelines[0].intervals[0].values.temperature;
             this.current_temperature_track_deg_c = calculateTrackSurfaceTemperatureDegCHassan2004(
-              this.current_temperature_air_deg_c);
+              this.current_temperature_air_deg_c,
+            );
             resolve(res);
           })
           .catch((error) => {

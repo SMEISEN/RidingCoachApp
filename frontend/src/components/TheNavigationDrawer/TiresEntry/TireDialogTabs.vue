@@ -32,14 +32,14 @@ import TireDialogTabsExpansion from './TireDialogTabsExpansion.vue';
 
 export default {
   name: 'TireDialogTabs',
+  components: {
+    TireDialogTabsExpansion,
+  },
   props: {
     tireArray: {
       type: Array,
       required: true,
     },
-  },
-  components: {
-    TireDialogTabsExpansion
   },
   computed: {
     /**
