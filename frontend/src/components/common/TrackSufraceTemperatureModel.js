@@ -21,7 +21,5 @@ export const calculateTrackSurfaceTemperatureDegCKhan2019 = (
   // source: https://doi.org/10.1016/j.jtte.2018.04.005
 };
 
-export const calculateTrackSurfaceTemperatureDegCHassan2004 = (airDegC) => {
-  return -1.437 + 1.121 * airDegC;
-  // source: https://doi.org/10.1016/j.conbuildmat.2007.06.016
-};
+export const calculateTrackSurfaceTemperatureDegCHassan2004 = (airDegC) => -1.437 + 1.121 * airDegC;
+// source: https://doi.org/10.1016/j.conbuildmat.2007.06.016

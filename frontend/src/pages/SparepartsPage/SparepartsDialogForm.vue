@@ -153,10 +153,18 @@ export default {
     },
   },
   methods: {
+    /**
+     * Emits a message to the parent component that the save button was clicked and closes the
+     * add spare part dialog.
+     */
     onSave() {
       this.$emit('addSparepart');
       this.spareparts_dialog = false;
     },
+    /**
+     * Emits a message to the parent component that the cancel button was clicked, resets the
+     * validation of the add spare part dialog form and closes the dialog.
+     */
     onCancel() {
       this.$emit('initForm');
       if (typeof this.$refs.validation_form !== 'undefined') {
@@ -167,7 +175,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -141,22 +141,34 @@ export default {
     },
   },
   methods: {
+    /**
+     * Adds a child row to the spare part parent.
+     */
     addChildRow() {
       this.sparepart_child.push(this._.cloneDeep(this.sparepart_child_template));
     },
+    /**
+     * Deletes a child row from the spare part parent.
+     */
     deleteChildRow(index) {
       this.sparepart_child.splice(index, 1);
     },
+    /**
+     * Increases the stock of a spare part item.
+     * @param {number} stock
+     * @returns {number} updated stock
+     */
     increaseStock(stock) {
       return incrementNumber(stock, 1);
     },
+    /**
+     * Decrease the stock of a spare part item.
+     * @param {number} stock
+     * @returns {number} updated stock
+     */
     decreaseStock(stock) {
       return decrementNumber(stock, 1);
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

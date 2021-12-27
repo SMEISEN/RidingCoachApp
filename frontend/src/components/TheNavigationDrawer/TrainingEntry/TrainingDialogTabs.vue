@@ -274,11 +274,10 @@ export default {
       return this.$store.getters.getTrainingDialogState;
     },
   },
-  updated() {
-  },
-  created() {
-  },
   methods: {
+    /**
+     * Adds a new setup tab and initializes the data in this tab.
+     */
     addSetupTab() {
       const numberOfTabs = this.trainingFormObject.setup_fixed.length - 1;
       this.trainingFormObject.setup_fixed
@@ -335,7 +334,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

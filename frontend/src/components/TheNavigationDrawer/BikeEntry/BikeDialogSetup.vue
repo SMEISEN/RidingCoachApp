@@ -165,32 +165,44 @@ export default {
     confirm_delete_dialog: false,
     row_to_be_deleted: null,
   }),
-  updated() {
-  },
-  created() {
-  },
   methods: {
+    /**
+     * Adds a new setup row to the setup table.
+     */
     addSetupRow() {
       this.bikeFormObject.setup_individual.push(this._.cloneDeep(this.setupIndividualTemplate));
     },
+    /**
+     * Opens the confirm delete dialog for the indexed setup row from the setup table.
+     * @param {number} index index of the row to be deleted
+     */
     deleteSetupRow(index) {
       this.confirm_delete_dialog = true;
       this.row_to_be_deleted = index;
     },
+    /**
+     * Deletes the setup row from the setup table after the deletion was confirmed.
+     */
     deletionConfirmed() {
       this.bikeFormObject.setup_individual.splice(this.row_to_be_deleted, 1);
       this.row_to_be_deleted = null;
     },
+    /**
+     * Increases the clicks of a setup entry.
+     * @param {number} inputNumber current clicks
+     * @returns {number}
+     */
     increment(inputNumber) {
       return incrementNumber(inputNumber, 1, 0);
     },
+    /**
+     * Decreases the clicks of a setup entry.
+     * @param {number} inputNumber current clicks
+     * @returns {number}
+     */
     decrement(inputNumber) {
       return decrementNumber(inputNumber, 1, 0);
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -66,15 +66,21 @@ export default {
       return [];
     },
   },
-  updated() {
-  },
   created() {
     this.getSetupGroups();
   },
   methods: {
+    /**
+     * Filters the electronic setup for the given setup group.
+     * @param {string} group setup group
+     * @returns {T[]}
+     */
     setupByGroup(group) {
       return this.electronic_setup.filter((i) => i.group === group);
     },
+    /**
+     * Extracts the groups of the electronic setup.
+     */
     getSetupGroups() {
       this.setup_groups = this._.uniq(
         Object.assign(this.setup_groups,
@@ -88,7 +94,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

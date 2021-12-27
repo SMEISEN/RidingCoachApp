@@ -137,35 +137,42 @@ export default {
   updated() {
     this.window_height = window.innerHeight;
   },
-  created() {
-  },
   methods: {
+    /**
+     * Update the tire selection for the selected bike.
+     * @param {string} BikeId id of the selected bike
+     */
     updateTires(BikeId) {
-      const delta_operating_hours =
-        this.bikeFormObject.operating_hours - this.operating_hours_initial;
+      const deltaOperatingHours = this.bikeFormObject.operating_hours
+        - this.operating_hours_initial;
       const query = {
         bike_id: BikeId,
         active: true,
       };
       apiQueryTire(query).then((res) => {
-        const active_tires = res.data;
-        for (let i = 0; i < active_tires.length; i++) {
-          const tire_id = active_tires[i].tire_id
+        const activeTires = res.data;
+        for (let i = 0; i < activeTires.length; i += 1) {
+          const tireId = activeTires[i].tire_id;
           const payload = {
             operating_hours: Number.parseFloat(
-              active_tires[i].operating_hours + delta_operating_hours).toFixed(2),
+              activeTires[i].operating_hours + deltaOperatingHours,
+            ).toFixed(2),
           };
-          apiPutTireItem(payload, tire_id).then(() => {
-            if (active_tires[i].axis === "Front") {
+          apiPutTireItem(payload, tireId).then(() => {
+            if (activeTires[i].axis === 'Front') {
               this.$store.commit('updateCurrentFrontTireOperatingHours', payload.operating_hours);
-            } else if (active_tires[i].axis === "Rear") {
+            } else if (activeTires[i].axis === 'Rear') {
               this.$store.commit('updateCurrentRearTireOperatingHours', payload.operating_hours);
             }
-            this.$store.commit('lastTireUpdatedId', tire_id);
-          })
+            this.$store.commit('lastTireUpdatedId', tireId);
+          });
         }
       });
     },
+    /**
+     * Add a new bike to the database.
+     * @param {object} payload bike object
+     */
     postBike(payload) {
       apiPostBike(payload)
         .then((res) => {
@@ -189,6 +196,11 @@ export default {
           });
         });
     },
+    /**
+     * Modify a specific bike in the database.
+     * @param {string} BikeId id of the bike
+     * @param {object} payload bike object
+     */
     putBike(BikeId, payload) {
       apiPutBike(BikeId, payload)
         .then(() => {
@@ -212,6 +224,9 @@ export default {
           });
         });
     },
+    /**
+     * Deletes the bike of the open bike dialog.
+     */
     deleteBikeData() {
       const bikeId = this.bikeFormObject.bike_id;
       apiDeleteBike(bikeId)
@@ -237,6 +252,10 @@ export default {
       this.$store.commit('setBikeDialogState', false);
       this.$store.commit('setNavigationDrawerState', false);
     },
+    /**
+     * Decides if submitted data is a new bike or a modification of an existing bike, triggers
+     * the API calls abd closes the bike dialog and navigation drawer.
+     */
     onBikeSubmit() {
       const BikeId = this.bikeFormObject.bike_id;
       const payload = {
@@ -272,6 +291,10 @@ export default {
       this.$store.commit('setBikeDialogState', false);
       this.$store.commit('setNavigationDrawerState', false);
     },
+    /**
+     * After the cancel button was clicked, reset the bike dialog form validation and close the bike
+     * dialog.
+     */
     onBikeCancel() {
       if (typeof this.$refs.validation_bike_form !== 'undefined') {
         this.$refs.validation_bike_form.resetValidation();
@@ -282,7 +305,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

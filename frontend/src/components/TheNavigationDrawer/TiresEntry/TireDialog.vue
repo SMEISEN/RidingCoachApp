@@ -6,25 +6,25 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
-    <v-card :min-height="window_height">
+      <v-card :min-height="window_height">
         <v-toolbar
-        dark
-        color="primary"
+          dark
+          color="primary"
         >
-        <v-btn
+          <v-btn
             icon
             @click.prevent="onTireCancel()"
-        >
+          >
             <v-icon>mdi-close</v-icon>
-        </v-btn>
-        <v-toolbar-title>Tires</v-toolbar-title>
-        <v-spacer />
+          </v-btn>
+          <v-toolbar-title>Tires</v-toolbar-title>
+          <v-spacer />
         </v-toolbar>
         <TireDialogTabs
           :tire-array="tire_array"
           @refreshTires="$emit('refreshTires')"
         />
-    </v-card>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -34,14 +34,14 @@ import TireDialogTabs from './TireDialogTabs.vue';
 
 export default {
   name: 'TireDialog',
+  components: {
+    TireDialogTabs,
+  },
   props: {
     tireArray: {
       type: Array,
       required: true,
     },
-  },
-  components: {
-      TireDialogTabs
   },
   data: () => ({
     window_height: 0,
@@ -63,13 +63,12 @@ export default {
     this.window_height = window.innerHeight;
   },
   methods: {
-      onTireCancel() {
+    /**
+     * Closes the tire dialog.
+     */
+    onTireCancel() {
       this.tire_dialog = false;
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

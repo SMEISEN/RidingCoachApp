@@ -18,7 +18,7 @@ import { apiGetLocation } from '../../api/LocationApi';
 import { apiGetWeather } from '../../api/WeatherApi';
 import LineChart from '../../common/LineChart.vue';
 import {
-  calculateTrackSurfaceTemperatureDegCHassan2004
+  calculateTrackSurfaceTemperatureDegCHassan2004,
 } from '../../common/TrackSufraceTemperatureModel';
 
 export default {
@@ -109,17 +109,22 @@ export default {
       return this.$store.getters.getTrainingDialogSetupActiveTab;
     },
   },
-  updated() {
-  },
   created() {
     this.getGeneralProperties();
   },
   methods: {
+    /**
+     * Firstly, gets the location, then, gets the weather information for this location.
+     */
     getGeneralProperties() {
       this.getLocation().then(() => {
         this.getWeather();
       });
     },
+    /**
+     * Gets the geolocation information from the browser.
+     * @returns {promise} promise with API answer
+     */
     getLocation() {
       return new Promise((resolve, reject) => {
         apiGetLocation()
@@ -137,14 +142,17 @@ export default {
           });
       });
     },
+    /**
+     * Gets the weather information for a specific geolocation.
+     */
     getWeather() {
       apiGetWeather(this.location_object)
         .then((res) => {
-          const weather_current = res.data.timelines[0].intervals;
-          const timestamp_current = res.data.timelines[0].startTime;
-          const weather_past_future = res.data.timelines[1].intervals;
-          this.extractTemperature(weather_past_future, weather_current, timestamp_current);
-          this.trainingFormObject.weather = weather_past_future;
+          const weatherCurrent = res.data.timelines[0].intervals;
+          const timestampCurrent = res.data.timelines[0].startTime;
+          const weatherPastFuture = res.data.timelines[1].intervals;
+          this.extractTemperature(weatherPastFuture, weatherCurrent, timestampCurrent);
+          this.trainingFormObject.weather = weatherPastFuture;
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {
@@ -154,20 +162,26 @@ export default {
           });
         });
     },
+    /**
+     * Extracts the temperature time series from the weather objects.
+     * @param {object} weatherPastFuture historic and forecast of weather data
+     * @param {object} weatherCurrent weather data for the current time stamp
+     * @param {string} timestampCurrent current time stamp
+     */
     extractTemperature(weatherPastFuture, weatherCurrent, timestampCurrent) {
       this.data_sets[0].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[0].borderColor = this.$vuetify.theme.themes.light.accent;
       this.data_sets[1].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[1].borderColor = this.$vuetify.theme.themes.light.error;
       let timestampPreviousIteration = weatherPastFuture[0].startTime;
-      let timeArray = []
+      const timeArray = [];
       for (let i = 0; i < weatherPastFuture.length; i += 1) {
         const timestampCurrentIteration = weatherPastFuture[i].startTime;
         const airDegC = weatherPastFuture[i].values.temperature;
         const asphaltDegC = calculateTrackSurfaceTemperatureDegCHassan2004(airDegC);
-        if (  // insert current time stamp
-          timestampCurrent > timestampPreviousIteration &&
-          timestampCurrent < timestampCurrentIteration) {
+        if ( // insert current time stamp
+          timestampCurrent > timestampPreviousIteration
+          && timestampCurrent < timestampCurrentIteration) {
           const currentAirDegC = weatherCurrent[0].values.temperature;
           const currentAsphaltDegC = calculateTrackSurfaceTemperatureDegCHassan2004(currentAirDegC);
           this.$store.commit('setCurrentTemperatureAirDegC', currentAirDegC);
@@ -176,13 +190,15 @@ export default {
           this.data_sets[0].data.push(currentAirDegC);
           this.data_sets[1].data.push(currentAsphaltDegC);
           this.data_options.scales.xAxes[0].gridLines.color.push(
-            this.$vuetify.theme.themes.light.info);
+            this.$vuetify.theme.themes.light.info,
+          );
         }
         timeArray.push(new Date(timestampCurrentIteration));
         this.data_sets[0].data.push(airDegC);
         this.data_sets[1].data.push(asphaltDegC);
         this.data_options.scales.xAxes[0].gridLines.color.push(
-          'rgba(0, 0, 0, 0.1)');
+          'rgba(0, 0, 0, 0.1)',
+        );
         timestampPreviousIteration = timestampCurrentIteration;
       }
       this.data_collection.datasets = this.data_sets;
@@ -192,7 +208,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

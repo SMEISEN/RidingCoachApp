@@ -33,11 +33,11 @@ export default {
       },
     },
   },
-  created() {
-  },
-  updated() {
-  },
   methods: {
+    /**
+     * Emits a message to the parent component that the undo button of the snackbar was clicked and
+     * closes the snackbar dialog.
+     */
     undoButtonClicked() {
       this.$emit('undoButtonClicked');
       this.$emit('update:snackbarState', false);
@@ -45,7 +45,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

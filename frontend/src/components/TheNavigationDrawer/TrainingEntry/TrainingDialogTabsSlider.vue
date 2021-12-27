@@ -25,18 +25,30 @@ export default {
     },
   },
   methods: {
+    /**
+     * Increases the clicks of the setup entry by 1.
+     */
     incrementSetup() {
       this.setupEntry.ticks_current += 1;
       this.$forceUpdate();
     },
+    /**
+     * Decreases the clicks of the setup entry by 1.
+     */
     decrementSetup() {
       this.setupEntry.ticks_current -= 1;
       this.$forceUpdate();
     },
-    tickLabels(standardTick, availableTicks) {
+    /**
+     * Adds the default tick to the tick labels of the slider.
+     * @param {number} defaultTick default number of setup clicks
+     * @param {number} availableTicks available setup clicks
+     * @returns {*[]}
+     */
+    tickLabels(defaultTick, availableTicks) {
       const tickLabels = [];
       for (let i = 0; i < availableTicks; i += 1) {
-        if (i === Number.parseInt(standardTick, 10)) {
+        if (i === Number.parseInt(defaultTick, 10)) {
           tickLabels.push('I');
         } else {
           tickLabels.push('');
@@ -47,7 +59,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>
