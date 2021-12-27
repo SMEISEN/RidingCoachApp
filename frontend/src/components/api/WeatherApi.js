@@ -28,7 +28,7 @@ export const apiGetWeather = (pos) => new Promise((resolve, reject) => {
     startTime,
     endTime,
   }, {arrayFormat: "comma"});
-  const ApiPath = getTimelineURL + "?" + getTimelineParameters;
+  const ApiPath = getTimelineURL + '?' + getTimelineParameters;
   axios.get(ApiPath)
     .then((res) => resolve(res.data))
     .catch((error) => {

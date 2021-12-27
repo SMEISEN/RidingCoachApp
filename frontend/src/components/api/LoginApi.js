@@ -4,6 +4,13 @@ const mocks = {
   'user/me': { GET: { name: 'doggo', title: 'sir' } },
 };
 
+/**
+ * Verifies given credentials.
+ * @param url
+ * @param {object} data object containing username and password
+ * @param method
+ * @returns {Promise<unknown>}
+ */
 export const apiLogin = ({ url, data, method }) => new Promise((resolve, reject) => {
   try {
     if (data.username !== process.env.VUE_APP_USER
