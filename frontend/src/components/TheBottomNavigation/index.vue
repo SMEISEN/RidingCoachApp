@@ -119,11 +119,19 @@ export default {
     });
   },
   methods: {
+    /**
+     * Get the spare part warnings from the database, i.e., spare parte where the current stock is
+     * smaller than the minimal stock.
+     */
     getSparepartWarnings() {
       apiGetSparepartWarnings().then((res) => {
         this.sparepart_warnings = res.data.warnings;
       });
     },
+    /**
+     * Get the maintenance warnings from the database, i.e., maintenance items where maintenance
+     * needs to be done.
+     */
     getMaintenanceWarnings() {
       apiGetMaintenanceWarnings(this.currentBikeId).then((res) => {
         this.maintenance_warnings = res.data.warnings;
