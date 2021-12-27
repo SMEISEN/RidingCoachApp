@@ -111,6 +111,9 @@ export default {
     this.extractTemperature();
   },
   methods: {
+    /**
+     * Processes the weather data for the temperature plot.
+     */
     extractTemperature() {
       this.data_sets[0].pointBackgroundColor = this.$vuetify.theme.themes.light.info;
       this.data_sets[0].borderColor = this.$vuetify.theme.themes.light.accent;

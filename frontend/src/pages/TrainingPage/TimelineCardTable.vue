@@ -365,6 +365,17 @@ export default {
   created() {
   },
   methods: {
+    /**
+     * Dynamically defines the color of the setup avatars, showing the current click, depending on
+     * the position of the click between the minimum, maximum and baseline click. If the current
+     * click is smaller than the baseline, the color gradient is grey to blue, if greater, the color
+     * gradient is grey to red.
+     * @param {number} value current click
+     * @param {number} minimum minimum click
+     * @param {number} maximum maximal available clicks
+     * @param {number} baseline the default number of clicks
+     * @returns {string} rgb string for the given value
+     */
     getColor(value, minimum, maximum, baseline) {
       const diff = value - baseline;
       if (diff < 0) {
@@ -372,6 +383,16 @@ export default {
       }
       return this.linearGradient('#B3B5C6', '#B71C1C', value, baseline, maximum);
     },
+    /**
+     * Returns the rgb string corresponding to the given value and depending on the minimum and
+     * maximum value, as well as given start and end color hex strings.
+     * @param {string} startColour hex string of start color
+     * @param {string} endColour hex string of end color
+     * @param {number} value the value for which the color string is requested
+     * @param {number} minimum minimum value, corresponding to the start color
+     * @param {number} maximum maximum value, corresponding to the end color
+     * @returns {string} rgb string for the given value
+     */
     linearGradient(startColour, endColour, value, minimum, maximum) {
       const startRGB = this.hexToRgb(startColour);
       const endRGB = this.hexToRgb(endColour);
@@ -384,12 +405,27 @@ export default {
       diffBlue = (diffBlue * percentFade) + startRGB.b;
       return `rgb(${Math.round(diffRed)}, ${Math.round(diffGreen)}, ${Math.round(diffBlue)})`;
     },
+    /**
+     * Converts a linear scale (source) to a transformed linear scale (target) and returns the value
+     * for the transformed linear scale.
+     * @param {number} value the value for which the fade should be calculated
+     * @param {number} fromSource the minimum value of the source scale
+     * @param {number} toSource the maximum value of the source scale
+     * @param {number} fromTarget the minimum value of the target scale
+     * @param {number} toTarget the maximum value of the target scale
+     * @returns {number} the percentage of color fade
+     */
     mapColor(value, fromSource, toSource, fromTarget, toTarget) {
       return fromTarget
         + (
           ((value - fromSource) / (toSource - fromSource + Number.EPSILON)
           ) * (toTarget - fromTarget));
     },
+    /**
+     * Transforms a hex color string to object containing the numbers of the corresponding rgb-code.
+     * @param {string} hex hex string of the color
+     * @returns {{r: number, b: number, g: number}|null} rgb-object or null
+     */
     hexToRgb(hex) {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? {
@@ -398,6 +434,11 @@ export default {
         b: parseInt(result[3], 16),
       } : null;
     },
+    /**
+     * Filters the tire setups of a training item.
+     * @param {number} index the number of the setup of a training.
+     * @returns {array} array of tire setups or empty array
+     */
     tire_setups(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
@@ -412,6 +453,11 @@ export default {
       }
       return [];
     },
+    /**
+     * Filters the suspension setups of a training item.
+     * @param {number} index the number of the setup of a training.
+     * @returns {array} array of suspension setups or empty array
+     */
     suspension_setups(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
@@ -422,6 +468,11 @@ export default {
       }
       return [];
     },
+    /**
+     * Filters the geometry setups of a training item.
+     * @param {number} index the number of the setup of a training.
+     * @returns {array} array of geometry setups or empty array
+     */
     geometry_setups(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
@@ -432,6 +483,11 @@ export default {
       }
       return [];
     },
+    /**
+     * Filters the engine setups of a training item.
+     * @param {number} index the number of the setup of a training.
+     * @returns {array} array of engine setups or empty array
+     */
     engine_setups(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
@@ -442,6 +498,22 @@ export default {
       }
       return [];
     },
+    /**
+     * Filters valid lap times and assigns them to the corresponding track layouts
+     * @param {number} index the number of the setup of a training.
+     * @returns {array} array of lap time objects, e.g.,
+     * [
+     *  {
+     *    track_layout: "A",
+     *    laptimes: [44.59, 43.96, ...]
+     *  },
+     * {
+     *    track_layout: "B",
+     *    laptimes: [53.67, 52.84, ...]
+     *  }
+     * ]
+     * or empty array
+     */
     valid_laptimes(index) {
       if (Object.keys(this.trainingItem).includes('setups')) {
         if (this.trainingItem.setups.length > 0) {
@@ -480,12 +552,27 @@ export default {
       }
       return [];
     },
+    /**
+     * Calculates the arithmetic mean of the given array of lap times.
+     * @param {array} laptimes array of lap time numbers
+     * @returns {number} arithmetic mean
+     */
     average_laptime(laptimes) {
       return mean(laptimes).toFixed(2);
     },
+    /**
+     * Searches for the minimal value of the given array of lap times.
+     * @param {array} laptimes array of lap time numbers
+     * @returns {number} minimum value
+     */
     min_laptime(laptimes) {
       return min(laptimes).toFixed(2);
     },
+    /**
+     * Calculates the standard deviation of the given array of lap times.
+     * @param {array} laptimes array of lap time numbers
+     * @returns {number} standard deviation
+     */
     std_laptime(laptimes) {
       return std(laptimes).toFixed(2);
     },
