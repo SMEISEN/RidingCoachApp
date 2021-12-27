@@ -121,8 +121,10 @@ import {
 } from '../../utils/FromUtils';
 import { interpolateLinearly1D } from '../../utils/DataProcessingUtils';
 import { apiGetLocation } from '../../api/LocationApi';
-import { apiGetWeatherCurrent } from '../../api/WeatherApi';
-import { calculateTrackSurfaceTemperatureDegC } from '../../common/TrackSufraceTemperatureModel';
+import { apiGetWeather } from '../../api/WeatherApi';
+import {
+  calculateTrackSurfaceTemperatureDegCHassan2004
+} from '../../common/TrackSufraceTemperatureModel';
 
 export default {
   name: 'TrainingDialogTabsTires',
@@ -250,9 +252,12 @@ export default {
     },
     getCurrentWeather() {
       return new Promise((resolve, reject) => {
-        apiGetWeatherCurrent(this.location_object)
+        apiGetWeather(this.location_object)
           .then((res) => {
-            this.calculateTrackSurfaceTemperature(res);
+            this.current_temperature_air_deg_c = res.data.
+              timelines[0].intervals[0].values.temperature;
+            this.current_temperature_track_deg_c = calculateTrackSurfaceTemperatureDegCHassan2004(
+              this.current_temperature_air_deg_c);
             resolve(res);
           })
           .catch((error) => {
@@ -264,25 +269,6 @@ export default {
             reject(error);
           });
       });
-    },
-    calculateTrackSurfaceTemperature(weatherObject) {
-      const airDegC = weatherObject.temp.value;
-      if (airDegC !== null) {
-        const windSpeedMetersSeconds = weatherObject.wind_speed.value;
-        const humidityPercent = weatherObject.humidity.value;
-        const solarRadiationWattPerMetersSquared = weatherObject.surface_shortwave_radiation.value;
-        const asphaltDegC = calculateTrackSurfaceTemperatureDegC(
-          airDegC,
-          windSpeedMetersSeconds,
-          humidityPercent,
-          solarRadiationWattPerMetersSquared,
-        );
-        this.current_temperature_air_deg_c = airDegC;
-        this.current_temperature_track_deg_c = asphaltDegC;
-      } else {
-        this.current_temperature_air_deg_c = null;
-        this.current_temperature_track_deg_c = null;
-      }
     },
     getRecommendedTirePressure() {
       if (this.slick_front_pressure !== null) {
