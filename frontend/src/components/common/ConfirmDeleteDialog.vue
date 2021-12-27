@@ -51,10 +51,18 @@ export default {
     },
   },
   methods: {
+    /**
+     * Emits a message to the parent component that the deletion was cancelled and closes the
+     * confirm delete dialog.
+     */
     onCancel() {
       this.$emit('cancelButtonClicked');
       this.$emit('update:confirmDeleteDialog', false);
     },
+    /**
+     * Emits a message to the parent component that the deletion was confirmed and closes the
+     * confirm delete dialog.
+     */
     onConfirm() {
       this.$emit('deleteConfirmationButtonClicked');
       this.$emit('update:confirmDeleteDialog', false);
