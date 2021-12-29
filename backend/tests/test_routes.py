@@ -18,3 +18,20 @@ def test_route_index():
     # test response vs expected
     assert response.get_data() == index_html.read()
     assert response.status_code == 200
+
+
+def test_route_favicon():
+    # setup client
+    client = app.test_client()
+    url = "/favicon.svg"
+    response = client.get(url)
+
+    # get expected file
+    dist_dir = app.config['DIST_DIR']
+    entry = os.path.join(dist_dir, 'favicon.svg')
+    with open(entry, "rb") as file:
+        index_html = io.BytesIO(file.read())
+
+    # test response vs expected
+    assert response.get_data() == index_html.read()
+    assert response.status_code == 200
