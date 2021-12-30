@@ -1,5 +1,6 @@
 import os
 import json
+import click
 from datetime import datetime
 from flask import Flask, Blueprint, current_app, send_file
 from flask_cors import CORS
@@ -24,7 +25,7 @@ from backend.database import db, ma, migrate
 index_bp = Blueprint('index', __name__)
 favicon_bp = Blueprint('favicon', __name__)
 assets_bp = Blueprint('assets', __name__)
-cli_bp = Blueprint('cli', __name__)
+cli = click.Group()
 
 
 def create_app(config_class=Config):
@@ -51,7 +52,6 @@ def create_app(config_class=Config):
     app.register_blueprint(index_bp)
     app.register_blueprint(favicon_bp)
     app.register_blueprint(assets_bp)
-    app.register_blueprint(cli_bp)
 
     db.init_app(app)
     ma.init_app(app)
@@ -96,19 +96,18 @@ def assets_client(file):
     return send_file(entry)
 
 
-@cli_bp.cli.command(name='create_tables')
+@cli.command(name='create_tables')
 def create_tables():
     db.create_all()
-
-    copy_maintenance_template()
-    copy_coach_template()
 
     print('Database created!')
 
 
-@cli_bp.cli.command(name='copy_maintenance_template')
-def copy_maintenance_template():
-    with open('backend/database/templates/maintenance_model_template.json') as json_file:
+@cli.command(name='copy_maintenance_template')
+@click.argument('temp', nargs=1)
+def copy_maintenance_template(temp):
+
+    with open(temp) as json_file:
         maintenance_template = json.load(json_file)
 
     for entry in maintenance_template.items():
@@ -128,9 +127,11 @@ def copy_maintenance_template():
     print('Template copied into database!')
 
 
-@cli_bp.cli.command(name='copy_coach_template')
-def copy_coach_template():
-    with open('backend/database/templates/coach_model_template.json') as json_file:
+@cli.command(name='copy_coach_template')
+@click.argument('temp', nargs=1)
+def copy_coach_template(temp):
+
+    with open(temp) as json_file:
         coach_template = json.load(json_file)
 
     for entry in coach_template:
@@ -150,13 +151,13 @@ def copy_coach_template():
     print('Template copied into database!')
 
 
-@cli_bp.cli.command(name='drop_tables')
+@cli.command(name='drop_tables')
 def drop_tables():
     db.drop_all()
     print('Database dropped!')
 
 
-@cli_bp.cli.command(name='clear_tables')
+@cli.command(name='clear_tables')
 def clear_tables():
     meta = db.metadata
     for table in reversed(meta.sorted_tables):
