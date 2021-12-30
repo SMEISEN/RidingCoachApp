@@ -1,9 +1,12 @@
 import os
 import io
-from backend.app import app
+from backend.app import create_app
+from backend.config import TestConfig
 
 
 def test_route_index():
+    app = create_app(TestConfig)
+
     # setup client
     client = app.test_client()
     url = "/"
@@ -21,6 +24,8 @@ def test_route_index():
 
 
 def test_route_favicon():
+    app = create_app(TestConfig)
+
     # setup client
     client = app.test_client()
     url = "/favicon.svg"
@@ -38,6 +43,8 @@ def test_route_favicon():
 
 
 def test_route_assets():
+    app = create_app(TestConfig)
+
     # test assets
     assets = [
         "coach-category-fork.svg",
