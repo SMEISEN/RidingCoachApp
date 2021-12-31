@@ -140,8 +140,8 @@ def test_api_maintenance():
     maintenance_items = json.loads(response.get_data())
     for value in maintenance_items.values():
         for valuevalue in value.values():
-            assert payload["interval_amount"]["values"][0] <= valuevalue["interval_amount"]
-            assert payload["interval_amount"]["values"][1] >= valuevalue["interval_amount"]
+            assert valuevalue["interval_amount"] >= payload["interval_amount"]["values"][0]
+            assert valuevalue["interval_amount"] <= payload["interval_amount"]["values"][1]
     assert response.status_code == 200
 
     # drop test tables
