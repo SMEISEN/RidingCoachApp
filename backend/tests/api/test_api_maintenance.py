@@ -1,4 +1,5 @@
 import json
+import pytest
 from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
@@ -13,18 +14,28 @@ from backend.tests.api.requests.maintenance import post_query
 from backend.tests.api.requests.maintenance import default_payload_post, default_payload_put
 
 
-def test_api_maintenance():
-    app = create_app(TestConfig)
-
-    # create test tables
-    with app.app_context():
+@pytest.fixture
+def app():
+    # setup
+    _app = create_app(TestConfig)
+    with _app.app_context():
+        # create test tables
         db.drop_all()
         db.create_all()
+    yield _app
+    # teardown
+    with _app.app_context():
+        # drop test tables
+        db.drop_all()
 
-    # setup client
-    client = app.test_client()
 
-    # test requests
+@pytest.fixture
+def client(app):
+    _client = app.test_client()
+    return _client
+
+
+def test_api_maintenance(app, client):
 
     # GET /maintenance/
     response = get(app, client)
@@ -144,6 +155,4 @@ def test_api_maintenance():
             assert valuevalue["interval_amount"] <= payload["interval_amount"]["values"][1]
     assert response.status_code == 200
 
-    # drop test tables
-    with app.app_context():
-        db.drop_all()
+
