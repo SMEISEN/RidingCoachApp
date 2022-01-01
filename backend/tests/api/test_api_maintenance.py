@@ -35,19 +35,36 @@ def client(app):
     return _client
 
 
-def test_api_maintenance(app, client):
+@pytest.fixture
+def maintenance_id(app, client):
+    response = get(app, client)
 
+    if bool(json.loads(response.get_data())) is False:
+        # create a new maintenance item
+        response = post(app, client)
+        maintenance_id_ = json.loads(response.get_data())
+    else:
+        # extract id from existing maintenance item
+        maintenance_id_ = response.get_data()[0]["maintenance_id"]
+    return maintenance_id_
+
+
+def test_get(app, client):
     # GET /maintenance/
     response = get(app, client)
     assert bool(json.loads(response.get_data())) is False  # response must be empty
     assert response.status_code == 200
 
+
+def test_post(app, client):
     # POST /maintenance/
     response = post(app, client)
     maintenance_id = json.loads(response.get_data())
     assert validate_uuid(maintenance_id, 4) is True  # response must be a valid uuid4
     assert response.status_code == 201
 
+
+def test_get_item(app, client, maintenance_id):
     # GET /maintenance/{id_}
     response = get_item(app, client, maintenance_id)
     maintenance_item = json.loads(response.get_data())
@@ -58,6 +75,8 @@ def test_api_maintenance(app, client):
         assert maintenance_item[key] == value
     assert response.status_code == 200
 
+
+def test_put_item(app, client, maintenance_id):
     # PUT /maintenance/{id_}
     response = put_item(app, client, maintenance_id)
     assert response.status_code == 204
@@ -70,17 +89,33 @@ def test_api_maintenance(app, client):
     for key, value in default_payload_put.items():
         assert maintenance_item[key] == value
 
+
+def test_delete_item(app, client, maintenance_id):
     # DELETE /maintenance/{id_}
     response = delete_item(app, client, maintenance_id)
     assert response.status_code == 204
     response = get(app, client)
     assert bool(json.loads(response.get_data())) is False  # response must be empty
 
+
+def test_post_query(app, client, maintenance_id):
     # POST /maintenance/query
     response = post_query(app, client)
     assert response.status_code == 200
 
-    post(app, client)  # post new default item
+    # post and get new default item
+    response = get_item(app, client, maintenance_id)
+    bike_id = json.loads(response.get_data())["bike_id"]
+
+    payload = {
+        "bike_id": bike_id,
+    }
+    response = post_query(app, client, payload)
+    maintenance_items = json.loads(response.get_data())
+    for value in maintenance_items.values():
+        for value_value in value.values():
+            assert value_value["bike_id"] == payload["bike_id"]
+    assert response.status_code == 200
 
     payload = {
         "category": "maintenance category",
@@ -154,5 +189,3 @@ def test_api_maintenance(app, client):
             assert valuevalue["interval_amount"] >= payload["interval_amount"]["values"][0]
             assert valuevalue["interval_amount"] <= payload["interval_amount"]["values"][1]
     assert response.status_code == 200
-
-
