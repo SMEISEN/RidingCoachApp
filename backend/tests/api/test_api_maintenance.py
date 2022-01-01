@@ -18,14 +18,16 @@ from backend.tests.api.requests.maintenance import default_payload_post, default
 def app():
     # setup
     _app = create_app(TestConfig)
+
+    # create test tables
     with _app.app_context():
-        # create test tables
         db.drop_all()
         db.create_all()
+
     yield _app
+
     # teardown
     with _app.app_context():
-        # drop test tables
         db.drop_all()
 
 

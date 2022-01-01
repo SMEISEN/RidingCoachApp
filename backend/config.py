@@ -33,4 +33,5 @@ class Config(BaseConfig):
 class TestConfig(BaseConfig):
 
     TESTING = True
+    DEBUG = False  # https://github.com/ga4gh/ga4gh-server/issues/791#issuecomment-158547948
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL_TEST')
