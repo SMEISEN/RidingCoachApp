@@ -58,6 +58,16 @@ def test_get(app, client):
     assert bool(json.loads(response.get_data())) is False  # response must be empty
     assert response.status_code == 200
 
+    # post two history items
+    post(app, client, default_payload_post)
+    post(app, client, default_payload_put)
+
+    response = get(app, client)
+    history_items = json.loads(response.get_data())
+    assert isinstance(history_items, list)
+    assert len(history_items) == 2
+    assert response.status_code == 200
+
 
 def test_post(app, client):
     # POST /history/
@@ -114,6 +124,7 @@ def test_post_query(app, client):
 
     # post new default item
     post(app, client)
+    # todo: post two bikes, then get, must be 2, must be a list
 
     payload = {
         "active": "false",

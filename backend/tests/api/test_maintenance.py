@@ -57,6 +57,16 @@ def test_get(app, client):
     assert bool(json.loads(response.get_data())) is False  # response must be empty
     assert response.status_code == 200
 
+    # post two maintenance items
+    post(app, client, default_payload_post)
+    post(app, client, default_payload_put)
+
+    response = get(app, client)
+    maintenance_items = json.loads(response.get_data())
+    assert isinstance(maintenance_items, dict)  # change to list
+    assert len(maintenance_items) == 2
+    assert response.status_code == 200
+
 
 def test_post(app, client):
     # POST /maintenance/
@@ -108,6 +118,7 @@ def test_post_query(app, client, maintenance_id):
     # post and get new default item
     response = get_item(app, client, maintenance_id)
     bike_id = json.loads(response.get_data())["bike_id"]
+    # todo: post two bikes, then get, must be 2, must be a list
 
     payload = {
         "bike_id": bike_id,
@@ -191,3 +202,7 @@ def test_post_query(app, client, maintenance_id):
             assert valuevalue["interval_amount"] >= payload["interval_amount"]["values"][0]
             assert valuevalue["interval_amount"] <= payload["interval_amount"]["values"][1]
     assert response.status_code == 200
+
+def test_get_warnings(app, client, maintenance_id):
+    #tbd
+    pass

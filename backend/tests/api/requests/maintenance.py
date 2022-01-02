@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 from backend.tests.api.requests.bike import post as post_bike
 
 default_payload_post = {
@@ -62,8 +64,14 @@ def post(app, client, payload=None):
     response = post_bike(app, client)
     payload["bike_id"] = json.loads(response.get_data())
 
-    response = client.post("/api/maintenance", data=json.dumps(payload), content_type='application/json',
-                           headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+    try:
+        response = client.post("/api/maintenance", data=json.dumps(payload), content_type='application/json',
+                               headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+    except IntegrityError:
+        # maintenance name already exists
+        payload["name"] = payload["name"] + datetime.now().strftime("%m%d%Y%H%M%S")
+        response = client.post("/api/maintenance", data=json.dumps(payload), content_type='application/json',
+                               headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
 
     return response
 

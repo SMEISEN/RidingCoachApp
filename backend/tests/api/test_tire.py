@@ -56,6 +56,16 @@ def test_get(app, client):
     assert bool(json.loads(response.get_data())) is False  # response must be empty
     assert response.status_code == 200
 
+    # post two tire items
+    post(app, client, default_payload_post)
+    post(app, client, default_payload_put)
+
+    response = get(app, client)
+    tire_items = json.loads(response.get_data())
+    assert isinstance(tire_items, list)
+    assert len(tire_items) == 2
+    assert response.status_code == 200
+
 
 def test_post(app, client):
     # POST /tire/
@@ -95,3 +105,8 @@ def test_delete_item(app, client, tire_id):
     assert response.status_code == 204
     response = get(app, client)
     assert bool(json.loads(response.get_data())) is False  # response must be empty
+
+def test_post_query():
+    # tbd
+    # todo: post two bikes, then get, must be 2, must be a list
+    pass
