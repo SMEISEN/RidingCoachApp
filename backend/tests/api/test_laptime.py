@@ -44,11 +44,11 @@ def lap_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new laptime item
         response = post(app, client)
-        lap_id_ = json.loads(response.get_data())
+        _lap_id = json.loads(response.get_data())
     else:
         # extract id from existing laptime item
-        lap_id_ = response.get_data()[0]["lap_id"]
-    return lap_id_
+        _lap_id = response.get_data()[0]["lap_id"]
+    return _lap_id
 
 
 def test_get(app, client):

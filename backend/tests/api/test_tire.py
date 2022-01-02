@@ -43,11 +43,11 @@ def tire_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new tire item
         response = post(app, client)
-        tire_id_ = json.loads(response.get_data())
+        _tire_id = json.loads(response.get_data())
     else:
         # extract id from existing tire item
-        tire_id_ = response.get_data()[0]["tire_id"]
-    return tire_id_
+        _tire_id = response.get_data()[0]["tire_id"]
+    return _tire_id
 
 
 def test_get(app, client):

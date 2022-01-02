@@ -44,11 +44,11 @@ def maintenance_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new maintenance item
         response = post(app, client)
-        maintenance_id_ = json.loads(response.get_data())
+        _maintenance_id = json.loads(response.get_data())
     else:
         # extract id from existing maintenance item
-        maintenance_id_ = response.get_data()[0]["maintenance_id"]
-    return maintenance_id_
+        _maintenance_id = response.get_data()[0]["maintenance_id"]
+    return _maintenance_id
 
 
 def test_get(app, client):

@@ -45,11 +45,11 @@ def history_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new history item
         response = post(app, client)
-        history_id_ = json.loads(response.get_data())
+        _history_id = json.loads(response.get_data())
     else:
         # extract id from existing history item
-        history_id_ = response.get_data()[0]["history_id"]
-    return history_id_
+        _history_id = response.get_data()[0]["history_id"]
+    return _history_id
 
 
 def test_get(app, client):

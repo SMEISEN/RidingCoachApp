@@ -44,11 +44,11 @@ def session_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new session item
         response = post(app, client)
-        session_id_ = json.loads(response.get_data())
+        _session_id = json.loads(response.get_data())
     else:
         # extract id from existing session item
-        session_id_ = response.get_data()[0]["session_id"]
-    return session_id_
+        _session_id = response.get_data()[0]["session_id"]
+    return _session_id
 
 
 def test_get(app, client):

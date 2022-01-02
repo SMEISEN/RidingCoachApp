@@ -43,11 +43,11 @@ def bike_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new bike item
         response = post(app, client)
-        bike_id_ = json.loads(response.get_data())
+        _bike_id = json.loads(response.get_data())
     else:
         # extract id from existing bike item
-        bike_id_ = response.get_data()[0]["bike_id"]
-    return bike_id_
+        _bike_id = response.get_data()[0]["bike_id"]
+    return _bike_id
 
 
 def test_get(app, client):

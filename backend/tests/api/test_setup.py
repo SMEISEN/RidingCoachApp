@@ -44,11 +44,11 @@ def setup_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new setup item
         response = post(app, client)
-        setup_id_ = json.loads(response.get_data())
+        _setup_id = json.loads(response.get_data())
     else:
         # extract id from existing setup item
-        setup_id_ = response.get_data()[0]["setup_id"]
-    return setup_id_
+        _setup_id = response.get_data()[0]["setup_id"]
+    return _setup_id
 
 
 def test_get(app, client):

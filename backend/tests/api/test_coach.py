@@ -43,11 +43,11 @@ def coach_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new coach item
         response = post(app, client)
-        coach_id_ = json.loads(response.get_data())
+        _coach_id = json.loads(response.get_data())
     else:
         # extract id from existing coach item
-        coach_id_ = response.get_data()[0]["coach_id"]
-    return coach_id_
+        _coach_id = response.get_data()[0]["coach_id"]
+    return _coach_id
 
 
 def test_get(app, client):

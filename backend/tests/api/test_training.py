@@ -39,11 +39,11 @@ def training_id(app, client):
     if bool(json.loads(response.get_data())) is False:
         # create a new training item
         response = post(app, client)
-        training_id_ = json.loads(response.get_data())
+        _training_id = json.loads(response.get_data())
     else:
         # extract id from existing training item
-        training_id_ = response.get_data()[0]["training_id"]
-    return training_id_
+        _training_id = response.get_data()[0]["training_id"]
+    return _training_id
 
 
 @pytest.fixture
