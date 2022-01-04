@@ -11,7 +11,7 @@
       value="Dashboard"
       to="/dashboard"
     >
-      <span>Dashboard</span>
+      <span style="fontSize:9px">Dashboard</span>
       <v-icon>
         mdi-home
       </v-icon>
@@ -20,7 +20,7 @@
       value="Maintenance"
       to="/maintenance"
     >
-      <span>Maintenance</span>
+      <span style="fontSize:9px">Maintenance</span>
       <v-badge
         v-if="maintenance_warnings > 0"
         color="red"
@@ -39,7 +39,7 @@
       value="Spare Parts"
       to="/spareparts"
     >
-      <span>Spare Parts</span>
+      <span style="fontSize:9px">Spare Parts</span>
       <v-badge
         v-if="sparepart_warnings > 0"
         color="red"
@@ -58,7 +58,7 @@
       value="Training"
       to="/training"
     >
-      <span>Training</span>
+      <span style="fontSize:9px">Training</span>
       <v-icon>
         mdi-racing-helmet
       </v-icon>
@@ -67,7 +67,7 @@
       value="History"
       to="/history"
     >
-      <span>History</span>
+      <span style="fontSize:9px">History</span>
       <v-icon>
         mdi-calendar-edit
       </v-icon>
