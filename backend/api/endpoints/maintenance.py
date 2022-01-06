@@ -241,8 +241,6 @@ class MaintenanceItem(Resource):
             maintenance_work.interval_type = inserted_data.get('interval_type')
         if inserted_data.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.tags_default = inserted_data.get('tags_default')
-        if bool(inserted_data):
-            maintenance_work.datetime_last_modified = datetime.now(timezone.utc)
 
         db.session.add(maintenance_work)
         db.session.commit()

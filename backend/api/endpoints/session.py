@@ -74,7 +74,7 @@ class SessionCollection(Resource):
             bike_id=inserted_data.get('bike_id'),
             setup_id=inserted_data.get('setup_id'),
             application=inserted_data.get('application'),
-            datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
+            datetime_display=datetime.fromtimestamp(inserted_data.get('datetime_display'), tz=timezone.utc),
         )
 
         db.session.add(new_session)
@@ -135,9 +135,8 @@ class SessionItem(Resource):
         if inserted_data.get('application', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.application = inserted_data.get('application')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            session_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data):
-            session_entry.datetime_last_modified = datetime.now(timezone.utc)
+            session_entry.datetime_display = datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc)
 
         db.session.add(session_entry)
         db.session.commit()

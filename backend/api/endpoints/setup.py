@@ -111,7 +111,7 @@ class SetupCollection(Resource):
             rain_pressure_rear=inserted_data.get('rain_pressure_rear'),
             setup=inserted_data.get('setup'),
             comment=inserted_data.get('comment'),
-            datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
+            datetime_display=datetime.fromtimestamp(inserted_data.get('datetime_display'), tz=timezone.utc),
         )
 
         db.session.add(new_setup)
@@ -184,9 +184,8 @@ class SetupItem(Resource):
         if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.comment = inserted_data.get('comment')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            setup_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data):
-            setup_entry.datetime_last_modified = datetime.now(timezone.utc)
+            setup_entry.datetime_display = datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc)
 
         db.session.add(setup_entry)
         db.session.commit()

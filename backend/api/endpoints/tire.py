@@ -211,8 +211,6 @@ class TireItem(Resource):
             tire_entry.operating_hours = inserted_data.get('operating_hours')
         if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.comment = inserted_data.get('comment')
-        if bool(inserted_data):
-            tire_entry.datetime_last_modified = datetime.now(timezone.utc).replace(tzinfo=None)
 
         db.session.add(tire_entry)
         db.session.commit()
@@ -266,12 +264,18 @@ class TireQuery(Resource):
         filter_data = {}
         if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_created'] = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created')['values']],
+                'values': [
+                    datetime.fromtimestamp(ts, tz=timezone.utc) for ts in requested.get(
+                        'datetime_created')['values']
+                ],
                 'operators': requested.get('datetime_created')['operators'],
             }
         elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_last_modified'] = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified')['values']],
+                'values': [
+                    datetime.fromtimestamp(ts, tz=timezone.utc) for ts in requested.get(
+                        'datetime_last_modified')['values']
+                ],
                 'operators': requested.get('datetime_last_modified')['operators'],
             }
         elif requested.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':

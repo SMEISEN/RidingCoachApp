@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -135,8 +134,6 @@ class SparepartItem(Resource):
             sparepart.module = inserted_data.get('module')
         if inserted_data.get('min_stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart.min_stock = inserted_data.get('min_stock')
-        if bool(inserted_data):
-            sparepart.datetime_last_modified = datetime.now(timezone.utc).replace(tzinfo=None)
 
         db.session.add(sparepart)
         db.session.commit()
