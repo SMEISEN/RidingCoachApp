@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -31,7 +31,8 @@ history_input_parameters = api.model('HistoryInputParameters', {
             "replaced",
         ]),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True,
+                        example=datetime.now(timezone.utc).timestamp()),
 })
 history_query_parameters = api.model('HistoryQueryParameters', {
     "bike_id":
@@ -54,17 +55,26 @@ history_query_parameters = api.model('HistoryQueryParameters', {
         ]),
     "datetime_created":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp() - 2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_last_modified":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp() - 2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_display":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp() - 2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
 })
@@ -180,7 +190,7 @@ class HistoryItem(Resource):
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
         if bool(inserted_data):
-            history_entry.datetime_last_modified = datetime.utcnow()
+            history_entry.datetime_last_modified = datetime.now(timezone.utc)
 
         db.session.add(history_entry)
         db.session.commit()

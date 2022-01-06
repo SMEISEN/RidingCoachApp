@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -151,7 +151,7 @@ class CoachItem(Resource):
         if inserted_data.get('advice', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             coach_entry.advice = inserted_data.get('advice')
         if bool(inserted_data):
-            coach_entry.datetime_last_modified = datetime.utcnow()
+            coach_entry.datetime_last_modified = datetime.now(timezone.utc).replace(tzinfo=None)
 
         db.session.add(coach_entry)
         db.session.commit()

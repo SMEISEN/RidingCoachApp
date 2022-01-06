@@ -1,6 +1,6 @@
 import json
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
@@ -85,7 +85,8 @@ def test_get_item(app, client, training_id):
     assert validate_uuid(training_item["training_id"], 4) is True
     for key, value in default_payload_post.items():
         if key == "datetime_display":
-            assert training_item[key] == datetime.utcfromtimestamp(value).isoformat()  # this should be unified
+            assert training_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
+                .isoformat()  # this should be unified
         else:
             assert training_item[key] == value
     assert response.status_code == 200
@@ -102,7 +103,8 @@ def test_put_item(app, client, training_id):
     assert validate_uuid(training_item["training_id"], 4) is True
     for key, value in default_payload_put.items():
         if key == "datetime_display":
-            assert training_item[key] == datetime.utcfromtimestamp(value).isoformat()  # this should be unified
+            assert training_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
+                .isoformat()  # this should be unified
         else:
             assert training_item[key] == value
 
@@ -134,7 +136,8 @@ def test_post_query(app, client):
     training_item = training_items[0]
     for key, value in default_payload_post.items():
         if key == "datetime_display":
-            assert training_item[key] == datetime.utcfromtimestamp(value).isoformat()  # this should be unified
+            assert training_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
+                .isoformat()  # this should be unified
         else:
             assert training_item[key] == value
     assert response.status_code == 200
@@ -142,8 +145,8 @@ def test_post_query(app, client):
     payload = {
         "datetime_display": {
             "values": [
-                datetime.utcnow().timestamp() - 2000,
-                datetime.utcnow().timestamp(),
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
                 ],
             "operators": [
                 ">=",
@@ -154,17 +157,19 @@ def test_post_query(app, client):
     response = post_query(app, client, payload)
     training_items = json.loads(response.get_data())
     for training_item in training_items:
-        assert training_item["datetime_display"] >= datetime.utcfromtimestamp(
-            payload["datetime_display"]["values"][0]).isoformat()
-        assert training_item["datetime_display"] <= datetime.utcfromtimestamp(
-            payload["datetime_display"]["values"][1]).isoformat()
+        assert training_item["datetime_display"] >= datetime.fromtimestamp(
+            payload["datetime_display"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
+            .isoformat()  # this should be unified
+        assert training_item["datetime_display"] <= datetime.fromtimestamp(
+            payload["datetime_display"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
+            .isoformat()  # this should be unified
     assert response.status_code == 200
 
     payload = {
         "datetime_created": {
             "values": [
-                datetime.utcnow().timestamp() - 2000,
-                datetime.utcnow().timestamp(),
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
                 ],
             "operators": [
                 ">=",
@@ -175,17 +180,19 @@ def test_post_query(app, client):
     response = post_query(app, client, payload)
     training_items = json.loads(response.get_data())
     for training_item in training_items:
-        assert training_item["datetime_created"] >= datetime.utcfromtimestamp(
-            payload["datetime_created"]["values"][0]).isoformat()
-        assert training_item["datetime_created"] <= datetime.utcfromtimestamp(
-            payload["datetime_created"]["values"][1]).isoformat()
+        assert training_item["datetime_created"] >= datetime.fromtimestamp(
+            payload["datetime_created"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
+            .isoformat()  # this should be unified
+        assert training_item["datetime_created"] <= datetime.fromtimestamp(
+            payload["datetime_created"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
+            .isoformat()  # this should be unified
     assert response.status_code == 200
 
     payload = {
         "datetime_last_modified": {
             "values": [
-                datetime.utcnow().timestamp() - 2000,
-                datetime.utcnow().timestamp(),
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
                 ],
             "operators": [
                 ">=",
@@ -196,8 +203,10 @@ def test_post_query(app, client):
     response = post_query(app, client, payload)
     training_items = json.loads(response.get_data())
     for training_item in training_items:
-        assert training_item["datetime_last_modified"] >= datetime.utcfromtimestamp(
-            payload["datetime_last_modified"]["values"][0]).isoformat()
-        assert training_item["datetime_last_modified"] <= datetime.utcfromtimestamp(
-            payload["datetime_last_modified"]["values"][1]).isoformat()
+        assert training_item["datetime_last_modified"] >= datetime.fromtimestamp(
+            payload["datetime_last_modified"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
+            .isoformat()  # this should be unified
+        assert training_item["datetime_last_modified"] <= datetime.fromtimestamp(
+            payload["datetime_last_modified"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
+            .isoformat()  # this should be unified
     assert response.status_code == 200

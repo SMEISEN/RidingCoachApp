@@ -1,15 +1,15 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.tests.api.requests.training import post as post_training
 from backend.tests.api.requests.bike import post as post_bike
 from backend.tests.api.requests.setup import post as post_setup
 
 default_payload_post = {
-    "datetime_display": datetime.utcnow().timestamp()
+    "datetime_display": datetime.now(tz=timezone.utc).timestamp()
 }
 
 default_payload_put = {
-    "datetime_display": datetime.utcnow().timestamp() + 2000
+    "datetime_display": datetime.now(tz=timezone.utc).timestamp() + 2000
 }
 
 

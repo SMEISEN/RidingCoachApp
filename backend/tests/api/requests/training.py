@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 default_payload_post = {
     "location": "track name",
@@ -29,7 +29,7 @@ default_payload_post = {
             "type": "forecast"
         }
     ],
-    "datetime_display": datetime.utcnow().timestamp()
+    "datetime_display": datetime.now(tz=timezone.utc).timestamp()
 }
 
 default_payload_put = {
@@ -60,15 +60,15 @@ default_payload_put = {
             "type": "forecast"
         }
     ],
-    "datetime_display": datetime.utcnow().timestamp() + 2000
+    "datetime_display": datetime.now(tz=timezone.utc).timestamp() + 2000
 }
 
 default_payload_query = {
     "location": "track name",
     "datetime_created": {
         "values": [
-            datetime.utcnow().timestamp() - 2000,
-            datetime.utcnow().timestamp(),
+            datetime.now(tz=timezone.utc).timestamp() - 2000,
+            datetime.now(tz=timezone.utc).timestamp(),
         ],
         "operators": [
             ">=",
@@ -77,8 +77,8 @@ default_payload_query = {
     },
     "datetime_last_modified": {
         "values": [
-            datetime.utcnow().timestamp() - 2000,
-            datetime.utcnow().timestamp(),
+            datetime.now(tz=timezone.utc).timestamp() - 2000,
+            datetime.now(tz=timezone.utc).timestamp(),
         ],
         "operators": [
             ">=",
@@ -87,8 +87,8 @@ default_payload_query = {
     },
     "datetime_display": {
         "values": [
-            datetime.utcnow().timestamp() - 2000,
-            datetime.utcnow().timestamp(),
+            datetime.now(tz=timezone.utc).timestamp() - 2000,
+            datetime.now(tz=timezone.utc).timestamp(),
         ],
         "operators": [
             ">=",

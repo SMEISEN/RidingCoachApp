@@ -1,6 +1,6 @@
 import json
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
@@ -84,7 +84,8 @@ def test_get_item(app, client, session_id):
     assert validate_uuid(session_item["session_id"], 4) is True
     for key, value in default_payload_post.items():
         if key == "datetime_display":
-            assert session_item[key] == datetime.utcfromtimestamp(value).isoformat()  # this should be unified
+            assert session_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
+                .isoformat()  # this should be unified
         else:
             assert session_item[key] == value
     assert response.status_code == 200
@@ -101,7 +102,8 @@ def test_put_item(app, client, session_id):
     assert validate_uuid(session_item["session_id"], 4) is True
     for key, value in default_payload_put.items():
         if key == "datetime_display":
-            assert session_item[key] == datetime.utcfromtimestamp(value).isoformat()  # this should be unified
+            assert session_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
+                .isoformat()  # this should be unified
         else:
             assert session_item[key] == value
 

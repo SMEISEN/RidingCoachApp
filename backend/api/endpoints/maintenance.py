@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -69,7 +69,7 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     elif maintenance_data['interval_unit'] == 'a':
         interval_left = (
             datetime.fromisoformat(history_data[0]['datetime_display']) -
-            datetime.utcnow() +
+            datetime.now(timezone.utc) +
             timedelta(days=365 * maintenance_data['interval_amount'])
         )
         state_left = interval_left / timedelta(days=365 * maintenance_data['interval_amount'])
@@ -79,7 +79,7 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     # elif maintenance_data['interval_unit'] == 't':
     #     interval_left = (
     #         datetime.fromisoformat(history_data[0]['datetime_display']) -
-    #         datetime.utcnow() +
+    #         datetime.now(timezone.utc) +
     #         timedelta(days=1)
     #     ).total_seconds()
 
@@ -242,7 +242,7 @@ class MaintenanceItem(Resource):
         if inserted_data.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.tags_default = inserted_data.get('tags_default')
         if bool(inserted_data):
-            maintenance_work.datetime_last_modified = datetime.utcnow()
+            maintenance_work.datetime_last_modified = datetime.now(timezone.utc)
 
         db.session.add(maintenance_work)
         db.session.commit()
@@ -337,7 +337,10 @@ class MaintenanceQuery(Resource):
             .all()
 
         maintenance_categories_dict = query_to_dict(
-            maintenance_query=maintenance_query, bike_operating_hours=bike_operating_hours, bike_id=requested.get('bike_id'))
+            maintenance_query=maintenance_query,
+            bike_operating_hours=bike_operating_hours,
+            bike_id=requested.get('bike_id')
+        )
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200

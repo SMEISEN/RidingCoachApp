@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -61,12 +61,18 @@ tire_query_parameters = api.model('HistoryQueryParameters', {
                    }),
     "datetime_created":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp() - 2000,
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_last_modified":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp() - 2000,
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
 })
@@ -206,7 +212,7 @@ class TireItem(Resource):
         if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.comment = inserted_data.get('comment')
         if bool(inserted_data):
-            tire_entry.datetime_last_modified = datetime.utcnow()
+            tire_entry.datetime_last_modified = datetime.now(timezone.utc).replace(tzinfo=None)
 
         db.session.add(tire_entry)
         db.session.commit()

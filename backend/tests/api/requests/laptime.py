@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from backend.tests.api.requests.session import post as post_session
 
 default_payload_post = {
@@ -10,7 +10,7 @@ default_payload_post = {
         "Sector 1": 39.9,
         "Sector 2": 36.57
     },
-    "datetime_display": datetime.utcnow().timestamp()
+    "datetime_display": datetime.now(tz=timezone.utc).timestamp()
 }
 
 default_payload_put = {
@@ -21,7 +21,7 @@ default_payload_put = {
         "Sector 1": 40.4,
         "Sector 2": 37.07
     },
-    "datetime_display": datetime.utcnow().timestamp() + 2000
+    "datetime_display": datetime.now(tz=timezone.utc).timestamp() + 2000
 }
 
 

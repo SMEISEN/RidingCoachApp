@@ -1,7 +1,7 @@
 import os
 import json
 import click
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Flask, Blueprint, current_app, send_file
 from flask_cors import CORS
 from backend.api import api
@@ -117,8 +117,8 @@ def copy_maintenance_template(temp):
             interval_amount=entry[1]['interval_amount'],
             interval_unit=entry[1]['interval_unit'],
             interval_type=entry[1]['interval_type'],
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
+            datetime_created=datetime.now(timezone.utc),
+            datetime_last_modified=datetime.now(timezone.utc),
         )
         db.session.add(new_maintenance)
 
@@ -141,8 +141,8 @@ def copy_coach_template(temp):
             notes=entry['notes'],
             questions=entry['questions'],
             advice=entry['advice'],
-            datetime_created=datetime.utcnow(),
-            datetime_last_modified=datetime.utcnow(),
+            datetime_created=datetime.now(timezone.utc),
+            datetime_last_modified=datetime.now(timezone.utc),
         )
         db.session.add(new_coach)
 

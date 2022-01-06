@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -56,7 +56,8 @@ setup_input_parameters = api.model('SetupInputParameters', {
     "comment":
         fields.String(description="comment", required=False, example="comment"),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True,
+                        example=datetime.now(timezone.utc).timestamp()),
 })
 
 
@@ -185,7 +186,7 @@ class SetupItem(Resource):
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
         if bool(inserted_data):
-            setup_entry.datetime_last_modified = datetime.utcnow()
+            setup_entry.datetime_last_modified = datetime.now(timezone.utc)
 
         db.session.add(setup_entry)
         db.session.commit()

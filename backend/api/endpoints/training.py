@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -46,7 +46,8 @@ training_input_parameters = api.model('TrainingInputParameters', {
             }
         ]),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True,
+                        example=datetime.now(timezone.utc).timestamp()),
 })
 training_query_parameters = api.model('TrainingQueryParameters', {
     "location":
@@ -55,17 +56,26 @@ training_query_parameters = api.model('TrainingQueryParameters', {
         fields.String(description="bike_id to be queried", required=False, example="UUID4"),
     "datetime_created":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp()-2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_last_modified":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp()-2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_display":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp()-2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp()-2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         })
 })
@@ -197,7 +207,7 @@ class TrainingItem(Resource):
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             training_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
         if bool(inserted_data):
-            training_entry.datetime_last_modified = datetime.utcnow()
+            training_entry.datetime_last_modified = datetime.now(timezone.utc)
 
         db.session.add(training_entry)
         db.session.commit()
