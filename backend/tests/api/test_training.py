@@ -6,6 +6,7 @@ from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
 from backend.utils.uuid import validate_uuid
+from backend.tests.api.routines.query import validate_filter_by, validate_filter_intervals
 
 from backend.tests.api.requests.training import get
 from backend.tests.api.requests.training import post
@@ -125,41 +126,21 @@ def test_post_query(app, client):
     # post new default item
     post(app, client, default_payload_post)
     post(app, client, default_payload_put)
-    # todo: post default and alternative, query both items
 
     # query invalid parameter
     payload = {
-        "test": "test",
+        "test314": "test314",
     }
     response = post_query(app, client, payload)
     assert len(json.loads(response.get_data())) == 0
+    assert response.status_code == 404
 
     # query single keys
-    def validate_filter_by(payload):
-        response = post_query(app, client, payload)
-        training_items = json.loads(response.get_data())
-        assert isinstance(training_items, list)
-        for training_item in training_items:
-            for key, value in payload.items():
-                assert training_item[key] == value
-        assert response.status_code == 200
-    validate_filter_by({"location": "track name"})
-    validate_filter_by({"location": "name track"})
+    validate_filter_by(payload={"location": "track name"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"location": "name track"}, post_query=post_query, app=app, client=client)
 
     # query intervals
-    def validate_filter_intervals(payload):
-        response = post_query(app, client, payload)
-        training_items = json.loads(response.get_data())
-        for training_item in training_items:
-            for key in payload:
-                assert training_item[key] >= datetime.fromtimestamp(
-                    payload[key]["values"][0], tz=timezone.utc).replace(tzinfo=None) \
-                    .isoformat()  # this should be unified
-                assert training_item[key] <= datetime.fromtimestamp(
-                    payload[key]["values"][1], tz=timezone.utc).replace(tzinfo=None) \
-                    .isoformat()  # this should be unified
-        assert response.status_code == 200
-    validate_filter_intervals({
+    validate_filter_intervals(payload={
         "datetime_display": {
             "values": [
                 datetime.now(tz=timezone.utc).timestamp() - 2000,
@@ -170,8 +151,8 @@ def test_post_query(app, client):
                 "<="
             ]
         },
-    })
-    validate_filter_intervals({
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_intervals(payload={
         "datetime_created": {
             "values": [
                 datetime.now(tz=timezone.utc).timestamp() - 2000,
@@ -182,8 +163,8 @@ def test_post_query(app, client):
                 "<="
             ]
         },
-    })
-    validate_filter_intervals({
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_intervals(payload={
         "datetime_last_modified": {
             "values": [
                 datetime.now(tz=timezone.utc).timestamp() - 2000,
@@ -194,4 +175,4 @@ def test_post_query(app, client):
                 "<="
             ]
         },
-    })
+    }, post_query=post_query, app=app, client=client)
