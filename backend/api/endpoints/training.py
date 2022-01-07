@@ -253,7 +253,7 @@ class TrainingQuery(Resource):
         filter_by_data = {
             'location': requested.get('location'),
         }
-        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value is not None}
 
         training_query = TrainingModel.query.filter_by(**filter_by_data)
 
@@ -265,7 +265,7 @@ class TrainingQuery(Resource):
 
         if bool(filter_data) is False and bool(filter_by_data) is False:
             response = jsonify([])
-            response.status_code = 200
+            response.status_code = 404
 
             return response
 

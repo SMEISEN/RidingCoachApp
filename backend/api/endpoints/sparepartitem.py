@@ -17,6 +17,8 @@ sparepartitem_input_parameters = api.model('SparepartitemInputParameters', {
         fields.String(description="condition of the spare part item child", required=True, example="good"),
     "description":
         fields.String(description="description of the spare part item child", required=True, example="new"),
+    "stock":
+        fields.Integer(description="current stock of the spare part item child", required=True, example=2),
 })
 
 
