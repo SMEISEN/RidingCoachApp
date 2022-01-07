@@ -75,7 +75,8 @@ class LaptimeCollection(Resource):
             track_layout=inserted_data.get('track_layout'),
             laptime_seconds=inserted_data.get('laptime_seconds'),
             sectors=inserted_data.get('sectors'),
-            datetime_display=datetime.fromtimestamp(inserted_data.get('datetime_display'), tz=timezone.utc),
+            datetime_display=datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None),
         )
 
         db.session.add(new_laptime)
@@ -141,7 +142,7 @@ class LaptimeItem(Resource):
             laptime_entry.sectors = inserted_data.get('sectors')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.datetime_display = datetime\
-                .fromtimestamp(inserted_data.get('datetime_display'), tz=timezone.utc)
+                .fromtimestamp(inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None)
 
         db.session.add(laptime_entry)
         db.session.commit()

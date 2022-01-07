@@ -126,7 +126,8 @@ class HistoryCollection(Resource):
             operating_hours=inserted_data.get('operating_hours'),
             comment=inserted_data.get('comment'),
             tags=inserted_data.get('tags'),
-            datetime_display=datetime.fromtimestamp(inserted_data.get('datetime_display'), tz=timezone.utc),
+            datetime_display=datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None),
         )
 
         db.session.add(new_history)
@@ -189,7 +190,7 @@ class HistoryItem(Resource):
             history_entry.tags = inserted_data.get('tags')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.datetime_display = datetime.fromtimestamp(
-                inserted_data.get('datetime_display'), tz=timezone.utc)
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None)
 
         db.session.add(history_entry)
         db.session.commit()
@@ -243,7 +244,7 @@ class HistoryQuery(Resource):
         if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_created'] = {
                 'values': [
-                    datetime.fromtimestamp(ts, tz=timezone.utc) for ts in requested.get(
+                    datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
                         'datetime_created')['values']
                 ],
                 'operators': requested.get('datetime_created')['operators'],
@@ -251,14 +252,14 @@ class HistoryQuery(Resource):
         elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_last_modified'] = {
                 'values': [
-                    datetime.fromtimestamp(ts, tz=timezone.utc) for ts in requested.get(
+                    datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
                         'datetime_last_modified')['values']
                 ],
                 'operators': requested.get('datetime_last_modified')['operators'],
             }
         elif requested.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_display'] = {
-                'values': [datetime.fromtimestamp(ts, tz=timezone.utc) for ts in requested.get(
+                'values': [datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
                     'datetime_display')['values']
                            ],
                 'operators': requested.get('datetime_display')['operators'],

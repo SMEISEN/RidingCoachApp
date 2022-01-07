@@ -265,7 +265,7 @@ class TireQuery(Resource):
         if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_created'] = {
                 'values': [
-                    datetime.fromtimestamp(ts, tz=timezone.utc) for ts in requested.get(
+                    datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
                         'datetime_created')['values']
                 ],
                 'operators': requested.get('datetime_created')['operators'],
@@ -273,7 +273,7 @@ class TireQuery(Resource):
         elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             filter_data['datetime_last_modified'] = {
                 'values': [
-                    datetime.fromtimestamp(ts, tz=timezone.utc) for ts in requested.get(
+                    datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
                         'datetime_last_modified')['values']
                 ],
                 'operators': requested.get('datetime_last_modified')['operators'],
