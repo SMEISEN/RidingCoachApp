@@ -123,25 +123,42 @@ def test_post_query(app, client):
     assert response.status_code == 200
 
     # post new default item
-    post(app, client)
+    post(app, client, default_payload_post)
+    post(app, client, default_payload_put)
     # todo: post default and alternative, query both items
 
+    # query invalid parameter
+    payload = {
+        "test": "test",
+    }
+    response = post_query(app, client, payload)
+    assert len(json.loads(response.get_data())) == 0
+
+    # query default
     payload = {
         "location": "track name",
     }
     response = post_query(app, client, payload)
     training_items = json.loads(response.get_data())
     assert isinstance(training_items, list)
-    # assert len(training_items) == 1
-    training_item = training_items[0]
-    for key, value in default_payload_post.items():
-        if key == "datetime_display":
-            assert training_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
-                .isoformat()  # this should be unified
-        else:
+    for training_item in training_items:
+        for key, value in payload.items():
             assert training_item[key] == value
     assert response.status_code == 200
 
+    # query alternative
+    payload = {
+        "location": "name track",
+    }
+    response = post_query(app, client, payload)
+    training_items = json.loads(response.get_data())
+    assert isinstance(training_items, list)
+    for training_item in training_items:
+        for key, value in payload.items():
+            assert training_item[key] == value
+    assert response.status_code == 200
+
+    # query intervals
     payload = {
         "datetime_display": {
             "values": [

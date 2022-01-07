@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from flask import jsonify, request
+from flask_restplus import Resource, fields
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
@@ -7,7 +8,7 @@ from backend.database.models.training import TrainingModel, TrainingSchema
 from backend.database.models.setup import SetupSchema
 from backend.database.models.session import SessionModel, SessionSchema
 from backend.database.models.laptime import LaptimeSchema
-from flask_restplus import Resource, fields
+from backend.api.routines.common import query_intervals
 
 ns = api.namespace('training', description='Operations related to training entries.')
 training_schema = TrainingSchema()
@@ -256,47 +257,17 @@ class TrainingQuery(Resource):
 
         training_query = TrainingModel.query.filter_by(**filter_by_data)
 
-        filter_data = {}
-        if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_created'] = {
-                'values': [
-                    datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
-                    'datetime_created')['values']
-                ],
-                'operators': requested.get('datetime_created')['operators'],
-            }
-        elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_last_modified'] = {
-                'values': [
-                    datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
-                        'datetime_last_modified')['values']
-                ],
-                'operators': requested.get('datetime_last_modified')['operators'],
-            }
-        elif requested.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_display'] = {
-                'values': [datetime.fromtimestamp(ts, tz=timezone.utc).replace(tzinfo=None) for ts in requested.get(
-                    'datetime_display')['values']
-                           ],
-                'operators': requested.get('datetime_display')['operators'],
-            }
+        training_query, filter_data = query_intervals(filter_keys=[
+            "datetime_created",
+            "datetime_last_modified",
+            "datetime_display"
+        ], query=training_query, request=requested, model=TrainingModel)
 
-        for attr, item in filter_data.items():
-            for operator, value in zip(item['operators'], item['values']):
-                if operator == '==':
-                    training_query = training_query.filter(getattr(TrainingModel, attr) == value)
-                elif operator == '<=':
-                    training_query = training_query.filter(getattr(TrainingModel, attr) <= value)
-                elif operator == '>=':
-                    training_query = training_query.filter(getattr(TrainingModel, attr) >= value)
-                elif operator == '<':
-                    training_query = training_query.filter(getattr(TrainingModel, attr) < value)
-                elif operator == '>':
-                    training_query = training_query.filter(getattr(TrainingModel, attr) > value)
-                elif operator == '!=':
-                    training_query = training_query.filter(getattr(TrainingModel, attr) != value)
-                else:
-                    raise ValueError('Given operator does not match available operators!')
+        if bool(filter_data) is False and bool(filter_by_data) is False:
+            response = jsonify([])
+            response.status_code = 200
+
+            return response
 
         training_query = training_query\
             .order_by(TrainingModel.datetime_display.desc())\
