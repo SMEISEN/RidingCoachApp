@@ -115,93 +115,87 @@ def test_post_query(app, client, maintenance_id):
     response = post_query(app, client)
     assert response.status_code == 200
 
-    # post and get new default item
-    response = get_item(app, client, maintenance_id)
-    bike_id = json.loads(response.get_data())["bike_id"]
-    # todo: post default and alternative, query both items
+    # post new default item
+    response = post(app, client, default_payload_post)
+    response = get_item(app, client, json.loads(response.get_data()))
+    bike_id_post = json.loads(response.get_data())["bike_id"]
+    response = post(app, client, default_payload_put)
+    response = get_item(app, client, json.loads(response.get_data()))
+    bike_id_put = json.loads(response.get_data())["bike_id"]
 
+    # query invalid parameter
     payload = {
-        "bike_id": bike_id,
+        "test314": "test314",
     }
     response = post_query(app, client, payload)
-    maintenance_items = json.loads(response.get_data())
-    for value in maintenance_items.values():
-        for value_value in value.values():
-            assert value_value["bike_id"] == payload["bike_id"]
-    assert response.status_code == 200
+    assert len(json.loads(response.get_data())) == 0
+    assert response.status_code == 404
 
-    payload = {
-        "category": "maintenance category",
-    }
-    response = post_query(app, client, payload)
-    maintenance_items = json.loads(response.get_data())
-    for key in maintenance_items.keys():
-        assert key == payload["category"]
-    assert response.status_code == 200
+    def validate_category(payload):
+        response = post_query(app, client, payload)
+        items = json.loads(response.get_data())
+        for key in items.keys():
+            assert key == payload["category"]
+        assert response.status_code == 200
+    validate_category({"category": "maintenance category"})
+    validate_category({"category": "category maintenance"})
 
-    payload = {
-        "name": "maintenance name",
-    }
-    response = post_query(app, client, payload)
-    maintenance_items = json.loads(response.get_data())
-    for value in maintenance_items.values():
-        for key in value.keys():
-            assert key == payload["name"]
-    assert response.status_code == 200
+    def validate_name(payload):
+        response = post_query(app, client, payload)
+        maintenance_items = json.loads(response.get_data())
+        for value in maintenance_items.values():
+            for key in value.keys():
+                assert key == payload["name"]
+        assert response.status_code == 200
+    validate_name({"name": "maintenance name"})
+    validate_name({"name": "name maintenance"})
 
-    payload = {
-        "interval_unit": "h",
-    }
-    response = post_query(app, client, payload)
-    maintenance_items = json.loads(response.get_data())
-    for value in maintenance_items.values():
-        for value_value in value.values():
-            assert value_value["interval_unit"] == payload["interval_unit"]
-    assert response.status_code == 200
+    def validate_tags(payload):
+        response = post_query(app, client, payload)
+        maintenance_items = json.loads(response.get_data())
+        for value in maintenance_items.values():
+            for value_value in value.values():
+                for key in payload.keys():
+                    assert any(item in value_value[key] for item in payload[key]) is True
+        assert response.status_code == 200
+    validate_tags({"tags_default": ["checked", "fixed", "replaced"]})
+    validate_tags({"tags_default": ["checked"]})
 
-    payload = {
-        "interval_type": "planned cycle",
-    }
-    response = post_query(app, client, payload)
-    maintenance_items = json.loads(response.get_data())
-    for value in maintenance_items.values():
-        for value_value in value.values():
-            assert value_value["interval_type"] == payload["interval_type"]
-    assert response.status_code == 200
+    def validate_other(payload):
+        response = post_query(app, client, payload)
+        maintenance_items = json.loads(response.get_data())
+        for value in maintenance_items.values():
+            for value_value in value.values():
+                for key in payload.keys():
+                    assert value_value[key] == payload[key]
+        assert response.status_code == 200
+    validate_other({"interval_unit": "h"})
+    validate_other({"interval_unit": "a"})
+    validate_other({"interval_type": "planned cycle"})
+    validate_other({"interval_type": "estimated wear"})
 
-    payload = {
-        "tags_default": [
-            "checked",
-            "fixed",
-            "replaced"
-        ]
-    }
-    response = post_query(app, client, payload)
-    maintenance_items = json.loads(response.get_data())
-    for value in maintenance_items.values():
-        for value_value in value.values():
-            assert value_value["tags_default"] == payload["tags_default"]
-    assert response.status_code == 200
 
-    payload = {
-        "interval_amount": {
-            "values": [
-                9,
-                11
-            ],
-            "operators": [
-                ">=",
-                "<="
-            ]
-        },
-    }
-    response = post_query(app, client, payload)
-    maintenance_items = json.loads(response.get_data())
-    for value in maintenance_items.values():
-        for valuevalue in value.values():
-            assert valuevalue["interval_amount"] >= payload["interval_amount"]["values"][0]
-            assert valuevalue["interval_amount"] <= payload["interval_amount"]["values"][1]
-    assert response.status_code == 200
+    def validate_intervals(payload):
+        response = post_query(app, client, payload)
+        maintenance_items = json.loads(response.get_data())
+        for value in maintenance_items.values():
+            for valuevalue in value.values():
+                assert valuevalue["interval_amount"] >= payload["interval_amount"]["values"][0]
+                assert valuevalue["interval_amount"] <= payload["interval_amount"]["values"][1]
+        assert response.status_code == 200
+    validate_intervals({
+            "interval_amount": {
+                "values": [
+                    9,
+                    11
+                ],
+                "operators": [
+                    ">=",
+                    "<="
+                ]
+            },
+        })
+
 
 def test_get_warnings(app, client, maintenance_id):
     #tbd
