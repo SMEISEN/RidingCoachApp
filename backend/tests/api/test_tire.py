@@ -1,16 +1,19 @@
 import json
 import pytest
+from datetime import datetime, timezone
 from sqlalchemy.orm.exc import NoResultFound
 from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
 from backend.utils.uuid import validate_uuid
+from backend.tests.api.routines.query import validate_filter_by, validate_filter_intervals
 
 from backend.tests.api.requests.tire import get
 from backend.tests.api.requests.tire import post
 from backend.tests.api.requests.tire import get_item
 from backend.tests.api.requests.tire import put_item
 from backend.tests.api.requests.tire import delete_item
+from backend.tests.api.requests.tire import post_query
 from backend.tests.api.requests.tire import default_payload_post, default_payload_put
 
 
@@ -107,7 +110,62 @@ def test_delete_item(app, client, tire_id):
         assert response is None
 
 
-def test_post_query():
-    # tbd
-    # todo: post two bikes, then get, must be 2, must be a list
-    pass
+def test_post_query(app, client, tire_id):
+    # POST /tire/query
+    response = post_query(app, client)
+    assert response.status_code == 200
+
+    # post new default item
+    post(app, client, default_payload_post)
+    post(app, client, default_payload_put)
+
+    # query invalid parameter
+    payload = {
+        "test314": "test314",
+    }
+    response = post_query(app, client, payload)
+    assert len(json.loads(response.get_data())) == 0
+    assert response.status_code == 404
+
+    # query single keys
+    validate_filter_by(payload={"active": True}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"active": False}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"category": "slick"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"category": "rain"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"axis": "front"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"axis": "rear"}, post_query=post_query, app=app, client=client)
+
+    # query intervals
+    validate_filter_intervals(payload={
+        "datetime_created": {
+            "values": [
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
+                ],
+            "operators": [
+                ">=",
+                "<="
+            ]
+        },
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_intervals(payload={
+        "datetime_last_modified": {
+            "values": [
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
+                ],
+            "operators": [
+                ">=",
+                "<="
+            ]
+        },
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_intervals(payload={
+        "operating_hours": {
+            "values": [0, 2],
+            "operators": [
+                ">=",
+                "<="
+            ]
+        },
+    }, post_query=post_query, app=app, client=client)
