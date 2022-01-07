@@ -157,7 +157,7 @@ class BikeCollection(Resource):
             stroke=inserted_data.get('stroke'),
             piston=inserted_data.get('piston'),
             slick_front_name=inserted_data.get('slick_front_name'),
-            slick_front_notes=inserted_data.get('slick_front_pressure_notes'),
+            slick_front_notes=inserted_data.get('slick_front_notes'),
             slick_front_pressure=inserted_data.get('slick_front_pressure'),
             slick_rear_name=inserted_data.get('slick_rear_name'),
             slick_rear_notes=inserted_data.get('slick_rear_notes'),
