@@ -28,6 +28,11 @@ default_payload_query = {
     "active": "false",
     "category": "slick",
     "axis": "front",
+    "tags": [
+        "checked",
+        "fixed",
+        "replaced"
+    ],
     "operating_hours": {
         "values": [
             66,
