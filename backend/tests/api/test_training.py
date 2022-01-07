@@ -1,5 +1,6 @@
 import json
 import pytest
+from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime, timezone
 from backend.app import create_app
 from backend.config import TestConfig
@@ -15,7 +16,7 @@ from backend.tests.api.requests.training import post_query
 from backend.tests.api.requests.training import default_payload_post, default_payload_put
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def app():
     # setup
     _app = create_app(TestConfig)
@@ -32,24 +33,19 @@ def app():
         db.drop_all()
 
 
-@pytest.fixture
-def training_id(app, client):
-    response = get(app, client)
-
-    if bool(json.loads(response.get_data())) is False:
-        # create a new training item
-        response = post(app, client)
-        _training_id = json.loads(response.get_data())
-    else:
-        # extract id from existing training item
-        _training_id = response.get_data()[0]["training_id"]
-    return _training_id
-
-
-@pytest.fixture
+@pytest.fixture(scope='module')
 def client(app):
     _client = app.test_client()
     return _client
+
+
+@pytest.fixture(scope='function')  # each test needs to create its own item(scope='module')
+def training_id(app, client):
+    # create a new training item
+    response = post(app, client)
+    _training_id = json.loads(response.get_data())
+
+    return _training_id
 
 
 def test_get(app, client):
@@ -113,8 +109,12 @@ def test_delete_item(app, client, training_id):
     # DELETE /training/{id_}
     response = delete_item(app, client, training_id)
     assert response.status_code == 204
-    response = get(app, client)
-    assert bool(json.loads(response.get_data())) is False  # response must be empty
+
+    response = None
+    try:
+        response = get_item(app, client, training_id)
+    except NoResultFound:
+        assert response is None
 
 
 def test_post_query(app, client):
@@ -124,7 +124,7 @@ def test_post_query(app, client):
 
     # post new default item
     post(app, client)
-    # todo: post two bikes, then get, must be 2, must be a list
+    # todo: post default and alternative, query both items
 
     payload = {
         "location": "track name",
@@ -132,7 +132,7 @@ def test_post_query(app, client):
     response = post_query(app, client, payload)
     training_items = json.loads(response.get_data())
     assert isinstance(training_items, list)
-    assert len(training_items) == 1
+    # assert len(training_items) == 1
     training_item = training_items[0]
     for key, value in default_payload_post.items():
         if key == "datetime_display":

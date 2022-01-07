@@ -1,5 +1,6 @@
 import json
 import pytest
+from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime, timezone
 from backend.app import create_app
 from backend.config import TestConfig
@@ -14,7 +15,7 @@ from backend.tests.api.requests.session import delete_item
 from backend.tests.api.requests.session import default_payload_post, default_payload_put
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def app():
     # setup
     _app = create_app(TestConfig)
@@ -31,23 +32,18 @@ def app():
         db.drop_all()
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def client(app):
     _client = app.test_client()
     return _client
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')  # each test needs to create its own item
 def session_id(app, client):
-    response = get(app, client)
+    # create a new session item
+    response = post(app, client)
+    _session_id = json.loads(response.get_data())
 
-    if bool(json.loads(response.get_data())) is False:
-        # create a new session item
-        response = post(app, client)
-        _session_id = json.loads(response.get_data())
-    else:
-        # extract id from existing session item
-        _session_id = response.get_data()[0]["session_id"]
     return _session_id
 
 
@@ -112,5 +108,9 @@ def test_delete_item(app, client, session_id):
     # DELETE /session/{id_}
     response = delete_item(app, client, session_id)
     assert response.status_code == 204
-    response = get(app, client)
-    assert bool(json.loads(response.get_data())) is False  # response must be empty
+
+    response = None
+    try:
+        response = get_item(app, client, session_id)
+    except NoResultFound:
+        assert response is None

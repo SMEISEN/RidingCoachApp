@@ -1,5 +1,6 @@
 import json
 import pytest
+from sqlalchemy.orm.exc import NoResultFound
 from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
@@ -14,7 +15,7 @@ from backend.tests.api.requests.maintenance import post_query
 from backend.tests.api.requests.maintenance import default_payload_post, default_payload_put
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def app():
     # setup
     _app = create_app(TestConfig)
@@ -31,23 +32,18 @@ def app():
         db.drop_all()
 
 
-@pytest.fixture
+@pytest.fixture(scope='module')
 def client(app):
     _client = app.test_client()
     return _client
 
 
-@pytest.fixture
+@pytest.fixture(scope='function')  # each test needs to create its own item
 def maintenance_id(app, client):
-    response = get(app, client)
+    # create a new maintenance item
+    response = post(app, client)
+    _maintenance_id = json.loads(response.get_data())
 
-    if bool(json.loads(response.get_data())) is False:
-        # create a new maintenance item
-        response = post(app, client)
-        _maintenance_id = json.loads(response.get_data())
-    else:
-        # extract id from existing maintenance item
-        _maintenance_id = response.get_data()[0]["maintenance_id"]
     return _maintenance_id
 
 
@@ -106,8 +102,12 @@ def test_delete_item(app, client, maintenance_id):
     # DELETE /maintenance/{id_}
     response = delete_item(app, client, maintenance_id)
     assert response.status_code == 204
-    response = get(app, client)
-    assert bool(json.loads(response.get_data())) is False  # response must be empty
+
+    response = None
+    try:
+        response = get_item(app, client, maintenance_id)
+    except NoResultFound:
+        assert response is None
 
 
 def test_post_query(app, client, maintenance_id):
@@ -118,7 +118,7 @@ def test_post_query(app, client, maintenance_id):
     # post and get new default item
     response = get_item(app, client, maintenance_id)
     bike_id = json.loads(response.get_data())["bike_id"]
-    # todo: post two bikes, then get, must be 2, must be a list
+    # todo: post default and alternative, query both items
 
     payload = {
         "bike_id": bike_id,
