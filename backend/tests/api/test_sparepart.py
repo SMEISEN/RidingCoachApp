@@ -1,5 +1,6 @@
 import json
 import pytest
+from sqlalchemy.orm.exc import NoResultFound
 from datetime import datetime, timezone
 from backend.app import create_app
 from backend.config import TestConfig
@@ -99,8 +100,12 @@ def test_delete_item(app, client, sparepart_id):
     # DELETE /sparepart/{id_}
     response = delete_item(app, client, sparepart_id)
     assert response.status_code == 204
-    response = get(app, client)
-    assert bool(json.loads(response.get_data())) is False  # response must be empty
+
+    response = None
+    try:
+        response = get_item(app, client, sparepart_id)
+    except NoResultFound:
+        assert response is None
 
 
 def test_post_query(app, client):
@@ -141,6 +146,6 @@ def test_post_query(app, client):
     }, post_query=post_query, app=app, client=client)
 
 
-def test_get_warnings(app, client, maintenance_id):
+def test_get_warnings(app, client, sparepart_id):
     #tbd
     pass
