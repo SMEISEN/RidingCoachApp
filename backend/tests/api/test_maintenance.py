@@ -12,7 +12,10 @@ from backend.tests.api.requests.maintenance import get_item
 from backend.tests.api.requests.maintenance import put_item
 from backend.tests.api.requests.maintenance import delete_item
 from backend.tests.api.requests.maintenance import post_query
+from backend.tests.api.requests.maintenance import get_warnings
 from backend.tests.api.requests.maintenance import default_payload_post, default_payload_put
+from backend.tests.api.requests.history import post as post_history
+from backend.tests.api.requests.history import get_item as get_history_item
 
 
 @pytest.fixture(scope='module')
@@ -199,6 +202,21 @@ def test_post_query(app, client, maintenance_id):
         })
 
 
-def test_get_warnings(app, client, maintenance_id):
-    #tbd
-    pass
+def test_get_warnings(app, client):
+    # GET /maintenance/warnings
+
+    # post maintenance and history item
+    response = post_history(app, client)
+
+    # get bike_id
+    response = get_history_item(app, client, json.loads(response.get_data()))
+
+    response = get_warnings(app, client, json.loads(response.get_data())["bike_id"])
+    warning_data = json.loads(response.get_data())
+    assert isinstance(warning_data, dict)
+    assert isinstance(warning_data["warnings"], int)
+    assert isinstance(warning_data["overdue_maintenance"], list)
+
+    for sparepart in warning_data["overdue_maintenance"]:
+        for key in default_payload_post.keys():
+            assert (key in list(sparepart.keys())) is True

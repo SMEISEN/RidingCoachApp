@@ -112,3 +112,9 @@ def post_query(app, client, payload=None):
                            headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
 
     return response
+
+
+def get_warnings(app, client, id_):
+    response = client.get(f"/api/maintenance/warnings/{id_}", headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+
+    return response

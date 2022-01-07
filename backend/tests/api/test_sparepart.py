@@ -14,7 +14,9 @@ from backend.tests.api.requests.sparepart import get_item
 from backend.tests.api.requests.sparepart import put_item
 from backend.tests.api.requests.sparepart import delete_item
 from backend.tests.api.requests.sparepart import post_query
+from backend.tests.api.requests.sparepart import get_warnings
 from backend.tests.api.requests.sparepart import default_payload_post, default_payload_put
+from backend.tests.api.requests.sparepartitem import post as post_sparepartitem
 
 
 @pytest.fixture(scope='module')
@@ -53,6 +55,16 @@ def test_get(app, client):
     # GET /sparepart/
     response = get(app, client)
     assert bool(json.loads(response.get_data())) is False  # response must be empty
+    assert response.status_code == 200
+
+    # post two sparepart items
+    post(app, client, default_payload_post)
+    post(app, client, default_payload_put)
+
+    response = get(app, client)
+    history_items = json.loads(response.get_data())
+    assert isinstance(history_items, list)
+    assert len(history_items) == 2
     assert response.status_code == 200
 
 
@@ -146,6 +158,18 @@ def test_post_query(app, client):
     }, post_query=post_query, app=app, client=client)
 
 
-def test_get_warnings(app, client, sparepart_id):
-    #tbd
-    pass
+def test_get_warnings(app, client):
+    # GET /sparepart/warnings
+
+    # post sparepart item
+    post_sparepartitem(app, client)
+
+    response = get_warnings(app, client)
+    warning_data = json.loads(response.get_data())
+    assert isinstance(warning_data, dict)
+    assert isinstance(warning_data["warnings"], int)
+    assert isinstance(warning_data["missing_spareparts"], list)
+
+    for sparepart in warning_data["missing_spareparts"]:
+        for key in default_payload_post.keys():
+            assert (key in list(sparepart.keys())) is True
