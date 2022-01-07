@@ -44,4 +44,4 @@ Installation and deployment guide will be provided with alpha release.
 * RestPlus template by [@postrational](https://github.com/postrational) - [template](https://github.com/postrational/rest_api_demo)
 
 _________________
-Copyright © 2021 [Stefan Meisenbacher](https://github.com/SMEISEN)
+Copyright © 2022 [Stefan Meisenbacher](https://github.com/SMEISEN)
