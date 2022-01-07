@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
+from flask_restplus import Resource, fields
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.tire import TireModel, TireSchema
-from flask_restplus import Resource, fields
+from backend.api.routines.common import query_intervals
 
 ns = api.namespace('tire', description='Operations related to tire entries.')
 tire_schema = TireSchema()
@@ -61,12 +62,18 @@ tire_query_parameters = api.model('HistoryQueryParameters', {
                    }),
     "datetime_created":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp() - 2000,
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_last_modified":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp() - 2000,
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
 })
@@ -205,8 +212,6 @@ class TireItem(Resource):
             tire_entry.operating_hours = inserted_data.get('operating_hours')
         if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.comment = inserted_data.get('comment')
-        if bool(inserted_data):
-            tire_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(tire_entry)
         db.session.commit()
@@ -253,43 +258,21 @@ class TireQuery(Resource):
             'category': requested.get('category'),
             'axis': requested.get('axis'),
         }
-        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value is not None}
 
         tire_query = TireModel.query.filter_by(**filter_by_data)
 
-        filter_data = {}
-        if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_created'] = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created')['values']],
-                'operators': requested.get('datetime_created')['operators'],
-            }
-        elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_last_modified'] = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified')['values']],
-                'operators': requested.get('datetime_last_modified')['operators'],
-            }
-        elif requested.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['operating_hours'] = {
-                'values': requested.get('operating_hours')['values'],
-                'operators': requested.get('operating_hours')['operators'],
-            }
+        training_query, filter_data = query_intervals(filter_keys=[
+            "datetime_created",
+            "datetime_last_modified",
+            "operating_hours"
+        ], query=tire_query, request=requested, model=TireModel)
 
-        for attr, item in filter_data.items():
-            for operator, value in zip(item['operators'], item['values']):
-                if operator == '==':
-                    tire_query = tire_query.filter(getattr(TireModel, attr) == value)
-                elif operator == '<=':
-                    tire_query = tire_query.filter(getattr(TireModel, attr) <= value)
-                elif operator == '>=':
-                    tire_query = tire_query.filter(getattr(TireModel, attr) >= value)
-                elif operator == '<':
-                    tire_query = tire_query.filter(getattr(TireModel, attr) < value)
-                elif operator == '>':
-                    tire_query = tire_query.filter(getattr(TireModel, attr) > value)
-                elif operator == '!=':
-                    tire_query = tire_query.filter(getattr(TireModel, attr) != value)
-                else:
-                    raise ValueError('Given operator does not match available operators!')
+        if bool(filter_data) is False and bool(filter_by_data) is False:
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
 
         tire_query = tire_query \
             .order_by(TireModel.operating_hours.asc()) \

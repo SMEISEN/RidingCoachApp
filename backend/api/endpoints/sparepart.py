@@ -1,11 +1,11 @@
-from datetime import datetime
 from flask import jsonify, request
+from flask_restplus import Resource, fields
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
+from backend.api.routines.common import query_intervals
 from backend.database import db
 from backend.database.models.sparepart import SparepartModel, SparepartSchema
 from backend.database.models.sparepartitem import SparepartitemSchema
-from flask_restplus import Resource, fields
 
 ns = api.namespace('sparepart', description='Operations related to spareparts.')
 sparepart_schema = SparepartSchema()
@@ -106,9 +106,9 @@ class SparepartItem(Resource):
         if validate_api_key(api_key).status_code != 200:
             return validate_api_key(api_key)
 
-        sparepart = SparepartModel.query.filter(SparepartModel.sparepart_id == id_).one()
+        sparepart_item = SparepartModel.query.filter(SparepartModel.sparepart_id == id_).one()
 
-        response = jsonify(sparepartitem_schema.dump(sparepart))
+        response = jsonify(sparepart_schema.dump(sparepart_item))
         response.status_code = 200
 
         return response
@@ -135,8 +135,6 @@ class SparepartItem(Resource):
             sparepart.module = inserted_data.get('module')
         if inserted_data.get('min_stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart.min_stock = inserted_data.get('min_stock')
-        if bool(inserted_data):
-            sparepart.datetime_last_modified = datetime.utcnow()
 
         db.session.add(sparepart)
         db.session.commit()
@@ -183,33 +181,19 @@ class SparepartQuery(Resource):
             'name': requested.get('name'),
             'module': requested.get('module'),
         }
-        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value is not None}
 
         sparepart_query = SparepartModel.query.filter_by(**filter_by_data)
 
-        filter_data = {}
-        if requested.get('min_stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['min_stock'] = {
-                'values': requested.get('min_stock')['values'],
-                'operators': requested.get('min_stock')['operators'],
-            }
+        sparepart_query, filter_data = query_intervals(filter_keys=[
+            "min_stock",
+        ], query=sparepart_query, request=requested, model=SparepartModel)
 
-        for attr, item in filter_data.items():
-            for operator, value in zip(item['operators'], item['values']):
-                if operator == '==':
-                    sparepart_query = sparepart_query.filter(getattr(SparepartModel, attr) == value)
-                elif operator == '<=':
-                    sparepart_query = sparepart_query.filter(getattr(SparepartModel, attr) <= value)
-                elif operator == '>=':
-                    sparepart_query = sparepart_query.filter(getattr(SparepartModel, attr) >= value)
-                elif operator == '<':
-                    sparepart_query = sparepart_query.filter(getattr(SparepartModel, attr) < value)
-                elif operator == '>':
-                    sparepart_query = sparepart_query.filter(getattr(SparepartModel, attr) > value)
-                elif operator == '!=':
-                    sparepart_query = sparepart_query.filter(getattr(SparepartModel, attr) != value)
-                else:
-                    raise ValueError('Given operator does not match available operators!')
+        if bool(filter_data) is False and bool(filter_by_data) is False:
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
 
         sparepart_query = sparepart_query \
             .order_by(SparepartModel.module.asc()) \

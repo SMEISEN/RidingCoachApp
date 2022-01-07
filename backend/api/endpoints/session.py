@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -19,7 +19,8 @@ session_input_parameters = api.model('SessionInputParameters', {
     "setup_id":
         fields.String(description="corresponding setup ID", required=True, example="UUID4"),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True,
+                        example=datetime.now(timezone.utc).timestamp()),
 })
 
 
@@ -73,7 +74,8 @@ class SessionCollection(Resource):
             bike_id=inserted_data.get('bike_id'),
             setup_id=inserted_data.get('setup_id'),
             application=inserted_data.get('application'),
-            datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
+            datetime_display=datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None),
         )
 
         db.session.add(new_session)
@@ -134,9 +136,8 @@ class SessionItem(Resource):
         if inserted_data.get('application', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             session_entry.application = inserted_data.get('application')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            session_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data):
-            session_entry.datetime_last_modified = datetime.utcnow()
+            session_entry.datetime_display = datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None)
 
         db.session.add(session_entry)
         db.session.commit()

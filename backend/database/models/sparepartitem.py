@@ -1,6 +1,5 @@
-from datetime import datetime
 from backend.database import db, ma
-from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 
@@ -14,9 +13,9 @@ class SparepartitemModel(db.Model):
     description = db.Column(db.String, nullable=False)
     stock = db.Column(db.Integer, nullable=False)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_display = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
 
     def __repr__(self):
         return f"Sparepartitem[" \

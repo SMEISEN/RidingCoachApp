@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -24,7 +24,8 @@ laptime_input_parameters = api.model('LaptimeInputParameters', {
             "Sector 2": 36.57
         }),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=False, example=datetime.utcnow().timestamp())
+        fields.DateTime(description="utc time stamp in seconds", required=False,
+                        example=datetime.now(timezone.utc).timestamp())
 })
 
 
@@ -74,7 +75,8 @@ class LaptimeCollection(Resource):
             track_layout=inserted_data.get('track_layout'),
             laptime_seconds=inserted_data.get('laptime_seconds'),
             sectors=inserted_data.get('sectors'),
-            datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display')),
+            datetime_display=datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None),
         )
 
         db.session.add(new_laptime)
@@ -139,9 +141,8 @@ class LaptimeItem(Resource):
         if inserted_data.get('sectors', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             laptime_entry.sectors = inserted_data.get('sectors')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            laptime_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data):
-            laptime_entry.datetime_last_modified = datetime.utcnow()
+            laptime_entry.datetime_display = datetime\
+                .fromtimestamp(inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None)
 
         db.session.add(laptime_entry)
         db.session.commit()

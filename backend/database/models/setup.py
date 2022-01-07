@@ -1,4 +1,3 @@
-from datetime import datetime
 from backend.database import db, ma
 from backend.database.models.bike import BikeModel
 from backend.database.models.training import TrainingModel
@@ -23,9 +22,9 @@ class SetupModel(db.Model):
     setup = db.Column(JSON, nullable=True)
     comment = db.Column(db.Text, nullable=True)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
+    datetime_display = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
 
     bike = db.relationship(
         'BikeModel', backref=db.backref('setups', order_by='SetupModel.datetime_display.asc()'))

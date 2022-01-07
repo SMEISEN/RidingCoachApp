@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -157,7 +156,7 @@ class BikeCollection(Resource):
             stroke=inserted_data.get('stroke'),
             piston=inserted_data.get('piston'),
             slick_front_name=inserted_data.get('slick_front_name'),
-            slick_front_notes=inserted_data.get('slick_front_pressure_notes'),
+            slick_front_notes=inserted_data.get('slick_front_notes'),
             slick_front_pressure=inserted_data.get('slick_front_pressure'),
             slick_rear_name=inserted_data.get('slick_rear_name'),
             slick_rear_notes=inserted_data.get('slick_rear_notes'),
@@ -260,8 +259,6 @@ class BikeItem(Resource):
             bike_entry.rain_rear_pressure = inserted_data.get('rain_rear_pressure')
         if inserted_data.get('setup', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.setup = inserted_data.get('setup')
-        if bool(inserted_data):
-            bike_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(bike_entry)
         db.session.commit()

@@ -1,4 +1,3 @@
-from datetime import datetime
 from backend.database import db, ma
 from backend.database.models.session import SessionModel
 from sqlalchemy.dialects.postgresql import UUID, JSON
@@ -19,9 +18,9 @@ class LaptimeModel(db.Model):
     laptime_seconds = db.Column(db.Float, nullable=False)
     sectors = db.Column(JSON, nullable=False)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
+    datetime_display = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
 
     session = db.relationship(
         'SessionModel',

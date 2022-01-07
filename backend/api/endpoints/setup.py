@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -56,7 +56,8 @@ setup_input_parameters = api.model('SetupInputParameters', {
     "comment":
         fields.String(description="comment", required=False, example="comment"),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True,
+                        example=datetime.now(timezone.utc).timestamp()),
 })
 
 
@@ -110,7 +111,8 @@ class SetupCollection(Resource):
             rain_pressure_rear=inserted_data.get('rain_pressure_rear'),
             setup=inserted_data.get('setup'),
             comment=inserted_data.get('comment'),
-            datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
+            datetime_display=datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None),
         )
 
         db.session.add(new_setup)
@@ -183,9 +185,8 @@ class SetupItem(Resource):
         if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             setup_entry.comment = inserted_data.get('comment')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            setup_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data):
-            setup_entry.datetime_last_modified = datetime.utcnow()
+            setup_entry.datetime_display = datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None)
 
         db.session.add(setup_entry)
         db.session.commit()
