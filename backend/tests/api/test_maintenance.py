@@ -169,6 +169,8 @@ def test_post_query(app, client, maintenance_id):
                 for key in payload.keys():
                     assert value_value[key] == payload[key]
         assert response.status_code == 200
+    validate_other({"bike_id": bike_id_post})
+    validate_other({"bike_id": bike_id_put})
     validate_other({"interval_unit": "h"})
     validate_other({"interval_unit": "a"})
     validate_other({"interval_type": "planned cycle"})

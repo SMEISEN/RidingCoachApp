@@ -6,6 +6,7 @@ from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
 from backend.utils.uuid import validate_uuid
+from backend.tests.api.routines.query import validate_filter_by, validate_filter_intervals
 
 from backend.tests.api.requests.history import get
 from backend.tests.api.requests.history import post
@@ -125,44 +126,80 @@ def test_post_query(app, client):
     assert response.status_code == 200
 
     # post new default item
-    post(app, client)
-    # todo: post default and alternative, query both items
-    # todo: get bike ids
-    # todo: test invalid key, return must be zero
+    response = post(app, client, default_payload_post)
+    response = get_item(app, client, json.loads(response.get_data()))
+    bike_id_post = json.loads(response.get_data())["bike_id"]
+    response = post(app, client, default_payload_put)
+    response = get_item(app, client, json.loads(response.get_data()))
+    bike_id_put = json.loads(response.get_data())["bike_id"]
 
-    # payload = {
-    #     "bike_id": "false",
-    # }
-    # response = post_query(app, client, payload)
-    # history_items = json.loads(response.get_data())
-    # assert isinstance(history_items, list)
-    # # assert len(history_items) == 1
-    # history_item = history_items[0]
-    # for key, value in default_payload_post.items():
-    #     if key == "datetime_display":
-    #         assert history_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
-    #             .isoformat()  # this should be unified
-    #     else:
-    #         assert history_item[key] == value
-    # assert response.status_code == 200
-
+    # query invalid parameter
     payload = {
-        "comment": "comment on the maintenance entry",
+        "test314": "test314",
     }
     response = post_query(app, client, payload)
-    history_items = json.loads(response.get_data())
-    assert isinstance(history_items, list)
-    # assert len(history_items) == 1
-    history_item = history_items[0]
-    for key, value in default_payload_post.items():
-        if key == "datetime_display":
-            assert history_item[key] == datetime.fromtimestamp(value, tz=timezone.utc).replace(tzinfo=None)\
-                .isoformat()  # this should be unified
-        else:
-            assert history_item[key] == value
-    assert response.status_code == 200
+    assert len(json.loads(response.get_data())) == 0
+    assert response.status_code == 404
 
-    payload = {
+    # query single keys
+    validate_filter_by(payload={"bike_id": bike_id_post}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"bike_id": bike_id_put}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={
+        "comment": "comment on the maintenance entry"
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={
+        "comment": "comment on the updated maintenance entry"
+    }, post_query=post_query, app=app, client=client)
+
+    def validate_tags(payload):
+        response = post_query(app, client, payload)
+        items = json.loads(response.get_data())
+        assert isinstance(items, list)
+        for item in items:
+            for key, value in payload.items():
+                assert any(tag in item[key] for tag in payload[key]) is True
+        assert response.status_code == 200
+    validate_tags({"tags": ["checked", "fixed", "replaced"]})
+    validate_tags({"tags": ["checked"]})
+
+    # query intervals
+    validate_filter_intervals(payload={
+        "datetime_display": {
+            "values": [
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
+                ],
+            "operators": [
+                ">=",
+                "<="
+            ]
+        },
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_intervals(payload={
+        "datetime_created": {
+            "values": [
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
+                ],
+            "operators": [
+                ">=",
+                "<="
+            ]
+        },
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_intervals(payload={
+        "datetime_last_modified": {
+            "values": [
+                datetime.now(tz=timezone.utc).timestamp() - 2000,
+                datetime.now(tz=timezone.utc).timestamp(),
+                ],
+            "operators": [
+                ">=",
+                "<="
+            ]
+        },
+    }, post_query=post_query, app=app, client=client)
+    validate_filter_intervals(payload={
         "operating_hours": {
             "values": [
                 66,
@@ -173,79 +210,4 @@ def test_post_query(app, client):
                 "<="
             ]
         },
-    }
-    response = post_query(app, client, payload)
-    history_items = json.loads(response.get_data())
-    for history_item in history_items:
-        assert payload["operating_hours"]["values"][0] <= history_item["operating_hours"]
-        assert payload["operating_hours"]["values"][1] >= history_item["operating_hours"]
-    assert response.status_code == 200
-
-    payload = {
-        "datetime_display": {
-            "values": [
-                datetime.now(tz=timezone.utc).timestamp() - 2000,
-                datetime.now(tz=timezone.utc).timestamp(),
-            ],
-            "operators": [
-                ">=",
-                "<="
-            ]
-        },
-    }
-    response = post_query(app, client, payload)
-    history_items = json.loads(response.get_data())
-    for history_item in history_items:
-        assert history_item["datetime_display"] >= datetime.fromtimestamp(
-            payload["datetime_display"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-        assert history_item["datetime_display"] <= datetime.fromtimestamp(
-            payload["datetime_display"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-    assert response.status_code == 200
-
-    payload = {
-        "datetime_created": {
-            "values": [
-                datetime.now(tz=timezone.utc).timestamp() - 2000,
-                datetime.now(tz=timezone.utc).timestamp(),
-            ],
-            "operators": [
-                ">=",
-                "<="
-            ]
-        },
-    }
-    response = post_query(app, client, payload)
-    history_items = json.loads(response.get_data())
-    for history_item in history_items:
-        assert history_item["datetime_created"] >= datetime.fromtimestamp(
-            payload["datetime_created"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-        assert history_item["datetime_created"] <= datetime.fromtimestamp(
-            payload["datetime_created"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-    assert response.status_code == 200
-
-    payload = {
-        "datetime_last_modified": {
-            "values": [
-                datetime.now(tz=timezone.utc).timestamp() - 2000,
-                datetime.now(tz=timezone.utc).timestamp(),
-            ],
-            "operators": [
-                ">=",
-                "<="
-            ]
-        },
-    }
-    response = post_query(app, client, payload)
-    history_items = json.loads(response.get_data())
-    for history_item in history_items:
-        assert history_item["datetime_last_modified"] >= datetime.fromtimestamp(
-            payload["datetime_last_modified"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-        assert history_item["datetime_last_modified"] <= datetime.fromtimestamp(
-            payload["datetime_last_modified"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-    assert response.status_code == 200
+    }, post_query=post_query, app=app, client=client)
