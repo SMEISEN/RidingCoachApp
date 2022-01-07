@@ -134,32 +134,32 @@ def test_post_query(app, client):
     response = post_query(app, client, payload)
     assert len(json.loads(response.get_data())) == 0
 
-    # query default
-    payload = {
-        "location": "track name",
-    }
-    response = post_query(app, client, payload)
-    training_items = json.loads(response.get_data())
-    assert isinstance(training_items, list)
-    for training_item in training_items:
-        for key, value in payload.items():
-            assert training_item[key] == value
-    assert response.status_code == 200
-
-    # query alternative
-    payload = {
-        "location": "name track",
-    }
-    response = post_query(app, client, payload)
-    training_items = json.loads(response.get_data())
-    assert isinstance(training_items, list)
-    for training_item in training_items:
-        for key, value in payload.items():
-            assert training_item[key] == value
-    assert response.status_code == 200
+    # query single keys
+    def validate_filter_by(payload):
+        response = post_query(app, client, payload)
+        training_items = json.loads(response.get_data())
+        assert isinstance(training_items, list)
+        for training_item in training_items:
+            for key, value in payload.items():
+                assert training_item[key] == value
+        assert response.status_code == 200
+    validate_filter_by({"location": "track name"})
+    validate_filter_by({"location": "name track"})
 
     # query intervals
-    payload = {
+    def validate_filter_intervals(payload):
+        response = post_query(app, client, payload)
+        training_items = json.loads(response.get_data())
+        for training_item in training_items:
+            for key in payload:
+                assert training_item[key] >= datetime.fromtimestamp(
+                    payload[key]["values"][0], tz=timezone.utc).replace(tzinfo=None) \
+                    .isoformat()  # this should be unified
+                assert training_item[key] <= datetime.fromtimestamp(
+                    payload[key]["values"][1], tz=timezone.utc).replace(tzinfo=None) \
+                    .isoformat()  # this should be unified
+        assert response.status_code == 200
+    validate_filter_intervals({
         "datetime_display": {
             "values": [
                 datetime.now(tz=timezone.utc).timestamp() - 2000,
@@ -170,19 +170,8 @@ def test_post_query(app, client):
                 "<="
             ]
         },
-    }
-    response = post_query(app, client, payload)
-    training_items = json.loads(response.get_data())
-    for training_item in training_items:
-        assert training_item["datetime_display"] >= datetime.fromtimestamp(
-            payload["datetime_display"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-        assert training_item["datetime_display"] <= datetime.fromtimestamp(
-            payload["datetime_display"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-    assert response.status_code == 200
-
-    payload = {
+    })
+    validate_filter_intervals({
         "datetime_created": {
             "values": [
                 datetime.now(tz=timezone.utc).timestamp() - 2000,
@@ -193,19 +182,8 @@ def test_post_query(app, client):
                 "<="
             ]
         },
-    }
-    response = post_query(app, client, payload)
-    training_items = json.loads(response.get_data())
-    for training_item in training_items:
-        assert training_item["datetime_created"] >= datetime.fromtimestamp(
-            payload["datetime_created"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-        assert training_item["datetime_created"] <= datetime.fromtimestamp(
-            payload["datetime_created"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-    assert response.status_code == 200
-
-    payload = {
+    })
+    validate_filter_intervals({
         "datetime_last_modified": {
             "values": [
                 datetime.now(tz=timezone.utc).timestamp() - 2000,
@@ -216,14 +194,4 @@ def test_post_query(app, client):
                 "<="
             ]
         },
-    }
-    response = post_query(app, client, payload)
-    training_items = json.loads(response.get_data())
-    for training_item in training_items:
-        assert training_item["datetime_last_modified"] >= datetime.fromtimestamp(
-            payload["datetime_last_modified"]["values"][0], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-        assert training_item["datetime_last_modified"] <= datetime.fromtimestamp(
-            payload["datetime_last_modified"]["values"][1], tz=timezone.utc).replace(tzinfo=None)\
-            .isoformat()  # this should be unified
-    assert response.status_code == 200
+    })
