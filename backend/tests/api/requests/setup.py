@@ -98,6 +98,8 @@ def post(app, client, payload=None):
 
     response = client.post("/api/setup", data=json.dumps(payload), content_type='application/json',
                            headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+    payload.pop("training_id")
+    payload.pop("bike_id")
 
     return response
 

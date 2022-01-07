@@ -41,6 +41,7 @@ def post(app, client, payload=None):
 
     response = client.post("/api/laptime", data=json.dumps(payload), content_type='application/json',
                            headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+    payload.pop("session_id")
 
     return response
 

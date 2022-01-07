@@ -72,6 +72,7 @@ def post(app, client, payload=None):
         payload["name"] = payload["name"] + datetime.now().strftime("%m%d%Y%H%M%S")
         response = client.post("/api/maintenance", data=json.dumps(payload), content_type='application/json',
                                headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+    payload.pop("bike_id")
 
     return response
 
@@ -85,8 +86,15 @@ def get_item(app, client, id_):
 def put_item(app, client, id_, payload=None):
     if payload is None:
         payload = default_payload_put
-    response = client.put(f"/api/maintenance/{id_}", data=json.dumps(payload), content_type='application/json',
-                          headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+
+    try:
+        response = client.put(f"/api/maintenance/{id_}", data=json.dumps(payload), content_type='application/json',
+                              headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+    except IntegrityError:
+        # maintenance name already exists
+        payload["name"] = payload["name"] + datetime.now().strftime("%m%d%Y%H%M%S")
+        response = client.put(f"/api/maintenance/{id_}", data=json.dumps(payload), content_type='application/json',
+                              headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
 
     return response
 
