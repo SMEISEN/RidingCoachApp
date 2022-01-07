@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 from backend.tests.api.requests.bike import post as post_bike
 
 default_payload_post = {
@@ -43,6 +44,42 @@ default_payload_put = {
     "comment": "comment"
 }
 
+default_payload_query = {
+    "active": False,
+    "category": "slick",
+    "axis": "front",
+    "datetime_created": {
+        "values": [
+            datetime.now(tz=timezone.utc).timestamp() - 2000,
+            datetime.now(tz=timezone.utc).timestamp(),
+            ],
+        "operators": [
+            ">=",
+            "<="
+        ]
+    },
+    "datetime_last_modified": {
+        "values": [
+            datetime.now(tz=timezone.utc).timestamp() - 2000,
+            datetime.now(tz=timezone.utc).timestamp(),
+            ],
+        "operators": [
+            ">=",
+            "<="
+        ]
+    },
+    "datetime_display": {
+        "values": [
+            datetime.now(tz=timezone.utc).timestamp() - 2000,
+            datetime.now(tz=timezone.utc).timestamp(),
+            ],
+        "operators": [
+            ">=",
+            "<="
+        ]
+    }
+}
+
 def get(app, client):
     response = client.get("/api/tire", headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
 
@@ -81,5 +118,14 @@ def put_item(app, client, id_, payload=None):
 
 def delete_item(app, client, id_):
     response = client.delete(f"/api/tire/{id_}", headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
+
+    return response
+
+
+def post_query(app, client, payload=None):
+    if payload is None:
+        payload = default_payload_query
+    response = client.post("/api/tire/query", data=json.dumps(payload), content_type='application/json',
+                           headers={"apikey": app.config['FLASK_RESTPLUS_API_KEY']})
 
     return response
