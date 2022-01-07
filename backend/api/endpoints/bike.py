@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -260,8 +259,6 @@ class BikeItem(Resource):
             bike_entry.rain_rear_pressure = inserted_data.get('rain_rear_pressure')
         if inserted_data.get('setup', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_entry.setup = inserted_data.get('setup')
-        if bool(inserted_data):
-            bike_entry.datetime_last_modified = datetime.now(timezone.utc).replace(tzinfo=None)
 
         db.session.add(bike_entry)
         db.session.commit()
