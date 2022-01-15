@@ -233,6 +233,14 @@ class HistoryQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
+        valid_keys = ["bike_id", "comment", "datetime_created", "datetime_last_modified", "datetime_display",
+                      "operating_hours", "tags"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
         filter_by_data = {
             'bike_id': requested.get('bike_id'),
             'comment': requested.get('comment'),
@@ -241,24 +249,16 @@ class HistoryQuery(Resource):
 
         history_query = HistoryModel.query.filter_by(**filter_by_data)
 
-        history_query, filter_data = query_intervals(filter_keys=[
+        history_query = query_intervals(filter_keys=[
             "datetime_created",
             "datetime_last_modified",
             "datetime_display",
             "operating_hours",
         ], query=history_query, request=requested, model=HistoryModel)
 
-        filtered_special = False
         if requested.get('tags', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_query = history_query \
                 .filter(HistoryModel.tags.contains(cast(requested.get('tags'), ARRAY(db.String))))
-            filtered_special = True
-
-        if bool(filter_data) is False and bool(filter_by_data) is False and filtered_special is False:
-            response = jsonify([])
-            response.status_code = 404
-
-            return response
 
         history_query = history_query \
             .order_by(HistoryModel.datetime_display.desc()) \

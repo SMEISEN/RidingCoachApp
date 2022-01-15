@@ -25,9 +25,7 @@ default_payload_put = {
 }
 
 default_payload_query = {
-    "active": "false",
-    "category": "slick",
-    "axis": "front",
+    "comment": "comment on the maintenance entry",
     "tags": [
         "checked",
         "fixed",

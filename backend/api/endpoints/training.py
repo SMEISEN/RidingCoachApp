@@ -250,6 +250,13 @@ class TrainingQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
+        valid_keys = ["location", "datetime_created", "datetime_last_modified", "datetime_display"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
         filter_by_data = {
             'location': requested.get('location'),
         }
@@ -257,17 +264,11 @@ class TrainingQuery(Resource):
 
         training_query = TrainingModel.query.filter_by(**filter_by_data)
 
-        training_query, filter_data = query_intervals(filter_keys=[
+        training_query = query_intervals(filter_keys=[
             "datetime_created",
             "datetime_last_modified",
             "datetime_display"
         ], query=training_query, request=requested, model=TrainingModel)
-
-        if bool(filter_data) is False and bool(filter_by_data) is False:
-            response = jsonify([])
-            response.status_code = 404
-
-            return response
 
         training_query = training_query\
             .order_by(TrainingModel.datetime_display.desc())\

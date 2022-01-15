@@ -176,6 +176,13 @@ class SparepartQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
+        valid_keys = ["bike_id", "name", "module", "min_stock"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
         filter_by_data = {
             'bike_id': requested.get('bike_id'),
             'name': requested.get('name'),
@@ -185,15 +192,9 @@ class SparepartQuery(Resource):
 
         sparepart_query = SparepartModel.query.filter_by(**filter_by_data)
 
-        sparepart_query, filter_data = query_intervals(filter_keys=[
+        sparepart_query = query_intervals(filter_keys=[
             "min_stock",
         ], query=sparepart_query, request=requested, model=SparepartModel)
-
-        if bool(filter_data) is False and bool(filter_by_data) is False:
-            response = jsonify([])
-            response.status_code = 404
-
-            return response
 
         sparepart_query = sparepart_query \
             .order_by(SparepartModel.module.asc()) \
@@ -208,7 +209,6 @@ class SparepartQuery(Resource):
             sparepart_data['current_stock'] = sparepart_entry.current_stock
             sparepart_data['items'] = sparepartitem_data
             sparepart_entry_list.append(sparepart_data)
-
 
         response = jsonify(sparepart_entry_list)
         response.status_code = 200

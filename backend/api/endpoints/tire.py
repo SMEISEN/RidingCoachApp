@@ -44,7 +44,7 @@ tire_input_parameters = api.model('TireInputParameters', {
     "comment":
         fields.String(description="comment on the tire", required=False, example="comment on the tire")
 })
-tire_query_parameters = api.model('HistoryQueryParameters', {
+tire_query_parameters = api.model('TireQueryParameters', {
     "bike_id":
         fields.String(description="corresponding bike ID", required=False, example="UUID4"),
     "active":
@@ -252,6 +252,14 @@ class TireQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
+        valid_keys = ["bike_id", "active", "category", "axis", "datetime_created", "datetime_last_modified",
+                      "operating_hours"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
         filter_by_data = {
             'bike_id': requested.get('bike_id'),
             'active': requested.get('active'),
@@ -262,17 +270,11 @@ class TireQuery(Resource):
 
         tire_query = TireModel.query.filter_by(**filter_by_data)
 
-        training_query, filter_data = query_intervals(filter_keys=[
+        tire_query = query_intervals(filter_keys=[
             "datetime_created",
             "datetime_last_modified",
             "operating_hours"
         ], query=tire_query, request=requested, model=TireModel)
-
-        if bool(filter_data) is False and bool(filter_by_data) is False:
-            response = jsonify([])
-            response.status_code = 404
-
-            return response
 
         tire_query = tire_query \
             .order_by(TireModel.operating_hours.asc()) \
