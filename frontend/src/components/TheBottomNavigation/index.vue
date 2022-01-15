@@ -7,20 +7,29 @@
     background-color="primary"
   >
     <v-btn
-      icon
+      class="bottom-navigation-btn"
       value="Dashboard"
       to="/dashboard"
     >
-      <span>Dashboard</span>
+      <span
+        :style="calculateFontSize"
+      >
+        Dashboard
+      </span>
       <v-icon>
         mdi-home
       </v-icon>
     </v-btn>
     <v-btn
+      class="bottom-navigation-btn"
       value="Maintenance"
       to="/maintenance"
     >
-      <span>Maintenance</span>
+      <span
+        :style="calculateFontSize"
+      >
+        Maintenance
+      </span>
       <v-badge
         v-if="maintenance_warnings > 0"
         color="red"
@@ -36,10 +45,15 @@
       </v-icon>
     </v-btn>
     <v-btn
+      class="bottom-navigation-btn"
       value="Spare Parts"
       to="/spareparts"
     >
-      <span>Spare Parts</span>
+      <span
+        :style="calculateFontSize"
+      >
+        Spare Parts
+      </span>
       <v-badge
         v-if="sparepart_warnings > 0"
         color="red"
@@ -55,19 +69,29 @@
       </v-icon>
     </v-btn>
     <v-btn
+      class="bottom-navigation-btn"
       value="Training"
       to="/training"
     >
-      <span>Training</span>
+      <span
+        :style="calculateFontSize"
+      >
+        Training
+      </span>
       <v-icon>
         mdi-racing-helmet
       </v-icon>
     </v-btn>
     <v-btn
+      class="bottom-navigation-btn"
       value="History"
       to="/history"
     >
-      <span>History</span>
+      <span
+        :style="calculateFontSize"
+      >
+        History
+      </span>
       <v-icon>
         mdi-calendar-edit
       </v-icon>
@@ -86,6 +110,7 @@ import {
 export default {
   name: 'TheBottomNavigation',
   data: () => ({
+    window_width: null,
     current_page: null,
     maintenance_warnings: 0,
     sparepart_warnings: 0,
@@ -94,6 +119,14 @@ export default {
     currentBikeId() {
       return this.$store.getters.getCurrentBikeId;
     },
+    calculateFontSize() {
+      if (this.window_width < 375) {
+        return `fontSize:0px`;
+      } else if (this.window_width >= 375 && this.window_width < 450) {
+        return `fontSize:${(this.window_width - 375) * 0.05 + 9}px`;
+      }
+      return `fontSize:12px`;
+    }
   },
   watch: {
     current_page() {
@@ -118,6 +151,9 @@ export default {
       }
     });
   },
+  updated() {
+    this.window_width = window.innerWidth;
+  },
   methods: {
     /**
      * Get the spare part warnings from the database, i.e., spare parte where the current stock is
@@ -140,3 +176,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.v-btn.bottom-navigation-btn {
+  min-width: 0 !important;
+}
+</style>
