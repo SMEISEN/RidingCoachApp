@@ -250,7 +250,7 @@ class TrainingQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
-        valid_keys = ["location", "datetime_created", "datetime_last_modified", "datetime_display"]
+        valid_keys = ["bike_id", "location", "datetime_created", "datetime_last_modified", "datetime_display"]
         if not all(x in valid_keys for x in requested.keys()):
             response = jsonify([])
             response.status_code = 404
