@@ -67,16 +67,6 @@ default_payload_query = {
             ">=",
             "<="
         ]
-    },
-    "datetime_display": {
-        "values": [
-            datetime.now(tz=timezone.utc).timestamp() - 2000,
-            datetime.now(tz=timezone.utc).timestamp(),
-            ],
-        "operators": [
-            ">=",
-            "<="
-        ]
     }
 }
 

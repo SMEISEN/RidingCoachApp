@@ -37,4 +37,4 @@ def query_intervals(filter_keys, query, request, model):
             else:
                 raise ValueError('Given operator does not match available operators!')
 
-    return query, filter_data
+    return query

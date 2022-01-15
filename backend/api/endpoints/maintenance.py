@@ -68,8 +68,8 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
 
     elif maintenance_data['interval_unit'] == 'a':
         interval_left = (
-                datetime.fromisoformat(history_data[0]['datetime_display']) -
-                datetime.now(timezone.utc) +
+                datetime.fromisoformat(history_data[0]['datetime_display']).replace(tzinfo=None) -
+                datetime.now(timezone.utc).replace(tzinfo=None) +
                 timedelta(days=365 * maintenance_data['interval_amount'])
         )
         state_left = interval_left / timedelta(days=365 * maintenance_data['interval_amount'])
@@ -282,6 +282,14 @@ class MaintenanceQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
+        valid_keys = ["bike_id", "category", "name", "interval_unit", "interval_type", "interval_amount",
+                      "tags_default"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
         filter_by_data = {
             'bike_id': requested.get('bike_id'),
             'category': requested.get('category'),
@@ -293,27 +301,18 @@ class MaintenanceQuery(Resource):
 
         maintenance_query = MaintenanceModel.query.filter_by(**filter_by_data)
 
-        maintenance_query, filter_data = query_intervals(filter_keys=[
+        maintenance_query = query_intervals(filter_keys=[
             "interval_amount",
         ], query=maintenance_query, request=requested, model=MaintenanceModel)
 
-        filtered_special = False
         bike_operating_hours = None
         if requested.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_query = BikeModel.query.filter_by(**{'bike_id': requested.get('bike_id')}).all()
             bike_operating_hours = bike_schema.dump(bike_query, many=True)[0]['operating_hours']
-            filtered_special = True
 
         if requested.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_query = maintenance_query \
                 .filter(MaintenanceModel.tags_default.contains(cast(requested.get('tags_default'), ARRAY(db.String))))
-            filtered_special = True
-
-        if bool(filter_data) is False and bool(filter_by_data) is False and filtered_special is False:
-            response = jsonify([])
-            response.status_code = 404
-
-            return response
 
         maintenance_query = maintenance_query \
             .order_by(MaintenanceModel.category.asc()) \
