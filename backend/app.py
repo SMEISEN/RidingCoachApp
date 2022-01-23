@@ -2,6 +2,7 @@ import os
 import json
 import click
 from datetime import datetime, timezone
+from werkzeug.utils import secure_filename
 from flask import Flask, Blueprint, current_app, send_file
 from flask_cors import CORS
 from backend.api import api
@@ -82,14 +83,8 @@ def favicon_client():
 
 @assets_bp.route('/assets/<path:file>')
 def assets_client(file):
-    # remove slashes and backslashes
-    file = file.replace("/", "").replace("\\", "")
-
-    # remove multiple dots
-    dots = file.count(".")
-    dots = [f"{i * '.'}" for i in range(2, dots)]
-    for dot in dots:
-        file = file.replace(dot, "")
+    # remove slashes, dots, and backslashes
+    file = secure_filename(file)
 
     dist_dir = current_app.config['DIST_DIR']
     entry = os.path.join(dist_dir, 'assets', file)
