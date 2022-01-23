@@ -3,8 +3,8 @@
     <v-container fluid>
       <v-row dense>
         <v-col
-          v-for="(category_object, category_name) in maintenance_object"
-          :key="category_name + '/' + Object.keys(category_object).length"
+          v-for="(category_array, category_name) in maintenance_object"
+          :key="category_name + '/' + category_array.length"
           cols="12"
           xs="12"
           sm="12"
@@ -15,7 +15,7 @@
               <span class="headline">{{ category_name }}</span>
             </v-card-title>
             <MaintenanceTable
-              :maintenance-entries="category_object"
+              :maintenance-entries="category_array"
               @doneButtonClicked="postHistoryEntry"
             />
             <MaintenanceDial
@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       maintenance_object: {},
+      category_names: [],
       interval_types: [],
       snackbar_state: false,
     };
@@ -83,9 +84,6 @@ export default {
         this.$store.commit('setHistoryId', value);
       },
     },
-    category_array() {
-      return Object.keys(this.maintenance_object);
-    },
   },
   created() {
     this.getMaintenance();
@@ -102,7 +100,7 @@ export default {
     getMaintenance() {
       apiQueryMaintenance({ bike_id: this.currentBikeId })
         .then((res) => {
-          this.maintenance_object = res.data;
+          this.maintenance_object = this.structureMaintenanceArray(res.data);
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {
@@ -165,6 +163,20 @@ export default {
             message: `${error}!`,
           });
         });
+    },
+    structureMaintenanceArray(maintenanceArray) {
+      this.category_names = this._.uniq(maintenanceArray.map((value) => value.category));
+      const maintenanceObject = {};
+      for (let i = 0; i < this.category_names.length; i += 1) {
+        const categoryName = this.category_names[i];
+        const categoryObject = {};
+        categoryObject[categoryName] = maintenanceArray.filter(
+          (j) => j.category === categoryName,
+        );
+        Object.assign(maintenanceObject, categoryObject);
+      }
+      console.log(maintenanceObject);
+      return maintenanceObject;
     },
   },
 };
