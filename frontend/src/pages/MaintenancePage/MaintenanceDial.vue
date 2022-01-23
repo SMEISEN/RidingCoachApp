@@ -51,21 +51,21 @@
     </v-speed-dial>
     <MaintenanceDialAddDialog
       :add-maintenance-dialog.sync="add_maintenance_dialog"
-      :category-object="categoryObject"
-      :category-name="categoryName"
       :category-array="categoryArray"
+      :category-name="categoryName"
+      :category-names="categoryNames"
       @newMaintenanceAdded="$emit('refreshTable')"
     />
     <MaintenanceDialEditDialog
       :edit-maintenance-dialog.sync="edit_maintenance_dialog"
-      :category-object="categoryObject"
-      :category-name="categoryName"
       :category-array="categoryArray"
+      :category-name="categoryName"
+      :category-names="categoryNames"
       @maintenanceEdited="$emit('refreshTable')"
     />
     <MaintenanceDialDeleteDialog
       :delete-maintenance-dialog.sync="delete_maintenance_dialog"
-      :category-object="categoryObject"
+      :category-array="categoryArray"
       :category-name="categoryName"
       @maintenanceDeleted="$emit('refreshTable')"
     />
@@ -85,15 +85,15 @@ export default {
     MaintenanceDialAddDialog,
   },
   props: {
-    categoryObject: {
-      type: Object,
+    categoryArray: {
+      type: Array,
       required: true,
     },
     categoryName: {
       type: String,
       required: true,
     },
-    categoryArray: {
+    categoryNames: {
       type: Array,
       required: true,
     },

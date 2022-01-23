@@ -27,9 +27,9 @@
     </v-card>
     <MaintenanceDialAddDialog
       :add-maintenance-dialog.sync="add_maintenance_dialog"
-      :category-object="category_object"
-      :category-name="category_name"
       :category-array="category_array"
+      :category-name="category_name"
+      :category-names="category_names"
       @newMaintenanceAdded="$emit('refreshTable')"
     />
   </v-col>
@@ -44,19 +44,19 @@ export default {
     MaintenanceDialAddDialog,
   },
   props: {
-    categoryArray: {
+    categoryNames: {
       type: Array,
       required: true,
     },
   },
   data: () => ({
     add_maintenance_dialog: false,
-    category_object: {},
+    category_array: [],
     category_name: '',
   }),
   computed: {
-    category_array() {
-      return this.categoryArray;
+    category_names() {
+      return this.categoryNames;
     },
   },
   methods: {

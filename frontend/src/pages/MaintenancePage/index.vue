@@ -19,15 +19,15 @@
               @doneButtonClicked="postHistoryEntry"
             />
             <MaintenanceDial
-              :category-object="category_object"
-              :category-name="category_name"
               :category-array="category_array"
+              :category-name="category_name"
+              :category-names="category_names"
               @refreshTable="getMaintenance"
             />
           </v-card>
         </v-col>
         <MaintenanceAddCategoryDialog
-          :category-array="category_array"
+          :category-names="category_names"
           @refreshTable="getMaintenance"
         />
       </v-row>
@@ -175,7 +175,6 @@ export default {
         );
         Object.assign(maintenanceObject, categoryObject);
       }
-      console.log(maintenanceObject);
       return maintenanceObject;
     },
   },

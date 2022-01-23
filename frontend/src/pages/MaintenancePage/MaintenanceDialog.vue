@@ -22,7 +22,7 @@
             >
               <v-combobox
                 v-model="category_name"
-                :items="categoryArray"
+                :items="category_names"
                 :rules="[v => !!v]"
                 label="Category name"
                 required
@@ -39,7 +39,7 @@
               <v-select
                 v-if="task === 'Edit'"
                 v-model="maintenance_name"
-                :items="maintenanceArray"
+                :items="maintenance_names"
                 :rules="[v => !!v]"
                 label="Maintenance name"
                 required
@@ -185,11 +185,11 @@ export default {
       type: Object,
       required: true,
     },
-    categoryArray: {
+    categoryNames: {
       type: Array,
       required: true,
     },
-    maintenanceArray: {
+    maintenanceNames: {
       type: Array,
       required: true,
     },
@@ -231,6 +231,12 @@ export default {
       set(value) {
         this.$emit('update:categoryName', value);
       },
+    },
+    category_names() {
+      return this.categoryNames;
+    },
+    maintenance_names() {
+      return this.maintenanceNames;
     },
     maintenance_dialog: {
       get() {
