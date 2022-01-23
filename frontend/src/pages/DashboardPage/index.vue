@@ -267,13 +267,21 @@ export default {
       })
         .then((res) => {
           if (Object.keys(res.data).length > 0) {
-            this.wear_object.brakes_front = res.data.Brakes[Object.keys(res.data.Brakes)[0]];
+            [this.wear_object.brakes_front] = res.data.filter(
+              (i) => i.name === 'Replace the brake pads of the front brake.',
+            );
             this.wear_object.brakes_front.name = 'Front brake pads';
-            this.wear_object.brakes_rear = res.data.Brakes[Object.keys(res.data.Brakes)[1]];
+            [this.wear_object.brakes_rear] = res.data.filter(
+              (i) => i.name === 'Replace the brake pads of the rear brake.',
+            );
             this.wear_object.brakes_rear.name = 'Rear brake pads';
-            this.wear_object.tires = res.data.Wheels[Object.keys(res.data.Wheels)[0]];
+            [this.wear_object.tires] = res.data.filter(
+              (i) => i.name === 'Replace tyres.',
+            );
             this.wear_object.tires.name = 'Tires';
-            this.wear_object.engine = res.data.Engine[Object.keys(res.data.Engine)[0]];
+            [this.wear_object.engine] = res.data.filter(
+              (i) => i.name === 'Engine revision.',
+            );
             this.wear_object.engine.name = 'Engine revision';
           }
         })
