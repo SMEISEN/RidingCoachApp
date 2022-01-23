@@ -27,3 +27,4 @@ yarn-error.log*
 /frontend/package.json
 /backend/venv/
 /backend/database/backup/
+/venv/
