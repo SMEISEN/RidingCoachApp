@@ -59,11 +59,5 @@ export default {
   updated() {
     this.window_height = window.innerHeight;
   },
-  created() {
-  },
 };
 </script>
-
-<style scoped>
-
-</style>

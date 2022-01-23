@@ -1,6 +1,7 @@
-from backend.app import app
+from backend.app import create_app
 from backend.config import Config
 
+app = create_app(Config)
 
 if __name__ == '__main__':
 

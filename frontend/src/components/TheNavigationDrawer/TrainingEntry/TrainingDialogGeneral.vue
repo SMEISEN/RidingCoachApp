@@ -38,13 +38,5 @@ export default {
     location_object: {},
     weather_array: [],
   }),
-  updated() {
-  },
-  created() {
-  },
 };
 </script>
-
-<style scoped>
-
-</style>

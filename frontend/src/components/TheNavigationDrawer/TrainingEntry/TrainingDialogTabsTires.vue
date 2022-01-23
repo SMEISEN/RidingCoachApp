@@ -121,8 +121,10 @@ import {
 } from '../../utils/FromUtils';
 import { interpolateLinearly1D } from '../../utils/DataProcessingUtils';
 import { apiGetLocation } from '../../api/LocationApi';
-import { apiGetWeatherCurrent } from '../../api/WeatherApi';
-import { calculateTrackSurfaceTemperatureDegC } from '../../common/TrackSufraceTemperatureModel';
+import { apiGetWeather } from '../../api/WeatherApi';
+import {
+  calculateTrackSurfaceTemperatureDegCHassan2004,
+} from '../../common/TrackSufraceTemperatureModel';
 
 export default {
   name: 'TrainingDialogTabsTires',
@@ -231,6 +233,10 @@ export default {
     });
   },
   methods: {
+    /**
+     * Gets the location from the browser.
+     * @returns {promise} Promise with API answer
+     */
     getLocation() {
       return new Promise((resolve, reject) => {
         apiGetLocation()
@@ -248,11 +254,19 @@ export default {
           });
       });
     },
+    /**
+     * Gets the current weather information for the geolocation.
+     * @returns {promise} Promise with API answer
+     */
     getCurrentWeather() {
       return new Promise((resolve, reject) => {
-        apiGetWeatherCurrent(this.location_object)
+        apiGetWeather(this.location_object)
           .then((res) => {
-            this.calculateTrackSurfaceTemperature(res);
+            this.current_temperature_air_deg_c = res.data
+              .timelines[0].intervals[0].values.temperature;
+            this.current_temperature_track_deg_c = calculateTrackSurfaceTemperatureDegCHassan2004(
+              this.current_temperature_air_deg_c,
+            );
             resolve(res);
           })
           .catch((error) => {
@@ -265,25 +279,9 @@ export default {
           });
       });
     },
-    calculateTrackSurfaceTemperature(weatherObject) {
-      const airDegC = weatherObject.temp.value;
-      if (airDegC !== null) {
-        const windSpeedMetersSeconds = weatherObject.wind_speed.value;
-        const humidityPercent = weatherObject.humidity.value;
-        const solarRadiationWattPerMetersSquared = weatherObject.surface_shortwave_radiation.value;
-        const asphaltDegC = calculateTrackSurfaceTemperatureDegC(
-          airDegC,
-          windSpeedMetersSeconds,
-          humidityPercent,
-          solarRadiationWattPerMetersSquared,
-        );
-        this.current_temperature_air_deg_c = airDegC;
-        this.current_temperature_track_deg_c = asphaltDegC;
-      } else {
-        this.current_temperature_air_deg_c = null;
-        this.current_temperature_track_deg_c = null;
-      }
-    },
+    /**
+     * Depending on the temperature, recommend the optimal tire pressure.
+     */
     getRecommendedTirePressure() {
       if (this.slick_front_pressure !== null) {
         this.tire_pressure_recommendation
@@ -310,6 +308,10 @@ export default {
         this.tire_pressure_recommendation.rain_rear = '';
       }
     },
+    /**
+     * Increases the pressure of the front tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     incrementTirePressureFront(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_front = incrementNumber(
@@ -321,6 +323,10 @@ export default {
         );
       }
     },
+    /**
+     * Decreases the pressure of the front tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     decrementTirePressureFront(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_front = decrementNumber(
@@ -332,6 +338,10 @@ export default {
         );
       }
     },
+    /**
+     * Increases the pressure of the rear tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     incrementTirePressureRear(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_rear = incrementNumber(
@@ -343,6 +353,10 @@ export default {
         );
       }
     },
+    /**
+     * Decreases the pressure of the rear tire by 0.1 bar.
+     * @param {number} ind index of the active setup tab
+     */
     decrementTirePressureRear(ind) {
       if (this.rain_tires === 0) {
         this.trainingFormObject.setup_fixed[ind].slick_pressure_rear = decrementNumber(
@@ -357,7 +371,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

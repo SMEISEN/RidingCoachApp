@@ -1,4 +1,4 @@
-<template v-slot:default>
+<template>
   <v-app>
     <v-container>
       <v-row
@@ -37,6 +37,11 @@ export default {
     loading: false,
   }),
   methods: {
+    /**
+     * Switches to the dashboard page if credentials are correct, otherwise raises an error message.
+     * @param {string} username
+     * @param {string} password
+     */
     login(username, password) {
       this.$store.dispatch(AUTH_REQUEST, { username, password })
         .then(() => {
@@ -59,7 +64,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

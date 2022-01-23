@@ -1,8 +1,7 @@
-from datetime import datetime
 from backend.database import db, ma
 from backend.database.models.sparepartitem import SparepartitemModel
-from sqlalchemy import select, func
-from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy import func
+from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 
@@ -22,9 +21,9 @@ class SparepartModel(db.Model):
             .correlate_except(SparepartitemModel)
     )
 
-    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_display = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
+    datetime_display = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
 
     def __repr__(self):
         return f"Sparepart[" \

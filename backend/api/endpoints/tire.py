@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
+from flask_restplus import Resource, fields
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.tire import TireModel, TireSchema
-from flask_restplus import Resource, fields
+from backend.api.routines.common import query_intervals
 
 ns = api.namespace('tire', description='Operations related to tire entries.')
 tire_schema = TireSchema()
@@ -12,6 +13,8 @@ tire_schema = TireSchema()
 tire_input_parameters = api.model('TireInputParameters', {
     "bike_id":
         fields.String(description="corresponding bike ID", required=True, example="UUID4"),
+    "active":
+        fields.Boolean(description="mounted on the bike or not", required=False, example="false"),
     "rim":
         fields.String(description="rim on which the tire is mounted", required=False, example="Alpina black"),
     "category":
@@ -41,6 +44,39 @@ tire_input_parameters = api.model('TireInputParameters', {
     "comment":
         fields.String(description="comment on the tire", required=False, example="comment on the tire")
 })
+tire_query_parameters = api.model('TireQueryParameters', {
+    "bike_id":
+        fields.String(description="corresponding bike ID", required=False, example="UUID4"),
+    "active":
+        fields.Boolean(description="mounted on the bike or not", required=False, example="false"),
+    "category":
+        fields.String(description="slick or rain tire", required=True, example="slick"),
+    "axis":
+        fields.String(description="front or rear", required=True, example="front"),
+    "operating_hours":
+        fields.Raw(description="operating hours of the bike when the maintenance work was done",
+                   required=False, example=
+                   {
+                       "values": [66.0, 99.6],
+                       "operators": ['>=', '<='],
+                   }),
+    "datetime_created":
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp() - 2000,
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
+            ],
+            "operators": ['>=', '<='],
+        }),
+    "datetime_last_modified":
+        fields.Raw(description="utc time stamp in seconds", required=False, example={
+            "values": [
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp() - 2000,
+                datetime.now(timezone.utc).replace(tzinfo=None).timestamp()
+            ],
+            "operators": ['>=', '<='],
+        }),
+})
 
 
 @ns.route('/')
@@ -57,7 +93,10 @@ class TireCollection(Resource):
         if validate_api_key(api_key).status_code != 200:
             return validate_api_key(api_key)
 
-        tire_all_entries = TireModel.query.order_by(TireModel.datetime_last_modified.desc()).all()
+        tire_all_entries = TireModel.query\
+            .order_by(TireModel.operating_hours.asc()) \
+            .order_by(TireModel.dot.asc())\
+            .all()
 
         tire_entry_list = []
         for tire_entry in tire_all_entries:
@@ -84,6 +123,7 @@ class TireCollection(Resource):
         inserted_data = request.get_json()
         new_tire = TireModel(
             bike_id=inserted_data.get('bike_id'),
+            active=inserted_data.get('active'),
             rim=inserted_data.get('rim'),
             category=inserted_data.get('category'),
             manufacturer=inserted_data.get('manufacturer'),
@@ -148,6 +188,8 @@ class TireItem(Resource):
 
         if inserted_data.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.bike_id = inserted_data.get('bike_id')
+        if inserted_data.get('active', 'ParameterNotInPayload') != 'ParameterNotInPayload':
+            tire_entry.active = inserted_data.get('active')
         if inserted_data.get('rim', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.rim = inserted_data.get('rim')
         if inserted_data.get('category', 'ParameterNotInPayload') != 'ParameterNotInPayload':
@@ -170,8 +212,6 @@ class TireItem(Resource):
             tire_entry.operating_hours = inserted_data.get('operating_hours')
         if inserted_data.get('comment', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             tire_entry.comment = inserted_data.get('comment')
-        if bool(inserted_data):
-            tire_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(tire_entry)
         db.session.commit()
@@ -195,3 +235,58 @@ class TireItem(Resource):
         db.session.commit()
 
         return None, 204
+
+@ns.route('/query')
+@api.response(404, 'Query parameters not found.')
+class TireQuery(Resource):
+
+    @api.doc(security='apikey')
+    @api.expect(tire_query_parameters)
+    def post(self):
+        """
+        Returns a list of all tire entries that match the query.
+        """
+
+        api_key = request.headers.get('apikey')
+        if validate_api_key(api_key).status_code != 200:
+            return validate_api_key(api_key)
+
+        requested = request.get_json()
+        valid_keys = ["bike_id", "active", "category", "axis", "datetime_created", "datetime_last_modified",
+                      "operating_hours"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
+        filter_by_data = {
+            'bike_id': requested.get('bike_id'),
+            'active': requested.get('active'),
+            'category': requested.get('category'),
+            'axis': requested.get('axis'),
+        }
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value is not None}
+
+        tire_query = TireModel.query.filter_by(**filter_by_data)
+
+        tire_query = query_intervals(filter_keys=[
+            "datetime_created",
+            "datetime_last_modified",
+            "operating_hours"
+        ], query=tire_query, request=requested, model=TireModel)
+
+        tire_query = tire_query \
+            .order_by(TireModel.operating_hours.asc()) \
+            .order_by(TireModel.dot.asc()) \
+            .all()
+
+        tire_entry_list = []
+        for tire_entry in tire_query:
+            tire_data = tire_schema.dump(tire_entry)
+            tire_entry_list.append(tire_data)
+
+        response = jsonify(tire_entry_list)
+        response.status_code = 200
+
+        return response

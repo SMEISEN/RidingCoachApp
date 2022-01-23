@@ -61,16 +61,20 @@ export default {
     },
   },
   methods: {
+    /**
+     * Emits a message to the parent component that the save button was clicked and parses the
+     * spare part id.
+     * @param {string} sparepartId id of the spare part
+     */
     onSave(sparepartId) {
       this.$emit('addSparepartItems', sparepartId);
     },
+    /**
+     * Emits a message to the parent component that the cancel button was clicked.
+     */
     onCancel() {
       this.$emit('initForm');
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -94,15 +94,24 @@ export default {
       }
     });
   },
-  updated() {
-  },
   methods: {
+    /**
+     * Highlights the current page in the bottom navigation.
+     * @param {string} value Name of the current page
+     */
     setPage(value) {
       this.current_tab = value;
     },
+    /**
+     * Opens the navigation drawer.
+     */
     onNavBarIcon() {
       this.$store.commit('setNavigationDrawerState', true);
     },
+    /**
+     * Get all bikes and store them to the vuex store. If there is no bike selected, select the
+     * first bike in the array. Store the information of the selected bike.
+     */
     getBike() {
       apiGetAllBikes()
         .then((res) => {

@@ -1,12 +1,13 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import jsonify, request
+from flask_restplus import Resource, fields
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
 from backend.database import db
 from backend.database.models.maintenance import MaintenanceModel, MaintenanceSchema
 from backend.database.models.history import HistorySchema
 from backend.database.models.bike import BikeModel, BikeSchema
-from flask_restplus import Resource, fields
+from backend.api.routines.common import query_intervals
 from sqlalchemy import cast
 from sqlalchemy.dialects.postgresql import ARRAY
 from collections import defaultdict
@@ -58,7 +59,6 @@ maintenance_query_parameters = api.model('MaintenanceQueryParameters', {
 
 
 def maintenance_state(maintenance_data, history_data, bike_operating_hours):
-
     state_left = None
     interval_left = None
 
@@ -68,9 +68,9 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
 
     elif maintenance_data['interval_unit'] == 'a':
         interval_left = (
-            datetime.fromisoformat(history_data[0]['datetime_display']) -
-            datetime.utcnow() +
-            timedelta(days=365 * maintenance_data['interval_amount'])
+                datetime.fromisoformat(history_data[0]['datetime_display']).replace(tzinfo=None) -
+                datetime.now(timezone.utc).replace(tzinfo=None) +
+                timedelta(days=365 * maintenance_data['interval_amount'])
         )
         state_left = interval_left / timedelta(days=365 * maintenance_data['interval_amount'])
         interval_left = interval_left.days
@@ -79,7 +79,7 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     # elif maintenance_data['interval_unit'] == 't':
     #     interval_left = (
     #         datetime.fromisoformat(history_data[0]['datetime_display']) -
-    #         datetime.utcnow() +
+    #         datetime.now(timezone.utc) +
     #         timedelta(days=1)
     #     ).total_seconds()
 
@@ -101,7 +101,7 @@ def query_to_dict(maintenance_query: list, bike_operating_hours: float = None, b
         interval_state = {
             'absolute': None,
             'relative': None,
-            }
+        }
 
         if bike_id is None:
             maintenance_data['interval_state'] = interval_state
@@ -241,8 +241,6 @@ class MaintenanceItem(Resource):
             maintenance_work.interval_type = inserted_data.get('interval_type')
         if inserted_data.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             maintenance_work.tags_default = inserted_data.get('tags_default')
-        if bool(inserted_data):
-            maintenance_work.datetime_last_modified = datetime.utcnow()
 
         db.session.add(maintenance_work)
         db.session.commit()
@@ -284,6 +282,14 @@ class MaintenanceQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
+        valid_keys = ["bike_id", "category", "name", "interval_unit", "interval_type", "interval_amount",
+                      "tags_default"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
         filter_by_data = {
             'bike_id': requested.get('bike_id'),
             'category': requested.get('category'),
@@ -291,53 +297,36 @@ class MaintenanceQuery(Resource):
             'interval_unit': requested.get('interval_unit'),
             'interval_type': requested.get('interval_type'),
         }
-        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value is not None}
 
         maintenance_query = MaintenanceModel.query.filter_by(**filter_by_data)
+
+        maintenance_query = query_intervals(filter_keys=[
+            "interval_amount",
+        ], query=maintenance_query, request=requested, model=MaintenanceModel)
 
         bike_operating_hours = None
         if requested.get('bike_id', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             bike_query = BikeModel.query.filter_by(**{'bike_id': requested.get('bike_id')}).all()
             bike_operating_hours = bike_schema.dump(bike_query, many=True)[0]['operating_hours']
 
-        filter_data = {}
-        if requested.get('interval_amount', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['interval_amount'] = {
-                'values': requested.get('interval_amount')['values'],
-                'operators': requested.get('interval_amount')['operators'],
-            }
-
-        for attr, item in filter_data.items():
-            for operator, value in zip(item['operators'], item['values']):
-                if operator == '==':
-                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) == value)
-                elif operator == '<=':
-                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) <= value)
-                elif operator == '>=':
-                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) >= value)
-                elif operator == '<':
-                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) < value)
-                elif operator == '>':
-                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) > value)
-                elif operator == '!=':
-                    maintenance_query = maintenance_query.filter(getattr(MaintenanceModel, attr) != value)
-                else:
-                    raise ValueError('Given operator does not match available operators!')
-
         if requested.get('tags_default', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            maintenance_query = maintenance_query\
+            maintenance_query = maintenance_query \
                 .filter(MaintenanceModel.tags_default.contains(cast(requested.get('tags_default'), ARRAY(db.String))))
 
-        maintenance_query = maintenance_query\
+        maintenance_query = maintenance_query \
             .order_by(MaintenanceModel.category.asc()) \
-            .order_by(MaintenanceModel.name.asc())\
-            .order_by(MaintenanceModel.interval_type.asc())\
-            .order_by(MaintenanceModel.interval_unit.asc())\
-            .order_by(MaintenanceModel.interval_amount.asc())\
+            .order_by(MaintenanceModel.name.asc()) \
+            .order_by(MaintenanceModel.interval_type.asc()) \
+            .order_by(MaintenanceModel.interval_unit.asc()) \
+            .order_by(MaintenanceModel.interval_amount.asc()) \
             .all()
 
         maintenance_categories_dict = query_to_dict(
-            maintenance_query=maintenance_query, bike_operating_hours=bike_operating_hours, bike_id=requested.get('bike_id'))
+            maintenance_query=maintenance_query,
+            bike_operating_hours=bike_operating_hours,
+            bike_id=requested.get('bike_id')
+        )
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200

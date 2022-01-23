@@ -80,12 +80,13 @@ export default {
       this.processSetupData();
     },
   },
-  updated() {
-  },
   created() {
     this.processSetupData();
   },
   methods: {
+    /**
+     * Processes the setup data for the radar chart.
+     */
     processSetupData() {
       this.data_sets[1].data = this.setupArray
         .map(() => 0);
@@ -100,7 +101,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -52,7 +52,7 @@
     </thead>
     <tbody>
       <tr
-        v-for="maintenance_object in sort_maintenance(maintenanceEntries)"
+        v-for="maintenance_object in maintenance_entries"
         :key="maintenance_object.maintenance_id"
       >
         <td style="font-size: 12px">
@@ -96,19 +96,27 @@ export default {
       required: true,
     },
   },
-  created() {
-  },
-  updated() {
-  },
-  methods: {
-    sort_maintenance(nestedEntries) {
-      const flattenedEntries = flattenNestedObjects(nestedEntries);
-      return this._.orderBy(flattenedEntries, ['interval_unit', 'interval_amount'], ['desc', 'asc']);
+  computed: {
+    /**
+     * Flattens the nested object of maintenance items to an array.
+     * @returns {array} array of maintenance items, e.g.
+     * [
+     *    {
+     *      bike_id: "...",
+     *      comment: "...",
+     *      ...
+     *      name: "...",
+     *      ...
+     *    },
+     *    ...
+     * ]
+     */
+    maintenance_entries() {
+      const flattenedEntries = flattenNestedObjects(this.maintenanceEntries);
+      return this._.orderBy(flattenedEntries,
+        ['interval_unit', 'interval_amount'],
+        ['desc', 'asc']);
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

@@ -148,6 +148,9 @@ export default {
     });
   },
   methods: {
+    /**
+     * Get trainings of the period selected in the toolbar menu.
+     */
     getTrainings() {
       switch (this.timeline_buttons) {
         case 4:
@@ -166,6 +169,9 @@ export default {
           this.queryTrainings();
       }
     },
+    /**
+     * Query trainings from the database.
+     */
     queryTrainings() {
       apiQueryTrainings(this.query).then((res) => {
         this.training_array = res.data;
@@ -177,10 +183,17 @@ export default {
         this.loading_trainings = false;
       });
     },
+    /**
+     * Removes a training from the display. Does not delete the training!
+     * @param {string} trainingId id of the training
+     */
     removeTraining(trainingId) {
       const trainingIndex = indexOfObjectValueInArray(this.training_array, trainingId);
       this.training_array.splice(trainingIndex, 1);
     },
+    /**
+     * Adds trainings to the display by adding 30 days to the considered period.
+     */
     appendTraining() {
       this.timeline_buttons = 0;
       this.loading_trainings = true;
@@ -191,6 +204,9 @@ export default {
         .toISOString().substr(0, 7);
       this.queryTrainings();
     },
+    /**
+     * Gets the training of the current day by considering all trainings later than today 00:00.
+     */
     getDateNow() {
       const dateValue = new Date()
         .setUTCHours(0, 0, 0, 0) / 1000 - 30 * 24 * 60 * 60;
@@ -200,6 +216,30 @@ export default {
       };
       this.queryTrainings();
     },
+    /**
+     * Sorts the trainings into different months, e.g.,
+     * [
+     *  [  # trainings of August
+     *    {
+     *      datetime_created: "...",
+     *      ...
+     *      training_id: "...",
+     *      weather_daily: "...",
+     *      weather_hourly: "..."
+     *    },
+     *    ...
+     *  ],
+     *  [  # trainings of September
+     *    {
+     *      datetime_created: "...",
+     *      ...
+     *    }
+     *  ]
+     * ]
+     * and checks if weather information is available. If yes, collect three points over the day and
+     * display them in the card title.
+     * @param {array} trainingArray array of training objects
+     */
     sortTrainingData(trainingArray) {
       const trainingArraySorted = [];
       let lastDate = new Date(trainingArray[0].datetime_display);
@@ -237,6 +277,10 @@ export default {
       trainingArraySorted.push(helperArray);
       this.training_array_sorted = trainingArraySorted;
     },
+    /**
+     * Gets the training of the current month by considering all trainings between the 1st of the
+     * current month 00:00:00 and the end of the current month 23:59:59
+     */
     getDateThisMonth() {
       const year = new Date().getFullYear();
       const monthStart = new Date().getMonth();
@@ -245,7 +289,7 @@ export default {
         new Date().setUTCHours(0, 0, 0, 0),
       ).setUTCFullYear(year, monthStart, 1) / 1000;
       const dateEnd = new Date(
-        new Date().setUTCHours(0, 0, 0, 0),
+        new Date().setUTCHours(23, 59, 59, 59),
       ).setUTCFullYear(year, monthEnd, 0) / 1000;
       this.query.datetime_display = {
         values: [Math.round(dateStart), Math.round(dateEnd)],
@@ -253,6 +297,10 @@ export default {
       };
       this.queryTrainings();
     },
+    /**
+     * Gets the training of the previous month by considering all trainings between the 1st of the
+     * previous month 00:00:00 and the end of the previous month 23:59:59
+     */
     getDateLastMonth() {
       const year = new Date().getFullYear();
       const monthStart = new Date().getMonth() - 1;
@@ -261,7 +309,7 @@ export default {
         new Date().setUTCHours(0, 0, 0, 0),
       ).setUTCFullYear(year, monthStart, 1) / 1000;
       const dateEnd = new Date(
-        new Date().setUTCHours(0, 0, 0, 0),
+        new Date().setUTCHours(23, 59, 59, 59),
       ).setUTCFullYear(year, monthEnd, 0) / 1000;
       this.query.datetime_display = {
         values: [Math.round(dateStart), Math.round(dateEnd)],
@@ -269,6 +317,10 @@ export default {
       };
       this.queryTrainings();
     },
+    /**
+     * Gets the training of the current year by considering all trainings between the 1st of January
+     * 00:00:00 and the end of the current month 23:59:59
+     */
     getDateThisYear() {
       const year = new Date().getFullYear();
       const monthStart = 0;
@@ -277,7 +329,7 @@ export default {
         new Date().setUTCHours(0, 0, 0, 0),
       ).setUTCFullYear(year, monthStart, 1) / 1000;
       const dateEnd = new Date(
-        new Date().setUTCHours(0, 0, 0, 0),
+        new Date().setUTCHours(23, 59, 59, 590),
       ).setUTCFullYear(year, monthEnd, 0) / 1000;
       this.query.datetime_display = {
         values: [Math.round(dateStart), Math.round(dateEnd)],
@@ -288,7 +340,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

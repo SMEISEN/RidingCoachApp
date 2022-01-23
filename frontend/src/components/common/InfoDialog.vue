@@ -40,11 +40,11 @@ export default {
       required: true,
     },
   },
-  updated() {
-  },
-  created() {
-  },
   methods: {
+    /**
+     * Emits a message to the parent component that the cancel button was clicked and closes the
+     * info dialog.
+     */
     onOkay() {
       this.$emit('cancelButtonClicked');
       this.$emit('update:infoDialog', false);
@@ -52,7 +52,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

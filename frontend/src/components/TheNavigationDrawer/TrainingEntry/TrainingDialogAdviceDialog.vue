@@ -278,12 +278,18 @@ export default {
     this.getCoach();
   },
   methods: {
+    /**
+     * Gets all coach items from the database.
+     */
     getCoach() {
       apiGetAllCoaches().then((res) => {
         this.coach_object = res.data;
         this.getCoachCategories();
       });
     },
+    /**
+     * Extracts the categories of the coach items.
+     */
     getCoachCategories() {
       this.coach_categories_array = this._.uniq(
         Object.assign(this.coach_categories_array,

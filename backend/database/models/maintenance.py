@@ -1,4 +1,3 @@
-from datetime import datetime
 from backend.database import db, ma
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 import uuid
@@ -18,8 +17,8 @@ class MaintenanceModel(db.Model):
     interval_unit = db.Column(db.String(25), nullable=True)
     tags_default = db.Column(ARRAY(db.String), nullable=True)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
 
     def __repr__(self):
         return f"Maintenance[" \

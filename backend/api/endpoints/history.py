@@ -1,11 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import jsonify, request
+from flask_restplus import Resource, fields
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
+from backend.api.routines.common import query_intervals
 from backend.database import db
 from backend.database.models.history import HistoryModel, HistorySchema
 from backend.database.models.maintenance import MaintenanceSchema
-from flask_restplus import Resource, fields
 from sqlalchemy import cast
 from sqlalchemy.dialects.postgresql import ARRAY
 
@@ -31,7 +32,8 @@ history_input_parameters = api.model('HistoryInputParameters', {
             "replaced",
         ]),
     "datetime_display":
-        fields.DateTime(description="utc time stamp in seconds", required=True, example=datetime.utcnow().timestamp()),
+        fields.DateTime(description="utc time stamp in seconds", required=True,
+                        example=datetime.now(timezone.utc).timestamp()),
 })
 history_query_parameters = api.model('HistoryQueryParameters', {
     "bike_id":
@@ -54,17 +56,26 @@ history_query_parameters = api.model('HistoryQueryParameters', {
         ]),
     "datetime_created":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp() - 2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_last_modified":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp() - 2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
     "datetime_display":
         fields.Raw(description="utc time stamp in seconds", required=False, example={
-            "values": [datetime.utcnow().timestamp() - 2000, datetime.utcnow().timestamp()],
+            "values": [
+                datetime.now(timezone.utc).timestamp() - 2000,
+                datetime.now(timezone.utc).timestamp()
+            ],
             "operators": ['>=', '<='],
         }),
 })
@@ -116,7 +127,8 @@ class HistoryCollection(Resource):
             operating_hours=inserted_data.get('operating_hours'),
             comment=inserted_data.get('comment'),
             tags=inserted_data.get('tags'),
-            datetime_display=datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
+            datetime_display=datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None),
         )
 
         db.session.add(new_history)
@@ -178,9 +190,8 @@ class HistoryItem(Resource):
         if inserted_data.get('tags', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_entry.tags = inserted_data.get('tags')
         if inserted_data.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            history_entry.datetime_display = datetime.utcfromtimestamp(inserted_data.get('datetime_display'))
-        if bool(inserted_data):
-            history_entry.datetime_last_modified = datetime.utcnow()
+            history_entry.datetime_display = datetime.fromtimestamp(
+                inserted_data.get('datetime_display'), tz=timezone.utc).replace(tzinfo=None)
 
         db.session.add(history_entry)
         db.session.commit()
@@ -222,52 +233,28 @@ class HistoryQuery(Resource):
             return validate_api_key(api_key)
 
         requested = request.get_json()
+        valid_keys = ["bike_id", "comment", "datetime_created", "datetime_last_modified", "datetime_display",
+                      "operating_hours", "tags"]
+        if not all(x in valid_keys for x in requested.keys()):
+            response = jsonify([])
+            response.status_code = 404
+
+            return response
+
         filter_by_data = {
             'bike_id': requested.get('bike_id'),
             'comment': requested.get('comment'),
         }
-        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value}
+        filter_by_data = {key: value for (key, value) in filter_by_data.items() if value is not None}
 
         history_query = HistoryModel.query.filter_by(**filter_by_data)
 
-        filter_data = {}
-        if requested.get('datetime_created', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_created'] = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_created')['values']],
-                'operators': requested.get('datetime_created')['operators'],
-            }
-        elif requested.get('datetime_last_modified', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_last_modified'] = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_last_modified')['values']],
-                'operators': requested.get('datetime_last_modified')['operators'],
-            }
-        elif requested.get('datetime_display', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['datetime_display'] = {
-                'values': [datetime.utcfromtimestamp(ts) for ts in requested.get('datetime_display')['values']],
-                'operators': requested.get('datetime_display')['operators'],
-            }
-        elif requested.get('operating_hours', 'ParameterNotInPayload') != 'ParameterNotInPayload':
-            filter_data['operating_hours'] = {
-                'values': requested.get('operating_hours')['values'],
-                'operators': requested.get('datetime_display')['operators'],
-            }
-
-        for attr, item in filter_data.items():
-            for operator, value in zip(item['operators'], item['values']):
-                if operator == '==':
-                    history_query = history_query.filter(getattr(HistoryModel, attr) == value)
-                elif operator == '<=':
-                    history_query = history_query.filter(getattr(HistoryModel, attr) <= value)
-                elif operator == '>=':
-                    history_query = history_query.filter(getattr(HistoryModel, attr) >= value)
-                elif operator == '<':
-                    history_query = history_query.filter(getattr(HistoryModel, attr) < value)
-                elif operator == '>':
-                    history_query = history_query.filter(getattr(HistoryModel, attr) > value)
-                elif operator == '!=':
-                    history_query = history_query.filter(getattr(HistoryModel, attr) != value)
-                else:
-                    raise ValueError('Given operator does not match available operators!')
+        history_query = query_intervals(filter_keys=[
+            "datetime_created",
+            "datetime_last_modified",
+            "datetime_display",
+            "operating_hours",
+        ], query=history_query, request=requested, model=HistoryModel)
 
         if requested.get('tags', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             history_query = history_query \

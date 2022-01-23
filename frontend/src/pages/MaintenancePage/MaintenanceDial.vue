@@ -104,19 +104,24 @@ export default {
     delete_maintenance_dialog: false,
   }),
   methods: {
+    /**
+     * Opens the add maintenance dialog.
+     */
     addMaintenance() {
       this.add_maintenance_dialog = true;
     },
+    /**
+     * Opens the edit maintenance dialog.
+     */
     editMaintenance() {
       this.edit_maintenance_dialog = true;
     },
+    /**
+     * Opens the delete maintenance dialog.
+     */
     deleteMaintenance() {
       this.delete_maintenance_dialog = true;
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>

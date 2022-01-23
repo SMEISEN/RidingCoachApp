@@ -130,9 +130,11 @@ export default {
   updated() {
     this.window_height = window.innerHeight;
   },
-  created() {
-  },
   methods: {
+    /**
+     * After the save button was clicked, update the operating hours of the selected bike and post
+     * or edit the training. If there is no training_id, a new training will be posted.
+     */
     onTrainingSave() {
       const bikeId = this.$store.getters.getCurrentBikeId;
       const payloadBike = {
@@ -222,14 +224,25 @@ export default {
       this.$store.commit('setTrainingEditId', null);
       this.$emit('saveClicked');
     },
+    /**
+     * After the cancel button was clicked, the training dialog is closed and the validation of the
+     * training dialog form is reset.
+     */
     onTrainingCancel() {
       this.training_dialog = false;
       this.$refs.validation_training_form.resetValidation();
       this.$store.commit('setTrainingEditId', null);
     },
+    /**
+     * Opens the confirm delete dialog.
+     */
     onTrainingDelete() {
       this.confirm_delete_dialog = true;
     },
+    /**
+     * After the deletion was confirmed, firstly, the setup items of the corresponding training is
+     * deleted, secondly, the training item is deleted.
+     */
     deleteTrainingData() {
       for (let i = 0; i < this.trainingFormObject.setup_fixed.length; i += 1) {
         const setupId = this.trainingFormObject.setup_fixed[i].setup_id;
@@ -261,6 +274,14 @@ export default {
         });
       this.$store.commit('setTrainingEditId', null);
     },
+    /**
+     * Returns the setup of a specific training and the corresponding bike by the setup index in the
+     * setup array.
+     * @param {string} trainingId id of the corresponding training
+     * @param {number} setupNo index of the setup in the setup array
+     * @param {string} bikeId id of the corresponding bike
+     * @returns {object} setup object
+     */
     setupPayload(trainingId, setupNo, bikeId) {
       const datetime = this.trainingFormObject.date
         .concat('T', this.trainingFormObject.setup_fixed[setupNo].time);
@@ -281,7 +302,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

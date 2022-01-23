@@ -7,6 +7,7 @@ import mapValues from 'lodash/mapValues';
 import orderBy from 'lodash/orderBy';
 import flatten from 'lodash/flatten';
 
+// Use lodash and export used methods
 Vue.use(VueLodash, {
   lodash: {
     cloneDeep,

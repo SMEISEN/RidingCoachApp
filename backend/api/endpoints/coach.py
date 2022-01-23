@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -150,8 +149,6 @@ class CoachItem(Resource):
             coach_entry.questions = inserted_data.get('questions')
         if inserted_data.get('advice', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             coach_entry.advice = inserted_data.get('advice')
-        if bool(inserted_data):
-            coach_entry.datetime_last_modified = datetime.utcnow()
 
         db.session.add(coach_entry)
         db.session.commit()

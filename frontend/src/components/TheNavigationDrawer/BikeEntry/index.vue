@@ -14,13 +14,13 @@
       <v-radio-group v-model="selected_bike">
         <v-list-item
           v-for="(bike, index) in bike_array"
-          :key="bike.bike_id"
+          :key="bike.bike_id + '_list'"
           v-touch="{ right: () => editBike(bike.bike_id) }"
           @click="selectBike(index)"
         >
           <v-list-item-action>
             <v-radio
-              :key="bike.bike_id"
+              :key="bike.bike_id + '_radio'"
               :value="bike.bike_id"
             />
           </v-list-item-action>
@@ -44,6 +44,7 @@
     <TheNavigationDrawerBikeDialog
       :bike-form-object="bike_form_object"
       :setup-individual-template="setup_individual_template"
+      :operating-hours-initial="operating_hours_initial"
       @clearBikeDialog="initBikeForm"
     />
   </div>
@@ -102,6 +103,7 @@ export default {
       ticks_standard: null,
       ticks_available: null,
     },
+    operating_hours_initial: 0,
   }),
   computed: {
     selected_bike: {
@@ -156,18 +158,21 @@ export default {
   methods: {
     selectBike(index) {
       const selectedBike = this.bike_array[index];
-      this.$nextTick(() => {
-        if (this.current_bike_id !== selectedBike.bike_id && this.bike_dialog === false) {
-          this.$store.commit('selectBike', selectedBike);
-          this.navigation_drawer = false;
-          this.$forceUpdate();
-        }
-      });
+      if (typeof index === 'number') {
+        this.$nextTick(() => {
+          if (this.current_bike_id !== selectedBike.bike_id && this.bike_dialog === false) {
+            this.$store.commit('selectBike', selectedBike);
+            this.navigation_drawer = false;
+            this.$forceUpdate();
+          }
+        });
+      }
     },
     editBike(BikeId) {
       this.bike_edit_flag = true;
       this.bike_dialog = true;
       const bikeIndex = indexOfObjectValueInArray(this.bike_array, BikeId);
+      this.operating_hours_initial = this.bike_array[bikeIndex].operating_hours;
       this.bike_form_object.bike_id = this.bike_array[bikeIndex].bike_id;
       this.bike_form_object.manufacturer = this.bike_array[bikeIndex].manufacturer;
       this.bike_form_object.model = this.bike_array[bikeIndex].model;
@@ -210,7 +215,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

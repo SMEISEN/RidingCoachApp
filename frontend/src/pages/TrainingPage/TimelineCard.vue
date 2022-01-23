@@ -118,12 +118,23 @@ export default {
     },
   },
   methods: {
+    /**
+     * Emits a message to the parent component that the edit training button was clicked and parses
+     * the id of this training.
+     */
     onTrainingEdit() {
       this.$store.commit('setTrainingEditId', this.trainingItem.training_id);
     },
+    /**
+     * Opens the confirm deletion dialog after clicking the delete button of a training.
+     */
     onTrainingDelete() {
       this.confirm_delete_dialog = true;
     },
+    /**
+     * Deletes a training by firstly, deleting all corresponding setups and secondly, deleting the
+     * respective training.
+     */
     deleteTrainingData() {
       for (let i = 0; i < this.trainingItem.setups.length; i += 1) {
         const setupId = this.trainingItem.setups[i].setup_id;
@@ -152,7 +163,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

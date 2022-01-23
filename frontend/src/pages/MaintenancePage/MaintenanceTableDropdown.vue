@@ -65,9 +65,11 @@ export default {
   created() {
     this.selected_chips_array = this.getDefaultTags();
   },
-  updated() {
-  },
   methods: {
+    /**
+     * Gets the default tags for a maintenance item.
+     * @returns {array} array of the default tags
+     */
     getDefaultTags() {
       const tagsDefault = this.maintenanceObject.tags_default;
       const selectedChipsArray = [];
@@ -82,9 +84,17 @@ export default {
       }
       return selectedChipsArray;
     },
+    /**
+     * Closes the dropdown if clicked anywhere else.
+     */
     clickAway() {
       this.dropdown = false;
     },
+    /**
+     * Emits a message to the parent component that the done button was clicked and parses the
+     * maintenance id.
+     * @param {string} mtnId maintenance id
+     */
     doneButtonClicked(mtnId) {
       const selectedChips = this.chipNumberToString();
       this.$emit('doneButtonClicked', mtnId, selectedChips);
@@ -92,6 +102,11 @@ export default {
         this.dropdown = false;
       }, 1);
     },
+    /**
+     * The selected maintenance tag chips are encoded as numbers, translates these numbers back to
+     * the corresponding string.
+     * @returns {array} array of maintenance tags
+     */
     chipNumberToString() {
       const selectedChipsArray = [];
       if (this.selected_chips_array.includes(0)) {
@@ -108,7 +123,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-</style>

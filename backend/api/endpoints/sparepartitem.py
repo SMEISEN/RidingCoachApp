@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import jsonify, request
 from backend.api import api
 from backend.api.authentication.validation import validate_api_key
@@ -18,6 +17,8 @@ sparepartitem_input_parameters = api.model('SparepartitemInputParameters', {
         fields.String(description="condition of the spare part item child", required=True, example="good"),
     "description":
         fields.String(description="description of the spare part item child", required=True, example="new"),
+    "stock":
+        fields.Integer(description="current stock of the spare part item child", required=True, example=2),
 })
 
 
@@ -121,8 +122,6 @@ class SparepartitemItem(Resource):
             sparepart_item.description = inserted_data.get('description')
         if inserted_data.get('stock', 'ParameterNotInPayload') != 'ParameterNotInPayload':
             sparepart_item.stock = inserted_data.get('stock')
-        if bool(inserted_data):
-            sparepart_item.datetime_last_modified = datetime.utcnow()
 
         db.session.add(sparepart_item)
         db.session.commit()

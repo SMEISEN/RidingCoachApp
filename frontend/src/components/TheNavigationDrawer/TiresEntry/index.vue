@@ -41,21 +41,28 @@ export default {
   },
   created() {
     this.getTires();
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'lastTireUpdatedId') {
+        this.getTires();
+      }
+    });
   },
   methods: {
+    /**
+     * Gets all tire entries from the database.
+     */
     getTires() {
       apiGetTire()
         .then((res) => {
-              this.tire_array = res.data;
+          this.tire_array = res.data;
         });
     },
+    /**
+     * Opens the tire dialog.
+     */
     tireDialog() {
       this.tire_dialog = true;
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>
