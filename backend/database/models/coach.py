@@ -14,8 +14,8 @@ class CoachModel(db.Model):
     questions = db.Column(ARRAY(db.String), nullable=True, default=[])
     advice = db.Column(JSON, nullable=False)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=db.utcnow, onupdate=db.utcnow)
 
     def __repr__(self):
         return f"Coach[" \

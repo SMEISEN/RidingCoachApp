@@ -17,9 +17,9 @@ class HistoryModel(db.Model):
     comment = db.Column(db.Text, nullable=True)
     tags = db.Column(ARRAY(db.String), nullable=True)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
-    datetime_display = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=db.utcnow, onupdate=db.utcnow)
+    datetime_display = db.Column(db.DateTime, nullable=False, default=db.utcnow)
 
     bike = db.relationship('BikeModel', backref=db.backref('history'))
     maintenance = db.relationship('MaintenanceModel',

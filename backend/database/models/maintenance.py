@@ -17,8 +17,8 @@ class MaintenanceModel(db.Model):
     interval_unit = db.Column(db.String(25), nullable=True)
     tags_default = db.Column(ARRAY(db.String), nullable=True)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=db.utcnow, onupdate=db.utcnow)
 
     def __repr__(self):
         return f"Maintenance[" \
