@@ -32,8 +32,8 @@ class TireModel(db.Model):
 
     comment = db.Column(db.Text, nullable=True)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=db.utcnow, onupdate=db.utcnow)
 
     def __repr__(self):
         return f"Maintenance[" \

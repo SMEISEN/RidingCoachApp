@@ -20,7 +20,7 @@
     <HistoryDialogForm
       :history-form-input="history_form_object"
       :maintenance-categories="maintenance_categories_array"
-      :maintenance-names="maintenance_names_object"
+      :maintenance-array="maintenance_array"
       :maintenance-tags="maintenance_tags_array"
       @saveButtonClicked="refreshHistory()"
       @cancelButtonClicked="refreshHistory()"
@@ -59,9 +59,9 @@ export default {
       comment: null,
       tags: null,
     },
+    maintenance_array: [],
     maintenance_categories_array: [],
     maintenance_tags_array: ['checked', 'fixed', 'replaced'],
-    maintenance_names_object: {},
   }),
   computed: {
     orderedHistory() {
@@ -129,8 +129,8 @@ export default {
         });
       apiQueryMaintenance({ bike_id: this.currentBikeId })
         .then((res) => {
-          this.maintenance_categories_array = Object.keys(res.data);
-          this.maintenance_names_object = res.data;
+          this.maintenance_array = res.data;
+          this.maintenance_categories_array = this._.uniq(res.data.map((value) => value.category));
         })
         .catch((error) => {
           this.$store.commit('setInfoSnackbar', {

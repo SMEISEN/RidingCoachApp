@@ -14,7 +14,7 @@
           </v-card-title>
           <v-card-text>
             <MaintenanceDialDeleteDialogTable
-              :maintenance-entries="categoryObject"
+              :category-array="categoryArray"
               :delete-checkbox="delete_checkbox"
             />
           </v-card-text>
@@ -63,8 +63,8 @@ export default {
       type: Boolean,
       required: true,
     },
-    categoryObject: {
-      type: Object,
+    categoryArray: {
+      type: Array,
       required: true,
     },
     categoryName: {
@@ -98,11 +98,14 @@ export default {
       for (let i = 0; i < entries.length; i += 1) {
         const name = entries[i][0];
         const deleteFlag = entries[i][1];
-        const mtnId = this.categoryObject[name].maintenance_id;
+        const mtnId = this.categoryArray.filter((j) => j.name === name)[0].maintenance_id;
+        const index = this.categoryArray.indexOf(this.categoryArray.filter(
+          (j) => j.name === this.maintenance_name,
+        )[0]);
         if (deleteFlag === true) {
           apiDeleteMaintenanceItem(mtnId)
             .then(() => {
-              delete this.categoryObject[name];
+              delete this.categoryArray[index];
               this.$emit('maintenanceDeleted');
             })
             .catch((error) => {

@@ -17,9 +17,9 @@ class SessionModel(db.Model):
 
     application = db.Column(db.String(50), nullable=True)
 
-    datetime_created = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
-    datetime_last_modified = db.Column(db.DateTime, nullable=False, server_default=db.utcnow, onupdate=db.utcnow)
-    datetime_display = db.Column(db.DateTime, nullable=False, server_default=db.utcnow)
+    datetime_created = db.Column(db.DateTime, nullable=False, default=db.utcnow)
+    datetime_last_modified = db.Column(db.DateTime, nullable=False, default=db.utcnow, onupdate=db.utcnow)
+    datetime_display = db.Column(db.DateTime, nullable=False, default=db.utcnow)
 
     bike = db.relationship(
         'BikeModel', backref=db.backref('sessions', order_by='SessionModel.datetime_display.asc()'))
