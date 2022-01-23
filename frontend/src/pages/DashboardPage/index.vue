@@ -200,51 +200,6 @@ export default {
   },
   methods: {
     /**
-     * Flattens the nested maintenance object fetched from the database to an array.
-     * @param {object} data nested object, e.g.
-     * {
-     *   "Attachments": {
-     *     "Check antifreeze and coolant level": {
-     *       bike_id: "...",
-     *       comment: "...",
-     *       datetime_created: "...",
-     *       ...
-     *     },
-     *     ...
-     *   },
-     *   ...
-     * }
-     * @returns {array} flattened array of objects, e.g.
-     * [
-     *  {
-     *    bike_id: "...",
-     *    comment: "...",
-     *    datetime_created: "...",
-     *    ...
-     *    name: "Check antifreeze and coolant level",
-     *    ...
-     *  },
-     *  ...
-     * ]
-     */
-    structureMaintenanceNext(data) {
-      const helperList1 = [];
-      for (let i = 0; i < Object.values(data).length; i += 1) {
-        Object.assign(helperList1, Object.values(data)[i]);
-      }
-      const helperList2 = [];
-      for (let i = 0; i < Object.values(helperList1).length; i += 1) {
-        if (Object.values(helperList1)[i].operating_hours !== undefined) {
-          const name = { name: Object.keys(helperList1)[i] };
-          helperList2.push(Object.assign(
-            name,
-            Object.values(helperList1)[i],
-          ));
-        }
-      }
-      return helperList2;
-    },
-    /**
      * Gets the setup of the selected bike from the vuex store.
      */
     getSetup() {
@@ -305,7 +260,9 @@ export default {
       })
         .then((res) => {
           if (Object.keys(res.data).length > 0) {
-            this.maintenance_array = this.structureMaintenanceNext(res.data);
+            this.maintenance_array = res.data.filter(
+              (i) => i.operating_hours !== undefined,
+            );
           }
         })
         .catch((error) => {
