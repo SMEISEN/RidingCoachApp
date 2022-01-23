@@ -324,8 +324,6 @@ export default {
      * @returns {array} array of maintenance tag strings
      */
     getDefaultTags(category, name) {
-      console.log(category);
-      console.log(name);
       if (this.maintenanceCategories.includes(category)) {
         if (Object.keys(this.maintenanceNames[category]).includes(name)) {
           return this.maintenanceNames[category][name].tags_default;
