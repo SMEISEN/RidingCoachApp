@@ -10,7 +10,6 @@ from backend.database.models.bike import BikeModel, BikeSchema
 from backend.api.routines.common import query_intervals
 from sqlalchemy import cast
 from sqlalchemy.dialects.postgresql import ARRAY
-from collections import defaultdict
 
 ns = api.namespace('maintenance', description='Operations related to maintenance entries.')
 history_schema = HistorySchema()
@@ -89,7 +88,7 @@ def maintenance_state(maintenance_data, history_data, bike_operating_hours):
     }
 
 
-def query_to_dict(maintenance_query: list, bike_operating_hours: float = None, bike_id: str = None):
+def query_to_list(maintenance_query: list, bike_operating_hours: float = None, bike_id: str = None):
     """
     Re-formats the query to a structured dictionary, which can be json serialized.
     """
@@ -123,15 +122,7 @@ def query_to_dict(maintenance_query: list, bike_operating_hours: float = None, b
                 maintenance_data['interval_state'] = interval_state
                 maintenance_list.append(maintenance_data)
 
-    maintenance_categories_dict = defaultdict(lambda: defaultdict(dict))
-    for item in maintenance_list:
-        category = item['category']
-        item.pop('category')
-        name = item['name']
-        item.pop('name')
-        maintenance_categories_dict[category][name].update(item)
-
-    return maintenance_categories_dict
+    return maintenance_list
 
 
 @ns.route('/')
@@ -150,7 +141,7 @@ class MaintenanceCollection(Resource):
 
         maintenance_all = MaintenanceModel.query.order_by(MaintenanceModel.category.asc()).all()
 
-        maintenance_categories_dict = query_to_dict(maintenance_query=maintenance_all)
+        maintenance_categories_dict = query_to_list(maintenance_query=maintenance_all)
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200
@@ -322,11 +313,9 @@ class MaintenanceQuery(Resource):
             .order_by(MaintenanceModel.interval_amount.asc()) \
             .all()
 
-        maintenance_categories_dict = query_to_dict(
-            maintenance_query=maintenance_query,
-            bike_operating_hours=bike_operating_hours,
-            bike_id=requested.get('bike_id')
-        )
+        maintenance_categories_dict = query_to_list(maintenance_query=maintenance_query,
+                                                    bike_operating_hours=bike_operating_hours,
+                                                    bike_id=requested.get('bike_id'))
 
         response = jsonify(maintenance_categories_dict)
         response.status_code = 200

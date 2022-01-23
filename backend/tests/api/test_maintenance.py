@@ -5,6 +5,7 @@ from backend.app import create_app
 from backend.config import TestConfig
 from backend.app import db
 from backend.utils.uuid import validate_uuid
+from backend.tests.api.routines.query import validate_filter_by, validate_filter_intervals
 
 from backend.tests.api.requests.maintenance import get
 from backend.tests.api.requests.maintenance import post
@@ -62,7 +63,7 @@ def test_get(app, client):
 
     response = get(app, client)
     maintenance_items = json.loads(response.get_data())
-    assert isinstance(maintenance_items, dict)  # change to list
+    assert isinstance(maintenance_items, list)
     assert len(maintenance_items) == 2
     assert response.status_code == 200
 
@@ -134,61 +135,29 @@ def test_post_query(app, client, maintenance_id):
     assert len(json.loads(response.get_data())) == 0
     assert response.status_code == 404
 
-    def validate_category(payload):
+    def validate_tags_default(payload):
         response = post_query(app, client, payload)
         items = json.loads(response.get_data())
-        for key in items.keys():
-            assert key == payload["category"]
+        assert isinstance(items, list)
+        for item in items:
+            for key, value in payload.items():
+                assert any(tag in item[key] for tag in payload[key]) is True
         assert response.status_code == 200
-    validate_category({"category": "maintenance category"})
-    validate_category({"category": "category maintenance"})
+    validate_tags_default({"tags_default": ["checked", "fixed", "replaced"]})
+    validate_tags_default({"tags_default": ["checked"]})
 
-    def validate_name(payload):
-        response = post_query(app, client, payload)
-        maintenance_items = json.loads(response.get_data())
-        for value in maintenance_items.values():
-            for key in value.keys():
-                assert key == payload["name"]
-        assert response.status_code == 200
-    validate_name({"name": "maintenance name"})
-    validate_name({"name": "name maintenance"})
+    validate_filter_by(payload={"bike_id": bike_id_post}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"bike_id": bike_id_put}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"interval_unit": "h"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"interval_unit": "a"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"interval_type": "planned cycle"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"interval_type": "estimated wear"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"name": "maintenance name"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"name": "name maintenance"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"category": "maintenance category"}, post_query=post_query, app=app, client=client)
+    validate_filter_by(payload={"category": "category maintenance"}, post_query=post_query, app=app, client=client)
 
-    def validate_tags(payload):
-        response = post_query(app, client, payload)
-        maintenance_items = json.loads(response.get_data())
-        for value in maintenance_items.values():
-            for value_value in value.values():
-                for key in payload.keys():
-                    assert any(item in value_value[key] for item in payload[key]) is True
-        assert response.status_code == 200
-    validate_tags({"tags_default": ["checked", "fixed", "replaced"]})
-    validate_tags({"tags_default": ["checked"]})
-
-    def validate_other(payload):
-        response = post_query(app, client, payload)
-        maintenance_items = json.loads(response.get_data())
-        for value in maintenance_items.values():
-            for value_value in value.values():
-                for key in payload.keys():
-                    assert value_value[key] == payload[key]
-        assert response.status_code == 200
-    validate_other({"bike_id": bike_id_post})
-    validate_other({"bike_id": bike_id_put})
-    validate_other({"interval_unit": "h"})
-    validate_other({"interval_unit": "a"})
-    validate_other({"interval_type": "planned cycle"})
-    validate_other({"interval_type": "estimated wear"})
-
-
-    def validate_intervals(payload):
-        response = post_query(app, client, payload)
-        maintenance_items = json.loads(response.get_data())
-        for value in maintenance_items.values():
-            for valuevalue in value.values():
-                assert valuevalue["interval_amount"] >= payload["interval_amount"]["values"][0]
-                assert valuevalue["interval_amount"] <= payload["interval_amount"]["values"][1]
-        assert response.status_code == 200
-    validate_intervals({
+    validate_filter_intervals(payload={
             "interval_amount": {
                 "values": [
                     9,
@@ -199,7 +168,7 @@ def test_post_query(app, client, maintenance_id):
                     "<="
                 ]
             },
-        })
+        }, post_query=post_query, app=app, client=client)
 
 
 def test_get_warnings(app, client):
