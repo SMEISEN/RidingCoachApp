@@ -235,8 +235,8 @@ export default {
       type: Array,
       required: true,
     },
-    maintenanceNames: {
-      type: Object,
+    maintenanceArray: {
+      type: Array,
       required: true,
     },
     maintenanceTags: {
@@ -270,12 +270,12 @@ export default {
       if (category !== null) {
         if (name !== null) {
           if (this.$store.getters.getHistoryEditFlag === false) {
-            this.historyFormInput.tags = this.getDefaultTags(category, name);
+            this.historyFormInput.tags = this.getDefaultTags(name);
           }
           if (this.changed === false) {
             this.changed = true;
           } else {
-            this.historyFormInput.tags = this.getDefaultTags(category, name);
+            this.historyFormInput.tags = this.getDefaultTags(name);
           }
         }
       }
@@ -314,20 +314,18 @@ export default {
      */
     getMaintenanceNamesFromCategory(category) {
       if (this.maintenanceCategories.includes(category)) {
-        return Object.keys(this.maintenanceNames[category]);
+        return this.maintenanceArray.filter((i) => i.category === category).map((j) => j.name);
       } return [];
     },
     /**
      * Gets the default maintenance tags for a specific maintenance name.
-     * @param {string} category
      * @param {string} name
      * @returns {array} array of maintenance tag strings
      */
-    getDefaultTags(category, name) {
-      if (this.maintenanceCategories.includes(category)) {
-        if (Object.keys(this.maintenanceNames[category]).includes(name)) {
-          return this.maintenanceNames[category][name].tags_default;
-        }
+    getDefaultTags(name) {
+      const [maintenanceItem] = this.maintenanceArray.filter((i) => i.name === name);
+      if (maintenanceItem) {
+        return maintenanceItem.tags_default;
       }
       return [];
     },
@@ -383,12 +381,12 @@ export default {
           tags: this.historyFormInput.tags,
           comment: this.historyFormInput.comment,
         };
-        if (Object.keys(this.maintenanceNames[this.historyFormInput.category])
-          .includes(this.historyFormInput.name)) {
+        const [maintenanceName] = this.maintenanceArray.filter(
+          (i) => i.name === this.historyFormInput.name,
+        );
+        if (maintenanceName) {
           // maintenance name already exists
-          histPayload.maintenance_id = this.maintenanceNames[
-            this.historyFormInput.category][
-            this.historyFormInput.name].maintenance_id;
+          histPayload.maintenance_id = maintenanceName.maintenance_id;
           this.pushHistory(histPayload);
         } else {
           // maintenance name does not exist yet
