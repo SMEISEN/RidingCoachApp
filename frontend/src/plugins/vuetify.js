@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import en from 'vuetify/es5/locale/en';
-import 'vuetify/dist/vuetify.min.css';
+/*import 'vuetify/dist/vuetify.min.css';
 import '@mdi/font/css/materialdesignicons.css';
-import 'roboto-fontface/css/roboto/roboto-fontface.css';
+import 'roboto-fontface/css/roboto/roboto-fontface.css';*/
 
 // Use vuetify, define color themes, language, and icons, and export the setup
 Vue.use(Vuetify);
