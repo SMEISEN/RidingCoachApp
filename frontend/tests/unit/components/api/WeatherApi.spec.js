@@ -4,7 +4,6 @@ describe('api for weather data from tomorrow.io', () => {
 
   it('gets weather data',
     async () => {
-
       const pos = {
         coords: {
           latitude: 5.322528,

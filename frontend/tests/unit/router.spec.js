@@ -48,7 +48,6 @@ describe('render pages while user is not logged in', () => {
 
   it('renders the login page',
     async () => {
-
       router.push('/login').catch(err => {
         if (err.name !== "NavigationDuplicated") {
           throw err;
@@ -62,7 +61,6 @@ describe('render pages while user is not logged in', () => {
 
   it('renders the login page, alias path',
     async () => {
-
       router.push('/').catch(err => {
         if (err.name !== "NavigationDuplicated") {
           throw err;
@@ -76,7 +74,6 @@ describe('render pages while user is not logged in', () => {
 
   it('renders the login page because of navigation guard redirection',
     async () => {
-
       router.push('/dashboard').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -90,7 +87,6 @@ describe('render pages while user is not logged in', () => {
 
   it('renders the login page because of navigation guard redirection',
     async () => {
-
       router.push('/maintenance').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -104,7 +100,6 @@ describe('render pages while user is not logged in', () => {
 
   it('renders the login page because of navigation guard redirection',
     async () => {
-
       router.push('/spareparts').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -118,7 +113,6 @@ describe('render pages while user is not logged in', () => {
 
   it('renders the login page because of navigation guard redirection',
     async () => {
-
       router.push('/training').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -132,7 +126,6 @@ describe('render pages while user is not logged in', () => {
 
   it('renders the login page because of navigation guard redirection',
     async () => {
-
       router.push('/history').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -154,7 +147,6 @@ describe('render pages while user is logged in', () => {
 
   it('renders the login page',
     async () => {
-
       router.push('/login').catch(err => {
         if (err.name !== "NavigationDuplicated") {
           throw err;
@@ -168,7 +160,6 @@ describe('render pages while user is logged in', () => {
 
   it('renders the login page, alias path',
     async () => {
-
       router.push('/').catch(err => {
         if (err.name !== "NavigationDuplicated") {
           throw err;
@@ -182,7 +173,6 @@ describe('render pages while user is logged in', () => {
 
   it('renders the the dashboard page',
     async () => {
-
       router.push('/dashboard').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -196,7 +186,6 @@ describe('render pages while user is logged in', () => {
 
   it('renders the the maintenance page',
     async () => {
-
       router.push('/maintenance').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -210,7 +199,6 @@ describe('render pages while user is logged in', () => {
 
   it('renders the the spareparts page',
     async () => {
-
       router.push('/spareparts').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -224,7 +212,6 @@ describe('render pages while user is logged in', () => {
 
   it('renders the the training page',
     async () => {
-
       router.push('/training').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
@@ -238,7 +225,6 @@ describe('render pages while user is logged in', () => {
 
   it('renders the the history page',
     async () => {
-
       router.push('/history').catch((e) => {
         if (!isNavigationFailure(e, NavigationFailureType.redirected)) {
           Promise.reject(e)
