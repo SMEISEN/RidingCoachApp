@@ -9,7 +9,10 @@
         Warning
       </v-card-title>
       <v-card-text>
-        <p class="text--primary">
+        <p
+          id="confirmQuestion"
+          class="text--primary"
+        >
           Do you really want to delete this {{ flaggedForDeletion }}?
         </p>
         <p class="text--secondary text-sm-left">
@@ -19,6 +22,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
+          id="cancelButton"
           color="accent"
           text
           @click.prevent="onCancel"
@@ -26,6 +30,7 @@
           Cancel
         </v-btn>
         <v-btn
+          id="confirmButton"
           color="error"
           text
           @click.prevent="onConfirm"
