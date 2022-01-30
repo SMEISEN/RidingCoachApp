@@ -162,6 +162,7 @@
               :key="'tab-item/' + session_tab_item_index"
             >
               <TrainingDialogTabsLaptimes
+                v-if="trainingFormObject.sessions.length > 0"
                 :session-object="trainingFormObject.sessions[session_tab_item_index-1]"
               />
             </v-tab-item>
@@ -187,22 +188,29 @@
       :info-dialog.sync="info_dialog"
       :info-text="'The initial setup of a training can not be deleted!'"
     />
+    <UploadFileDialog
+      :file-category="'lap time spreadsheets'"
+      :file-types="['.ods']"
+      :upload-dialog.sync="upload_dialog"
+    />
   </div>
 </template>
 
 <script>
+import ConfirmDeleteDialog from '@/components/common/ConfirmDeleteDialog.vue';
+import InfoDialog from '@/components/common/InfoDialog.vue';
+import UploadFileDialog from '@/components/common/UploadFileDialog.vue';
 import TrainingDialogTabsEngine from './TrainingDialogTabsEngine.vue';
 import TrainingDialogTabsTires from './TrainingDialogTabsTires.vue';
 import TrainingDialogTabsSetup from './TrainingDialogTabsSetup.vue';
 import TrainingDialogTabsElectronic from './TrainingDialogTabsElectronic.vue';
 import TrainingDialogTabsLaptimes from './TrainingDialogTabsLaptimes.vue';
-import ConfirmDeleteDialog from '../../common/ConfirmDeleteDialog.vue';
-import InfoDialog from '../../common/InfoDialog.vue';
 import { apiDeleteSetupItem } from '../../api/SetupApi';
 
 export default {
   name: 'TrainingDialogTabs',
   components: {
+    UploadFileDialog,
     InfoDialog,
     ConfirmDeleteDialog,
     TrainingDialogTabsElectronic,
@@ -229,6 +237,7 @@ export default {
     time_menu: false,
     confirm_delete_dialog: false,
     info_dialog: false,
+    upload_dialog: false,
     new_tabs: [],
   }),
   computed: {
@@ -354,7 +363,7 @@ export default {
      * Opens a dialog to add a spreadsheet of lap times.
      */
     addLaptimes() {
-      return null;
+      this.upload_dialog = true;
     },
   },
 };
