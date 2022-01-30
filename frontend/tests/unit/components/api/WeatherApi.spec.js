@@ -52,4 +52,5 @@ describe('api for weather data from tomorrow.io', () => {
       expect(Object.keys(data.timelines[1].intervals[0].values)).toEqual(
         expect.arrayContaining(weatherProperties));
     });
+
 });

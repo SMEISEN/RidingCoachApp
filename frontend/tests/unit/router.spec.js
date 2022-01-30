@@ -235,4 +235,5 @@ describe('render pages while user is logged in', () => {
       expect(router.history.current.path).toEqual('/history');
       expect(wrapper.findComponent({ name: 'History' }).exists()).toBe(true);
     });
+
 });
