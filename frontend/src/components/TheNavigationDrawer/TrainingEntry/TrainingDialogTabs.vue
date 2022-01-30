@@ -120,7 +120,6 @@
       </v-btn>
     </v-tabs>
     <v-card
-      v-if="trainingFormObject.sessions.length > 0"
       color="secondary"
       dark
     >
@@ -149,13 +148,15 @@
             dark
             vertical
           >
-            <v-tab
-              v-for="session_tab_index in training_session_tabs"
-              :key="'tab/' + session_tab_index"
-              @click="$forceUpdate()"
-            >
-              Session {{ session_tab_index }}
-            </v-tab>
+            <div v-if="trainingFormObject.sessions.length > 0">
+              <v-tab
+                v-for="session_tab_index in training_session_tabs"
+                :key="'tab/' + session_tab_index"
+                @click="$forceUpdate()"
+              >
+                Session {{ session_tab_index }}
+              </v-tab>
+            </div>
             <v-tab-item
               v-for="session_tab_item_index in training_session_tabs"
               :key="'tab-item/' + session_tab_item_index"
@@ -164,6 +165,15 @@
                 :session-object="trainingFormObject.sessions[session_tab_item_index-1]"
               />
             </v-tab-item>
+            <v-btn
+              depressed
+              width="110px"
+              height="47px"
+              color="secondary"
+              @click.prevent="addLaptimes()"
+            >
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
           </v-tabs>
         </div>
       </v-expand-transition>
@@ -292,11 +302,17 @@ export default {
         this.training_setup_tab = this.training_setup_tabs - 1;
       });
     },
+    /**
+     * Refreshes the time.
+     */
     refreshTime() {
       this.trainingFormObject.setup_fixed[this.training_setup_tab].time = new Date()
         .toTimeString().substr(0, 5);
       this.$forceUpdate();
     },
+    /**
+     * Opens the confirm delete dialog before deleting a session.
+     */
     onSetupDelete() {
       const currentTab = this.training_setup_tab;
       if (currentTab !== 0) {
@@ -305,6 +321,9 @@ export default {
         this.info_dialog = true;
       }
     },
+    /**
+     * Deletes a session after the deletion was confirmed.
+     */
     deletionConfirmed() {
       const currentTab = this.training_setup_tab;
       const setupId = this.trainingFormObject.setup_fixed[currentTab].setup_id;
@@ -330,6 +349,12 @@ export default {
             });
           });
       }
+    },
+    /**
+     * Opens a dialog to add a spreadsheet of lap times.
+     */
+    addLaptimes() {
+      return null;
     },
   },
 };
