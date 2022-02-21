@@ -121,12 +121,13 @@ export default {
     },
     calculateFontSize() {
       if (this.window_width < 375) {
-        return `fontSize:0px`;
-      } else if (this.window_width >= 375 && this.window_width < 450) {
+        return 'fontSize:0px';
+      }
+      if (this.window_width >= 375 && this.window_width < 450) {
         return `fontSize:${(this.window_width - 375) * 0.05 + 9}px`;
       }
-      return `fontSize:12px`;
-    }
+      return 'fontSize:12px';
+    },
   },
   watch: {
     current_page() {

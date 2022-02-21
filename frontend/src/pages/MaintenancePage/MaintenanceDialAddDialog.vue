@@ -5,8 +5,8 @@
     :category-name.sync="category_name"
     :maintenance-name.sync="maintenance_name"
     :maintenance-object.sync="maintenance_object"
-    :category-array="category_array"
-    :maintenance-array="maintenance_array"
+    :category-names="category_names"
+    :maintenance-names="maintenance_names"
     @saveClicked="postMaintenanceItem"
     @cancelClicked="initMaintenanceObject"
   />
@@ -26,15 +26,15 @@ export default {
       type: Boolean,
       required: true,
     },
-    categoryObject: {
-      type: Object,
+    categoryArray: {
+      type: Array,
       required: true,
     },
     categoryName: {
       type: String,
       required: true,
     },
-    categoryArray: {
+    categoryNames: {
       type: Array,
       required: true,
     },
@@ -70,11 +70,11 @@ export default {
         this.$emit('update:addMaintenanceDialog', value);
       },
     },
-    maintenance_array() {
-      return Object.keys(this.categoryObject);
+    maintenance_names() {
+      return this.categoryArray.map((value) => value.name);
     },
-    category_array() {
-      return this.categoryArray;
+    category_names() {
+      return this.categoryNames;
     },
     current_bike_id() {
       return this.$store.getters.getCurrentBikeId;
@@ -95,14 +95,17 @@ export default {
       const payload = this.maintenance_object;
       apiPostMaintenance(payload)
         .then((res) => {
-          this.categoryObject[this.maintenance_name] = {
+          const index = this.categoryArray.indexOf(this.categoryArray.filter(
+            (i) => i.name === this.maintenance_name,
+          )[0]);
+          this.categoryArray[index] = {
             category: payload.category,
             name: payload.name,
             interval_type: payload.interval_type,
             interval_amount: payload.interval_amount,
             interval_unit: payload.interval_unit,
           };
-          this.categoryObject[this.maintenance_name].maintenance_id = res.data;
+          this.categoryArray[index].maintenance_id = res.data;
           this.add_maintenance_dialog = false;
           this.initMaintenanceObject();
           this.$emit('newMaintenanceAdded');

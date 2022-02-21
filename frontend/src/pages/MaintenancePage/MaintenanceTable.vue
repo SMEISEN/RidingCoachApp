@@ -80,7 +80,6 @@
 </template>
 
 <script>
-import { flattenNestedObjects } from '../../components/utils/DataProcessingUtils';
 import MaintenanceTableDropdown from './MaintenanceTableDropdown.vue';
 import LinearProgressMaintenanceInterval from '../../components/common/LinearProgressMaintenanceInterval.vue';
 
@@ -92,7 +91,7 @@ export default {
   },
   props: {
     maintenanceEntries: {
-      type: Object,
+      type: Array,
       required: true,
     },
   },
@@ -114,8 +113,7 @@ export default {
      * ]
      */
     maintenance_entries() {
-      const flattenedEntries = flattenNestedObjects(this.maintenanceEntries);
-      const filteredEntries = flattenedEntries
+      const filteredEntries = this.maintenanceEntries
         .filter((i) => i.interval_type === 'planned cycle' || i.interval_type === 'estimated wear')
         .filter((i) => i.interval_unit !== 't');
       return this._.orderBy(filteredEntries,

@@ -73,14 +73,16 @@ export default {
     getDefaultTags() {
       const tagsDefault = this.maintenanceObject.tags_default;
       const selectedChipsArray = [];
-      if (tagsDefault.includes('checked')) {
-        selectedChipsArray.push(0);
-      }
-      if (tagsDefault.includes('fixed')) {
-        selectedChipsArray.push(1);
-      }
-      if (tagsDefault.includes('replaced')) {
-        selectedChipsArray.push(2);
+      if (tagsDefault) {
+        if (tagsDefault.includes('checked')) {
+          selectedChipsArray.push(0);
+        }
+        if (tagsDefault.includes('fixed')) {
+          selectedChipsArray.push(1);
+        }
+        if (tagsDefault.includes('replaced')) {
+          selectedChipsArray.push(2);
+        }
       }
       return selectedChipsArray;
     },

@@ -82,13 +82,12 @@
 </template>
 
 <script>
-import { flattenNestedObjects } from '../../components/utils/DataProcessingUtils';
 
 export default {
   name: 'MaintenanceDialDeleteDialogTable',
   props: {
-    maintenanceEntries: {
-      type: Object,
+    categoryArray: {
+      type: Array,
       required: true,
     },
     deleteCheckbox: {
@@ -112,8 +111,7 @@ export default {
      * ]
      */
     maintenance_entries() {
-      const flattenedEntries = flattenNestedObjects(this.maintenanceEntries);
-      return this._.orderBy(flattenedEntries,
+      return this._.orderBy(this.categoryArray,
         ['interval_unit', 'interval_amount'],
         ['desc', 'asc']);
     },

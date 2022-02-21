@@ -97,7 +97,6 @@ export default {
      * @param {object} activityItem maintenance or training item
      */
     routeToPage(activityItem) {
-      console.log(activityItem);
       if (Object.keys(activityItem).includes('location')) {
         this.$router.push('/training');
       } else {
