@@ -1,5 +1,5 @@
 # RidingCoachApp 
-_Web application for motorcycle riders to organize maintenance, spare parts, and bike setups._
+_Web application for bike and motorcycle riders to organize maintenance, spare parts, and bike setups._
 
 ![RidingCoach Logo](/frontend/public/favicon.svg "RidingCoach Logo")
 
@@ -44,4 +44,4 @@ Installation and deployment guide will be provided with alpha release.
 * RestPlus template by [@postrational](https://github.com/postrational) - [template](https://github.com/postrational/rest_api_demo)
 
 _________________
-Copyright © 2022 [Stefan Meisenbacher](https://github.com/SMEISEN)
+Copyright © 2024 [Stefan Meisenbacher](https://github.com/SMEISEN)
